@@ -8,7 +8,7 @@ KlausLang — свободное программное обеспечение: 
 поздней версии.
 
 Программное обеспечение KlausLang распространяется в надежде, что оно будет 
-полезным, но БЕЗО ВСЯКИХ ГАРАНТИЙ; даже без неявной гарантии ТОВАРНОГО ВИДА 
+полезным, но БЕЗ ВСЯКИХ ГАРАНТИЙ; даже без неявной гарантии ТОВАРНОГО ВИДА 
 или ПРИГОДНОСТИ ДЛЯ ОПРЕДЕЛЕННЫХ ЦЕЛЕЙ. 
 
 Подробнее см. в Стандартной общественной лицензии GNU.
@@ -25,11 +25,12 @@ unit KlausConsole;
 interface
 
 uses
-  Messages, SysUtils, Classes, Graphics, Controls, Dialogs, Types, LCLType,
+  Messages, LMessages, SysUtils, Classes, Graphics, Controls, Dialogs, Types, LCLType,
   Forms, CustomTimer, U8, KlausConKeys;
 
 const
-  WM_InvalidateSize = $7FFA;
+  KM_InvalidateSize = $7FFA;
+  KM_SetRedrawTimer = $7FFB;
 
 const
   klsConDefaultScreenWidth  = 80;
@@ -190,9 +191,10 @@ type
       procedure CMFontChanged(var msg: tMessage); message CM_FontChanged;
       procedure WMSetFocus(var msg: tMessage); message WM_SetFocus;
       procedure WMKillFocus(var msg: tMessage); message WM_KillFocus;
-      procedure WMInvalidateSize(var msg: tMessage); message WM_InvalidateSize;
-      procedure CNKeyDown(var msg: tWMKeyDown); message CN_KeyDown;
-      procedure CNSysKeyDown(var msg: tWMKeyDown); message CN_SysKeyDown;
+      procedure KMInvalidateSize(var msg: tMessage); message KM_InvalidateSize;
+      procedure KMSetRedrawTimer(var msg: tMessage); message KM_SetRedrawTimer;
+      procedure CNKeyDown(var msg: tLMKeyDown); message CN_KeyDown;
+      procedure CNSysKeyDown(var msg: tLMKeyDown); message CN_SysKeyDown;
       procedure redrawTimerTimer(sender: tObject);
       procedure createWnd; override;
       procedure destroyWnd; override;
@@ -582,8 +584,9 @@ procedure tCustomKlausConsole.setRedrawTimer;
 begin
   lock;
   try
+    if not handleAllocated then exit;
     hideCaret;
-    fRedrawTimer.enabled := true;
+    postMessage(handle, KM_SetRedrawTimer, 0, 0);
   finally
     unlock;
   end;
@@ -600,11 +603,11 @@ procedure tCustomKlausConsole.redrawTimerTimer(sender: tObject);
 begin
   lock;
   try
+    killRedrawTimer;
     if fAllInvalid then invalidate
     else if not IsRectEmpty(fRectInvalid) then invalidateRect(handle, @fRectInvalid, false);
     fAllInvalid := false;
     fRectInvalid := rect(0, 0, 0, 0);
-    killRedrawTimer;
   finally
     unlock;
   end;
@@ -930,7 +933,7 @@ begin
     endInput(true);
     fBuffer.setSize(w, h, longWord(fTextAttr));
     invalidatePreferredSize;
-    if handleAllocated then postMessage(handle, WM_InvalidateSize, 0, 0);
+    if handleAllocated then postMessage(handle, KM_InvalidateSize, 0, 0);
   finally
     unlock;
   end;
@@ -1098,19 +1101,26 @@ begin
   end;
 end;
 
-procedure tCustomKlausConsole.WMInvalidateSize(var msg: tMessage);
+procedure tCustomKlausConsole.KMInvalidateSize(var msg: tMessage);
 begin
   adjustSize;
 end;
 
-procedure tCustomKlausConsole.CNKeyDown(var msg: tWMKeyDown);
+procedure tCustomKlausConsole.KMSetRedrawTimer(var msg: tMessage);
+begin
+  lock;
+  try fRedrawTimer.enabled := true;
+  finally unlock; end;
+end;
+
+procedure tCustomKlausConsole.CNKeyDown(var msg: tLMKeyDown);
 begin
   if not previewShortcuts then inherited
   else if application.isShortcut(msg) then msg.result := 1
   else inherited;
 end;
 
-procedure tCustomKlausConsole.CNSysKeyDown(var msg: tWMKeyDown);
+procedure tCustomKlausConsole.CNSysKeyDown(var msg: tLMKeyDown);
 begin
   if not previewShortcuts then inherited
   else if application.isShortcut(msg) then msg.result := 1
@@ -1476,6 +1486,7 @@ begin
         kctVertLine: begin w := 2; h := fCharSize.cy; end;
         else w := fCharSize.cx; h := fCharSize.cy;
       end;
+      fCaretVisible := true;
       LCLIntf.createCaret(handle, 0, w, h);
       LCLIntf.setCaretRespondToFocus(handle, false);
     end;

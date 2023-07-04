@@ -8,7 +8,7 @@ KlausLang — свободное программное обеспечение: 
 поздней версии.
 
 Программное обеспечение KlausLang распространяется в надежде, что оно будет 
-полезным, но БЕЗО ВСЯКИХ ГАРАНТИЙ; даже без неявной гарантии ТОВАРНОГО ВИДА 
+полезным, но БЕЗ ВСЯКИХ ГАРАНТИЙ; даже без неявной гарантии ТОВАРНОГО ВИДА 
 или ПРИГОДНОСТИ ДЛЯ ОПРЕДЕЛЕННЫХ ЦЕЛЕЙ. 
 
 Подробнее см. в Стандартной общественной лицензии GNU.
@@ -5671,13 +5671,13 @@ end;
 procedure tKlausRuntime.setRawInputMode(raw: boolean);
 begin
   if assigned(fStdIO.setRaw) then fStdIO.setRaw(raw)
-  else klausTerminalSetRaw(raw);
+  else klausTerminalSetRaw(input, raw);
 end;
 
 function tKlausRuntime.inputAvailable: boolean;
 begin
   if assigned(fStdIO.hasChar) then result := fStdIO.hasChar()
-  else result := klausTerminalHasChar;
+  else result := klausTerminalHasChar(input);
 end;
 
 { tKlausStackFrame }

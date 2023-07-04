@@ -8,7 +8,7 @@ KlausLang — свободное программное обеспечение: 
 поздней версии.
 
 Программное обеспечение KlausLang распространяется в надежде, что оно будет 
-полезным, но БЕЗО ВСЯКИХ ГАРАНТИЙ; даже без неявной гарантии ТОВАРНОГО ВИДА 
+полезным, но БЕЗ ВСЯКИХ ГАРАНТИЙ; даже без неявной гарантии ТОВАРНОГО ВИДА 
 или ПРИГОДНОСТИ ДЛЯ ОПРЕДЕЛЕННЫХ ЦЕЛЕЙ. 
 
 Подробнее см. в Стандартной общественной лицензии GNU.
@@ -119,7 +119,7 @@ begin
   fConsole.parent := self;
   fConsole.borderStyle := bsSingle;
   fConsole.borderSpacing.around := 4;
-  {$ifdef windows} fConsole.font.name := 'Courier New';
+  {$ifdef windows} fConsole.font.name := 'Consolas';
   {$else} fConsole.font.name := 'Monospace'; {$endif}
   fConsole.font.size := 11;
   fConsole.autoSize := true;

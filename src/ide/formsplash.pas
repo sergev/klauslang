@@ -8,7 +8,7 @@ KlausLang — свободное программное обеспечение: 
 поздней версии.
 
 Программное обеспечение KlausLang распространяется в надежде, что оно будет 
-полезным, но БЕЗО ВСЯКИХ ГАРАНТИЙ; даже без неявной гарантии ТОВАРНОГО ВИДА 
+полезным, но БЕЗ ВСЯКИХ ГАРАНТИЙ; даже без неявной гарантии ТОВАРНОГО ВИДА 
 или ПРИГОДНОСТИ ДЛЯ ОПРЕДЕЛЕННЫХ ЦЕЛЕЙ. 
 
 Подробнее см. в Стандартной общественной лицензии GNU.
@@ -39,10 +39,13 @@ type
     lblComments: TLabel;
     lblLegalCopyright: TLabel;
     lblVersion: TLabel;
+    shpFrame: TShape;
     tmrClose: TTimer;
     procedure anythingClick(sender: tObject);
     procedure formCreate(sender: tObject);
     procedure formKeyDown(sender: tObject; var key: word; shift: tShiftState);
+    procedure shpFrameMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
     procedure tmrCloseTimer(sender: tObject);
   private
     function  detectURL(const s: string): string;
@@ -100,6 +103,11 @@ end;
 procedure tSplashForm.formKeyDown(sender: tObject; var key: word; shift: tShiftState);
 begin
   if (key = VK_ESCAPE) or (key = VK_RETURN) then close;
+end;
+
+procedure tSplashForm.shpFrameMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+  anythingClick(shpFrame);
 end;
 
 procedure tSplashForm.tmrCloseTimer(sender: tObject);

@@ -8,7 +8,7 @@ KlausLang — свободное программное обеспечение: 
 поздней версии.
 
 Программное обеспечение KlausLang распространяется в надежде, что оно будет 
-полезным, но БЕЗО ВСЯКИХ ГАРАНТИЙ; даже без неявной гарантии ТОВАРНОГО ВИДА 
+полезным, но БЕЗ ВСЯКИХ ГАРАНТИЙ; даже без неявной гарантии ТОВАРНОГО ВИДА 
 или ПРИГОДНОСТИ ДЛЯ ОПРЕДЕЛЕННЫХ ЦЕЛЕЙ. 
 
 Подробнее см. в Стандартной общественной лицензии GNU.
@@ -46,9 +46,6 @@ type
   end;
 
 type
-
-  { tMainForm }
-
   tMainForm = class(tForm)
     actFileNew: TAction;
     actFileOpen: TAction;
@@ -697,7 +694,7 @@ begin
   case messageDlg(strConfirmation, s, mtConfirmation, [mbYes, mbNo, mbCancel], 0, mbYes) of
     mrYes: result := saveEditFrame(fr);
     mrNo: result := true;
-    mrCancel: result := false;
+    else result := false;
   end;
 end;
 

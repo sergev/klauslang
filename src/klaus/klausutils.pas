@@ -8,7 +8,7 @@ KlausLang — свободное программное обеспечение: 
 поздней версии.
 
 Программное обеспечение KlausLang распространяется в надежде, что оно будет 
-полезным, но БЕЗО ВСЯКИХ ГАРАНТИЙ; даже без неявной гарантии ТОВАРНОГО ВИДА 
+полезным, но БЕЗ ВСЯКИХ ГАРАНТИЙ; даже без неявной гарантии ТОВАРНОГО ВИДА 
 или ПРИГОДНОСТИ ДЛЯ ОПРЕДЕЛЕННЫХ ЦЕЛЕЙ. 
 
 Подробнее см. в Стандартной общественной лицензии GNU.
@@ -133,14 +133,14 @@ function klausCmp(v1, v2: tKlausMoment): integer;
 function klausCmp(v1, v2: tKlausBoolean): integer;
 
 // Устанавливает raw-режим работы терминала
-procedure klausTerminalSetRaw(raw: boolean);
+procedure klausTerminalSetRaw(var inp: text; raw: boolean);
 
 // Возвращает TRUE, если стандартный поток ввода не пуст
-function klausTerminalHasChar: boolean;
+function klausTerminalHasChar(var inp: text): boolean;
 
 implementation
 
-uses Math, BaseUnix, TermIO;
+uses {$ifdef windows}Windows,{$else}BaseUnix, TermIO,{$endif}Math;
 
 resourcestring
   errInvalidInteger = 'Неверное целое число: "%s".';
@@ -317,23 +317,18 @@ end;
 type
   tTerminalState = {$ifdef windows}cardinal{$else}TermIOs{$endif};
 
-function stdInHandle: tHandle;
+function stdInHandle(var inp: text): tHandle;
 begin
-  exit(tTextRec(input).handle);
-  (*{$ifdef windows}
-  result := getStdHandle(STD_INPUT_HANDLE);
-  {$else}
-  result := stdInputHandle;
-  {$endif}*)
+  result := tTextRec(inp).handle;
 end;
 
-function stdInBufNotEmpty: boolean;
+function stdInBufNotEmpty(var inp: text): boolean;
 begin
-  with tTextRec(input) do
+  with tTextRec(inp) do
     result := bufPos < bufEnd;
 end;
 
-{$push}{$WARN 5059 off}{$WARN 5060 off}
+{$push}{$WARN 5057 off}{$WARN 5059 off}{$WARN 5060 off}
 function getTerminalState(h: tHandle): tTerminalState;
 begin
   {$ifdef windows}
@@ -344,7 +339,7 @@ begin
 end;
 {$pop}
 
-procedure klausTerminalSetRaw(raw: boolean);
+procedure klausTerminalSetRaw(var inp: text; raw: boolean);
 const
   {$push}{$warnings off}
   prevState: record
@@ -357,32 +352,33 @@ var
 begin
   if not prevState.valid then begin
     if not raw then exit;
-    prevState.state := getTerminalState(stdInHandle);
+    prevState.state := getTerminalState(stdInHandle(inp));
     prevState.valid := true;
   end;
   state := prevState.state;
   {$ifdef windows}
   if raw then state := state and not (ENABLE_ECHO_INPUT or ENABLE_LINE_INPUT or ENABLE_PROCESSED_INPUT);
-  setConsoleMode(stdInHandle, state);
+  setConsoleMode(stdInHandle(inp), state);
   {$else}
   if raw then CFMakeRaw(state);
   TCSetAttr(stdInHandle, TCSANOW, state);
   {$endif}
 end;
 
-function klausTerminalHasChar: boolean;
+function klausTerminalHasChar(var inp: text): boolean;
 {$ifdef windows}
 var
-  num, read: cardinal;
+  read: longWord;
+  num: longWord = 0;
   inps: array of tInputRecord;
-  i: Integer;
+  i: integer;
 begin
-  if stdInBufNotEmpty then exit(true);
+  if stdInBufNotEmpty(inp) then exit(true);
   result := false;
-  if not getNumberOfConsoleInputEvents(stdInHandle, num) then exit(true); //!!! why true?
+  if not getNumberOfConsoleInputEvents(stdInHandle(inp), num) then exit(true);
   if num = 0 then exit;
   setLength(inps, num);
-  peekConsoleInput(stdInHandle, @inps[0], num, @read);
+  peekConsoleInput(stdInHandle(inp), @inps[0], num, @read);
   for i := 0 to read-1 do
     if (inps[i].eventType = KEY_EVENT) and (inps[i].event.keyEvent.bKeyDown) then exit(true)
 end;

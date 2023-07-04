@@ -8,7 +8,7 @@ KlausLang — свободное программное обеспечение: 
 поздней версии.
 
 Программное обеспечение KlausLang распространяется в надежде, что оно будет 
-полезным, но БЕЗО ВСЯКИХ ГАРАНТИЙ; даже без неявной гарантии ТОВАРНОГО ВИДА 
+полезным, но БЕЗ ВСЯКИХ ГАРАНТИЙ; даже без неявной гарантии ТОВАРНОГО ВИДА 
 или ПРИГОДНОСТИ ДЛЯ ОПРЕДЕЛЕННЫХ ЦЕЛЕЙ. 
 
 Подробнее см. в Стандартной общественной лицензии GNU.
@@ -1863,6 +1863,7 @@ procedure tCustomKlausEdit.paintLine(cnv: tCanvas; r: tRect; line: integer; selS
   var
     i, stop: integer;
   begin
+    result := chr;
     highlight := (selStart >= 0) and (chr >= selStart) and ((selEnd < 0) or (chr < selEnd));
     if highlight then begin
       if selEnd < 0 then result := len
