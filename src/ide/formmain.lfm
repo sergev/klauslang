@@ -1,0 +1,1112 @@
+object MainForm: TMainForm
+  Left = 465
+  Height = 559
+  Top = 260
+  Width = 898
+  Caption = 'Клаус'
+  ClientHeight = 534
+  ClientWidth = 898
+  Menu = mainMenu
+  OnCloseQuery = formCloseQuery
+  LCLVersion = '2.2.4.0'
+  object toolBar: TToolBar
+    Left = 0
+    Top = 0
+    Width = 898
+    AutoSize = True
+    ButtonHeight = 30
+    ButtonWidth = 30
+    Images = actionImages
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 0
+    object tbFileNew: TToolButton
+      Left = 1
+      Top = 2
+      Action = actFileNew
+    end
+    object tbFileOpen: TToolButton
+      Left = 31
+      Top = 2
+      Action = actFileOpen
+    end
+    object tbFileSave: TToolButton
+      Left = 61
+      Top = 2
+      Action = actFileSave
+    end
+    object tbFileClose: TToolButton
+      Left = 91
+      Top = 2
+      Action = actFileClose
+    end
+    object ToolButton5: TToolButton
+      Left = 121
+      Height = 30
+      Top = 2
+      Caption = 'ToolButton5'
+      Style = tbsSeparator
+    end
+    object tbEditUndo: TToolButton
+      Left = 129
+      Top = 2
+      Action = actEditUndo
+    end
+    object ToolButton7: TToolButton
+      Left = 249
+      Height = 30
+      Top = 2
+      Caption = 'ToolButton7'
+      Style = tbsSeparator
+    end
+    object tbEditSearch: TToolButton
+      Left = 325
+      Top = 2
+      Action = actEditSearch
+    end
+    object tbEditSearchNext: TToolButton
+      Left = 355
+      Top = 2
+      Action = actEditSearchNext
+    end
+    object tbEditReplace: TToolButton
+      Left = 385
+      Top = 2
+      Action = actEditReplace
+    end
+    object ToolButton1: TToolButton
+      Left = 453
+      Height = 30
+      Top = 2
+      Caption = 'ToolButton1'
+      Style = tbsSeparator
+    end
+    object tbWindowLocalVariables: TToolButton
+      Left = 755
+      Top = 2
+      Action = actWindowLocalVariables
+    end
+    object tbWindowCallStack: TToolButton
+      Left = 785
+      Top = 2
+      Action = actWindowCallStack
+    end
+    object tbWindowBreakpoints: TToolButton
+      Left = 815
+      Top = 2
+      Action = actWindowBreakpoints
+    end
+    object tbEditCut: TToolButton
+      Left = 159
+      Top = 2
+      Action = actEditCut
+    end
+    object tbEditCopy: TToolButton
+      Left = 189
+      Top = 2
+      Action = actEditCopy
+    end
+    object tbEditPaste: TToolButton
+      Left = 219
+      Top = 2
+      Action = actEditPaste
+    end
+    object ToolButton2: TToolButton
+      Left = 415
+      Height = 30
+      Top = 2
+      Caption = 'ToolButton2'
+      Style = tbsSeparator
+    end
+    object tbRunCheckSyntax: TToolButton
+      Left = 423
+      Top = 2
+      Action = actRunCheckSyntax
+    end
+    object tbRunStart: TToolButton
+      Left = 491
+      Top = 2
+      Action = actRunStart
+    end
+    object tbRunStartArgs: TToolButton
+      Left = 461
+      Top = 2
+      Action = actRunStartArgs
+    end
+    object tbRunPause: TToolButton
+      Left = 551
+      Top = 2
+      Action = actRunPause
+    end
+    object tbRunStop: TToolButton
+      Left = 581
+      Top = 2
+      Action = actRunStop
+    end
+    object ToolButton10: TToolButton
+      Left = 649
+      Height = 30
+      Top = 2
+      Caption = 'ToolButton10'
+      Style = tbsSeparator
+    end
+    object tbRunStepInto: TToolButton
+      Left = 657
+      Top = 2
+      Action = actRunStepInto
+    end
+    object tbRunStepOver: TToolButton
+      Left = 687
+      Top = 2
+      Action = actRunStepOver
+    end
+    object tbRunShowExecPoint: TToolButton
+      Left = 717
+      Top = 2
+      Action = actRunShowExecPoint
+    end
+    object ToolButton14: TToolButton
+      Left = 747
+      Height = 30
+      Top = 2
+      Caption = 'ToolButton14'
+      Style = tbsSeparator
+    end
+    object ToolButton3: TToolButton
+      Left = 611
+      Height = 30
+      Top = 2
+      Caption = 'ToolButton3'
+      Style = tbsSeparator
+    end
+    object tbRunShowScene: TToolButton
+      Left = 619
+      Top = 2
+      Action = actRunShowScene
+    end
+    object ToolButton4: TToolButton
+      Left = 521
+      Top = 2
+      Action = actRunToCursor
+    end
+    object ToolButton6: TToolButton
+      Left = 257
+      Top = 2
+      Action = actEditUnindentBlock
+    end
+    object ToolButton8: TToolButton
+      Left = 287
+      Top = 2
+      Action = actEditIndentBlock
+    end
+    object ToolButton9: TToolButton
+      Left = 317
+      Height = 30
+      Top = 2
+      Caption = 'ToolButton9'
+      Style = tbsSeparator
+    end
+  end
+  object statusBar: TStatusBar
+    Left = 2
+    Height = 19
+    Top = 513
+    Width = 894
+    BorderSpacing.Left = 2
+    BorderSpacing.Right = 2
+    BorderSpacing.Bottom = 2
+    Panels = <    
+      item
+        Width = 150
+      end    
+      item
+        Width = 100
+      end    
+      item
+        Width = 50
+      end>
+    SimplePanel = False
+  end
+  object pageControl: TPageControl
+    Left = 0
+    Height = 481
+    Top = 32
+    Width = 624
+    Align = alClient
+    TabOrder = 2
+    OnChange = pageControlChange
+    Options = [nboDoChangeOnSetIndex]
+  end
+  object sbDebug: TScrollBox
+    Left = 624
+    Height = 481
+    Top = 32
+    Width = 274
+    HorzScrollBar.Page = 1
+    HorzScrollBar.Visible = False
+    VertScrollBar.Page = 50
+    Align = alRight
+    BorderStyle = bsNone
+    ClientHeight = 481
+    ClientWidth = 274
+    TabOrder = 3
+    object bvDebugSizer: TBevel
+      Cursor = crHSplit
+      Left = 0
+      Height = 481
+      Top = 0
+      Width = 5
+      Align = alLeft
+      Shape = bsSpacer
+      OnMouseDown = bvDebugSizerMouseDown
+      OnMouseMove = bvDebugSizerMouseMove
+      OnMouseUp = bvDebugSizerMouseUp
+    end
+    object pnDebugContent: TFlowPanel
+      Left = 5
+      Height = 481
+      Top = 0
+      Width = 269
+      Align = alClient
+      AutoSize = True
+      BevelOuter = bvNone
+      ControlList = <>
+      FlowLayout = tlTop
+      FlowStyle = fsLeftRightTopBottom
+      TabOrder = 0
+      OnResize = pnDebugContentResize
+    end
+  end
+  object mainMenu: TMainMenu
+    Images = actionImages
+    Left = 92
+    Top = 176
+    object miFile: TMenuItem
+      Caption = 'Файл'
+      object miFileNew: TMenuItem
+        Action = actFileNew
+      end
+      object miFileOpen: TMenuItem
+        Action = actFileOpen
+      end
+      object miFileSave: TMenuItem
+        Action = actFileSave
+      end
+      object miFileSaveAs: TMenuItem
+        Action = actFileSaveAs
+      end
+      object miFileSaveAll: TMenuItem
+        Action = actFileSaveAll
+      end
+      object miFileClose: TMenuItem
+        Action = actFileClose
+      end
+      object Separator1: TMenuItem
+        Caption = '-'
+      end
+      object miSepRecent: TMenuItem
+        Caption = '-'
+      end
+      object miFileExit: TMenuItem
+        Action = actFileExit
+      end
+    end
+    object miEdit: TMenuItem
+      Caption = 'Правка'
+      object miEditUndo: TMenuItem
+        Action = actEditUndo
+      end
+      object Separator2: TMenuItem
+        Caption = '-'
+      end
+      object miEditCut: TMenuItem
+        Action = actEditCut
+      end
+      object miEditCopy: TMenuItem
+        Action = actEditCopy
+      end
+      object miEditPaste: TMenuItem
+        Action = actEditPaste
+      end
+      object miEditSelectAll: TMenuItem
+        Action = actEditSelectAll
+      end
+      object Separator5: TMenuItem
+        Caption = '-'
+      end
+      object MenuItem1: TMenuItem
+        Action = actEditDeleteLine
+      end
+      object Separator12: TMenuItem
+        Caption = '-'
+      end
+      object miEditIndentBlock: TMenuItem
+        Action = actEditIndentBlock
+      end
+      object miEditUnindentBlock: TMenuItem
+        Action = actEditUnindentBlock
+      end
+      object Separator10: TMenuItem
+        Caption = '-'
+      end
+      object miEditSearch: TMenuItem
+        Action = actEditSearch
+      end
+      object miEditSearchNext: TMenuItem
+        Action = actEditSearchNext
+      end
+      object miEditReplace: TMenuItem
+        Action = actEditReplace
+      end
+    end
+    object miRun: TMenuItem
+      Caption = 'Запуск'
+      object miRunCheckSyntax: TMenuItem
+        Action = actRunCheckSyntax
+      end
+      object Separator7: TMenuItem
+        Caption = '-'
+      end
+      object miRunStart: TMenuItem
+        Action = actRunStart
+      end
+      object miRunStartArgs: TMenuItem
+        Action = actRunStartArgs
+      end
+      object miRunPause: TMenuItem
+        Action = actRunPause
+      end
+      object miRunStop: TMenuItem
+        Action = actRunStop
+      end
+      object Separator8: TMenuItem
+        Caption = '-'
+      end
+      object miRunShowScene: TMenuItem
+        Action = actRunShowScene
+      end
+      object Separator6: TMenuItem
+        Caption = '-'
+      end
+      object miSunStepInto: TMenuItem
+        Action = actRunStepInto
+      end
+      object miRunStepOver: TMenuItem
+        Action = actRunStepOver
+      end
+      object miRunShowExecPoint: TMenuItem
+        Action = actRunShowExecPoint
+      end
+      object Separator11: TMenuItem
+        Caption = '-'
+      end
+      object miToggleBreakpoint: TMenuItem
+        Action = actRunToggleBreakpoint
+      end
+      object miRunToCursor: TMenuItem
+        Action = actRunToCursor
+      end
+      object Separator13: TMenuItem
+        Caption = '-'
+      end
+      object miRunInterceptKeyboard: TMenuItem
+        Action = actRunInterceptKeyboard
+        AutoCheck = True
+      end
+    end
+    object miWindow: TMenuItem
+      Caption = 'Окно'
+      object miWindowPrevTab: TMenuItem
+        Action = actWindowPrevTab
+      end
+      object miWindowNextTab: TMenuItem
+        Action = actWindowNextTab
+      end
+      object Separator3: TMenuItem
+        Caption = '-'
+      end
+      object miWindowMoveTabLeft: TMenuItem
+        Action = actWindowMoveTabLeft
+      end
+      object miWindowMoveTabRight: TMenuItem
+        Action = actWindowMoveTabRight
+      end
+      object Separator9: TMenuItem
+        Caption = '-'
+      end
+      object miToggleBookmark: TMenuItem
+        Caption = 'Поставить/снять закладку'
+        object miToggleBookmark0: TMenuItem
+          Action = actToggleBookmark0
+        end
+        object miToggleBookmark1: TMenuItem
+          Action = actToggleBookmark1
+        end
+        object miToggleBookmark2: TMenuItem
+          Action = actToggleBookmark2
+        end
+        object miToggleBookmark3: TMenuItem
+          Action = actToggleBookmark3
+        end
+        object miToggleBookmark4: TMenuItem
+          Action = actToggleBookmark4
+        end
+        object miToggleBookmark5: TMenuItem
+          Action = actToggleBookmark5
+        end
+        object miToggleBookmark6: TMenuItem
+          Action = actToggleBookmark6
+        end
+        object miToggleBookmark7: TMenuItem
+          Action = actToggleBookmark7
+        end
+        object miToggleBookmark8: TMenuItem
+          Action = actToggleBookmark8
+        end
+        object miToggleBookmark9: TMenuItem
+          Action = actToggleBookmark9
+        end
+      end
+      object miGotoBookmark: TMenuItem
+        Caption = 'Перейти к закладке'
+        object miGotoBookmark0: TMenuItem
+          Action = actGotoBookmark0
+        end
+        object miGotoBookmark1: TMenuItem
+          Action = actGotoBookmark1
+        end
+        object miGotoBookmark2: TMenuItem
+          Action = actGotoBookmark2
+        end
+        object miGotoBookmark3: TMenuItem
+          Action = actGotoBookmark3
+        end
+        object miGotoBookmark4: TMenuItem
+          Action = actGotoBookmark4
+        end
+        object miGotoBookmark5: TMenuItem
+          Action = actGotoBookmark5
+        end
+        object miGotoBookmark6: TMenuItem
+          Action = actGotoBookmark6
+        end
+        object miGotoBookmark7: TMenuItem
+          Action = actGotoBookmark7
+        end
+        object miGotoBookmark8: TMenuItem
+          Action = actGotoBookmark8
+        end
+        object miGotoBookmark9: TMenuItem
+          Action = actGotoBookmark9
+        end
+      end
+      object Separator4: TMenuItem
+        Caption = '-'
+      end
+      object miWindowLocalVariables: TMenuItem
+        Action = actWindowLocalVariables
+      end
+      object miWindowCallStack: TMenuItem
+        Action = actWindowCallStack
+      end
+      object miWindowBreakpoints: TMenuItem
+        Action = actWindowBreakpoints
+      end
+    end
+    object miHelp: TMenuItem
+      Caption = 'Справка'
+      object miHelpAbout: TMenuItem
+        Action = actHelpAbout
+      end
+    end
+  end
+  object actionList: TActionList
+    Images = actionImages
+    Left = 188
+    Top = 176
+    object actFileNew: TAction
+      Category = 'Файл'
+      Caption = 'Создать'
+      Hint = 'Создать|Создать новый файл'
+      ImageIndex = 1
+      OnExecute = actFileNewExecute
+      ShortCut = 16462
+    end
+    object actFileOpen: TAction
+      Category = 'Файл'
+      Caption = 'Открыть...'
+      Hint = 'Открыть|Открыть существующий файл'
+      ImageIndex = 2
+      OnExecute = actFileOpenExecute
+      ShortCut = 16463
+    end
+    object actFileSave: TAction
+      Category = 'Файл'
+      Caption = 'Сохранить'
+      Hint = 'Сохранить|Сохранить изменения в файле'
+      ImageIndex = 3
+      OnExecute = actFileSaveExecute
+      ShortCut = 16467
+    end
+    object actFileSaveAs: TAction
+      Category = 'Файл'
+      Caption = 'Сохранить как...'
+      Hint = 'Сохранить как...|Сохранить изменения в новом файле'
+      OnExecute = actFileSaveAsExecute
+    end
+    object actFileSaveAll: TAction
+      Category = 'Файл'
+      Caption = 'Сохранить все'
+      Hint = 'Сохранить все|Сохранить изменения во всех открытых файлах'
+      OnExecute = actFileSaveAllExecute
+      ShortCut = 24659
+    end
+    object actFileClose: TAction
+      Category = 'Файл'
+      Caption = 'Закрыть'
+      Hint = 'Закрыть|Закрыть файл'
+      ImageIndex = 0
+      OnExecute = actFileCloseExecute
+      ShortCut = 16499
+    end
+    object actFileExit: TAction
+      Category = 'Файл'
+      Caption = 'Выход'
+      Hint = 'Выход|Завершение работы'
+      ImageIndex = 8
+      OnExecute = actFileExitExecute
+      ShortCut = 32883
+    end
+    object actEditUndo: TAction
+      Category = 'Правка'
+      Caption = 'Отменить'
+      Hint = 'Отменить|Отменить последнее редактирование'
+      ImageIndex = 5
+      OnExecute = actEditUndoExecute
+      ShortCut = 16474
+    end
+    object actEditCut: TAction
+      Category = 'Правка'
+      Caption = 'Вырезать'
+      Hint = 'Вырезать|Вырезать выделенный текст в буфер обмена'
+      ImageIndex = 10
+      OnExecute = actEditCutExecute
+      ShortCut = 16472
+    end
+    object actEditCopy: TAction
+      Category = 'Правка'
+      Caption = 'Копировать'
+      Hint = 'Копировать|Копировать выделенный текст в буфер обмена'
+      ImageIndex = 9
+      OnExecute = actEditCopyExecute
+      ShortCut = 16451
+    end
+    object actEditPaste: TAction
+      Category = 'Правка'
+      Caption = 'Вставить'
+      Hint = 'Вставить|Вставить текст из буфера обмена'
+      ImageIndex = 11
+      OnExecute = actEditPasteExecute
+      ShortCut = 16470
+    end
+    object actEditSelectAll: TAction
+      Category = 'Правка'
+      Caption = 'Выделить всё'
+      Hint = 'Выделить всё|Выделить весь текст'
+      ShortCut = 16449
+    end
+    object actEditSearch: TAction
+      Category = 'Правка'
+      Caption = 'Найти...'
+      Hint = 'Найти|Открыть диалог поиска текста'
+      ImageIndex = 6
+      OnExecute = actEditSearchReplaceExecute
+      ShortCut = 16454
+    end
+    object actEditSearchNext: TAction
+      Category = 'Правка'
+      Caption = 'Найти следующее'
+      Hint = 'Найти следующее|Продолжить поиск с текущей позиции'
+      ImageIndex = 7
+      OnExecute = actEditSearchNextExecute
+      ShortCut = 114
+    end
+    object actEditReplace: TAction
+      Category = 'Правка'
+      Caption = 'Заменить'
+      Hint = 'Заменить|Открыть диалог поиска и замены текста'
+      ImageIndex = 4
+      OnExecute = actEditSearchReplaceExecute
+      ShortCut = 16466
+    end
+    object actWindowNextTab: TAction
+      Category = 'Окно'
+      Caption = 'Следующая вкладка'
+      Hint = 'Следующая вкладка|Перейти на следующую вкладку'
+      OnExecute = actWindowNextTabExecute
+      ShortCut = 16393
+    end
+    object actWindowPrevTab: TAction
+      Category = 'Окно'
+      Caption = 'Предыдущая вкладка'
+      Hint = 'Предыдущая вкладка|Перейти на предыдущую вкладку'
+      OnExecute = actWindowPrevTabExecute
+      ShortCut = 24585
+    end
+    object actWindowMoveTabLeft: TAction
+      Category = 'Окно'
+      Caption = 'Сдвинуть вкладку влево'
+      Hint = 'Сдвинуть вкладку влево|Переместить активную вкладку влево'
+      ImageIndex = 13
+      OnExecute = actWindowMoveTabLeftExecute
+      ShortCut = 40997
+    end
+    object actWindowMoveTabRight: TAction
+      Category = 'Окно'
+      Caption = 'Сдвинуть вкладку вправо'
+      Hint = 'Сдвинуть вкладку вправо|Переместить активную вкладку вправо'
+      ImageIndex = 12
+      OnExecute = actWindowMoveTabRightExecute
+      ShortCut = 40999
+    end
+    object actRunCheckSyntax: TAction
+      Category = 'Запуск'
+      Caption = 'Проверить ошибки'
+      Hint = 'Проверить ошибки|Проверить правильность исходного текста'
+      ImageIndex = 18
+      OnExecute = actRunCheckSyntaxExecute
+      ShortCut = 8312
+    end
+    object actRunStart: TAction
+      Category = 'Запуск'
+      Caption = 'Запуск'
+      Hint = 'Запуск|Запустить программу'
+      ImageIndex = 15
+      OnExecute = actRunStartExecute
+      ShortCut = 120
+    end
+    object actRunPause: TAction
+      Category = 'Запуск'
+      Caption = 'Пауза'
+      Hint = 'Пауза|Приостановить выполнение программы'
+      ImageIndex = 14
+      OnExecute = actRunPauseExecute
+    end
+    object actRunStop: TAction
+      Category = 'Запуск'
+      Caption = 'Завершить'
+      Hint = 'Завершить|Завершить выполнение программы'
+      ImageIndex = 17
+      OnExecute = actRunStopExecute
+      ShortCut = 16497
+    end
+    object actRunShowScene: TAction
+      Category = 'Запуск'
+      Caption = 'Окно выполнения'
+      Hint = 'Окно выполнения|Показать окно выполнения программы'
+      ImageIndex = 26
+      OnExecute = actRunShowSceneExecute
+      ShortCut = 123
+    end
+    object actRunStepOver: TAction
+      Category = 'Запуск'
+      Caption = 'Шаг в обход'
+      Hint = 'Шаг в обход|Выполнить одну строку программы, не заходя в вызываемые подпрограммы'
+      ImageIndex = 20
+      OnExecute = actRunStepOverExecute
+      ShortCut = 119
+    end
+    object actRunStepInto: TAction
+      Category = 'Запуск'
+      Caption = 'Шаг с заходом'
+      Hint = 'Шаг с заходом|Выполнить одну строку программы с заходом в вызываемые подпрограммы'
+      ImageIndex = 21
+      OnExecute = actRunStepIntoExecute
+      ShortCut = 118
+    end
+    object actRunShowExecPoint: TAction
+      Category = 'Запуск'
+      Caption = 'Точка выполнения'
+      Hint = 'Точка выполнения|Показать в редакторе текущую выполняемую строку'
+      ImageIndex = 19
+      OnExecute = actRunShowExecPointExecute
+    end
+    object actRunStartArgs: TAction
+      Category = 'Запуск'
+      Caption = 'Аргументы'
+      Hint = 'Аргументы|Указать аргументы командной строки для запуска программы'
+      ImageIndex = 16
+      OnExecute = actRunStartArgsExecute
+      ShortCut = 24696
+    end
+    object actWindowLocalVariables: TAction
+      Category = 'Окно'
+      Caption = 'Локальные переменные'
+      Hint = 'Локальные переменные|Открыть список локальных переменных'
+      ImageIndex = 24
+      OnExecute = actWindowLocalVariablesExecute
+    end
+    object actWindowCallStack: TAction
+      Category = 'Окно'
+      Caption = 'Стек вызовов'
+      Hint = 'Стек вызовов|Открыть окно просмотра стека вызовов'
+      ImageIndex = 23
+      OnExecute = actWindowCallStackExecute
+    end
+    object actWindowBreakpoints: TAction
+      Category = 'Окно'
+      Caption = 'Точки останова'
+      Hint = 'Точки останова|Открыть список точек останова'
+      ImageIndex = 22
+      OnExecute = actWindowBreakpointsExecute
+    end
+    object actToggleBookmark0: TAction
+      Category = 'Закладки'
+      Caption = 'Закладка 0'
+      Hint = 'Поставить/снять закладку №0 на текущую строку'
+      OnExecute = actToggleBookmarkExecute
+      ShortCut = 24624
+    end
+    object actToggleBookmark1: TAction
+      Tag = 1
+      Category = 'Закладки'
+      Caption = 'Закладка 1'
+      Hint = 'Поставить/снять закладку №1 на текущую строку'
+      OnExecute = actToggleBookmarkExecute
+      ShortCut = 24625
+    end
+    object actToggleBookmark2: TAction
+      Tag = 2
+      Category = 'Закладки'
+      Caption = 'Закладка 2'
+      Hint = 'Поставить/снять закладку №2 на текущую строку'
+      OnExecute = actToggleBookmarkExecute
+      ShortCut = 24626
+    end
+    object actToggleBookmark3: TAction
+      Tag = 3
+      Category = 'Закладки'
+      Caption = 'Закладка 3'
+      Hint = 'Поставить/снять закладку №3 на текущую строку'
+      OnExecute = actToggleBookmarkExecute
+      ShortCut = 24627
+    end
+    object actToggleBookmark4: TAction
+      Tag = 4
+      Category = 'Закладки'
+      Caption = 'Закладка 4'
+      Hint = 'Поставить/снять закладку №4 на текущую строку'
+      OnExecute = actToggleBookmarkExecute
+      ShortCut = 24628
+    end
+    object actToggleBookmark5: TAction
+      Tag = 5
+      Category = 'Закладки'
+      Caption = 'Закладка 5'
+      Hint = 'Поставить/снять закладку №5 на текущую строку'
+      OnExecute = actToggleBookmarkExecute
+      ShortCut = 24629
+    end
+    object actToggleBookmark6: TAction
+      Tag = 6
+      Category = 'Закладки'
+      Caption = 'Закладка 6'
+      Hint = 'Поставить/снять закладку №6 на текущую строку'
+      OnExecute = actToggleBookmarkExecute
+      ShortCut = 24630
+    end
+    object actToggleBookmark7: TAction
+      Tag = 7
+      Category = 'Закладки'
+      Caption = 'Закладка 7'
+      Hint = 'Поставить/снять закладку №7 на текущую строку'
+      OnExecute = actToggleBookmarkExecute
+      ShortCut = 24631
+    end
+    object actToggleBookmark8: TAction
+      Tag = 8
+      Category = 'Закладки'
+      Caption = 'Закладка 8'
+      Hint = 'Поставить/снять закладку №8 на текущую строку'
+      OnExecute = actToggleBookmarkExecute
+      ShortCut = 24632
+    end
+    object actToggleBookmark9: TAction
+      Tag = 9
+      Category = 'Закладки'
+      Caption = 'Закладка 9'
+      Hint = 'Поставить/снять закладку №9 на текущую строку'
+      OnExecute = actToggleBookmarkExecute
+      ShortCut = 24633
+    end
+    object actGotoBookmark0: TAction
+      Category = 'Закладки'
+      Caption = 'Закладка 0'
+      Hint = 'Перейти к закладке №0'
+      OnExecute = actGotoBookmarkExecute
+      ShortCut = 16432
+    end
+    object actGotoBookmark1: TAction
+      Tag = 1
+      Category = 'Закладки'
+      Caption = 'Закладка 1'
+      Hint = 'Перейти к закладке №1'
+      OnExecute = actGotoBookmarkExecute
+      ShortCut = 16433
+    end
+    object actGotoBookmark2: TAction
+      Tag = 2
+      Category = 'Закладки'
+      Caption = 'Закладка 2'
+      Hint = 'Перейти к закладке №2'
+      OnExecute = actGotoBookmarkExecute
+      ShortCut = 16434
+    end
+    object actGotoBookmark3: TAction
+      Tag = 3
+      Category = 'Закладки'
+      Caption = 'Закладка 3'
+      Hint = 'Перейти к закладке №3'
+      OnExecute = actGotoBookmarkExecute
+      ShortCut = 16435
+    end
+    object actGotoBookmark4: TAction
+      Tag = 4
+      Category = 'Закладки'
+      Caption = 'Закладка 4'
+      Hint = 'Перейти к закладке №4'
+      OnExecute = actGotoBookmarkExecute
+      ShortCut = 16436
+    end
+    object actGotoBookmark5: TAction
+      Tag = 5
+      Category = 'Закладки'
+      Caption = 'Закладка 5'
+      Hint = 'Перейти к закладке №5'
+      OnExecute = actGotoBookmarkExecute
+      ShortCut = 16437
+    end
+    object actGotoBookmark6: TAction
+      Tag = 6
+      Category = 'Закладки'
+      Caption = 'Закладка 6'
+      Hint = 'Перейти к закладке №6'
+      OnExecute = actGotoBookmarkExecute
+      ShortCut = 16438
+    end
+    object actGotoBookmark7: TAction
+      Tag = 7
+      Category = 'Закладки'
+      Caption = 'Закладка 7'
+      Hint = 'Перейти к закладке №7'
+      OnExecute = actGotoBookmarkExecute
+      ShortCut = 16439
+    end
+    object actGotoBookmark8: TAction
+      Tag = 8
+      Category = 'Закладки'
+      Caption = 'Закладка 8'
+      Hint = 'Перейти к закладке №8'
+      OnExecute = actGotoBookmarkExecute
+      ShortCut = 16440
+    end
+    object actGotoBookmark9: TAction
+      Tag = 9
+      Category = 'Закладки'
+      Caption = 'Закладка 9'
+      Hint = 'Перейти к закладке №9'
+      OnExecute = actGotoBookmarkExecute
+      ShortCut = 16441
+    end
+    object actRunToggleBreakpoint: TAction
+      Category = 'Запуск'
+      Caption = 'Точка останова'
+      Hint = 'Точка останова|Поставить/снять точку останова на текущей строке'
+      ImageIndex = 27
+      OnExecute = actRunToggleBreakpointExecute
+      ShortCut = 116
+    end
+    object actRunToCursor: TAction
+      Category = 'Запуск'
+      Caption = 'Выполнить до курсора'
+      Hint = 'Выполнить до курсора|Запустить программу и перейти в пошаговый режим по достижении текущей строки'
+      ImageIndex = 28
+      OnExecute = actRunToCursorExecute
+      ShortCut = 115
+    end
+    object actEditDeleteLine: TAction
+      Category = 'Правка'
+      Caption = 'Удалить строку'
+      Hint = 'Удалить строку|Удалить текущую строку'
+      OnExecute = actEditDeleteLineExecute
+      ShortCut = 16473
+    end
+    object actEditIndentBlock: TAction
+      Category = 'Правка'
+      Caption = 'Увеличить отступ'
+      Hint = 'Увеличить отступ|Сдвинуть выделенный блок право на размер табуляции'
+      ImageIndex = 30
+      OnExecute = actEditIndentBlockExecute
+      ShortCut = 16457
+    end
+    object actEditUnindentBlock: TAction
+      Category = 'Правка'
+      Caption = 'Уменьшить отступ'
+      Hint = 'Уменьшить отступ|Сдвинуть выделенный блок влево на размер табуляции'
+      ImageIndex = 29
+      OnExecute = actEditUnindentBlockExecute
+      ShortCut = 16469
+    end
+    object actHelpAbout: TAction
+      Category = 'Справка'
+      Caption = 'О программе...'
+      Hint = 'О программе|Открыть окно с информацией о программе и её разработчиках'
+      OnExecute = actHelpAboutExecute
+    end
+    object actRunInterceptKeyboard: TAction
+      Category = 'Запуск'
+      AutoCheck = True
+      Caption = 'Перехватывать клавиатуру'
+      Checked = True
+      DisableIfNoHandler = False
+      Hint = 'Перехватывать клавиатуру|Выполнять команды главного меню при нажатии горячих клавиш в окне выполнения программы'
+      OnExecute = actRunInterceptKeyboardExecute
+    end
+  end
+  object actionImages: TImageList
+    BlendColor = clSilver
+    Height = 22
+    Width = 22
+    Left = 280
+    Top = 176
+    Bitmap = {
+      4C7A1F0000001600000016000000A70900000000000078DAED9D8B76EA201045
+      F3E97CDAFD336E6B9B4AC83CCE3CD0A8D3AC2CADD5DDE304384078F4ADDF8E7F
+      FFFE75E4EC1B7E7CBF7FDB36E8B4B077EEFC33BF6265FFE92578E36BFBFF46D9
+      16BDE3738D6DD58BB23D7A11B645AF259D507ACFCAE4EF217137E5F33F8C767A
+      CFCE9DD9B35E320E5FBCC349E8FD7E7D64537A39ADE3798C7B53F5CAB124D8BF
+      CF39AE14DF4D890B921E3641B7878BEAB5C6E19076281EC1ECC37543D2037CCD
+      A6F43BB2D17C7C6013F9626721E90CF951F371E094CAB4C8A995EFAFEEC93DC9
+      933B9327B23D99D4EBF064546FD49345BD064F46F4463D39332F6B7AA5EF517A
+      4B6FE9BD86DE57F3E4773A567C6FEABA8E753DCFFFD999B3DE7B3B6873D5A5E6
+      FA27F51D104FB6F8219276490F9FEAE396F42B31357F47EB24E6B2C11903B4BC
+      A1E2C1E98D963D94DEBFB4F9F51C7DE4B873DC224C52AF91C9E5B959AF390640
+      3F4C465C49BD097125F37A425C333C33ABAD7915AF8C7ABCD42F97719EFA4ADA
+      EFF9F5BC35DB397F7EF4BFF1754F9D0FE196DED7D4BB8AEB3A356EF47C2617FD
+      EE162EDAD7E3E48E655D71F3B9DEEBB6CA8756FAE615DAA89EBE6AB4CD66651F
+      D207D75698DA299E3E7B24BD2075494EAF960E91B6B3250E5ABA45B8D475D3DA
+      F3D676BCA59FC09377D0FE87487ECA7A9F252F7ABED7313FB56EE9AF9175C8F7
+      7A39AEDCF6BDF3A4F851695DCE270DBA3F6DC9B394DE083BC2C5CB4D3B572BCB
+      A35C4B3AB3309FD177FB694776DDE69E7E3A79A25E7F4E433BA331E79DCFA7C3
+      3EE5518977E6F3E5EEFD7FCFCCF6DD069DCE99DDD83CD987EF767EFF7CCE6C9D
+      2BBF57FA4C23CBA60E3323DC4CBDD4F569621DA94331B6DD97B07D3FBC7E9FCB
+      7D24332B06739E6B49F5C931CF496926A35C2E97CA8B5DD69831AE0D14193326
+      DEFBBA1837330E52DBD3D22E55EF6D115CEA6F5963073DFD10949EF1F7CEDCAB
+      D5DA84AFCE9D4F2FD79ACED0F17D14EF5C27C6D25BBD373EB624B34FEA93C747
+      ADF2E2482C399F89F8B0E48B11BF5CA5574AEF9171EC52FEF4F865C433D17167
+      9207597CE2595CAFAFA1DE16A99348DEE6A947A1EFF772917B7F9EB48694FFD9
+      3EC1D52322F727B47B48DEFB2EABB8ABE2F04E6DDA583FED96729FED7C8D7F66
+      EB6DE1BEA13B6F3F47AEF7BEE2C89BB9DEB1832AD730FEF70A5C741EC3BBC5E1
+      CEC88DC3CF78B4B6240E3F3AD75EB7574B0F2F1787603F17574E6EC3DC69AB87
+      48E5BA87B7DA875EA11F7DC598326F3D3F324738C216E7CD4C6D6DEB7C71AADD
+      B0FFDE84D33DCFE7F7F3D48FC69EF5CE6B8A34E67FEEAF37E79CC5F1F36DD0DF
+      86F2B881EDB2F1B9A4578AB745EFF848C55BBAD781EAA5F47BF572CF51BDA3EE
+      67E89D5FB3AC5711D5CB9D9A46297F48E5AF572F721F1AF9F170D1D33B86F713
+      E70A23FD3CAEF108AD89FD52DF7FF7F48FACE0729F97FEDF15B833231A034E73
+      542BA739432B35E633B36EBDBACEBE82D906EFC88AED58B68ECF43E977D2181D
+      67C47D9ED2EFF19EF9B3E3EF5E2EF5D94770AD31D63EEB61A29F8DA6B357F3EE
+      8C7A07557FE1C68344E7261DFA5EBC6382BE7CE0E60DFBE3B006C0E139F13EA9
+      5D48BD978DCDC056C75F4CEF15EBF05EBD86478BDEF151AC4B47F42AFD0411BD
+      917E024DAFB79FC0A317E92740F47AFA09AC7A9176A1543E78FB09B476DAEA76
+      ACB59F00E5AED05BEDE3E0A14EE6F631B5B8FDDC2B23FE97F4FF412EFADA15B8
+      B73484F41D39B8C8F92CAE541FCBE05AF9562ECAF772357E94CBF1B3B873DE88
+      72DBEED5495C8EE7E56A3C2B17E559F2B185F7D0F2E156356B3DE32C3F2E3F2E
+      3FCEE54A5EE4E16A5E61E5A21E8472ADDEA671BD9EF92CEE78CF229B8BF0B3CA
+      87155C8A9FC9D5BCBAFCB88E8C7EF5EC3D36A4F6977DDCD8791C38F57A718B5B
+      DCCFE366973BABCAC93AEA58794F9E6A9BA572FB96CA3F707B1E9FE426F0456E
+      800F711D7C1397E05F9A9B1D87ECEB969DCEB2F3C58A7C9C5CEE7CCA7CDF3A3E
+      C38FD3B97D33AF67602A778471289EF9547379268D9D44C652B2E5AF30EE35C4
+      25D8F3381C37178889DBDF847844FCCD3BF615B96E9EBC89A4B314BDCA357671
+      0D7B163DABDC293FAEE30AF3A623FB4BAFD84FECCEEDC6B3B8C52DEEE77073CB
+      9D55E5641DEFEB9B19F33FB3D61CD1D61388AEED29EDC51B5D677B1F1FF737AE
+      61D853955B873BA297BDCFD5B1F546469DE4D8BEC35EB3DB698F36935E4AFFCE
+      04B8945E4A3FC2E4F48EC32B4FAF034C4AEFE1B37D33EB64F5CEFBE7F5CDCCE4
+      E2ABEDF1686B7713D79DD82B30A2F7A07B186FE5E166ECDD1DF579CFBE60E5EF
+      AFEDC319FDC9AFB4EE17B76F7D748D6DCA87250F8EEACD58675BF361641D7B4F
+      3986EE5F89FAB054E652FD9AD175C1B93ED8790C11729E34759E9BAD57F2B571
+      2E8135BE8F4E0FE4D8DE27A4DF0C1FAEB9C0E5D557F46A6E2F8D88574B6BD744
+      BC5AE37ABDDAAB17D91B00D16BF56A8F5EA4ACF3E845BD9A5A2B2ADA5729713D
+      5E3DE687F97E7E44AFB46EC4BCE785D5ABA571128F4C0F56AF96CA9DF2EA3A56
+      8F2388DCDFE5C65E44FC18E17AFC585A4730E2C7DA7A7D5E3FD6D640F4FAB156
+      0667F931C58DB695B83878FD78D69DD11695F256C48FB91867D71FB2FC58CA73
+      91F4C0A583881FA3F512AF5EB55EE24C635A5919F1E3F26AFFFD7E29BE91F109
+      5A1E3EF5D3EDEBC6191E116E73B0B53D8DB3E310FDB170A53D07BD5C796CCCE6
+      E262E36D3613D7368667BB1497BFF6D7D49BC95D951E56A6DF95F92DAB7CC82E
+      CF56F950F971F9F13BF93137CE2A9B8B943928F7349E2D81BBBABE638DB397AB
+      C5C3C2B5C4F90AF5494B9CA35C2E1E1E2E12E7F2E3F2E3F2E3CF6A1F7F2AB711
+      FB5736614FCB6773A5FD12B83D2432B8D1EB46E989EA95B829F51D63DA7B977C
+      517E5C7EFC343F3EAC8DBAC68F91B57BD572E797D1F7F9463DDE2EFCFB7BA71F
+      B5794A1297638EFBBA9BFCEDA645D6CBB125EE7D8D7199EDE1227A91FBE874FF
+      436E7C77AE168371BE8FBD5F994EBFFB1AEF33DBDBFF7BDCD7FB5E2648E3C436
+      A39FF7FDBEFDB43F44D4373976861F6B6C6FB9FE57366DF7310A9466EFB93171
+      C8F4C5F2E36A1F6B7158C995EE6145F546D85A1CBCEC47EB5D195FAEEFF88AE9
+      ACB8C5ADF6F17BACE181AF97E3990F90B3F6CEAA757DFC4C9E1D67D2EC913B8E
+      279AC71769BF6BDC51C3F8FBC8A31E51BD995C8EC1F1D03858B9D6EBC671B9BF
+      A17AAF938657E4B91565C48A326D4BD97B27735D889A3355EB577BD6A6D5C6F1
+      23EBDE52EBCA6B735B2CEBF4A2EBD65BD615B6C4CDB30E72781F05656E5CD63A
+      D397E7AE88C38AEBB6229DADC8172BF27172B9537388EAA8C33E173BBBEE30F6
+      BF6771A36BDE4BEB1E6572A53DEBAC7321C7CF67CE0F7E0477551C565DB795E9
+      2C235FACCAC775D451C7F5FC3ABB6ECB953DABCABB4C2E57F67BD69741F694D5
+      FCCDEA95CFE0AE8AC3CAEBF6CC74969D2F56E5E33AAE75FC07D1829CF8
+    }
+  end
+  object openDialog: TOpenDialog
+    Title = 'Открыть файл'
+    Filter = 'Файлы Клаус|*.клаус|Все файлы|*'
+    FilterIndex = 0
+    Options = [ofPathMustExist, ofFileMustExist, ofEnableSizing, ofViewDetail]
+    Left = 136
+    Top = 260
+  end
+  object applicationProperties: TApplicationProperties
+    ExceptionDialog = aedOkMessageBox
+    Title = 'Клаус'
+    OnHint = applicationHint
+    Left = 188
+    Top = 84
+  end
+  object propStorage: TIniPropStorage
+    StoredValues = <>
+    OnSavingProperties = propStorageSavingProperties
+    OnRestoringProperties = propStorageRestoringProperties
+    OnRestoreProperties = propStorageRestoreProperties
+    Left = 352
+    Top = 84
+  end
+  object saveDialog: TSaveDialog
+    Title = 'Сохранить'
+    DefaultExt = '.клаус'
+    Filter = 'Файлы Клаус|*.клаус|Все файлы|*'
+    FilterIndex = 0
+    Options = [ofOverwritePrompt, ofPathMustExist, ofEnableSizing, ofViewDetail]
+    Left = 248
+    Top = 260
+  end
+  object editLineImages: TImageList
+    Left = 401
+    Top = 176
+    Bitmap = {
+      4C7A0C0000001000000010000000460100000000000078DAED995B1283200C45
+      59BA4B736774FA41450C312F51CB9561A6054F643047A8CD29FFCABAAE595273
+      3A966F7B4A4954A918855F16BE4AF9F6D0F02D537F077FFDFC47DCFF722ED526
+      E1CB79BD768E6FCFE1FA287F2CFDB5BF549FA6FF1FFCA7F2D89ABF5ABE97FB23
+      C77F370FFFE1FFACEB7F5B3DBCC79F087F2DF3DF3BE03FFC87FF7A7FBDEB27F6
+      FFF07FC6FD3FE590D53F6BFEDFF9FB3D6AFDBD9B87FFF07FE4FEB3B7F7F55C7F
+      E4FA8DF51FFE63FF1FB7FF1FED3FDEFFC37FF8FF9CF57FC6F77F4FE0E13FFC9F
+      F1FFFFD9C70FFFE13FFC7FF7FB3BF8FF3EFF25CF8033D6E2FE9ECD27F51843CE
+      1E63E8D97D8C48FE7BA44A1DEE73CB6FED59148BBB3EC7F7C62FBDFE95F367E1
+      BDF91391BF11FE44F8EB299EF8EDB34D1B67CBC1648A53F3A56AE250BC260EC7
+      4BE248782ACE48DE3A7EEBFC59EF9F277FACF9EBF5C7533E1168EE4D
+    }
+  end
+end

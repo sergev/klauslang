@@ -1,0 +1,102 @@
+object SearchReplaceDlg: TSearchReplaceDlg
+  Left = 607
+  Height = 183
+  Top = 342
+  Width = 689
+  BorderStyle = bsDialog
+  Caption = 'Поиск/замена'
+  ClientHeight = 183
+  ClientWidth = 689
+  OnClose = FormClose
+  OnShow = FormShow
+  Position = poScreenCenter
+  SessionProperties = 'cbReplace.Items;cbReplace.Text;cbSearch.Items;cbSearch.Text;chMatchCase.Checked;chWholeWords.Checked'
+  LCLVersion = '2.2.4.0'
+  object Label1: TLabel
+    Left = 20
+    Height = 17
+    Top = 23
+    Width = 86
+    Caption = 'Найти текст:'
+    ParentColor = False
+  end
+  object cbSearch: TComboBox
+    Left = 128
+    Height = 34
+    Top = 16
+    Width = 544
+    Anchors = [akTop, akLeft, akRight]
+    AutoComplete = True
+    AutoCompleteText = [cbactEnabled, cbactEndOfLineComplete, cbactSearchAscending]
+    ItemHeight = 0
+    OnChange = cbSearchChange
+    TabOrder = 0
+  end
+  object chReplace: TCheckBox
+    Left = 20
+    Height = 23
+    Top = 60
+    Width = 98
+    Caption = 'Заменить:'
+    OnChange = chReplaceChange
+    TabOrder = 1
+  end
+  object cbReplace: TComboBox
+    Left = 128
+    Height = 34
+    Top = 56
+    Width = 544
+    Anchors = [akTop, akLeft, akRight]
+    AutoComplete = True
+    AutoCompleteText = [cbactEnabled, cbactEndOfLineComplete, cbactSearchAscending]
+    ItemHeight = 0
+    OnChange = cbReplaceChange
+    TabOrder = 2
+  end
+  object chMatchCase: TCheckBox
+    Left = 128
+    Height = 23
+    Top = 100
+    Width = 154
+    Caption = 'С учётом регистра'
+    TabOrder = 3
+  end
+  object pbCancel: TButton
+    Left = 456
+    Height = 32
+    Top = 135
+    Width = 104
+    Anchors = [akRight, akBottom]
+    Cancel = True
+    Caption = 'Отменить'
+    ModalResult = 2
+    TabOrder = 4
+  end
+  object pbOK: TButton
+    Left = 568
+    Height = 32
+    Top = 135
+    Width = 104
+    Anchors = [akRight, akBottom]
+    Caption = 'Найти'
+    Default = True
+    ModalResult = 1
+    TabOrder = 5
+  end
+  object pbAll: TButton
+    Left = 20
+    Height = 32
+    Top = 135
+    Width = 140
+    Anchors = [akLeft, akBottom]
+    Caption = 'Заменить все'
+    ModalResult = 8
+    TabOrder = 6
+  end
+  object propStorage: TIniPropStorage
+    StoredValues = <>
+    OnRestoreProperties = propStorageRestoreProperties
+    Left = 280
+    Top = 128
+  end
+end

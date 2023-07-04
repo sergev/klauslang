@@ -1,0 +1,108 @@
+object DebugViewFrame: TDebugViewFrame
+  Left = 0
+  Height = 263
+  Top = 0
+  Width = 352
+  ClientHeight = 263
+  ClientWidth = 352
+  TabOrder = 0
+  DesignLeft = 774
+  DesignTop = 300
+  object bvSizer: TBevel
+    Cursor = crVSplit
+    Left = 0
+    Height = 5
+    Top = 258
+    Width = 352
+    Align = alBottom
+    Shape = bsSpacer
+    OnMouseDown = bvSizerMouseDown
+    OnMouseMove = bvSizerMouseMove
+    OnMouseUp = bvSizerMouseUp
+  end
+  object pnHeader: TPanel
+    Left = 0
+    Height = 23
+    Top = 4
+    Width = 352
+    Align = alTop
+    Alignment = taLeftJustify
+    BorderSpacing.Top = 4
+    BevelOuter = bvNone
+    BorderWidth = 4
+    ClientHeight = 23
+    ClientWidth = 352
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 0
+    object sbClose: TSpeedButton
+      Left = 328
+      Height = 16
+      Top = 3
+      Width = 17
+      Anchors = [akTop, akRight]
+      Glyph.Data = {
+        C6000000424DC60000000000000076000000280000000B0000000A0000000100
+        0400000000005000000000000000000000000000000000000000000000000000
+        8000008000000080800080000000800080008080000080808000C0C0C0000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00DDDDDDDDDDD0
+        0000DDDDDDDDDDD00000DD00DDD00DD00000DDD00D00DDD00000DDDD000DDDD0
+        0000DDDD000DDDD00000DDD00D00DDD00000DD00DDD00DD00000DDDDDDDDDDD0
+        0000DDDDDDDDDDD00000
+      }
+      OnClick = sbCloseClick
+    end
+    object sbMoveDown: TSpeedButton
+      Left = 313
+      Height = 16
+      Top = 3
+      Width = 16
+      Anchors = [akTop, akRight]
+      Glyph.Data = {
+        8A000000424D8A00000000000000760000002800000008000000050000000100
+        0400000000001400000000000000000000000000000000000000000000000000
+        8000008000000080800080000000800080008080000080808000C0C0C0000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00888008888800
+        0088800000080000000088888888
+      }
+      Layout = blGlyphTop
+      OnClick = sbMoveDownClick
+    end
+    object sbMoveUp: TSpeedButton
+      Left = 298
+      Height = 16
+      Top = 3
+      Width = 16
+      Anchors = [akTop, akRight]
+      Glyph.Data = {
+        8A000000424D8A00000000000000760000002800000008000000050000000100
+        0400000000001400000000000000000000000000000000000000000000000000
+        8000008000000080800080000000800080008080000080808000C0C0C0000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00888888880000
+        0000800000088800008888800888
+      }
+      Layout = blGlyphTop
+      OnClick = sbMoveUpClick
+    end
+    object lblCaption: TLabel
+      Left = 7
+      Height = 17
+      Top = 3
+      Width = 287
+      Anchors = [akTop, akLeft, akRight]
+      AutoSize = False
+      Caption = 'Caption'
+      ParentColor = False
+    end
+  end
+  object pnContent: TPanel
+    Left = 0
+    Height = 231
+    Top = 27
+    Width = 348
+    Align = alClient
+    BorderSpacing.Right = 4
+    BevelOuter = bvNone
+    TabOrder = 1
+  end
+end

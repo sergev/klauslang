@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectOptions>
+    <Version Value="12"/>
+    <General>
+      <SessionStorage Value="InProjectDir"/>
+      <Title Value="klauside"/>
+      <Scaled Value="True"/>
+      <ResourceType Value="res"/>
+      <UseXPManifest Value="True"/>
+      <XPManifest>
+        <DpiAware Value="True"/>
+      </XPManifest>
+      <Icon Value="0"/>
+    </General>
+    <VersionInfo>
+      <UseVersionInfo Value="True"/>
+      <MajorVersionNr Value="1"/>
+      <BuildNr Value="1"/>
+      <Language Value="0419"/>
+      <Attributes pvaPrivateBuild="True"/>
+      <StringTable Comments="Разработано при содействии компании Таркос: http://tarkos.ru" CompanyName="Школа Вектор, Воронеж: http://vektor.school" FileDescription="Среда разработки Клаус" InternalName="klauside" LegalCopyright="Программа распространяется бесплатно по Стандартной общественной лицензии GNU GPLv3 или более поздней версии: https://www.gnu.org/licenses/gpl-3.0.html" LegalTrademarks="Репозиторий проекта: https://gitflic.ru/project/czaerlag/klauslang" OriginalFilename="klaus-ide" ProductName="Клаус" ProductVersion="1.0"/>
+    </VersionInfo>
+    <BuildModes>
+      <Item Name="Default" Default="True"/>
+    </BuildModes>
+    <PublishOptions>
+      <Version Value="2"/>
+      <UseFileFilters Value="True"/>
+    </PublishOptions>
+    <RunParams>
+      <FormatVersion Value="2"/>
+    </RunParams>
+    <RequiredPackages>
+      <Item>
+        <PackageName Value="AnchorDocking"/>
+      </Item>
+      <Item>
+        <PackageName Value="FCL"/>
+      </Item>
+      <Item>
+        <PackageName Value="SynEdit"/>
+      </Item>
+      <Item>
+        <PackageName Value="LCL"/>
+      </Item>
+    </RequiredPackages>
+    <Units>
+      <Unit>
+        <Filename Value="klauside.lpr"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="formmain.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="MainForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="FormMain"/>
+      </Unit>
+      <Unit>
+        <Filename Value="frameklausedit.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="editFrame"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="frameKlausEdit"/>
+      </Unit>
+      <Unit>
+        <Filename Value="frameklausdebug.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="debugViewFrame"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="frameKlausDebug"/>
+      </Unit>
+      <Unit>
+        <Filename Value="globals.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Globals"/>
+      </Unit>
+      <Unit>
+        <Filename Value="formscene.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="SceneForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="FormScene"/>
+      </Unit>
+      <Unit>
+        <Filename Value="../lib/console/klausconsole.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="KlausConsole"/>
+      </Unit>
+      <Unit>
+        <Filename Value="../klaus/klausrun.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="framedebugvariables.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="DebugVariablesFrame"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="FrameDebugVariables"/>
+      </Unit>
+      <Unit>
+        <Filename Value="framedebugcallstack.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="DebugCallStackFrame"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="FrameDebugCallStack"/>
+      </Unit>
+      <Unit>
+        <Filename Value="dlgcmdlineargs.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="CmdLineArgsDlg"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="DlgCmdLineArgs"/>
+      </Unit>
+      <Unit>
+        <Filename Value="../klaus/klausmodulesystem.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="KlausModuleSystem"/>
+      </Unit>
+      <Unit>
+        <Filename Value="../klaus/klausunitsystem_proc.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="KlausUnitSystem_Proc"/>
+      </Unit>
+      <Unit>
+        <Filename Value="../klaus/klausstrutils.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="KlausStrUtils"/>
+      </Unit>
+      <Unit>
+        <Filename Value="framedebugbreakpoints.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="DebugBreakpointsFrame"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="FrameDebugBreakpoints"/>
+      </Unit>
+      <Unit>
+        <Filename Value="dlgsearchreplace.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="SearchReplaceDlg"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="DlgSearchReplace"/>
+      </Unit>
+      <Unit>
+        <Filename Value="../klaus/klausop.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="KlausOp"/>
+      </Unit>
+      <Unit>
+        <Filename Value="formsplash.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="SplashForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="FormSplash"/>
+      </Unit>
+      <Unit>
+        <Filename Value="../lib/console/klausconkeys.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="KlausConKeys"/>
+      </Unit>
+    </Units>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Version Value="11"/>
+    <Target>
+      <Filename Value="../../compiled/klaus-ide"/>
+    </Target>
+    <SearchPaths>
+      <IncludeFiles Value="$(ProjOutDir)"/>
+      <OtherUnitFiles Value="../lib;../klaus;../lib/edit;../lib/console"/>
+      <UnitOutputDirectory Value="../../compiled/$NameOnly($(ProjFile))/$(TargetCPU)-$(TargetOS)"/>
+    </SearchPaths>
+    <CodeGeneration>
+      <Optimizations>
+        <OptimizationLevel Value="0"/>
+      </Optimizations>
+    </CodeGeneration>
+    <Linking>
+      <Debugging>
+        <DebugInfoType Value="dsDwarf3"/>
+      </Debugging>
+      <Options>
+        <Win32>
+          <GraphicApplication Value="True"/>
+        </Win32>
+      </Options>
+    </Linking>
+    <Other>
+      <CompilerMessages>
+        <IgnoredMessages idx6058="True" idx5024="True" idx5023="True"/>
+      </CompilerMessages>
+    </Other>
+  </CompilerOptions>
+  <Debugging>
+    <Exceptions>
+      <Item>
+        <Name Value="EAbort"/>
+      </Item>
+      <Item>
+        <Name Value="ECodetoolError"/>
+      </Item>
+      <Item>
+        <Name Value="EFOpenError"/>
+      </Item>
+      <Item>
+        <Name Value="eKlausError"/>
+      </Item>
+      <Item>
+        <Name Value="eKlausDebugTerminated"/>
+      </Item>
+      <Item>
+        <Name Value="RunError(100)"/>
+      </Item>
+      <Item>
+        <Name Value="EInOutError"/>
+      </Item>
+      <Item>
+        <Name Value="eKlausReturn"/>
+      </Item>
+      <Item>
+        <Name Value="eKlausIOError"/>
+      </Item>
+      <Item>
+        <Name Value="eKlausBreak"/>
+      </Item>
+      <Item>
+        <Name Value="eKlausContinue"/>
+      </Item>
+      <Item>
+        <Name Value="eKlausHalt"/>
+      </Item>
+      <Item>
+        <Name Value="eKlausLangException"/>
+      </Item>
+      <Item>
+        <Name Value="eKlausThrow"/>
+      </Item>
+      <Item>
+        <Name Value="EConvertError"/>
+      </Item>
+    </Exceptions>
+  </Debugging>
+</CONFIG>

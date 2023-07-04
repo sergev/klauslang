@@ -1,0 +1,29 @@
+object SceneForm: TSceneForm
+  Left = 404
+  Height = 642
+  Top = 271
+  Width = 1010
+  HorzScrollBar.Page = 1
+  HorzScrollBar.Tracking = True
+  VertScrollBar.Page = 1
+  VertScrollBar.Tracking = True
+  AutoScroll = True
+  AutoSize = True
+  Caption = 'Выполняется'
+  OnClose = FormClose
+  OnCloseQuery = FormCloseQuery
+  OnShow = FormShow
+  Position = poScreenCenter
+  LCLVersion = '2.2.4.0'
+  object actionList: TActionList
+    Left = 475
+    Top = 106
+    object actCloseFinished: TAction
+      Category = 'Окно'
+      Caption = 'actCloseFinished'
+      Hint = 'Закрыть завершённое|Закрыть окно завершённой программы'
+      OnExecute = actCloseFinishedExecute
+      ShortCut = 27
+    end
+  end
+end

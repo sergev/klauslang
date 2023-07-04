@@ -1,0 +1,98 @@
+object EditFrame: TEditFrame
+  Left = 0
+  Height = 543
+  Top = 0
+  Width = 891
+  BorderSpacing.Bottom = 4
+  ClientHeight = 543
+  ClientWidth = 891
+  TabOrder = 0
+  DesignLeft = 511
+  DesignTop = 269
+  object pnErrorInfo: TPanel
+    Left = 0
+    Height = 17
+    Top = 526
+    Width = 891
+    Align = alBottom
+    AutoSize = True
+    BorderSpacing.Top = 4
+    BevelOuter = bvNone
+    ClientHeight = 17
+    ClientWidth = 891
+    TabOrder = 0
+    Visible = False
+    OnClick = errorInfoClick
+    object pnErrorInfoCloseBtn: TPanel
+      Left = 866
+      Height = 17
+      Top = 0
+      Width = 25
+      Align = alRight
+      BevelOuter = bvNone
+      ClientHeight = 17
+      ClientWidth = 25
+      TabOrder = 0
+      object sbClose: TSpeedButton
+        Left = 4
+        Height = 16
+        Top = 1
+        Width = 17
+        Glyph.Data = {
+          C6000000424DC60000000000000076000000280000000B0000000A0000000100
+          0400000000005000000000000000000000000000000000000000000000000000
+          8000008000000080800080000000800080008080000080808000C0C0C0000000
+          FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00DDDDDDDDDDD0
+          0000DDDDDDDDDDD00000DD00DDD00DD00000DDD00D00DDD00000DDDD000DDDD0
+          0000DDDD000DDDD00000DDD00D00DDD00000DD00DDD00DD00000DDDDDDDDDDD0
+          0000DDDDDDDDDDD00000
+        }
+        OnClick = sbCloseClick
+      end
+    end
+    object lblErrorInfo: TLabel
+      Left = 25
+      Height = 17
+      Top = 0
+      Width = 841
+      Align = alClient
+      Caption = 'Сообщение об ошибке'
+      ParentColor = False
+      WordWrap = True
+      OnClick = errorInfoClick
+    end
+    object pnErrorInfoCloseBtn1: TPanel
+      Left = 0
+      Height = 17
+      Top = 0
+      Width = 25
+      Align = alLeft
+      BevelOuter = bvNone
+      ClientHeight = 17
+      ClientWidth = 25
+      TabOrder = 1
+      object Image1: TImage
+        Left = 4
+        Height = 16
+        Top = 1
+        Width = 16
+        AutoSize = True
+        OnClick = errorInfoClick
+        Picture.Data = {
+          07544269746D61704A010000424D4A01000000000000CA0000007C0000001000
+          000010000000010004000000000080000000130B0000130B0000100000001000
+          00000000FF0000FF0000FF000000000000004247527300000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000200000000000000000000000000000000000000000080000080
+          00000080800080000000800080008080000080808000C0C0C0000000FF0000FF
+          000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00DDDDDD9999DDDDDDDDDD
+          99FFFF99DDDDDDD9FF9999FF9DDDDD9F99999999F9DDD9F9999FF9999F9DD9F9
+          999FF9999F9D9F999999999999F99F99999FF99999F99F99999FF99999F99F99
+          999FF99999F9D9F9999FF9999F9DD9F9999FF9999F9DDD9F99999999F9DDDDD9
+          FF9999FF9DDDDDDD99FFFF99DDDDDDDDDD9999DDDDDD
+        }
+        Transparent = True
+      end
+    end
+  end
+end
