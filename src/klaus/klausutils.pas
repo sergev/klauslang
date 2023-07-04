@@ -361,7 +361,7 @@ begin
   setConsoleMode(stdInHandle(inp), state);
   {$else}
   if raw then CFMakeRaw(state);
-  TCSetAttr(stdInHandle, TCSANOW, state);
+  TCSetAttr(stdInHandle(inp), TCSANOW, state);
   {$endif}
 end;
 
@@ -387,12 +387,12 @@ var
   fdSet: tFDSet;
   timeout: tTimeVal;
 begin
-  if stdInBufNotEmpty then exit(true);
+  if stdInBufNotEmpty(inp) then exit(true);
   fpFD_ZERO(fdSet);
-  fpFD_SET(stdInHandle, fdSet);
+  fpFD_SET(stdInHandle(inp), fdSet);
   timeout.tv_sec := 0;
   timeout.tv_usec := 0;
-  result := fpSelect(stdInHandle+1, @fdSet, nil, nil, @timeout) > 0;
+  result := fpSelect(stdInHandle(inp)+1, @fdSet, nil, nil, @timeout) > 0;
 end;
 {$EndIf}
 
