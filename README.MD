@@ -13,9 +13,9 @@
 
 ## Внешний вид
 
-![](https://gitflic.ru/project/czaerlag/klauslang/blob/raw?file=doc%2Fscr1.png){width=250px}(https://gitflic.ru/project/czaerlag/klauslang/blob/raw?file=doc%2Fscr1.png)
-![](https://gitflic.ru/project/czaerlag/klauslang/blob/raw?file=doc%2Fscr2.png){width=250px}(https://gitflic.ru/project/czaerlag/klauslang/blob/raw?file=doc%2Fscr2.png)
-![](https://gitflic.ru/project/czaerlag/klauslang/blob/raw?file=doc%2Fscr3.png){width=250px}(https://gitflic.ru/project/czaerlag/klauslang/blob/raw?file=doc%2Fscr3.png)
+[![](https://gitflic.ru/project/czaerlag/klauslang/blob/raw?file=doc%2Fscr1.png){width=250px}](https://gitflic.ru/project/czaerlag/klauslang/blob/raw?file=doc%2Fscr1.png)
+[![](https://gitflic.ru/project/czaerlag/klauslang/blob/raw?file=doc%2Fscr2.png){width=250px}](https://gitflic.ru/project/czaerlag/klauslang/blob/raw?file=doc%2Fscr2.png)
+[![](https://gitflic.ru/project/czaerlag/klauslang/blob/raw?file=doc%2Fscr3.png){width=250px}](https://gitflic.ru/project/czaerlag/klauslang/blob/raw?file=doc%2Fscr3.png)
 
 ## ЧаВо
 
