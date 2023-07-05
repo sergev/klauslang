@@ -11,11 +11,11 @@
 
 Программное обеспечение распространяется бесплатно по Стандартной общественной лицензии GNU GPLv3 или более поздней версии.
 
-# Картинки
+## Картинки
 
-![](doc/src1.png)
-![](doc/src2.png)
-![](doc/src3.png)
+![](https://gitflic.ru/project/czaerlag/klauslang/blob/raw?file=doc%2Fscr1.png)
+![](https://gitflic.ru/project/czaerlag/klauslang/blob/raw?file=doc%2Fscr2.png)
+![](https://gitflic.ru/project/czaerlag/klauslang/blob/raw?file=doc%2Fscr3.png)
 
 ## ЧаВо
 
