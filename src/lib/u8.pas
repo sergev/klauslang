@@ -75,6 +75,8 @@ type
 
 implementation
 
+{$ifdef windows}uses Windows;{$endif}
+
 const
   u8mask = %11000000;
   u8next = %10000000;
@@ -282,15 +284,60 @@ begin
 end;
 
 function u8ReadChar(var inp: text): u8Char; iocheck;
+
+  function readChar(var inp: text): char;
+  {$ifdef windows}
+  var
+    cnt: longWord;
+  {$endif}
+  begin
+    {$ifdef windows}
+    cnt := 0;
+    result := #0;
+    if not readFile(tTextRec(inp).handle, result, 1, cnt, nil) then begin
+      InOutRes := 100;
+      exit;
+    end;
+    if cnt <= 0 then result := #26;
+    {$else}
+    result := #0;
+    read(inp, result);
+    {$endif}
+  end;
+
+{$ifdef windows}
+const
+  isConsole: record
+    yes: boolean;
+    valid: boolean;
+  end = (yes: true; valid: false);
+var
+  c: char;
+  mode: longWord = 0;
+{$endif}
 var
   i: integer;
 begin
   if InOutRes <> 0 then exit('');
-  read(inp, result[1]);
+  {$ifdef windows}
+  if not isConsole.valid then begin
+    isConsole.yes := getConsoleMode(tTextRec(inp).handle, mode);
+    isConsole.valid := true;
+  end;
+  if isConsole.yes then begin
+    c := readChar(inp);
+    if InOutRes <> 0 then exit('');
+    result := ConsoleToUTF8(c);
+    exit;
+  end;
+  {$endif}
+  result[1] := readChar(inp);
+  if InOutRes <> 0 then exit('');
   result[0] := char(u8Size(result[1]));
   result[byte(result[0])+1] := #0;
   for i := 2 to byte(result[0]) do begin
-    read(inp, result[i]);
+    result[i] := readChar(inp);
+    if InOutRes <> 0 then exit('');
     if (byte(result[i]) and u8mask) <> u8next then begin
       InOutRes := 106;
       break;

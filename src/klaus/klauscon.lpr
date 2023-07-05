@@ -25,11 +25,16 @@ uses
   {$IFDEF UNIX}
   cthreads,
   {$ENDIF}
+  {$IFDEF WINDOWS}
+  Windows,
+  {$ENDIF}
   Classes, SysUtils, CustApp, FileInfo, KlausUtils, KlausLex, KlausDef, KlausErr, KlausSrc,
   KlausUnitSystem, KlausUnitSystem_Proc;
 
 type
   tKlausApplication = class(tCustomApplication)
+    private
+      fTSI, fTSO, fTSE: tKlausTerminalState;
     protected
       procedure doRun; override;
       procedure displayException(e: tObject);
@@ -38,6 +43,8 @@ type
     public
       constructor create(theOwner: tComponent); override;
       destructor destroy; override;
+      procedure initTerminalState;
+      procedure restoreTerminalState;
   end;
 
 resourcestring
@@ -66,6 +73,28 @@ begin
   inherited;
 end;
 
+procedure tKlausApplication.initTerminalState;
+begin
+  fTSI := klausGetTerminalState(tTextRec(input).handle);
+  fTSO := klausGetTerminalState(tTextRec(stdOut).handle);
+  fTSE := klausGetTerminalState(tTextRec(stdErr).handle);
+  {$ifdef windows}
+  setConsoleOutputCP(CP_UTF8);
+  setTextCodepage(stdOut, CP_UTF8);
+  setTextCodepage(stdErr, CP_UTF8);
+  klausSetTerminalState(tTextRec(input).handle, fTSI or ENABLE_VIRTUAL_TERMINAL_INPUT);
+  klausSetTerminalState(tTextRec(stdOut).handle, fTSO or ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+  klausSetTerminalState(tTextRec(stdErr).handle, fTSE or ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+  {$endif}
+end;
+
+procedure tKlausApplication.restoreTerminalState;
+begin
+  klausSetTerminalState(tTextRec(input).handle, fTSI);
+  klausSetTerminalState(tTextRec(stdOut).handle, fTSO);
+  klausSetTerminalState(tTextRec(stdErr).handle, fTSE);
+end;
+
 procedure tKlausApplication.runProgram(const fileName: string; args: tStrings);
 var
   s: tFileStream;
@@ -73,29 +102,34 @@ var
   src: tKlausSource;
   p: tKlausLexParser;
 begin
-  s := tFileStream.create(fileName, fmOpenRead or fmShareDenyWrite);
-  p := tKlausLexParser.create(s);
-  try src := tKlausSource.create(p);
-  finally freeAndNil(p); end;
+  initTerminalState;
   try
-    r := tKlausRuntime.create(src);
+    s := tFileStream.create(fileName, fmOpenRead or fmShareDenyWrite);
+    p := tKlausLexParser.create(s);
+    try src := tKlausSource.create(p);
+    finally freeAndNil(p); end;
     try
+      r := tKlausRuntime.create(src);
       try
-        try r.run(fileName, args);
-        finally exitCode := r.exitCode; end;
-      except
-        on e: eKlausLangException do begin
-          e.message := format(strKlausException, [e.name, e.message]);
-          e.finalizeData;
-          raise;
+        try
+          try r.run(fileName, args);
+          finally exitCode := r.exitCode; end;
+        except
+          on e: eKlausLangException do begin
+            e.message := format(strKlausException, [e.name, e.message]);
+            e.finalizeData;
+            raise;
+          end;
+          else raise;
         end;
-        else raise;
+      finally
+        freeAndNil(r);
       end;
     finally
-      freeAndNil(r);
+      freeAndNil(src);
     end;
   finally
-    freeAndNil(src);
+    restoreTerminalState;
   end;
 end;
 

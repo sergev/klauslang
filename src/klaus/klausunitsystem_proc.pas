@@ -770,6 +770,8 @@ end;
 
 procedure tKlausSysProc_ReadLn.customRun(
   frame: tKlausStackFrame; values: array of tKlausVarValueAt; const at: tSrcPoint);
+const
+  prev: u8Char = #0;
 var
   s: string;
   c: u8Char;
@@ -779,12 +781,15 @@ begin
     s := '';
     idx := 1;
     frame.owner.readStdIn(c);
+    if (c = #10) and (prev = #13) then frame.owner.readStdIn(c);
+    prev := c;
     while (c <> '') and not (c[1] in [#0, #10, #13, #26]) do begin
       l := byte(c[0]);
       if idx+l-1 > length(s) then setLength(s, idx+32);
       move(c[1], s[idx], l);
       idx += l;
       frame.owner.readStdIn(c);
+      prev := c;
     end;
     setLength(s, idx-1);
     //frame.owner.writeStdOut('"'+s+'"'#10);

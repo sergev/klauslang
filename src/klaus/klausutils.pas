@@ -20,6 +20,7 @@ KlausLang — свободное программное обеспечение: 
 unit KlausUtils;
 
 {$mode ObjFPC}{$H+}
+
 interface
 
 uses
@@ -138,7 +139,10 @@ type
   tKlausTerminalState = {$ifdef windows}cardinal{$else}TermIOs{$endif};
 
 // Возвращает текущее состояние терминала
-function klausTerminalState(h: tHandle): tKlausTerminalState;
+function klausGetTerminalState(h: tHandle): tKlausTerminalState;
+
+// Устанавливает состояние терминала
+procedure klausSetTerminalState(h: tHandle; state: tKlausTerminalState);
 
 // Устанавливает raw-режим работы терминала
 procedure klausTerminalSetRaw(var inp: text; raw: boolean);
@@ -337,7 +341,7 @@ begin
 end;
 
 {$push}{$WARN 5057 off}{$WARN 5059 off}{$WARN 5060 off}
-function klausTerminalState(h: tHandle): tKlausTerminalState;
+function klausGetTerminalState(h: tHandle): tKlausTerminalState;
 begin
   {$ifdef windows}
   getConsoleMode(h, result);
@@ -346,6 +350,15 @@ begin
   {$endif}
 end;
 {$pop}
+
+procedure klausSetTerminalState(h: tHandle; state: tKlausTerminalState);
+begin
+  {$ifdef windows}
+  setConsoleMode(h, state);
+  {$else}
+  TCSetAttr(h, TCSANOW, state);
+  {$endif}
+end;
 
 procedure klausTerminalSetRaw(var inp: text; raw: boolean);
 const
@@ -360,26 +373,25 @@ var
 begin
   if not prevState.valid then begin
     if not raw then exit;
-    prevState.state := klausTerminalState(stdInHandle(inp));
+    prevState.state := klausGetTerminalState(stdInHandle(inp));
     prevState.valid := true;
   end;
   state := prevState.state;
   {$ifdef windows}
   if raw then state := state and not (ENABLE_ECHO_INPUT or ENABLE_LINE_INPUT or ENABLE_PROCESSED_INPUT);
-  setConsoleMode(stdInHandle(inp), state);
   {$else}
   if raw then CFMakeRaw(state);
-  TCSetAttr(stdInHandle(inp), TCSANOW, state);
   {$endif}
+  klausSetTerminalState(stdInHandle(inp), state);
 end;
 
 function klausTerminalHasChar(var inp: text): boolean;
 {$ifdef windows}
 var
+  i: integer;
   read: longWord;
   num: longWord = 0;
-  inps: array of tInputRecord;
-  i: integer;
+  inps: array of tInputRecord = nil;
 begin
   if stdInBufNotEmpty(inp) then exit(true);
   result := false;
