@@ -23,7 +23,9 @@ unit KlausUtils;
 interface
 
 uses
-  Classes, SysUtils, Graphics, U8, KlausLex, KlausDef, KlausErr;
+  Classes, SysUtils, Graphics,
+  {$ifdef windows}Windows,{$else}BaseUnix, TermIO,{$endif}
+  U8, KlausLex, KlausDef, KlausErr;
 
 // Устанавливает длину переданной строки. Если новая длина больше старой, заполняет хвост
 // строки пробелами. Если меньше, до переданная длина должна быть такой, чтобы последний символ
@@ -132,6 +134,12 @@ function klausCmp(v1, v2: tKlausFloat): integer;
 function klausCmp(v1, v2: tKlausMoment): integer;
 function klausCmp(v1, v2: tKlausBoolean): integer;
 
+type
+  tKlausTerminalState = {$ifdef windows}cardinal{$else}TermIOs{$endif};
+
+// Возвращает текущее состояние терминала
+function klausTerminalState(h: tHandle): tKlausTerminalState;
+
 // Устанавливает raw-режим работы терминала
 procedure klausTerminalSetRaw(var inp: text; raw: boolean);
 
@@ -140,7 +148,7 @@ function klausTerminalHasChar(var inp: text): boolean;
 
 implementation
 
-uses {$ifdef windows}Windows,{$else}BaseUnix, TermIO,{$endif}Math;
+uses Math;
 
 resourcestring
   errInvalidInteger = 'Неверное целое число: "%s".';
@@ -329,7 +337,7 @@ begin
 end;
 
 {$push}{$WARN 5057 off}{$WARN 5059 off}{$WARN 5060 off}
-function getTerminalState(h: tHandle): tTerminalState;
+function klausTerminalState(h: tHandle): tKlausTerminalState;
 begin
   {$ifdef windows}
   getConsoleMode(h, result);
@@ -344,7 +352,7 @@ const
   {$push}{$warnings off}
   prevState: record
     valid: boolean;
-    state: tTerminalState;
+    state: tKlausTerminalState;
   end = (valid: false);
   {$pop}
 var
@@ -352,7 +360,7 @@ var
 begin
   if not prevState.valid then begin
     if not raw then exit;
-    prevState.state := getTerminalState(stdInHandle(inp));
+    prevState.state := klausTerminalState(stdInHandle(inp));
     prevState.valid := true;
   end;
   state := prevState.state;
@@ -382,7 +390,7 @@ begin
   for i := 0 to read-1 do
     if (inps[i].eventType = KEY_EVENT) and (inps[i].event.keyEvent.bKeyDown) then exit(true)
 end;
-{$Else}
+{$else}
 var
   fdSet: tFDSet;
   timeout: tTimeVal;
@@ -394,7 +402,7 @@ begin
   timeout.tv_usec := 0;
   result := fpSelect(stdInHandle(inp)+1, @fdSet, nil, nil, @timeout) > 0;
 end;
-{$EndIf}
+{$endIf}
 
 function klstrSetLength(var s: tKlausString; len: tKlausInteger; const at: tSrcPoint): tKlausInteger;
 var
