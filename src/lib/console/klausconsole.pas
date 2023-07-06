@@ -125,9 +125,6 @@ type
   end;
 
 type
-
-  { tCustomKlausConsole }
-
   tCustomKlausConsole = class(tCustomControl)
     private
       fLatch: tRTLCriticalSection;

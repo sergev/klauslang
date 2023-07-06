@@ -27,9 +27,6 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls;
 
 type
-
-  { tSplashForm }
-
   tSplashForm = class(TForm)
     Image1: TImage;
     Label1: TLabel;

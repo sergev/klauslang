@@ -28,9 +28,6 @@ uses
   IniPropStorage, FormMain, FrameEdit;
 
 type
-
-  { TSearchReplaceDlg }
-
   TSearchReplaceDlg = class(TForm)
     chReplace: TCheckBox;
     chMatchCase: TCheckBox;
