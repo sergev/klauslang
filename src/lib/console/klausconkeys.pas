@@ -28,7 +28,7 @@ uses
 
 const
   klausConSpecialKeys = [
-    VK_PRIOR, VK_NEXT, VK_END, VK_HOME, VK_UP, VK_DOWN, VK_RIGHT, VK_LEFT, VK_NUMPAD5,
+    VK_PRIOR, VK_NEXT, VK_END, VK_HOME, VK_UP, VK_DOWN, VK_RIGHT, VK_LEFT, VK_CLEAR,
     VK_INSERT, VK_DELETE, VK_F1, VK_F2, VK_F3, VK_F4, VK_F5, VK_F6, VK_F7, VK_F8,
     VK_F9, VK_F10, VK_F11, VK_F12, VK_BACK, VK_RETURN, VK_ESCAPE, VK_SPACE, VK_TAB];
 
@@ -88,7 +88,7 @@ begin
     VK_DOWN:              result := #27'['+shst('1')+'B';
     VK_RIGHT:             result := #27'['+shst('1')+'C';
     VK_LEFT:              result := #27'['+shst('1')+'D';
-    VK_NUMPAD5:           result := #27'['+shst('1')+'E';
+    VK_CLEAR:             result := #27'['+shst('1')+'E';
     VK_INSERT:            result := #27'[2'+shst+'~';
     VK_DELETE:            result := #27'[3'+shst+'~';
     VK_F1:                result := #27'['+shst('1', 'O')+'P';

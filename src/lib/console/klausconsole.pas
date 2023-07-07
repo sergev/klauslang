@@ -147,7 +147,6 @@ type
       fInputValue: string;
       fInputStart: tPoint;
       fRedrawTimer: tCustomTimer;
-      fRedrawPosted: boolean;
       fAllInvalid: boolean;
       fRectInvalid: tRect;
       fPreviewShortcuts: boolean;
@@ -178,7 +177,7 @@ type
       procedure destroyCaret;
       procedure hideCaret;
       procedure showCaret;
-      procedure updateCaretPos;
+      procedure invalidateCaretPos;
       procedure doUpdateCaretPos;
       function  processCtlChar(var p: pChar; out s: string; out cnt: integer; out ctl: char): boolean;
       procedure processEscSequence(var p: pChar);
@@ -489,7 +488,6 @@ begin
   fRedrawTimer.interval := 1;
   fRedrawTimer.enabled := false;
   fRedrawTimer.onTimer := @redrawTimerTimer;
-  fRedrawPosted := false;
   fAllInvalid := false;
   fRectInvalid := rect(0, 0, 0, 0);
 end;
@@ -524,7 +522,7 @@ begin
     endInput(true);
     fBuffer.clear(longWord(fTextAttr));
     fCaretPos := point(0, 0);
-    updateCaretPos;
+    invalidateCaretPos;
     invalidateAll;
   finally
     unlock;
@@ -542,7 +540,7 @@ begin
     fBuffer.clear(longWord(fTextAttr));
     fCaretPos := point(0, 0);
     fCaretEnabled := true;
-    updateCaretPos;
+    invalidateCaretPos;
     invalidateAll;
   finally
     unlock;
@@ -588,10 +586,8 @@ begin
   lock;
   try
     if not handleAllocated then exit;
-    if not fRedrawPosted and not fRedrawTimer.enabled then begin
-      postMessage(handle, KM_SetRedrawTimer, 0, 0);
-      fRedrawPosted := true;
-    end;
+    if not fRedrawTimer.enabled then
+      sendMessage(handle, KM_SetRedrawTimer, 0, 0);
   finally
     unlock;
   end;
@@ -640,7 +636,7 @@ begin
       old := fCaretPos;
       fCaretPos := fInputStart;
       if fInputValue <> '' then write(fInputValue)
-      else updateCaretPos;
+      else invalidateCaretPos;
       while fCaretPos.y < old.y do begin
         dec(old.y);
         inc(old.x, fBuffer.width);
@@ -792,7 +788,7 @@ begin
       end;
     end;
     invalidateLines(old.y, fCaretPos.y);
-    updateCaretPos;
+    invalidateCaretPos;
   finally
     unlock;
   end;
@@ -951,7 +947,7 @@ begin
   try
     if fCaretType <> val then begin
       fCaretType := val;
-      updateCaretPos;
+      invalidateCaretPos;
     end;
   finally
     unlock;
@@ -964,7 +960,7 @@ begin
   try
     if fCaretEnabled <> val then begin
       fCaretEnabled := val;
-      updateCaretPos;
+      invalidateCaretPos;
     end;
   finally
     unlock;
@@ -1063,7 +1059,7 @@ begin
     if (val.y < 0) or (val.y >= fBuffer.height) then raise eKlausConsoleError.createFmt(errInvalidRowIndex, [val.y]);
     if fCaretPos <> val then begin
       fCaretPos := val;
-      updateCaretPos;
+      invalidateCaretPos;
     end;
   finally
     unlock;
@@ -1088,7 +1084,7 @@ begin
   try
     inherited;
     createCaret;
-    updateCaretPos;
+    invalidateCaretPos;
   finally
     unlock;
   end;
@@ -1369,7 +1365,6 @@ begin
   lock;
   try
     hideCaret;
-    fRedrawPosted := false;
     fRedrawTimer.enabled := true;
   finally
     unlock;
@@ -1386,14 +1381,14 @@ begin
   end;
 end;
 
-procedure tCustomKlausConsole.updateCaretPos;
+procedure tCustomKlausConsole.invalidateCaretPos;
 begin
   lock;
   try
     if not handleAllocated then exit;
     if not fCaretInvalid then begin
       fCaretInvalid := true;
-      postMessage(handle, KM_UpdateCaretPos, 0, 0);
+      sendMessage(handle, KM_UpdateCaretPos, 0, 0);
     end;
   finally
     unlock;
@@ -1442,8 +1437,8 @@ procedure tCustomKlausConsole.showCaret;
 begin
   lock;
   try
-    if handleAllocated and fCaretEnabled and
-    not fRedrawPosted and not fRedrawTimer.enabled then
+    if not handleAllocated then exit;
+    if fCaretEnabled and not fRedrawTimer.enabled then
       if not fCaretVisible then begin
         LCLIntf.showCaret(handle);
         fCaretVisible := true;
@@ -1514,7 +1509,7 @@ begin
     if fRawMode <> val then begin
       endInput(true);
       fRawMode := val;
-      updateCaretPos;
+      invalidateCaretPos;
       invalidateAll;
     end;
   finally
