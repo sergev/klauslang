@@ -41,8 +41,7 @@ type
     procedure anythingClick(sender: tObject);
     procedure formCreate(sender: tObject);
     procedure formKeyDown(sender: tObject; var key: word; shift: tShiftState);
-    procedure shpFrameMouseDown(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
+    procedure shpFrameMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     procedure tmrCloseTimer(sender: tObject);
   private
     function  detectURL(const s: string): string;

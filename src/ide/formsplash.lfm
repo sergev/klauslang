@@ -12,7 +12,7 @@ object SplashForm: TSplashForm
   OnCreate = FormCreate
   OnKeyDown = FormKeyDown
   Position = poScreenCenter
-  LCLVersion = '2.2.6.0'
+  LCLVersion = '2.2.4.0'
   object shpFrame: TShape
     Left = 0
     Height = 328
@@ -814,9 +814,9 @@ object SplashForm: TSplashForm
   end
   object Label1: TLabel
     Left = 236
-    Height = 71
+    Height = 61
     Top = 20
-    Width = 151
+    Width = 154
     Caption = 'Клаус'
     Font.Height = -53
     Font.Style = [fsBold]
@@ -826,9 +826,9 @@ object SplashForm: TSplashForm
   end
   object Label2: TLabel
     Left = 240
-    Height = 37
+    Height = 32
     Top = 80
-    Width = 339
+    Width = 335
     Caption = 'язык программирования'
     Font.Height = -27
     Font.Style = [fsBold]
@@ -838,27 +838,27 @@ object SplashForm: TSplashForm
   end
   object lblVersion: TLabel
     Left = 240
-    Height = 15
+    Height = 17
     Top = 128
-    Width = 74
+    Width = 96
     Caption = 'версия 1.0.0.1'
     ParentColor = False
     OnClick = anythingClick
   end
   object lblCompanyName: TLabel
     Left = 32
-    Height = 15
+    Height = 17
     Top = 188
-    Width = 97
+    Width = 120
     Caption = 'lblCompanyName'
     ParentColor = False
     OnClick = anythingClick
   end
   object lblComments: TLabel
     Left = 32
-    Height = 15
+    Height = 17
     Top = 213
-    Width = 72
+    Width = 90
     Caption = 'lblComments'
     ParentColor = False
     OnClick = anythingClick
@@ -877,9 +877,9 @@ object SplashForm: TSplashForm
   end
   object lblRepository: TLabel
     Left = 32
-    Height = 15
+    Height = 17
     Top = 238
-    Width = 69
+    Width = 91
     Caption = 'lblRepository'
     ParentColor = False
     OnClick = anythingClick
