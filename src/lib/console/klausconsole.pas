@@ -147,6 +147,7 @@ type
       fInputValue: string;
       fInputStart: tPoint;
       fRedrawTimer: tCustomTimer;
+      fRedrawPosted: boolean;
       fAllInvalid: boolean;
       fRectInvalid: tRect;
       fPreviewShortcuts: boolean;
@@ -488,6 +489,7 @@ begin
   fRedrawTimer.interval := 1;
   fRedrawTimer.enabled := false;
   fRedrawTimer.onTimer := @redrawTimerTimer;
+  fRedrawPosted := false;
   fAllInvalid := false;
   fRectInvalid := rect(0, 0, 0, 0);
 end;
@@ -586,8 +588,16 @@ begin
   lock;
   try
     if not handleAllocated then exit;
-    if not fRedrawTimer.enabled then
+    if not fRedrawTimer.enabled then begin
+      {$ifdef windows}
+      if not fRedrawPosted then begin
+        fRedrawPosted := true;
+        postMessage(handle, KM_SetRedrawTimer, 0, 0);
+      end;
+      {$else}
       sendMessage(handle, KM_SetRedrawTimer, 0, 0);
+      {$endif}
+    end;
   finally
     unlock;
   end;
@@ -1365,6 +1375,7 @@ begin
   lock;
   try
     hideCaret;
+    fRedrawPosted := false;
     fRedrawTimer.enabled := true;
   finally
     unlock;
@@ -1388,7 +1399,11 @@ begin
     if not handleAllocated then exit;
     if not fCaretInvalid then begin
       fCaretInvalid := true;
+      {$ifdef windows}
+      postMessage(handle, KM_UpdateCaretPos, 0, 0);
+      {$else}
       sendMessage(handle, KM_UpdateCaretPos, 0, 0);
+      {$endif}
     end;
   finally
     unlock;
