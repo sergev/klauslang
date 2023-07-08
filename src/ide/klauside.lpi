@@ -20,8 +20,8 @@
       <MajorVersionNr Value="1"/>
       <BuildNr Value="1"/>
       <Language Value="0419"/>
-      <Attributes pvaPrivateBuild="True"/>
-      <StringTable Comments="Разработано при содействии компании Таркос: http://tarkos.ru" CompanyName="Школа Вектор, Воронеж: http://vektor.school" FileDescription="Среда разработки Клаус" InternalName="klauside" LegalCopyright="Программа распространяется бесплатно по Стандартной общественной лицензии GNU GPLv3 или более поздней версии: https://www.gnu.org/licenses/gpl-3.0.html" LegalTrademarks="Репозиторий проекта: https://gitflic.ru/project/czaerlag/klauslang" OriginalFilename="klaus-ide" ProductName="Клаус" ProductVersion="1.0"/>
+      <Attributes pvaPreRelease="True"/>
+      <StringTable Comments="Разработано при содействии компании Таркос: http://tarkos.ru" CompanyName="Школа Вектор, Воронеж: http://vektor.school" FileDescription="Среда разработки Клаус" InternalName="klauside" LegalCopyright="Программа распространяется бесплатно по Стандартной общественной лицензии GNU GPLv3 или более поздней версии: https://www.gnu.org/licenses/gpl-3.0.html" LegalTrademarks="Репозиторий проекта: https://gitflic.ru/project/czaerlag/klauslang" OriginalFilename="klaus-ide" ProductName="Клаус" ProductVersion="1.0.0a"/>
     </VersionInfo>
     <BuildModes>
       <Item Name="Default" Default="True"/>
