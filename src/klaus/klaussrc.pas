@@ -27,6 +27,8 @@ unit KlausSrc;
 //todo: Добавить в VarPath возможность ссылки на модуль
 
 //todo: Тип данных `объект` -- т.е., handle: для файлов, окон, сетевых соединений и пр.
+//todo: Не открыть ли файлы для объектов 0, 1, 2?
+
 //todo: тип данных `данные` -- строка с произвольным содержимым
 //todo: Типы данных `любое` и `тип`, операция `есть`, функции тип(Икс) и новый(Т)
 
@@ -98,6 +100,7 @@ type
   tKlausStmtRepeat = class;
 
 type
+  tKlausHandles = class;
   tKlausVarValue = class;
   tKlausVarValueSimple = class;
   tKlausVarValueArray = class;
@@ -1182,6 +1185,29 @@ type
   end;
 
 type
+  // Хранилище экземпляров встроенных объектов Клаус
+  tKlausHandles = class
+    private
+      fItems: tFPList;
+      fCount: sizeInt;
+      fFreeItems: array of tKlausHandle;
+      fFreeCount: sizeInt;
+
+      procedure storeFreeHandle(h: tKlausHandle);
+      function  restoreFreeHandle: tKlausHandle;
+    protected
+    public
+      property count: sizeInt read fCount;
+
+      constructor create;
+      destructor  destroy; override;
+      function get(h: tKlausHandle; const at: tSrcPoint): pointer;
+      function allocate(obj: pointer; const at: tSrcPoint): tKlausHandle;
+      function release(h: tKlausHandle; const at: tSrcPoint): pointer;
+      function exists(h: tKlausHandle): boolean;
+  end;
+
+type
   // Базовый класс хранилища значения переменной во фрейме стека вызовов
   // с поддержкой счётчика ссылок для копирования-при-записи
   tKlausVarValue = class(tObject)
@@ -1377,6 +1403,7 @@ type
   tKlausRuntime = class(tObject)
     private
       fSource: tKlausSource;
+      fHandles: tKlausHandles;
       fStack: tFPList;
       fMaxStackSize: integer;
       fExitCode: integer;
@@ -1389,6 +1416,7 @@ type
       procedure pop(fr: tKlausStackFrame);
     public
       property source: tKlausSource read fSource;
+      property handles: tKlausHandles read fHandles;
       property maxStackSize: integer read fMaxStackSize write fMaxStackSize;
       property stackCount: integer read getStackCount;
       property stackFrames[idx: integer]: tKlausStackFrame read getStackFrames;
@@ -5560,6 +5588,7 @@ constructor tKlausRuntime.create(aSource: tKlausSource);
 begin
   inherited create;
   fSource := aSource;
+  fHandles := tKlausHandles.create;
   fStack := tFPList.create;
   fMaxStackSize := klausDefaultMaxStackSize;
 end;
@@ -5567,6 +5596,8 @@ end;
 destructor tKlausRuntime.destroy;
 begin
   assert(stackCount = 0, 'Stack integrity violation');
+  freeAndNil(fStack);
+  freeAndNil(fHandles);
   inherited destroy;
 end;
 
@@ -5591,6 +5622,7 @@ begin
     try
       try
         source.systemUnit.run(frame, source.systemUnit.point);
+        if fHandles.count > 0 then raise eKlausError.create(ercInaccurateCleanup, 0, 0);
       except
         on e: eKlausHalt do fExitCode := e.code;
         else begin fExitCode := -1; raise; end;
@@ -5944,6 +5976,71 @@ begin
   finally
     freeAndNil(nextFrame);
   end;
+end;
+
+{ tKlausHandles }
+
+constructor tKlausHandles.create;
+begin
+  inherited;
+  fItems := tFPList.create;
+  fCount := 0;
+  fFreeCount := 0;
+  fFreeItems := nil;
+end;
+
+destructor tKlausHandles.destroy;
+begin
+  freeAndNil(fItems);
+  inherited destroy;
+end;
+
+function tKlausHandles.get(h: tKlausHandle; const at: tSrcPoint): pointer;
+begin
+  if not exists(h) then raise eKlausError.createFmt(ercInvalidKlausHandle, at, [h]);
+  result := fItems[h];
+end;
+
+procedure tKlausHandles.storeFreeHandle(h: tKlausHandle);
+begin
+  if fFreeCount >= length(fFreeItems) then setLength(fFreeItems, fFreeCount+64);
+  fFreeItems[fFreeCount] := h;
+  inc(fFreeCount);
+end;
+
+function tKlausHandles.restoreFreeHandle: tKlausHandle;
+begin
+  assert(fFreeCount > 0, 'No free Klaus handles to restore');
+  dec(fFreeCount);
+  result := fFreeItems[fFreeCount];
+end;
+
+function tKlausHandles.allocate(obj: pointer; const at: tSrcPoint): tKlausHandle;
+begin
+  assert(obj <> nil, 'Klaus handle cannot be allocated for a NIL object');
+  inc(fCount);
+  if fFreeCount > 0 then begin
+    result := restoreFreeHandle;
+    fItems[result] := obj;
+  end else begin
+    if fItems.count >= high(tKlausHandle) then raise eKlausError.create(ercTooManyHandles, at);
+    result := fItems.add(obj);
+  end;
+end;
+
+function tKlausHandles.release(h: tKlausHandle; const at: tSrcPoint): pointer;
+begin
+  result := get(h, at);
+  fItems[h] := nil;
+  storeFreeHandle(h);
+  dec(fCount);
+end;
+
+function tKlausHandles.exists(h: tKlausHandle): boolean;
+begin
+  if h >= fItems.count then exit(false);
+  if fItems[h] = nil then exit(false);
+  result := true;
 end;
 
 { tKlausVarValue }

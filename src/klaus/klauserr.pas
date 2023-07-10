@@ -111,6 +111,9 @@ const
   ercArgumentIsNaN          = 61;
   ercArgumentIsNotFinite    = 62;
   ercMissingProgramFilename = 63;
+  ercInaccurateCleanup      = 64;
+  ercInvalidKlausHandle     = 65;
+  ercTooManyHandles         = 66;
 
 const
   // Классификация кодов eKlausError для трансляции в исключения языка
@@ -151,7 +154,7 @@ const
     [ercInvalidCharAtIndex, ercInvalidStringIndex],
 
     //ksxRuntimeError
-    [ercStackTooBig],
+    [ercStackTooBig, ercInaccurateCleanup, ercInvalidKlausHandle, ercTooManyHandles],
 
     //ksxBadNumber
     [ercArgumentIsNaN, ercArgumentIsNotFinite],
@@ -254,6 +257,9 @@ resourcestring
   errArgumentIsNaN = 'Операция недопустима для аргументов, имеющих значение НеЧисло.';
   errArgumentIsNotFinite = 'Операция недопустима для аргументов, имеющих значение НеЧисло или Бесконечность.';
   errMissingProgramFilename = 'Не указано имя файла выполняемой программы.';
+  errInaccurateCleanup = 'Некоторые объекты, созданные при выполнении программы, не были уничтожены.';
+  errInvalidKlausHandle = 'Неверный дескриптор объекта: %8x. Объект не был создан.';
+  errTooManyHandles = 'Слишком много дескрипторов объектов.';
 
 { Globals }
 
@@ -349,6 +355,9 @@ begin
     ercArgumentIsNaN: result := errArgumentIsNaN;
     ercArgumentIsNotFinite: result := errArgumentIsNotFinite;
     ercMissingProgramFilename: result := errMissingProgramFilename;
+    ercInaccurateCleanup: result := errInaccurateCleanup;
+    ercInvalidKlausHandle: result := errInvalidKlausHandle;
+    ercTooManyHandles: result := errTooManyHandles;
   end;
 end;
 

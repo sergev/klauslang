@@ -35,6 +35,7 @@ type
   tKlausFloat   = type double;      // 64-разрядное вещественное
   tKlausMoment  = type tKlausFloat; // дата/время
   tKlausBoolean = type boolean;     // логическое
+  tKlausHandle  = type tHandle;     // объект
 
 const
   klausMinFloat = tKlausFloat(minDouble);
@@ -101,6 +102,7 @@ const
   klausFloat = 'дробное';
   klausMoment = 'момент';
   klausBoolean = 'логическое';
+  klausObject = 'объект';
 
 type
   // Ключевые слова языка
@@ -156,7 +158,9 @@ type
     kkwdInOut,
     kkwdEach,
     kkwdExists,
-    kkwdNotExists
+    kkwdNotExists,
+    kkwdObject,
+    kkwdEmpty
   );
 
 type
@@ -197,7 +201,7 @@ type
     klsComma,     // разделитель списка имён
     klsDot,       // обращение к полю структуры, конец программы
     klsColon,     // квалификатор определения
-    klsSemicolon, // разделитель операторов, полей структуры, параметров
+    klsSemicolon, // разделитель инструкций, полей структуры, параметров
     klsParOpen,   // группировка в выражениях, параметры процедур/функций
     klsParClose,  // группировка в выражениях, параметры процедур/функций
     klsBktOpen,   // обращение к элементу массива или словаря
@@ -388,6 +392,8 @@ const
     (s: 'моментов'; k: kkwdMoment),
     (s: klausBoolean; k: kkwdBoolean),
     (s: 'логических'; k: kkwdBoolean),
+    (s: klausObject; k: kkwdObject),
+    (s: 'объектов'; k: kkwdObject),
     (s: klausTrue; k: kkwdTrue),
     (s: klausFalse; k: kkwdFalse),
     (s: 'массив'; k: kkwdArray),
@@ -437,7 +443,8 @@ const
     (s: 'каждого'; k: kkwdEach),
     (s: 'каждой'; k: kkwdEach),
     (s: 'есть'; k: kkwdExists),
-    (s: 'нету'; k: kkwdNotExists)
+    (s: 'нету'; k: kkwdNotExists),
+    (s: 'пусто'; k: kkwdEmpty)
   );
 
 const
