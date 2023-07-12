@@ -118,7 +118,7 @@ const
     def:   '#id "=" <type_def> ";"'),
 
     (name: 'simple_type';
-    def:   '(`символ` | `строка` | `целое` | `дробное` | `момент` | `логическое`)'),
+    def:   '(`символ` | `строка` | `целое` | `дробное` | `момент` | `логическое` | `объект`)'),
 
     (name: 'type_id';
     def:   '(<simple_type> | #id)'),
@@ -215,7 +215,7 @@ const
            '"(" <expression> ")")'),
 
     (name: 'literal';
-    def:   '(#char | #string | #integer | #float | #moment | `да` | `нет`)'),
+    def:   '(#char | #string | #integer | #float | #moment | `да` | `нет` | `пусто`)'),
 
     (name: 'exists';
     def:   '(`есть` "(" <var_path> ")" | `нету` "(" <var_path> ")")'),

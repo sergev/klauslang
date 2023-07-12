@@ -134,6 +134,7 @@ function klausCmp(v1, v2: tKlausInteger): integer;
 function klausCmp(v1, v2: tKlausFloat): integer;
 function klausCmp(v1, v2: tKlausMoment): integer;
 function klausCmp(v1, v2: tKlausBoolean): integer;
+function klausCmp(v1, v2: tKlausObject): integer;
 
 type
   tKlausTerminalState = {$ifdef windows}cardinal{$else}TermIOs{$endif};
@@ -323,6 +324,13 @@ const
 begin
   if bv[v1] > bv[v2] then result := 1
   else if bv[v1] < bv[v2] then result := -1
+  else result := 0;
+end;
+
+function klausCmp(v1, v2: tKlausObject): integer;
+begin
+  if v1 > v2 then result := 1
+  else if v1 < v2 then result := -1
   else result := 0;
 end;
 
@@ -702,7 +710,7 @@ type
         else insert(stringOfChar('0', pad+1), result, 2)
       end;
       ftX: begin
-        if not (args[arg].dataType in [kdtInteger, kdtChar]) then raise eKlausError.createFmt(ercInvalidFormatArgType, at, [arg]);
+        if not (args[arg].dataType in [kdtInteger, kdtChar, kdtObject]) then raise eKlausError.createFmt(ercInvalidFormatArgType, at, [arg]);
         q := qWord(klausTypecast(args[arg], kdtInteger, at).iValue);
         prec := 1;
         while (qWord(1) shl (prec*4) <= q) and (prec < 16) do inc(prec);

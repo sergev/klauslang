@@ -100,7 +100,7 @@ type
   tKlausStmtRepeat = class;
 
 type
-  tKlausHandles = class;
+  tKlausObjects = class;
   tKlausVarValue = class;
   tKlausVarValueSimple = class;
   tKlausVarValueArray = class;
@@ -1186,25 +1186,25 @@ type
 
 type
   // Хранилище экземпляров встроенных объектов Клаус
-  tKlausHandles = class
+  tKlausObjects = class
     private
       fItems: tFPList;
       fCount: sizeInt;
-      fFreeItems: array of tKlausHandle;
+      fFreeItems: array of tKlausObject;
       fFreeCount: sizeInt;
 
-      procedure storeFreeHandle(h: tKlausHandle);
-      function  restoreFreeHandle: tKlausHandle;
+      procedure storeFreeHandle(h: tKlausObject);
+      function  restoreFreeHandle: tKlausObject;
     protected
     public
       property count: sizeInt read fCount;
 
       constructor create;
       destructor  destroy; override;
-      function get(h: tKlausHandle; const at: tSrcPoint): pointer;
-      function allocate(obj: pointer; const at: tSrcPoint): tKlausHandle;
-      function release(h: tKlausHandle; const at: tSrcPoint): pointer;
-      function exists(h: tKlausHandle): boolean;
+      function get(h: tKlausObject; const at: tSrcPoint): pointer;
+      function allocate(obj: pointer; const at: tSrcPoint): tKlausObject;
+      function release(h: tKlausObject; const at: tSrcPoint): pointer;
+      function exists(h: tKlausObject): boolean;
   end;
 
 type
@@ -1403,7 +1403,7 @@ type
   tKlausRuntime = class(tObject)
     private
       fSource: tKlausSource;
-      fHandles: tKlausHandles;
+      fHandles: tKlausObjects;
       fStack: tFPList;
       fMaxStackSize: integer;
       fExitCode: integer;
@@ -1416,7 +1416,7 @@ type
       procedure pop(fr: tKlausStackFrame);
     public
       property source: tKlausSource read fSource;
-      property handles: tKlausHandles read fHandles;
+      property handles: tKlausObjects read fHandles;
       property maxStackSize: integer read fMaxStackSize write fMaxStackSize;
       property stackCount: integer read getStackCount;
       property stackFrames[idx: integer]: tKlausStackFrame read getStackFrames;
@@ -1574,22 +1574,6 @@ type
 // Вызывает v.release (с проверкой на nil) и обнуляет ссылку
 procedure releaseAndNil(var v: tKlausVarValue);
 
-// Возвращает tKlausVarValue, заполненный переданными данными.
-// Возвращаемое значение нужно освобождать вызовом release()
-function klausVarVal(source: tKlausSource; const c: tKlausChar): tKlausVarValueSimple;
-function klausVarVal(source: tKlausSource; const s: tKlausString): tKlausVarValueSimple;
-function klausVarVal(source: tKlausSource; const i: tKlausInteger): tKlausVarValueSimple;
-function klausVarVal(source: tKlausSource; const f: tKlausFloat): tKlausVarValueSimple;
-function klausVarVal(source: tKlausSource; const m: tKlausMoment): tKlausVarValueSimple;
-function klausVarVal(source: tKlausSource; const b: tKlausBoolean): tKlausVarValueSimple;
-function klausVarArr(source: tKlausSource; const c: array of tKlausChar): tKlausVarValueArray;
-function klausVarArr(source: tKlausSource; const s: array of tKlausString): tKlausVarValueArray;
-function klausVarArr(source: tKlausSource; const s: tStrings): tKlausVarValueArray;
-function klausVarArr(source: tKlausSource; const i: array of tKlausInteger): tKlausVarValueArray;
-function klausVarArr(source: tKlausSource; const f: array of tKlausFloat): tKlausVarValueArray;
-function klausVarArr(source: tKlausSource; const m: array of tKlausMoment): tKlausVarValueArray;
-function klausVarArr(source: tKlausSource; const b: array of tKlausBoolean): tKlausVarValueArray;
-
 // Инструкции Клаус должны вызывать эту процедуру перед их выполнением, чтобы были
 // возможны работа в пошаговом режиме и прерывание программы, запущенной отладчиком
 procedure klausDebuggerStep(frame: tKlausStackFrame; execPoint: tSrcPoint);
@@ -1664,159 +1648,6 @@ begin
   if assigned(v) then begin
     v.release;
     v := nil;
-  end;
-end;
-
-// Возвращает tKlausVarValue, заполненный переданными данными
-// Возвращаемое значение нужно освобождать вызовом release()
-function klausVarVal(source: tKlausSource; const c: tKlausChar): tKlausVarValueSimple;
-begin
-  result := tKlausVarValueSimple.create(source.simpleTypes[kdtChar]);
-  result.setSimple(klausSimple(c), zeroSrcPt);
-end;
-
-// Возвращает tKlausVarValue, заполненный переданными данными
-// Возвращаемое значение нужно освобождать вызовом release()
-function klausVarVal(source: tKlausSource; const s: tKlausString): tKlausVarValueSimple;
-begin
-  result := tKlausVarValueSimple.create(source.simpleTypes[kdtString]);
-  result.setSimple(klausSimple(s), zeroSrcPt);
-end;
-
-// Возвращает tKlausVarValue, заполненный переданными данными
-// Возвращаемое значение нужно освобождать вызовом release()
-function klausVarVal(source: tKlausSource; const i: tKlausInteger): tKlausVarValueSimple;
-begin
-  result := tKlausVarValueSimple.create(source.simpleTypes[kdtInteger]);
-  result.setSimple(klausSimple(i), zeroSrcPt);
-end;
-
-// Возвращает tKlausVarValue, заполненный переданными данными
-// Возвращаемое значение нужно освобождать вызовом release()
-function klausVarVal(source: tKlausSource; const f: tKlausFloat): tKlausVarValueSimple;
-begin
-  result := tKlausVarValueSimple.create(source.simpleTypes[kdtFloat]);
-  result.setSimple(klausSimple(f), zeroSrcPt);
-end;
-
-// Возвращает tKlausVarValue, заполненный переданными данными
-// Возвращаемое значение нужно освобождать вызовом release()
-function klausVarVal(source: tKlausSource; const m: tKlausMoment): tKlausVarValueSimple;
-begin
-  result := tKlausVarValueSimple.create(source.simpleTypes[kdtMoment]);
-  result.setSimple(klausSimple(m), zeroSrcPt);
-end;
-
-// Возвращает tKlausVarValue, заполненный переданными данными
-// Возвращаемое значение нужно освобождать вызовом release()
-function klausVarVal(source: tKlausSource; const b: tKlausBoolean): tKlausVarValueSimple;
-begin
-  result := tKlausVarValueSimple.create(source.simpleTypes[kdtBoolean]);
-  result.setSimple(klausSimple(b), zeroSrcPt);
-end;
-
-// Возвращает tKlausVarValue, заполненный переданными данными
-// Возвращаемое значение нужно освобождать вызовом release()
-function klausVarArr(source: tKlausSource; const c: array of tKlausChar): tKlausVarValueArray;
-var
-  idx: integer;
-  v: tKlausVarValueSimple;
-begin
-  result := tKlausVarValueArray.create(source.arrayTypes[kdtChar]);
-  result.count := length(c);
-  for idx := 0 to length(c)-1 do begin
-    v := result.getElmt(idx, zeroSrcPt, vpmAsgnTarget) as tKlausVarValueSimple;
-    v.setSimple(klausSimple(c[idx]), zeroSrcPt);
-  end;
-end;
-
-// Возвращает tKlausVarValue, заполненный переданными данными
-// Возвращаемое значение нужно освобождать вызовом release()
-function klausVarArr(source: tKlausSource; const s: array of tKlausString): tKlausVarValueArray;
-var
-  idx: integer;
-  v: tKlausVarValueSimple;
-begin
-  result := tKlausVarValueArray.create(source.arrayTypes[kdtString]);
-  result.count := length(s);
-  for idx := 0 to length(s)-1 do begin
-    v := result.getElmt(idx, zeroSrcPt, vpmAsgnTarget) as tKlausVarValueSimple;
-    v.setSimple(klausSimple(s[idx]), zeroSrcPt);
-  end;
-end;
-
-// Возвращает tKlausVarValue, заполненный переданными данными
-// Возвращаемое значение нужно освобождать вызовом release()
-function klausVarArr(source: tKlausSource; const s: tStrings): tKlausVarValueArray;
-var
-  idx: integer;
-  v: tKlausVarValueSimple;
-begin
-  result := tKlausVarValueArray.create(source.arrayTypes[kdtString]);
-  result.count := s.count;
-  for idx := 0 to s.count-1 do begin
-    v := result.getElmt(idx, zeroSrcPt, vpmAsgnTarget) as tKlausVarValueSimple;
-    v.setSimple(klausSimple(s[idx]), zeroSrcPt);
-  end;
-end;
-
-// Возвращает tKlausVarValue, заполненный переданными данными
-// Возвращаемое значение нужно освобождать вызовом release()
-function klausVarArr(source: tKlausSource; const i: array of tKlausInteger): tKlausVarValueArray;
-var
-  idx: integer;
-  v: tKlausVarValueSimple;
-begin
-  result := tKlausVarValueArray.create(source.arrayTypes[kdtInteger]);
-  result.count := length(i);
-  for idx := 0 to length(i)-1 do begin
-    v := result.getElmt(idx, zeroSrcPt, vpmAsgnTarget) as tKlausVarValueSimple;
-    v.setSimple(klausSimple(i[idx]), zeroSrcPt);
-  end;
-end;
-
-// Возвращает tKlausVarValue, заполненный переданными данными
-// Возвращаемое значение нужно освобождать вызовом release()
-function klausVarArr(source: tKlausSource; const f: array of tKlausFloat): tKlausVarValueArray;
-var
-  idx: integer;
-  v: tKlausVarValueSimple;
-begin
-  result := tKlausVarValueArray.create(source.arrayTypes[kdtFloat]);
-  result.count := length(f);
-  for idx := 0 to length(f)-1 do begin
-    v := result.getElmt(idx, zeroSrcPt, vpmAsgnTarget) as tKlausVarValueSimple;
-    v.setSimple(klausSimple(f[idx]), zeroSrcPt);
-  end;
-end;
-
-// Возвращает tKlausVarValue, заполненный переданными данными
-// Возвращаемое значение нужно освобождать вызовом release()
-function klausVarArr(source: tKlausSource; const m: array of tKlausMoment): tKlausVarValueArray;
-var
-  idx: integer;
-  v: tKlausVarValueSimple;
-begin
-  result := tKlausVarValueArray.create(source.arrayTypes[kdtMoment]);
-  result.count := length(m);
-  for idx := 0 to length(m)-1 do begin
-    v := result.getElmt(idx, zeroSrcPt, vpmAsgnTarget) as tKlausVarValueSimple;
-    v.setSimple(klausSimple(m[idx]), zeroSrcPt);
-  end;
-end;
-
-// Возвращает tKlausVarValue, заполненный переданными данными
-// Возвращаемое значение нужно освобождать вызовом release()
-function klausVarArr(source: tKlausSource; const b: array of tKlausBoolean): tKlausVarValueArray;
-var
-  idx: integer;
-  v: tKlausVarValueSimple;
-begin
-  result := tKlausVarValueArray.create(source.arrayTypes[kdtBoolean]);
-  result.count := length(b);
-  for idx := 0 to length(b)-1 do begin
-    v := result.getElmt(idx, zeroSrcPt, vpmAsgnTarget) as tKlausVarValueSimple;
-    v.setSimple(klausSimple(b[idx]), zeroSrcPt);
   end;
 end;
 
@@ -4142,6 +3973,7 @@ begin
     kdtFloat: result := src.dataType in [kdtInteger, kdtFloat];
     kdtMoment: result := src.dataType = kdtMoment;
     kdtBoolean: result := src.dataType = kdtBoolean;
+    kdtObject: result := src.dataType = kdtObject;
   else
     result := false;
   end;
@@ -5588,7 +5420,7 @@ constructor tKlausRuntime.create(aSource: tKlausSource);
 begin
   inherited create;
   fSource := aSource;
-  fHandles := tKlausHandles.create;
+  fHandles := tKlausObjects.create;
   fStack := tFPList.create;
   fMaxStackSize := klausDefaultMaxStackSize;
 end;
@@ -5978,9 +5810,9 @@ begin
   end;
 end;
 
-{ tKlausHandles }
+{ tKlausObjects }
 
-constructor tKlausHandles.create;
+constructor tKlausObjects.create;
 begin
   inherited;
   fItems := tFPList.create;
@@ -5989,57 +5821,57 @@ begin
   fFreeItems := nil;
 end;
 
-destructor tKlausHandles.destroy;
+destructor tKlausObjects.destroy;
 begin
   freeAndNil(fItems);
   inherited destroy;
 end;
 
-function tKlausHandles.get(h: tKlausHandle; const at: tSrcPoint): pointer;
-begin
-  if not exists(h) then raise eKlausError.createFmt(ercInvalidKlausHandle, at, [h]);
-  result := fItems[h];
-end;
-
-procedure tKlausHandles.storeFreeHandle(h: tKlausHandle);
+procedure tKlausObjects.storeFreeHandle(h: tKlausObject);
 begin
   if fFreeCount >= length(fFreeItems) then setLength(fFreeItems, fFreeCount+64);
   fFreeItems[fFreeCount] := h;
   inc(fFreeCount);
 end;
 
-function tKlausHandles.restoreFreeHandle: tKlausHandle;
+function tKlausObjects.restoreFreeHandle: tKlausObject;
 begin
-  assert(fFreeCount > 0, 'No free Klaus handles to restore');
+  assert(fFreeCount > 0, 'No free handles to restore');
   dec(fFreeCount);
   result := fFreeItems[fFreeCount];
 end;
 
-function tKlausHandles.allocate(obj: pointer; const at: tSrcPoint): tKlausHandle;
+function tKlausObjects.get(h: tKlausObject; const at: tSrcPoint): pointer;
 begin
-  assert(obj <> nil, 'Klaus handle cannot be allocated for a NIL object');
-  inc(fCount);
-  if fFreeCount > 0 then begin
-    result := restoreFreeHandle;
-    fItems[result] := obj;
-  end else begin
-    if fItems.count >= high(tKlausHandle) then raise eKlausError.create(ercTooManyHandles, at);
-    result := fItems.add(obj);
-  end;
+  if not exists(h) then raise eKlausError.createFmt(ercInvalidKlausHandle, at, [h]);
+  result := fItems[h-1];
 end;
 
-function tKlausHandles.release(h: tKlausHandle; const at: tSrcPoint): pointer;
+function tKlausObjects.allocate(obj: pointer; const at: tSrcPoint): tKlausObject;
+begin
+  assert(obj <> nil, 'Klaus handle cannot be allocated for a NIL object');
+  if fFreeCount > 0 then begin
+    result := restoreFreeHandle;
+    fItems[result-1] := obj;
+  end else begin
+    if fItems.count >= high(tKlausObject)-1 then raise eKlausError.create(ercTooManyHandles, at);
+    result := fItems.add(obj)+1;
+  end;
+  inc(fCount);
+end;
+
+function tKlausObjects.release(h: tKlausObject; const at: tSrcPoint): pointer;
 begin
   result := get(h, at);
-  fItems[h] := nil;
+  fItems[h-1] := nil;
   storeFreeHandle(h);
   dec(fCount);
 end;
 
-function tKlausHandles.exists(h: tKlausHandle): boolean;
+function tKlausObjects.exists(h: tKlausObject): boolean;
 begin
-  if h >= fItems.count then exit(false);
-  if fItems[h] = nil then exit(false);
+  if h-1 >= fItems.count then exit(false);
+  if fItems[h-1] = nil then exit(false);
   result := true;
 end;
 

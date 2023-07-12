@@ -35,7 +35,7 @@ type
   tKlausFloat   = type double;      // 64-разрядное вещественное
   tKlausMoment  = type tKlausFloat; // дата/время
   tKlausBoolean = type boolean;     // логическое
-  tKlausHandle  = type tHandle;     // объект
+  tKlausObject  = type longInt;     // объект
 
 const
   klausMinFloat = tKlausFloat(minDouble);
@@ -121,6 +121,7 @@ type
     kkwdFloat,
     kkwdMoment,
     kkwdBoolean,
+    kkwdObject,
     kkwdTrue,
     kkwdFalse,
     kkwdArray,
@@ -159,7 +160,6 @@ type
     kkwdEach,
     kkwdExists,
     kkwdNotExists,
-    kkwdObject,
     kkwdEmpty
   );
 

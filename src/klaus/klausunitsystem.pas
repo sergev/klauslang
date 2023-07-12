@@ -393,15 +393,21 @@ end;
 
 procedure tKlausUnitSystem.beforeInit(frame: tKlausStackFrame);
 var
+  i: integer;
   v: tKlausVariable;
+  vv: tKlausVarValueSimple;
 begin
   inherited;
   // имя исполняемого файла
   v := frame.varByName(klausVarNameExecFilename, point);
-  v.acquireValue(klausVarVal(source, fileName), point, true);
+  (v.value as tKlausVarValueSimple).setSimple(klausSimple(fileName), zeroSrcPt);
   // аргументы командной строки
   v := frame.varByName(klausVarNameCmdLineParams, point);
-  v.acquireValue(klausVarArr(source, fArgs), point, true);
+  for i := 0 to fArgs.count-1 do begin
+    vv := tKlausVarValueSimple.create(source.simpleTypes[kdtString]);
+    vv.setSimple(klausSimple(fArgs[i]), zeroSrcPt);
+    (v.value as tKlausVarValueArray).insert(i, vv, zeroSrcPt);
+  end;
 end;
 
 { tKlausSysProcDecl }

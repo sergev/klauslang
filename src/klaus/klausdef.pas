@@ -52,7 +52,8 @@ type
 
 type
   // Тип данных
-  tKlausDataType = (kdtComplex, kdtChar, kdtString, kdtInteger, kdtFloat, kdtMoment, kdtBoolean);
+  tKlausDataType = (
+    kdtComplex, kdtChar, kdtString, kdtInteger, kdtFloat, kdtMoment, kdtBoolean, kdtObject);
 
   // Простой тип данных
   tKlausSimpleType = succ(kdtComplex)..high(tKlausDataType);
@@ -64,14 +65,16 @@ const
 
   // Наименования простых типов данных
   klausDataTypeCaption: array[tKlausDataType] of string = (
-    'составной', klausChar, klausString, klausInteger, klausFloat, klausMoment, klausBoolean);
+    'составной', klausChar, klausString, klausInteger,
+    klausFloat, klausMoment, klausBoolean, klausObject);
 
   // Множество ключевых слов, обозначающих простые типы данных
-  klausSimpleTypeKwd = [kkwdChar, kkwdString, kkwdInteger, kkwdFloat, kkwdMoment, kkwdBoolean];
+  klausSimpleTypeKwd = [
+    kkwdChar, kkwdString, kkwdInteger, kkwdFloat, kkwdMoment, kkwdBoolean, kkwdObject];
 
   // Соответствие простых типов данных ключевым словам
-  klausKwdToSimpleType: array[kkwdChar..kkwdBoolean] of tKlausSimpleType = (
-    kdtChar, kdtString, kdtInteger, kdtFloat, kdtMoment, kdtBoolean);
+  klausKwdToSimpleType: array[kkwdChar..kkwdObject] of tKlausSimpleType = (
+    kdtChar, kdtString, kdtInteger, kdtFloat, kdtMoment, kdtBoolean, kdtObject);
 
   // Множество лексем для литералов простых типов данных
   klausSimpleTypeLexemes = [klxChar, klxString, klxInteger, klxFloat, klxMoment];
@@ -91,6 +94,7 @@ type
       kdtFloat: (fValue: tKlausFloat);
       kdtMoment: (mValue: tKlausMoment);
       kdtBoolean: (bValue: tKlausBoolean);
+      kdtObject: (oValue: tKlausObject);
   end;
 
 const
@@ -443,6 +447,7 @@ function klausSimple(const i: tKlausInteger): tKlausSimpleValue;
 function klausSimple(const f: tKlausFloat): tKlausSimpleValue;
 function klausSimple(const m: tKlausMoment): tKlausSimpleValue;
 function klausSimple(const b: tKlausBoolean): tKlausSimpleValue;
+function klausSimple(const o: tKlausObject): tKlausSimpleValue;
 
 // Возвращает true, если тип src можно привести к типу dt
 function klausCanTypecast(src, dt: tKlausDataType): boolean;
@@ -500,6 +505,7 @@ begin
     kdtFloat: result.fValue := 0;
     kdtMoment: result.mValue := 0;
     kdtBoolean: result.bValue := false;
+    kdtObject: result.oValue := 0;
   else
     assert(false, 'Invalid data type');
   end;
@@ -517,6 +523,10 @@ begin
       kkwdFalse: begin
         result.dataType := kdtBoolean;
         result.bValue := false;
+      end;
+      kkwdEmpty: begin
+        result.dataType := kdtObject;
+        result.oValue := 0;
       end;
       else raise eKlausError.create(ercInvalidLiteralValue, li.line, li.pos);
     end;
@@ -577,6 +587,13 @@ begin
   result.bValue := b;
 end;
 
+// Возвращает tKlausSimpleValue, заполненный переданными данными
+function klausSimple(const o: tKlausObject): tKlausSimpleValue;
+begin
+  result.dataType := kdtObject;
+  result.oValue := o;
+end;
+
 // Возвращает true, если тип src можно привести к типу dt
 function klausCanTypecast(src, dt: tKlausDataType): boolean;
 begin
@@ -584,11 +601,12 @@ begin
   if src = dt then exit(true);
   case dt of
     kdtChar: result := src = kdtInteger;
-    kdtString: result := src in [kdtChar, kdtInteger, kdtFloat, kdtMoment, kdtBoolean];
-    kdtInteger: result := src in [kdtChar, kdtString, kdtFloat, kdtMoment, kdtBoolean];
+    kdtString: result := src in [kdtChar, kdtInteger, kdtFloat, kdtMoment, kdtBoolean, kdtObject];
+    kdtInteger: result := src in [kdtChar, kdtString, kdtFloat, kdtMoment, kdtBoolean, kdtObject];
     kdtFloat: result := src in [kdtString, kdtInteger, kdtMoment];
     kdtMoment: result := src in [kdtString, kdtInteger, kdtFloat];
     kdtBoolean: result := src = kdtInteger;
+    kdtObject: result := false;
   else
     result := false;
     assert(false, 'Invalid data type');
@@ -606,8 +624,7 @@ function klausTypecast(const v: tKlausSimpleValue; dt: tKlausSimpleType; const a
 const
   bv: array[boolean] of string = (klausFalse, klausTrue);
 begin
-  if not klausCanTypecast(v, dt) then
-    raise eKlausError.create(ercInvalidTypecast, at.line, at.pos);
+  if not klausCanTypecast(v, dt) then raise eKlausError.create(ercInvalidTypecast, at);
   if v.dataType = dt then exit(v);
   result.dataType := dt;
   case dt of
@@ -618,9 +635,10 @@ begin
       kdtFloat: result.sValue := klausFloatToStr(v.fValue);
       kdtMoment: result.sValue := klausMomentToStr(v.mValue);
       kdtBoolean: result.sValue := bv[v.bValue];
+      kdtObject: result.sValue := intToHex(v.oValue, sizeOf(tKlausObject)*2);
     end;
     kdtInteger: case v.dataType of
-      kdtChar: result.iValue := int64(v.cValue);
+      kdtChar: result.iValue := tKlausInteger(v.cValue);
       kdtString: result.iValue := klausStrToInt(v.sValue);
       kdtFloat: begin
         if isNaN(v.fValue) or isInfinite(v.fValue) then raise eKlausError.create(ercArgumentIsNotFinite, at);
@@ -631,6 +649,7 @@ begin
         result.iValue := trunc(v.mValue);
       end;
       kdtBoolean: if v.bValue then result.iValue := 1 else result.iValue := 0;
+      kdtObject: result.iValue := tKlausInteger(v.oValue);
     end;
     kdtFloat: case v.dataType of
       kdtString: result.fValue := klausStrToFloat(v.sValue);
@@ -643,6 +662,7 @@ begin
       kdtFloat: result.mValue := v.fValue;
     end;
     kdtBoolean: result.bValue := v.iValue <> 0;
+    kdtObject: raise eKlausError.create(ercInvalidTypecast, at);
   end;
 end;
 
@@ -663,6 +683,7 @@ begin
     kdtFloat: result := dt2 in [kdtInteger, kdtFloat];
     kdtMoment: result := dt2 = kdtMoment;
     kdtBoolean: result := dt2 = kdtBoolean;
+    kdtObject: result := dt2 = kdtObject;
   else
     result := false;
     assert(false, 'Invalid data type.');
@@ -700,6 +721,7 @@ begin
       result := klausCmp(v1.mValue, v2.mValue);
     end;
     kdtBoolean: result := klausCmp(v1.bValue, v2.bValue);
+    kdtObject: result := klausCmp(v1.oValue, v2.oValue);
   else
     assert(false, 'Invalid data type');
   end;
