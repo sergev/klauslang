@@ -17,10 +17,11 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="1"/>
+      <RevisionNr Value="1"/>
       <BuildNr Value="1"/>
       <Language Value="0419"/>
       <Attributes pvaPreRelease="True"/>
-      <StringTable Comments="Разработано при содействии компании Таркос: http://tarkos.ru" CompanyName="Школа Вектор, Воронеж: http://vektor.school" FileDescription="Интерпретатор Клаус" InternalName="klauscon" LegalCopyright="Программа распространяется бесплатно по Стандартной общественной лицензии GNU GPLv3 или более поздней версии: https://www.gnu.org/licenses/gpl-3.0.html" LegalTrademarks="Репозиторий проекта: https://gitflic.ru/project/czaerlag/klauslang" OriginalFilename="klaus" ProductName="Клаус" ProductVersion="1.0.0a"/>
+      <StringTable Comments="С благодарностью Дмитрию Тарасевичу и Анне Михеевой" CompanyName="Константин Захаров" FileDescription="Интерпретатор Клаус" InternalName="klauscon" LegalCopyright="Программа распространяется бесплатно по Стандартной общественной лицензии GNU GPLv3 или более поздней версии: https://www.gnu.org/licenses/gpl-3.0.html" LegalTrademarks="Репозиторий проекта: https://gitflic.ru/project/czaerlag/klauslang" OriginalFilename="klaus" ProductName="Клаус" ProductVersion="1.0.1a"/>
     </VersionInfo>
     <BuildModes>
       <Item Name="Default" Default="True"/>
