@@ -176,6 +176,8 @@ type
   tKlausFileStream = class(tFileStream)
     private
       fMode: tKlausInteger;
+    protected
+      procedure setSize(const newSize: int64); override;
     public
       property mode: tKlausInteger read fMode;
 
@@ -1183,6 +1185,12 @@ begin
 end;
 
 { tKlausFileStream }
+
+procedure tKlausFileStream.setSize(const newSize: int64);
+begin
+  if mode and klausFileOpenWrite = 0 then raise eStreamError.create(errFileNotWritable);
+  inherited setSize(newSize);
+end;
 
 constructor tKlausFileStream.create(const aFileName: string; aMode: tKlausInteger);
 var

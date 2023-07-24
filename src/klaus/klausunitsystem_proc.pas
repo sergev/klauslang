@@ -667,6 +667,7 @@ type
 
 type
   // функция файлРазмер(вх файл: объект): целое;
+  // функция файлРазмер(вх файл: объект; вх размер: целое): целое;
   tKlausSysProc_FileSize = class(tKlausSysProcDecl)
     public
       constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
