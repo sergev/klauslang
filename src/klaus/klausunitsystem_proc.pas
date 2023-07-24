@@ -30,9 +30,11 @@ type
   // функция прочесть(вых арг0, арг1, арг2, ...): целое;
   tKlausSysProc_ReadLn = class(tKlausSysProcDecl)
     private
-      function processInputData(const data: string; values: array of tKlausVarValueAt; const at: tSrcPoint): tKlausInteger;
+      fStream: tStringReadStream;
+      function processInputData(frame: tKlausStackFrame; const data: string; values: array of tKlausVarValueAt; const at: tSrcPoint): tKlausInteger;
     public
       constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      destructor  destroy; override;
       function  isCustomParamHandler: boolean; override;
       procedure checkCallParamTypes(expr: array of tKlausExpression; at: tSrcPoint); override;
       procedure getCustomParamModes(types: array of tKlausTypeDef; out modes: tKlausProcParamModes; const at: tSrcPoint); override;
@@ -594,6 +596,86 @@ type
       procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
   end;
 
+type
+  // функция файлСоздать(вх типФайла: целое; вх имя: строка; вх режим: целое): объект;
+  tKlausSysProc_FileCreate = class(tKlausSysProcDecl)
+    private
+      fFileType: tKlausProcParam;
+      fFileName: tKlausProcParam;
+      fMode: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  // функция файлОткрыть(вх типФайла: целое; вх имя: строка; вх режим: целое): объект;
+  tKlausSysProc_FileOpen = class(tKlausSysProcDecl)
+    private
+      fFileType: tKlausProcParam;
+      fFileName: tKlausProcParam;
+      fMode: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  // процедура файлЗакрыть(вв файл: объект);
+  tKlausSysProc_FileClose = class(tKlausSysProcDecl)
+    private
+      fFile: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  // процедура файлЗаписать(вх файл: объект; вх арг1, арг2, арг3...);
+  tKlausSysProc_FileWrite = class(tKlausSysProcDecl)
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      function  isCustomParamHandler: boolean; override;
+      procedure checkCallParamTypes(expr: array of tKlausExpression; at: tSrcPoint); override;
+      procedure getCustomParamModes(types: array of tKlausTypeDef; out modes: tKlausProcParamModes; const at: tSrcPoint); override;
+      procedure customRun(frame: tKlausStackFrame; values: array of tKlausVarValueAt; const at: tSrcPoint); override;
+  end;
+
+type
+  // процедура файлПрочесть(вх файл: объект; вых арг1, арг2, арг3...);
+  tKlausSysProc_FileRead = class(tKlausSysProcDecl)
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      function  isCustomParamHandler: boolean; override;
+      procedure checkCallParamTypes(expr: array of tKlausExpression; at: tSrcPoint); override;
+      procedure getCustomParamModes(types: array of tKlausTypeDef; out modes: tKlausProcParamModes; const at: tSrcPoint); override;
+      procedure customRun(frame: tKlausStackFrame; values: array of tKlausVarValueAt; const at: tSrcPoint); override;
+  end;
+
+type
+  // функция файлПоз(вх файл: объект): целое;
+  // функция файлПоз(вх файл: объект; вх поз: целое): целое;
+  // функция файлПоз(вх файл: объект; вх поз: целое; вх откуда: целое): целое;
+  tKlausSysProc_FilePos = class(tKlausSysProcDecl)
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      function  isCustomParamHandler: boolean; override;
+      procedure checkCallParamTypes(expr: array of tKlausExpression; at: tSrcPoint); override;
+      procedure getCustomParamModes(types: array of tKlausTypeDef; out modes: tKlausProcParamModes; const at: tSrcPoint); override;
+      procedure customRun(frame: tKlausStackFrame; values: array of tKlausVarValueAt; const at: tSrcPoint); override;
+  end;
+
+type
+  // функция файлРазмер(вх файл: объект): целое;
+  tKlausSysProc_FileSize = class(tKlausSysProcDecl)
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      function  isCustomParamHandler: boolean; override;
+      procedure checkCallParamTypes(expr: array of tKlausExpression; at: tSrcPoint); override;
+      procedure getCustomParamModes(types: array of tKlausTypeDef; out modes: tKlausProcParamModes; const at: tSrcPoint); override;
+      procedure customRun(frame: tKlausStackFrame; values: array of tKlausVarValueAt; const at: tSrcPoint); override;
+  end;
+
 implementation
 
 uses
@@ -676,8 +758,16 @@ constructor tKlausSysProc_ReadLn.create(aOwner: tKlausRoutine; aPoint: tSrcPoint
 begin
   inherited create(aOwner, klausSysProcName_ReadLn, aPoint);
   declareRetValue(kdtInteger);
+  fStream := tStringReadStream.create('');
 end;
 
+destructor tKlausSysProc_ReadLn.destroy;
+begin
+  freeAndNil(fStream);
+  inherited destroy;
+end;
+
+(*
 function tKlausSysProc_ReadLn.processInputData(
   const data: string; values: array of tKlausVarValueAt; const at: tSrcPoint): tKlausInteger;
 
@@ -693,7 +783,7 @@ function tKlausSysProc_ReadLn.processInputData(
   begin
     dt := values[idx].v.dataType.dataType;
     case dt of
-      kdtInteger: sv := klausSimple(strToInt64(s));
+      kdtInteger: sv := klausSimple(klausStrToInt(s));
       kdtFloat:   sv := klausSimple(klausStrToFloat(s));
       kdtMoment:  sv := klausSimple(klausStrToMoment(s));
       kdtBoolean: sv := klausSimple(klausStrToBool(s));
@@ -717,6 +807,8 @@ begin
   while idx < length(values) do begin
     dt := values[idx].v.dataType.dataType;
     case dt of
+      kdtObject:
+        raise eKlausError.createFmt(ercValueCannotBeRead, values[idx].at, [klausDataTypeCaption[dt]]);
       kdtChar: begin
         v := klausSimple(klausStrToChar(u8GetChar(p)));
         put(idx, v);
@@ -740,6 +832,23 @@ begin
   end;
   result := idx;
 end;
+*)
+
+function tKlausSysProc_ReadLn.processInputData(
+  frame: tKlausStackFrame; const data: string; values: array of tKlausVarValueAt; const at: tSrcPoint): tKlausInteger;
+var
+  i: integer;
+  sv: tKlausSimpleValue;
+begin
+  fStream.data := data;
+  for i := 0 to length(values)-1 do try
+    if not klausReadFromText(fStream, values[i].v.dataType.dataType, sv, values[i].at) then exit(i);
+    (values[i].v as tKlausVarValueSimple).setSimple(sv, values[i].at);
+  except
+    klausTranslateException(frame, values[i].at);
+  end;
+  result := length(values);
+end;
 
 function tKlausSysProc_ReadLn.isCustomParamHandler: boolean;
 begin
@@ -749,12 +858,13 @@ end;
 procedure tKlausSysProc_ReadLn.checkCallParamTypes(expr: array of tKlausExpression; at: tSrcPoint);
 var
   i: integer;
+  dt: tKlausDataType;
 begin
   for i := 0 to length(expr)-1 do begin
-    if expr[i].resultType = kdtComplex then
-      raise eKlausError.create(ercCannotReadComplexType, expr[i].point);
-    if not expr[i].isVarPath then
-      raise eKlausError.create(ercInvalidOutputParam, expr[i].point);
+    dt := expr[i].resultType;
+    if dt = kdtComplex then raise eKlausError.create(ercCannotReadComplexType, expr[i].point);
+    if dt = kdtObject then raise eKlausError.createFmt(ercValueCannotBeRead, expr[i].point, [klausDataTypeCaption[dt]]);
+    if not expr[i].isVarPath then raise eKlausError.create(ercInvalidOutputParam, expr[i].point);
   end;
 end;
 
@@ -775,7 +885,7 @@ const
 var
   s: string;
   c: u8Char;
-  l, idx: integer;
+  l, idx: sizeInt;
 begin
   try
     s := '';
@@ -785,7 +895,7 @@ begin
     prev := c;
     while (c <> '') and not (c[1] in [#0, #10, #13, #26]) do begin
       l := byte(c[0]);
-      if idx+l-1 > length(s) then setLength(s, idx+32);
+      if idx-1 > length(s)-l then setLength(s, idx+32);
       move(c[1], s[idx], l);
       idx += l;
       frame.owner.readStdIn(c);
@@ -793,7 +903,7 @@ begin
     end;
     setLength(s, idx-1);
     //frame.owner.writeStdOut('"'+s+'"'#10);
-    returnSimple(frame, klausSimple(processInputData(s, values, at)));
+    returnSimple(frame, klausSimple(processInputData(frame, s, values, at)));
   except
     klausTranslateException(frame, at);
   end;
@@ -2081,6 +2191,306 @@ begin
   if (c = '') or (c[1] = #0) then rslt := 0
   else rslt := u8ToUni(c);
   returnSimple(frame, klausSimple(rslt));
+end;
+
+{ tKlausSysProc_FileCreate }
+
+constructor tKlausSysProc_FileCreate.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_FileCreate, aPoint);
+  fFileType := tKlausProcParam.create(self, 'типФайла', aPoint, kpmInput, source.simpleTypes[kdtInteger]);
+  addParam(fFileType);
+  fFileName := tKlausProcParam.create(self, 'имя', aPoint, kpmInput, source.simpleTypes[kdtString]);
+  addParam(fFileName);
+  fMode := tKlausProcParam.create(self, 'режим', aPoint, kpmInput, source.simpleTypes[kdtInteger]);
+  addParam(fMode);
+  declareRetValue(kdtObject);
+end;
+
+procedure tKlausSysProc_FileCreate.run(frame: tKlausStackFrame; const at: tSrcPoint);
+var
+  fn: tKlausString;
+  rslt: tKlausObject;
+  ft, mode: tKlausInteger;
+begin
+  ft := getSimpleInt(frame, fFileType, at);
+  fn := getSimpleStr(frame, fFileName, at);
+  mode := getSimpleInt(frame, fMode, at) or klausFileCreate;
+  rslt := frame.owner.objects.allocate(tObject(klausInvalidPointer), at);
+  try
+    frame.owner.objects.put(rslt, klausGetFileType(ft, at).create(fn, mode), at);
+    returnSimple(frame, klausSimpleObj(rslt));
+  except
+    frame.owner.objects.release(rslt, at);
+    raise;
+  end;
+end;
+
+{ tKlausSysProc_FileOpen }
+
+constructor tKlausSysProc_FileOpen.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_FileOpen, aPoint);
+  fFileType := tKlausProcParam.create(self, 'типФайла', aPoint, kpmInput, source.simpleTypes[kdtInteger]);
+  addParam(fFileType);
+  fFileName := tKlausProcParam.create(self, 'имя', aPoint, kpmInput, source.simpleTypes[kdtString]);
+  addParam(fFileName);
+  fMode := tKlausProcParam.create(self, 'режим', aPoint, kpmInput, source.simpleTypes[kdtInteger]);
+  addParam(fMode);
+  declareRetValue(kdtObject);
+end;
+
+procedure tKlausSysProc_FileOpen.run(frame: tKlausStackFrame; const at: tSrcPoint);
+var
+  fn: tKlausString;
+  rslt: tKlausObject;
+  ft, mode: tKlausInteger;
+begin
+  ft := getSimpleInt(frame, fFileType, at);
+  fn := getSimpleStr(frame, fFileName, at);
+  mode := getSimpleInt(frame, fMode, at);
+  rslt := frame.owner.objects.allocate(tObject(klausInvalidPointer), at);
+  try
+    frame.owner.objects.put(rslt, klausGetFileType(ft, at).create(fn, mode), at);
+    returnSimple(frame, klausSimpleObj(rslt));
+  except
+    frame.owner.objects.release(rslt, at);
+    raise;
+  end;
+end;
+
+{ tKlausSysProc_FileClose }
+
+constructor tKlausSysProc_FileClose.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_FileClose, aPoint);
+  fFile := tKlausProcParam.create(self, 'файл', aPoint, kpmInOut, source.simpleTypes[kdtObject]);
+  addParam(fFile);
+end;
+
+procedure tKlausSysProc_FileClose.run(frame: tKlausStackFrame; const at: tSrcPoint);
+var
+  f: tKlausObject;
+  stream: tKlausFileStream;
+begin
+  f := getSimpleObj(frame, fFile, at);
+  stream := tKlausFileStream(frame.owner.objects.release(f, at));
+  freeAndNil(stream);
+  setSimple(frame, fFile, klausZeroValue(kdtObject), at);
+end;
+
+{ tKlausSysProc_FileWrite }
+
+constructor tKlausSysProc_FileWrite.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_FileWrite, aPoint);
+end;
+
+function tKlausSysProc_FileWrite.isCustomParamHandler: boolean;
+begin
+  result := true;
+end;
+
+procedure tKlausSysProc_FileWrite.checkCallParamTypes(expr: array of tKlausExpression; at: tSrcPoint);
+var
+  i, cnt: integer;
+begin
+  cnt := length(expr);
+  if cnt < 2 then errWrongParamCount(cnt, 2, -1, at);
+  checkCanAssign(kdtObject, expr[0].resultTypeDef, expr[0].point);
+  for i := 1 to cnt-1 do
+    if expr[i].resultType = kdtComplex then
+      raise eKlausError.create(ercCannotWriteComplexType, expr[i].point);
+end;
+
+procedure tKlausSysProc_FileWrite.getCustomParamModes(
+  types: array of tKlausTypeDef; out modes: tKlausProcParamModes; const at: tSrcPoint);
+var
+  i: integer;
+begin
+  modes := nil;
+  setLength(modes, length(types));
+  for i := 0 to length(modes)-1 do modes[i] := kpmInput;
+end;
+
+procedure tKlausSysProc_FileWrite.customRun(
+  frame: tKlausStackFrame; values: array of tKlausVarValueAt; const at: tSrcPoint);
+var
+  i: integer;
+  stream: tKlausFileStream;
+begin
+  try
+    stream := getKlausObject(frame, getSimpleObj(values[0]), tKlausFileStream, values[0].at) as tKlausFileStream;
+    for i := 1 to length(values)-1 do begin
+      if not (values[i].v is tKlausVarValueSimple) then
+        raise eKlausError.create(ercCannotWriteComplexType, values[i].at);
+      stream.writeSimpleValue(getSimple(values[i]), values[i].at);
+    end;
+  except
+    klausTranslateException(frame, at);
+  end;
+end;
+
+{ tKlausSysProc_FileRead }
+
+constructor tKlausSysProc_FileRead.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_FileRead, aPoint);
+end;
+
+function tKlausSysProc_FileRead.isCustomParamHandler: boolean;
+begin
+  result := true;
+end;
+
+procedure tKlausSysProc_FileRead.checkCallParamTypes(expr: array of tKlausExpression; at: tSrcPoint);
+var
+  i, cnt: integer;
+begin
+  cnt := length(expr);
+  if cnt < 2 then errWrongParamCount(cnt, 2, -1, at);
+  checkCanAssign(kdtObject, expr[0].resultTypeDef, expr[0].point);
+  for i := 1 to cnt-1 do
+    if expr[i].resultType = kdtComplex then
+      raise eKlausError.create(ercCannotReadComplexType, expr[i].point);
+end;
+
+procedure tKlausSysProc_FileRead.getCustomParamModes(
+  types: array of tKlausTypeDef; out modes: tKlausProcParamModes; const at: tSrcPoint);
+var
+  i, cnt: integer;
+begin
+  modes := nil;
+  cnt := length(types);
+  setLength(modes, cnt);
+  modes[0] := kpmInput;
+  for i := 1 to cnt-1 do modes[i] := kpmOutput;
+end;
+
+procedure tKlausSysProc_FileRead.customRun(
+  frame: tKlausStackFrame; values: array of tKlausVarValueAt; const at: tSrcPoint);
+var
+  i: integer;
+  vv: tKlausVarValueSimple;
+  stream: tKlausFileStream;
+begin
+  try
+    stream := getKlausObject(frame, getSimpleObj(values[0]), tKlausFileStream, values[0].at) as tKlausFileStream;
+    for i := 1 to length(values)-1 do begin
+      if not (values[i].v is tKlausVarValueSimple) then
+        raise eKlausError.create(ercCannotReadComplexType, values[i].at);
+      vv := values[i].v as tKlausVarValueSimple;
+      try vv.setSimple(stream.readSimpleValue(vv.dataType.dataType, values[i].at), values[i].at);
+      except klausTranslateException(frame, values[i].at); end;
+    end;
+  except
+    klausTranslateException(frame, at);
+  end;
+end;
+
+{ tKlausSysProc_FilePos }
+
+constructor tKlausSysProc_FilePos.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_FilePos, aPoint);
+  declareRetValue(kdtInteger);
+end;
+
+function tKlausSysProc_FilePos.isCustomParamHandler: boolean;
+begin
+  result := true;
+end;
+
+procedure tKlausSysProc_FilePos.checkCallParamTypes(expr: array of tKlausExpression; at: tSrcPoint);
+var
+  cnt: integer;
+begin
+  cnt := length(expr);
+  if (cnt < 1) or (cnt > 3) then errWrongParamCount(cnt, 1, 3, at);
+  checkCanAssign(kdtObject, expr[0].resultTypeDef, expr[0].point);
+  if cnt > 1 then checkCanAssign(kdtInteger, expr[1].resultTypeDef, expr[1].point);
+  if cnt > 2 then checkCanAssign(kdtInteger, expr[2].resultTypeDef, expr[2].point);
+end;
+
+procedure tKlausSysProc_FilePos.getCustomParamModes(
+  types: array of tKlausTypeDef; out modes: tKlausProcParamModes; const at: tSrcPoint);
+var
+  i: integer;
+begin
+  modes := nil;
+  setLength(modes, length(types));
+  for i := 0 to length(modes)-1 do modes[i] := kpmInput;
+end;
+
+procedure tKlausSysProc_FilePos.customRun(
+  frame: tKlausStackFrame; values: array of tKlausVarValueAt; const at: tSrcPoint);
+var
+  cnt: integer;
+  origin: tSeekOrigin;
+  stream: tKlausFileStream;
+begin
+  cnt := length(values);
+  origin := soBeginning;
+  if cnt >= 3 then case getSimpleInt(values[2]) of
+    klausFilePosFromEnd: origin := soEnd;
+    klausFilePosFromCurrent: origin := soCurrent;
+  end;
+  try
+    stream := getKlausObject(frame, getSimpleObj(values[0]), tKlausFileStream, values[0].at) as tKlausFileStream;
+    if cnt >= 2 then stream.seek(getSimpleInt(values[1]), origin);
+    returnSimple(frame, klausSimple(stream.position));
+  except
+    klausTranslateException(frame, at);
+  end;
+end;
+
+{ tKlausSysProc_FileSize }
+
+constructor tKlausSysProc_FileSize.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_FileSize, aPoint);
+  declareRetValue(kdtInteger);
+end;
+
+function tKlausSysProc_FileSize.isCustomParamHandler: boolean;
+begin
+  result := true;
+end;
+
+procedure tKlausSysProc_FileSize.checkCallParamTypes(expr: array of tKlausExpression; at: tSrcPoint);
+var
+  cnt: integer;
+begin
+  cnt := length(expr);
+  if (cnt < 1) or (cnt > 2) then errWrongParamCount(cnt, 1, 2, at);
+  checkCanAssign(kdtObject, expr[0].resultTypeDef, expr[0].point);
+  if cnt > 1 then checkCanAssign(kdtInteger, expr[1].resultTypeDef, expr[1].point);
+end;
+
+procedure tKlausSysProc_FileSize.getCustomParamModes(
+  types: array of tKlausTypeDef; out modes: tKlausProcParamModes; const at: tSrcPoint);
+var
+  i: integer;
+begin
+  modes := nil;
+  setLength(modes, length(types));
+  for i := 0 to length(modes)-1 do modes[i] := kpmInput;
+end;
+
+procedure tKlausSysProc_FileSize.customRun(
+  frame: tKlausStackFrame; values: array of tKlausVarValueAt; const at: tSrcPoint);
+var
+  cnt: integer;
+  stream: tKlausFileStream;
+begin
+  cnt := length(values);
+  try
+    stream := getKlausObject(frame, getSimpleObj(values[0]), tKlausFileStream, values[0].at) as tKlausFileStream;
+    if cnt >= 2 then stream.size := getSimpleInt(values[1]);
+    returnSimple(frame, klausSimple(stream.size));
+  except
+    klausTranslateException(frame, at);
+  end;
 end;
 
 end.

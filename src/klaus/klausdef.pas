@@ -447,7 +447,7 @@ function klausSimple(const i: tKlausInteger): tKlausSimpleValue;
 function klausSimple(const f: tKlausFloat): tKlausSimpleValue;
 function klausSimple(const m: tKlausMoment): tKlausSimpleValue;
 function klausSimple(const b: tKlausBoolean): tKlausSimpleValue;
-function klausSimple(const o: tKlausObject): tKlausSimpleValue;
+function klausSimpleObj(const o: tKlausObject): tKlausSimpleValue;
 
 // Возвращает true, если тип src можно привести к типу dt
 function klausCanTypecast(src, dt: tKlausDataType): boolean;
@@ -588,7 +588,7 @@ begin
 end;
 
 // Возвращает tKlausSimpleValue, заполненный переданными данными
-function klausSimple(const o: tKlausObject): tKlausSimpleValue;
+function klausSimpleObj(const o: tKlausObject): tKlausSimpleValue;
 begin
   result.dataType := kdtObject;
   result.oValue := o;

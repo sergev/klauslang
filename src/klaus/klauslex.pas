@@ -648,7 +648,7 @@ begin
   if fEOF then exit(LF);
   sp := fStream.position;
   try
-    result := u8GetChar(fStream);
+    result := u8ReadChar(fStream);
   except
     on eStreamError do raise eKlausError.create(ercStreamError, fLine, fPos);
     else raise;

@@ -114,12 +114,15 @@ const
   ercInaccurateCleanup      = 64;
   ercInvalidKlausHandle     = 65;
   ercTooManyHandles         = 66;
+  ercValueCannotBeRead      = 67;
+  ercInvalidFileType        = 68;
+  ercUnexpectedObjectClass  = 69;
 
 const
   // Классификация кодов eKlausError для трансляции в исключения языка
   klausCodeToStdErr: array[tKlausStdException] of set of byte = (
     //ksxInOutError
-    [ercStreamError],
+    [ercStreamError, ercInvalidFileType],
 
     //ksxConvertError
     [ercInvalidLiteralValue, ercInvalidFormatSpecifier, ercInvalidFormatArgIdx,
@@ -135,7 +138,7 @@ const
     [ercInvalidTypecast, ercTypeMismatch, ercIndexMustBeInteger, ercCannotWriteComplexType,
     ercCannotReadComplexType, ercConditionMustBeBool, ercBinOperNotDefined, ercUnOperNotDefined,
     ercIllegalAsgnOperator, ercInvalidLoopCounter, ercInvalidForEachKey, ercInvalidForEachType,
-    ercForEachKeyTypeMismatch, ercCaseExprMustBeSimple],
+    ercForEachKeyTypeMismatch, ercCaseExprMustBeSimple, ercValueCannotBeRead],
 
     //ksxInvalidName
     [ercVarNameNotFound, ercStructMemberNotFound],
@@ -154,7 +157,8 @@ const
     [ercInvalidCharAtIndex, ercInvalidStringIndex],
 
     //ksxRuntimeError
-    [ercStackTooBig, ercInaccurateCleanup, ercInvalidKlausHandle, ercTooManyHandles],
+    [ercStackTooBig, ercInaccurateCleanup, ercInvalidKlausHandle, ercTooManyHandles,
+    ercUnexpectedObjectClass],
 
     //ksxBadNumber
     [ercArgumentIsNaN, ercArgumentIsNotFinite],
@@ -258,8 +262,11 @@ resourcestring
   errArgumentIsNotFinite = 'Операция недопустима для аргументов, имеющих значение НеЧисло или Бесконечность.';
   errMissingProgramFilename = 'Не указано имя файла выполняемой программы.';
   errInaccurateCleanup = 'Некоторые объекты, созданные при выполнении программы, не были уничтожены.';
-  errInvalidKlausHandle = 'Неверный дескриптор объекта: %8x. Объект не был создан.';
+  errInvalidKlausHandle = 'Неверный дескриптор объекта: %.8x. Объект не был создан.';
   errTooManyHandles = 'Слишком много дескрипторов объектов.';
+  errValueCannotBeRead = 'Значение этого типа не может быть прочитано: %s.';
+  errInvalidFileType = 'Неверный тип файла: %d.';
+  errUnexpectedObjectClass = 'Неожиданный класс объекта. Требуется %s, передано %s.';
 
 { Globals }
 
@@ -358,6 +365,9 @@ begin
     ercInaccurateCleanup: result := errInaccurateCleanup;
     ercInvalidKlausHandle: result := errInvalidKlausHandle;
     ercTooManyHandles: result := errTooManyHandles;
+    ercValueCannotBeRead: result := errValueCannotBeRead;
+    ercInvalidFileType: result := errInvalidFileType;
+    ercUnexpectedObjectClass: result := errUnexpectedObjectClass;
   end;
 end;
 

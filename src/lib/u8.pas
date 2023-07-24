@@ -40,7 +40,7 @@ type
 
   function u8Size(c: char): byte;
   function u8Size(p: pChar): byte;
-  function u8Size(p: u8Char): byte;
+  function u8Size(c: u8Char): byte;
 
   function u8Start(p: pChar): boolean; inline;
 
@@ -53,7 +53,7 @@ type
 
   function u8GetChar(var p: pChar): u8Char;
   function u8GetCharBytes(var p: pChar): longWord;
-  function u8GetChar(stream: tStream): u8Char;
+  function u8ReadChar(stream: tStream): u8Char;
   function u8ReadChar(var inp: text): u8Char; // iocheck
 
   function u8CharFromBytes(c: longWord): u8Char;
@@ -131,10 +131,10 @@ end;
 
 // Возвращает размер в байтах символа UTF8. Для #0 возвращает 0.
 // Для некорректного начала символа возвращает 0.
-function u8Size(p: u8Char): byte;
+function u8Size(c: u8Char): byte;
 begin
-  if p = '' then exit(0);
-  result := u8Size(p[1]);
+  if c = '' then exit(0);
+  result := u8Size(c[1]);
 end;
 
 // Возвращает true, если p указывает на начало символа
@@ -262,7 +262,7 @@ end;
 // Читает символ UTF8 из потока и проверяет его корректность.
 // В случае конца потока возвращает пустую строку.
 // В случае некорректного символа создаёт исключение EStreamError.
-function u8GetChar(stream: tStream): u8Char;
+function u8ReadChar(stream: tStream): u8Char;
 const
   err = 'Invalid UTF-8 character in the input stream.';
 var

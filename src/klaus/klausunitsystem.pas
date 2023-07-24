@@ -25,7 +25,7 @@ unit KlausUnitSystem;
 //todo: найти() -- поиск подстроки в словаре со строковым ключом
 //todo: макс() и мин() значения ключа для словарей
 
-//todo: прописные(), строчные()
+//todo: загл(), строч()
 
 {$mode ObjFPC}{$H+}
 {$i ../lib/klaus.inc}
@@ -104,6 +104,13 @@ const
   klausSysProcName_ResetTextAttr = 'сброситьАтрибуты';
   klausSysProcName_InputAvailable = 'естьСимвол';
   klausSysProcName_ReadChar = 'прочестьСимвол';
+  klausSysProcName_FileCreate = 'файлСоздать';
+  klausSysProcName_FileOpen = 'файлОткрыть';
+  klausSysProcName_FileClose = 'файлЗакрыть';
+  klausSysProcName_FileSize = 'файлРазмер';
+  klausSysProcName_FilePos = 'файлПоз';
+  klausSysProcName_FileRead = 'файлПрочесть';
+  klausSysProcName_FileWrite = 'файлЗаписать';
 
 const
   klausConstNameNewline = 'НС';
@@ -113,6 +120,17 @@ const
   klausConstNameMinFloat = 'минДробное';
   klausConstNameMaxFloat = 'максДробное';
   klausConstNamePi = 'Pi';
+  klausConstNamePiRus = 'Пи';
+  klausConstFileTypeText = 'фтТекст';
+  klausConstFileTypeBinary = 'фтДвоичный';
+  klausConstFileOpenRead = 'фрдЧтение';
+  klausConstFileOpenWrite = 'фрдЗапись';
+  klausConstFileShareExclusive = 'фcдИсключить';
+  klausConstFileShareDenyWrite = 'фcдЧтение';
+  klausConstFileShareDenyNone = 'фcдЛюбой';
+  klausConstFilePosFromBeginning = 'фпОтНачала';
+  klausConstFilePosFromEnd = 'фпОтКонца';
+  klausConstFilePosFromCurrent = 'фпОтносительно';
 
 const
   klausVarNameCmdLineParams = '$cmdLineParams';
@@ -173,6 +191,7 @@ type
       function  getSimpleFloat(val: tKlausVarValueAt): tKlausFloat;
       function  getSimpleMoment(val: tKlausVarValueAt): tKlausMoment;
       function  getSimpleBool(val: tKlausVarValueAt): tKlausBoolean;
+      function  getSimpleObj(val: tKlausVarValueAt): tKlausObject;
       function  getSimple(frame: tKlausStackFrame; vd: tKlausVarDecl; const at: tSrcPoint): tKlausSimpleValue;
       function  getSimpleChar(frame: tKlausStackFrame; vd: tKlausVarDecl; const at: tSrcPoint): tKlausChar;
       function  getSimpleStr(frame: tKlausStackFrame; vd: tKlausVarDecl; const at: tSrcPoint): tKlausString;
@@ -180,6 +199,16 @@ type
       function  getSimpleFloat(frame: tKlausStackFrame; vd: tKlausVarDecl; const at: tSrcPoint): tKlausFloat;
       function  getSimpleMoment(frame: tKlausStackFrame; vd: tKlausVarDecl; const at: tSrcPoint): tKlausMoment;
       function  getSimpleBool(frame: tKlausStackFrame; vd: tKlausVarDecl; const at: tSrcPoint): tKlausBoolean;
+      function  getSimpleObj(frame: tKlausStackFrame; vd: tKlausVarDecl; const at: tSrcPoint): tKlausObject;
+      procedure setSimple(frame: tKlausStackFrame; vd: tKlausVarDecl; const sv: tKlausSimpleValue; const at: tSrcPoint);
+      procedure setSimpleChar(frame: tKlausStackFrame; vd: tKlausVarDecl; const val: tKlausChar; const at: tSrcPoint);
+      procedure setSimpleStr(frame: tKlausStackFrame; vd: tKlausVarDecl; const val: tKlausString; const at: tSrcPoint);
+      procedure setSimpleInt(frame: tKlausStackFrame; vd: tKlausVarDecl; const val: tKlausInteger; const at: tSrcPoint);
+      procedure setSimpleFloat(frame: tKlausStackFrame; vd: tKlausVarDecl; const val: tKlausFloat; const at: tSrcPoint);
+      procedure setSimpleMoment(frame: tKlausStackFrame; vd: tKlausVarDecl; const val: tKlausMoment; const at: tSrcPoint);
+      procedure setSimpleBool(frame: tKlausStackFrame; vd: tKlausVarDecl; const val: tKlausBoolean; const at: tSrcPoint);
+      procedure setSimpleObj(frame: tKlausStackFrame; vd: tKlausVarDecl; const val: tKlausObject; const at: tSrcPoint);
+      function  getKlausObject(frame: tKlausStackFrame; h: tKlausObject; cls: tClass; const at: tSrcPoint): tObject;
   end;
 
 function  klausStdError(frame: tKlausStackFrame; ksx: tKlausStdException; line, pos: integer): eKlausLangException;
@@ -189,10 +218,11 @@ procedure klausTranslateException(frame: tKlausStackFrame; const at: tSrcPoint);
 
 implementation
 
-uses KlausUnitSystem_Proc;
+uses KlausUtils, KlausUnitSystem_Proc;
 
 resourcestring
   strFromTo = 'от %d до %d';
+  strAtLeast = 'не менее %d';
   strInOutError = 'Ошибка ввода/вывода данных.';
   strConvertError = 'Ошибка конвертации данных.';
   strIndexError = 'Неверный индекс.';
@@ -261,7 +291,8 @@ begin
   or (obj is eFileNotFoundException)
   or (obj is ePathNotFoundException)
   or (obj is ePathTooLongException)
-  or (obj is eInOutError) then begin
+  or (obj is eInOutError)
+  or (obj is eStreamError) then begin
     releaseExceptionObject;
     raise klausStdError(frame, ksxInOutError, (obj as exception).message, at.line, at.pos) at get_caller_addr(get_frame)
   end else if obj is eFormatError then begin
@@ -319,6 +350,17 @@ begin
   tKlausConstDecl.create(self, klausConstNameMaxFloat, zeroSrcPt, klausSimple(klausMaxFloat));
   tKlausConstDecl.create(self, klausConstNameMinFloat, zeroSrcPt, klausSimple(klausMinFloat));
   tKlausConstDecl.create(self, klausConstNamePi, zeroSrcPt, klausSimple(tKlausFloat(Pi)));
+  tKlausConstDecl.create(self, klausConstNamePiRus, zeroSrcPt, klausSimple(tKlausFloat(Pi)));
+  tKlausConstDecl.create(self, klausConstFileTypeText, zeroSrcPt, klausSimple(klausFileTypeText));
+  tKlausConstDecl.create(self, klausConstFileTypeBinary, zeroSrcPt, klausSimple(klausFileTypeBinary));
+  tKlausConstDecl.create(self, klausConstFileOpenRead, zeroSrcPt, klausSimple(klausFileOpenRead));
+  tKlausConstDecl.create(self, klausConstFileOpenWrite, zeroSrcPt, klausSimple(klausFileOpenWrite));
+  tKlausConstDecl.create(self, klausConstFileShareExclusive, zeroSrcPt, klausSimple(klausFileShareExclusive));
+  tKlausConstDecl.create(self, klausConstFileShareDenyWrite, zeroSrcPt, klausSimple(klausFileShareDenyWrite));
+  tKlausConstDecl.create(self, klausConstFileShareDenyNone, zeroSrcPt, klausSimple(klausFileShareDenyNone));
+  tKlausConstDecl.create(self, klausConstFilePosFromBeginning, zeroSrcPt, klausSimple(klausFilePosFromBeginning));
+  tKlausConstDecl.create(self, klausConstFilePosFromEnd, zeroSrcPt, klausSimple(klausFilePosFromEnd));
+  tKlausConstDecl.create(self, klausConstFilePosFromCurrent, zeroSrcPt, klausSimple(klausFilePosFromCurrent));
   // имя исполняемого файла
   tKlausVarDecl.create(self, klausVarNameExecFilename, zeroSrcPt, dtString, klausZeroValue(kdtString));
   // аргументы командной строки
@@ -378,6 +420,12 @@ begin
   tKlausSysProc_InputAvailable.create(self, zeroSrcPt);
   tKlausSysProc_ReadChar.create(self, zeroSrcPt);
   tKlausSysProc_Random.create(self, zeroSrcPt);
+  tKlausSysProc_FileCreate.create(self, zeroSrcPt);
+  tKlausSysProc_FileOpen.create(self, zeroSrcPt);
+  tKlausSysProc_FileClose.create(self, zeroSrcPt);
+  tKlausSysProc_FileWrite.create(self, zeroSrcPt);
+  tKlausSysProc_FileRead.create(self, zeroSrcPt);
+  tKlausSysProc_FilePos.create(self, zeroSrcPt);
 end;
 
 procedure tKlausUnitSystem.setArgs(val: tStrings);
@@ -428,7 +476,9 @@ procedure tKlausSysProcDecl.errWrongParamCount(given, min, max: integer; const a
 var
   s: string;
 begin
-  if min = max then s := intToStr(min) else s := format(strFromTo, [min, max]);
+  if min = max then s := intToStr(min)
+  else if max < 0 then s := format(strAtLeast, [min])
+  else s := format(strFromTo, [min, max]);
   raise eKlausError.createFmt(ercWrongNumberOfParams, at.line, at.pos, [given, s])
   at get_caller_addr(get_frame);
 end;
@@ -591,6 +641,14 @@ begin
   result := klausTypecast((val.v as tKlausVarValueSimple).simple, kdtBoolean, val.at).bValue;
 end;
 
+function tKlausSysProcDecl.getSimpleObj(val: tKlausVarValueAt): tKlausObject;
+begin
+  if not source.simpleTypes[kdtObject].canAssign(val.v.dataType) then
+    raise eKlausError.create(ercTypeMismatch, val.at)
+    at get_caller_addr(get_frame);
+  result := klausTypecast((val.v as tKlausVarValueSimple).simple, kdtObject, val.at).oValue;
+end;
+
 function tKlausSysProcDecl.getSimple(frame: tKlausStackFrame; vd: tKlausVarDecl; const at: tSrcPoint): tKlausSimpleValue;
 var
   v: tKlausVarValue;
@@ -666,6 +724,111 @@ begin
     raise eKlausError.create(ercTypeMismatch, at)
     at get_caller_addr(get_frame);
   result := klausTypecast((v as tKlausVarValueSimple).simple, kdtBoolean, at).bValue;
+end;
+
+function tKlausSysProcDecl.getSimpleObj(frame: tKlausStackFrame; vd: tKlausVarDecl; const at: tSrcPoint): tKlausObject;
+var
+  v: tKlausVarValue;
+begin
+  v := frame.varByDecl(vd, at).value;
+  if not source.simpleTypes[kdtObject].canAssign(v.dataType) then
+    raise eKlausError.create(ercTypeMismatch, at)
+    at get_caller_addr(get_frame);
+  result := klausTypecast((v as tKlausVarValueSimple).simple, kdtObject, at).oValue;
+end;
+
+procedure tKlausSysProcDecl.setSimple(frame: tKlausStackFrame; vd: tKlausVarDecl; const sv: tKlausSimpleValue; const at: tSrcPoint);
+var
+  v: tKlausVarValue;
+begin
+  v := frame.varByDecl(vd, at).value;
+  if not (v is tKlausVarValueSimple) then
+    raise eKlausError.create(ercTypeMismatch, at)
+    at get_caller_addr(get_frame);
+  (v as tKlausVarValueSimple).setSimple(sv, at);
+end;
+
+procedure tKlausSysProcDecl.setSimpleChar(frame: tKlausStackFrame; vd: tKlausVarDecl; const val: tKlausChar; const at: tSrcPoint);
+var
+  v: tKlausVarValue;
+begin
+  v := frame.varByDecl(vd, at).value;
+  if not (v is tKlausVarValueSimple) then
+    raise eKlausError.create(ercTypeMismatch, at)
+    at get_caller_addr(get_frame);
+  (v as tKlausVarValueSimple).setSimple(klausSimple(val), at);
+end;
+
+procedure tKlausSysProcDecl.setSimpleStr(frame: tKlausStackFrame; vd: tKlausVarDecl; const val: tKlausString; const at: tSrcPoint);
+var
+  v: tKlausVarValue;
+begin
+  v := frame.varByDecl(vd, at).value;
+  if not (v is tKlausVarValueSimple) then
+    raise eKlausError.create(ercTypeMismatch, at)
+    at get_caller_addr(get_frame);
+  (v as tKlausVarValueSimple).setSimple(klausSimple(val), at);
+end;
+
+procedure tKlausSysProcDecl.setSimpleInt(frame: tKlausStackFrame; vd: tKlausVarDecl; const val: tKlausInteger; const at: tSrcPoint);
+var
+  v: tKlausVarValue;
+begin
+  v := frame.varByDecl(vd, at).value;
+  if not (v is tKlausVarValueSimple) then
+    raise eKlausError.create(ercTypeMismatch, at)
+    at get_caller_addr(get_frame);
+  (v as tKlausVarValueSimple).setSimple(klausSimple(val), at);
+end;
+
+procedure tKlausSysProcDecl.setSimpleFloat(frame: tKlausStackFrame; vd: tKlausVarDecl; const val: tKlausFloat; const at: tSrcPoint);
+var
+  v: tKlausVarValue;
+begin
+  v := frame.varByDecl(vd, at).value;
+  if not (v is tKlausVarValueSimple) then
+    raise eKlausError.create(ercTypeMismatch, at)
+    at get_caller_addr(get_frame);
+  (v as tKlausVarValueSimple).setSimple(klausSimple(val), at);
+end;
+
+procedure tKlausSysProcDecl.setSimpleMoment(frame: tKlausStackFrame; vd: tKlausVarDecl; const val: tKlausMoment; const at: tSrcPoint);
+var
+  v: tKlausVarValue;
+begin
+  v := frame.varByDecl(vd, at).value;
+  if not (v is tKlausVarValueSimple) then
+    raise eKlausError.create(ercTypeMismatch, at)
+    at get_caller_addr(get_frame);
+  (v as tKlausVarValueSimple).setSimple(klausSimple(val), at);
+end;
+
+procedure tKlausSysProcDecl.setSimpleBool(frame: tKlausStackFrame; vd: tKlausVarDecl; const val: tKlausBoolean; const at: tSrcPoint);
+var
+  v: tKlausVarValue;
+begin
+  v := frame.varByDecl(vd, at).value;
+  if not (v is tKlausVarValueSimple) then
+    raise eKlausError.create(ercTypeMismatch, at)
+    at get_caller_addr(get_frame);
+  (v as tKlausVarValueSimple).setSimple(klausSimple(val), at);
+end;
+
+procedure tKlausSysProcDecl.setSimpleObj(frame: tKlausStackFrame; vd: tKlausVarDecl; const val: tKlausObject; const at: tSrcPoint);
+var
+  v: tKlausVarValue;
+begin
+  v := frame.varByDecl(vd, at).value;
+  if not (v is tKlausVarValueSimple) then
+    raise eKlausError.create(ercTypeMismatch, at)
+    at get_caller_addr(get_frame);
+  (v as tKlausVarValueSimple).setSimple(klausSimple(val), at);
+end;
+
+function tKlausSysProcDecl.getKlausObject(frame: tKlausStackFrame; h: tKlausObject; cls: tClass; const at: tSrcPoint): tObject;
+begin
+  result := frame.owner.objects.get(h, at);
+  if not (result is cls) then raise eKlausError.createFmt(ercUnexpectedObjectClass, at, [cls.className, result.className]);
 end;
 
 end.

@@ -28,6 +28,9 @@ uses
   {$ifdef windows}Windows,{$else}BaseUnix, TermIO,{$endif}
   U8, KlausLex, KlausDef, KlausErr;
 
+const
+  klausInvalidPointer = pointer(ptrInt(-1));
+
 // Устанавливает длину переданной строки. Если новая длина больше старой, заполняет хвост
 // строки пробелами. Если меньше, до переданная длина должна быть такой, чтобы последний символ
 // в строке не оказался разбит на части, иначе будет ошибка НеверныйСимвол.
@@ -145,11 +148,70 @@ function klausGetTerminalState(h: tHandle): tKlausTerminalState;
 // Устанавливает состояние терминала
 procedure klausSetTerminalState(h: tHandle; state: tKlausTerminalState);
 
-// Устанавливает raw-режим работы терминала
+// Устанавливает сквозной режим работы терминала
 procedure klausTerminalSetRaw(var inp: text; raw: boolean);
 
 // Возвращает TRUE, если стандартный поток ввода не пуст
 function klausTerminalHasChar(var inp: text): boolean;
+
+// Читает значение из текстового потока в кодировке UTF-8.
+// Возвращает FALSE, если поток пустой; создаёт исключения при ошибках чтения и конвертации.
+function klausReadFromText(
+  stream: tStream; dt: tKlausSimpleType; out sv: tKlausSimpleValue; const at: tSrcPoint): boolean;
+
+const
+  klausFileCreate         = $01;
+  klausFileOpenRead       = $02;
+  klausFileOpenWrite      = $04;
+  klausFileOpenReadWrite  = klausFileOpenRead or klausFileOpenWrite;
+  klausFileShareExclusive = $10;
+  klausFileShareDenyWrite = $20;
+  klausFileShareDenyNone  = $40;
+const
+  klausFilePosFromBeginning = 0;
+  klausFilePosFromEnd       = 1;
+  klausFilePosFromCurrent   = 2;
+
+type
+  tKlausFileStream = class(tFileStream)
+    private
+      fMode: tKlausInteger;
+    public
+      property mode: tKlausInteger read fMode;
+
+      constructor create(const aFileName: string; aMode: tKlausInteger); virtual;
+      function  read(var buffer; count: longint): longint; override;
+      function  write(const buffer; count: longint): longint; override;
+      function  readSimpleValue(dt: tKlausSimpleType; const at: tSrcPoint): tKlausSimpleValue; virtual; abstract;
+      procedure writeSimpleValue(const sv: tKlausSimpleValue; const at: tSrcPoint); virtual; abstract;
+  end;
+
+type
+  tKlausTextFile = class(tKlausFileStream)
+    public
+      function  readSimpleValue(dt: tKlausSimpleType; const at: tSrcPoint): tKlausSimpleValue; override;
+      procedure writeSimpleValue(const sv: tKlausSimpleValue; const at: tSrcPoint); override;
+  end;
+
+type
+  tKlausBinaryFile = class(tKlausFileStream)
+    public
+      function  readSimpleValue(dt: tKlausSimpleType; const at: tSrcPoint): tKlausSimpleValue; override;
+      procedure writeSimpleValue(const sv: tKlausSimpleValue; const at: tSrcPoint); override;
+  end;
+
+type
+  tKlausFileClass = class of tKlausFileStream;
+
+const
+  klausFileTypeText = 0;
+  klausFileTypeBinary = 1;
+
+const
+  klausFileClass: array[klausFileTypeText..klausFileTypeBinary] of tKlausFileClass = (
+    tKlausTextFile, tKlausBinaryFile);
+
+function klausGetFileType(ft: tKlausInteger; const at: tSrcPoint): tKlausFileClass;
 
 implementation
 
@@ -158,8 +220,11 @@ uses Math;
 resourcestring
   errInvalidInteger = 'Неверное целое число: "%s".';
   errInvalidFloat = 'Неверное дробное число: "%s".';
-  strInvalidBoolean = 'Неверное логическое значение: "%s".';
-  strInvalidMoment = 'Неверное значение даты/времени: "%s".';
+  errInvalidBoolean = 'Неверное логическое значение: "%s".';
+  errInvalidMoment = 'Неверное значение даты/времени: "%s".';
+  errFileNotReadable = 'Файл не был открыт для чтения.';
+  errFileNotWritable = 'Файл не был открыт для записи.';
+  errFileReadError = 'Ошибка чтения файла.';
 
 function klausStrToFloat(const s: string; klausExpSigns: boolean = true): tKlausFloat;
 var
@@ -215,7 +280,7 @@ begin
   or (s = 't') or (s = 'true') or (s = 'и') or (s = 'истина') then result := true
   else if (s = 'n') or (s = 'no') or (s = 'н') or (s = 'нет') or (s = '0')
   or (s = 'f') or (s = 'false') or (s = 'л') or (s = 'ложь') then result := false
-  else raise eConvertError.createFmt(strInvalidBoolean, [s]);
+  else raise eConvertError.createFmt(errInvalidBoolean, [s]);
 end;
 
 function klausStrToMoment(const s: string): tKlausMoment;
@@ -230,7 +295,7 @@ begin
   b := tryStrToDateTime(s, result, klausLiteralFormat);
   if not b then b := tryStrToTime(s, result, klausLiteralFormat);
   if not b then b := tryStrToDate(s, result, klausLiteralFormat);
-  if not b then raise eConvertError.createFmt(strInvalidMoment, [s]);
+  if not b then raise eConvertError.createFmt(errInvalidMoment, [s]);
 end;
 
 function klausMomentToStr(v: tKlausMoment): string;
@@ -1037,6 +1102,178 @@ begin
   v := klausSimple('Привет!');
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
+end;
+
+function klausGetFileType(ft: tKlausInteger; const at: tSrcPoint): tKlausFileClass;
+begin
+  if (ft < low(klausFileClass)) or (ft > high(klausFileClass)) then raise eKlausError.createFmt(ercInvalidFileType, at, [ft]);
+  result := klausFileClass[ft];
+end;
+
+function klausReadFromText(
+  stream: tStream; dt: tKlausSimpleType; out sv: tKlausSimpleValue; const at: tSrcPoint): boolean;
+var
+  c: u8Char;
+  s: tKlausString;
+  l, idx: sizeInt;
+begin
+  case dt of
+    kdtObject:
+      raise eKlausError.createFmt(ercValueCannotBeRead, at, [klausDataTypeCaption[dt]]);
+    kdtChar: begin
+      c := u8ReadChar(stream);
+      if c = '' then exit(false);
+      sv.cValue := klausStrToChar(c);
+      sv.dataType := kdtChar;
+    end;
+    kdtString: begin
+      s := '';
+      idx := 1;
+      c := u8ReadChar(stream);
+      if c = '' then exit(false);
+      while c <> '' do begin
+        if c = #10 then break
+        else if c = #13 then begin
+          c := u8ReadChar(stream);
+          if (c <> '') and (c <> #10) then stream.seek(-u8Size(c), soCurrent);
+          break;
+        end;
+        l := byte(c[0]);
+        if idx-1 > length(s)-l then setLength(s, idx+32);
+        move(c[1], s[idx], l);
+        idx += l;
+        c := u8ReadChar(stream);
+      end;
+      setLength(s, idx-1);
+      sv.sValue := s;
+      sv.dataType := kdtString;
+    end;
+  else
+    c := u8ReadChar(stream);
+    if c = '' then exit(false);
+    while c[1] in [#9, #10, #13, ' '] do begin
+      c := u8ReadChar(stream);
+      if c = '' then exit(false);
+    end;
+    s := '';
+    idx := 1;
+    while c <> '' do begin
+      if c[1] in [#9, #10, #13, ' '] then begin
+        stream.seek(-1, soCurrent);
+        break;
+      end;
+      l := byte(c[0]);
+      if idx-1 > length(s)-l then setLength(s, idx+32);
+      move(c[1], s[idx], l);
+      idx += l;
+      c := u8ReadChar(stream);
+    end;
+    setLength(s, idx-1);
+    case dt of
+      kdtInteger: sv.iValue := klausStrToInt(s);
+      kdtFloat:   sv.fValue := klausStrToFloat(s);
+      kdtMoment:  sv.mValue := klausStrToMoment(s);
+      kdtBoolean: sv.bValue := klausStrToBool(s);
+    else
+      assert(false, 'Unexpected value type');
+    end;
+    sv.dataType := dt;
+  end;
+  result := true;
+end;
+
+{ tKlausFileStream }
+
+constructor tKlausFileStream.create(const aFileName: string; aMode: tKlausInteger);
+var
+  fm, fs: word;
+begin
+  fMode := aMode;
+  if mode and klausFileCreate = klausFileCreate then begin
+    fm := fmCreate;
+    fMode := fMode or klausFileOpenReadWrite;
+  end else if mode and klausFileOpenReadWrite = klausFileOpenReadWrite then
+    fm := fmOpenReadWrite
+  else if mode and klausFileOpenWrite = klausFileOpenWrite then
+    fm := fmOpenWrite
+  else
+    fm := fmOpenRead;
+  if mode and klausFileShareDenyNone = klausFileShareDenyNone then fs := fmShareDenyNone
+  else if mode and klausFileShareDenyWrite = klausFileShareDenyWrite then fs := fmShareDenyWrite
+  else fs := klausFileShareExclusive;
+  inherited create(aFileName, fm or fs);
+end;
+
+function tKlausFileStream.read(var buffer; count: longint): longint;
+begin
+  if mode and klausFileOpenRead = 0 then raise eStreamError.create(errFileNotReadable);
+  result := inherited read(buffer, count);
+end;
+
+function tKlausFileStream.write(const buffer; count: longint): longint;
+begin
+  if mode and klausFileOpenWrite = 0 then raise eStreamError.create(errFileNotWritable);
+  result := inherited write(buffer, count);
+end;
+
+{ tKlausTextFile }
+
+function tKlausTextFile.readSimpleValue(dt: tKlausSimpleType; const at: tSrcPoint): tKlausSimpleValue;
+begin
+  if not klausReadFromText(self, dt, result, at) then raise eStreamError.create(errFileReadError);
+end;
+
+procedure tKlausTextFile.writeSimpleValue(const sv: tKlausSimpleValue; const at: tSrcPoint);
+var
+  s: tKlausString;
+begin
+  s := klausTypecast(sv, kdtString, at).sValue;
+  if s <> '' then writeBuffer(pChar(s)^, length(s));
+end;
+
+{ tKlausBinaryFile }
+
+procedure tKlausBinaryFile.writeSimpleValue(const sv: tKlausSimpleValue; const at: tSrcPoint);
+var
+  l: tKlausInteger;
+begin
+  case sv.dataType of
+    kdtChar: writeBuffer(sv.cValue, sizeOf(sv.cValue));
+    kdtString: begin
+      l := length(sv.sValue);
+      writeBuffer(l, sizeOf(l));
+      if sv.sValue <> '' then writeBuffer(pChar(sv.sValue)^, l);
+    end;
+    kdtInteger: writeBuffer(sv.iValue, sizeOf(sv.iValue));
+    kdtFloat: writeBuffer(sv.fValue, sizeOf(sv.fValue));
+    kdtMoment: writeBuffer(sv.mValue, sizeOf(sv.mValue));
+    kdtBoolean: writeBuffer(sv.bValue, sizeOf(sv.bValue));
+    kdtObject: writeBuffer(sv.oValue, sizeOf(sv.oValue));
+  else
+    assert(false, 'Invalid simple type');
+  end;
+end;
+
+function tKlausBinaryFile.readSimpleValue(dt: tKlausSimpleType; const at: tSrcPoint): tKlausSimpleValue;
+var
+  l: tKlausInteger = 0;
+begin
+  result.dataType := dt;
+  case dt of
+    kdtChar: readBuffer(result.cValue, sizeOf(result.cValue));
+    kdtString: begin
+      readBuffer(l, sizeOf(l));
+      setLength(result.sValue, l);
+      if l > 0  then readBuffer(pChar(result.sValue)^, l);
+    end;
+    kdtInteger: readBuffer(result.iValue, sizeOf(result.iValue));
+    kdtFloat: readBuffer(result.fValue, sizeOf(result.fValue));
+    kdtMoment: readBuffer(result.mValue, sizeOf(result.mValue));
+    kdtBoolean: readBuffer(result.bValue, sizeOf(result.bValue));
+    kdtObject: raise eKlausError.createFmt(ercValueCannotBeRead, at, [klausDataTypeCaption[dt]]);
+  else
+    assert(false, 'Invalid data type');
+  end;
 end;
 
 initialization

@@ -73,6 +73,7 @@ type
   tKlausOpndLiteral = class;
   tKlausOpndTypecast = class;
   tKlausOpndVarPath = class;
+  tKlausOpndExists = class;
   tKlausOpndCall = class;
   tKlausStatement = class;
   tKlausStmtNothing = class;
@@ -1201,10 +1202,11 @@ type
 
       constructor create;
       destructor  destroy; override;
-      function get(h: tKlausObject; const at: tSrcPoint): pointer;
-      function allocate(obj: pointer; const at: tSrcPoint): tKlausObject;
-      function release(h: tKlausObject; const at: tSrcPoint): pointer;
-      function exists(h: tKlausObject): boolean;
+      function  get(h: tKlausObject; const at: tSrcPoint): tObject;
+      procedure put(h: tKlausObject; obj: tObject; const at: tSrcPoint);
+      function  allocate(obj: tObject; const at: tSrcPoint): tKlausObject;
+      function  release(h: tKlausObject; const at: tSrcPoint): tObject;
+      function  exists(h: tKlausObject): boolean;
   end;
 
 type
@@ -1403,7 +1405,7 @@ type
   tKlausRuntime = class(tObject)
     private
       fSource: tKlausSource;
-      fHandles: tKlausObjects;
+      fObjects: tKlausObjects;
       fStack: tFPList;
       fMaxStackSize: integer;
       fExitCode: integer;
@@ -1416,7 +1418,7 @@ type
       procedure pop(fr: tKlausStackFrame);
     public
       property source: tKlausSource read fSource;
-      property handles: tKlausObjects read fHandles;
+      property objects: tKlausObjects read fObjects;
       property maxStackSize: integer read fMaxStackSize write fMaxStackSize;
       property stackCount: integer read getStackCount;
       property stackFrames[idx: integer]: tKlausStackFrame read getStackFrames;
@@ -5420,7 +5422,7 @@ constructor tKlausRuntime.create(aSource: tKlausSource);
 begin
   inherited create;
   fSource := aSource;
-  fHandles := tKlausObjects.create;
+  fObjects := tKlausObjects.create;
   fStack := tFPList.create;
   fMaxStackSize := klausDefaultMaxStackSize;
 end;
@@ -5429,7 +5431,7 @@ destructor tKlausRuntime.destroy;
 begin
   assert(stackCount = 0, 'Stack integrity violation');
   freeAndNil(fStack);
-  freeAndNil(fHandles);
+  freeAndNil(fObjects);
   inherited destroy;
 end;
 
@@ -5454,7 +5456,7 @@ begin
     try
       try
         source.systemUnit.run(frame, source.systemUnit.point);
-        if fHandles.count > 0 then raise eKlausError.create(ercInaccurateCleanup, 0, 0);
+        if fObjects.count > 0 then raise eKlausError.create(ercInaccurateCleanup, 0, 0);
       except
         on e: eKlausHalt do fExitCode := e.code;
         else begin fExitCode := -1; raise; end;
@@ -5841,13 +5843,7 @@ begin
   result := fFreeItems[fFreeCount];
 end;
 
-function tKlausObjects.get(h: tKlausObject; const at: tSrcPoint): pointer;
-begin
-  if not exists(h) then raise eKlausError.createFmt(ercInvalidKlausHandle, at, [h]);
-  result := fItems[h-1];
-end;
-
-function tKlausObjects.allocate(obj: pointer; const at: tSrcPoint): tKlausObject;
+function tKlausObjects.allocate(obj: tObject; const at: tSrcPoint): tKlausObject;
 begin
   assert(obj <> nil, 'Klaus handle cannot be allocated for a NIL object');
   if fFreeCount > 0 then begin
@@ -5860,7 +5856,7 @@ begin
   inc(fCount);
 end;
 
-function tKlausObjects.release(h: tKlausObject; const at: tSrcPoint): pointer;
+function tKlausObjects.release(h: tKlausObject; const at: tSrcPoint): tObject;
 begin
   result := get(h, at);
   fItems[h-1] := nil;
@@ -5870,9 +5866,22 @@ end;
 
 function tKlausObjects.exists(h: tKlausObject): boolean;
 begin
-  if h-1 >= fItems.count then exit(false);
+  if (h <= 0) or (h-1 >= fItems.count) then exit(false);
   if fItems[h-1] = nil then exit(false);
   result := true;
+end;
+
+function tKlausObjects.get(h: tKlausObject; const at: tSrcPoint): tObject;
+begin
+  if not exists(h) then raise eKlausError.createFmt(ercInvalidKlausHandle, at, [h]);
+  result := tObject(fItems[h-1]);
+end;
+
+procedure tKlausObjects.put(h: tKlausObject; obj: tObject; const at: tSrcPoint);
+begin
+  assert(obj <> nil, 'Klaus handle cannot be allocated for a NIL object');
+  if (h < 0) or (h-1 >= fItems.count) then raise eKlausError.createFmt(ercInvalidKlausHandle, at, [h]);
+  fItems[h-1] := obj;
 end;
 
 { tKlausVarValue }
