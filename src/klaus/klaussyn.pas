@@ -198,7 +198,7 @@ const
     def:   '#id [* "[" <expression> "]"]'),
 
     (name: 'assign_symbol';
-    def:   '(":=" | "+=" | "-=" | "*=" | "/=" | "\=" | "%=" | "^=")'),
+    def:   '(":=" | "+=" | "-=" | "*=" | "/=" | "\=" | "%=" | "^="  | "&=" | "|=" | "~=")'),
 
     (name: 'expression';
     def:   '<operand> [* <binary_operation> <operand>]'),
@@ -207,8 +207,8 @@ const
     def:   '("-" | "!")'),
 
     (name: 'binary_operation';
-    def:   '("+" | "++" | "-" | "*" | "/" | "\" | "%" | "^" | '+
-           '"=" | "<>" | ">" | "<" | ">=" | "<=" | "&&" | "||" | "~|")'),
+    def:   '("+" | "++" | "-" | "*" | "/" | "\" | "%" | "^" | "=" | "<>" | '+
+           '">" | "<" | ">=" | "<=" | "&&" | "||" | "~~" | "&" | "|" | "~")'),
 
     (name: 'operand';
     def:   '[<unary_operation>] (<literal> | <typecast> | <call> | <var_path> | <exists> | '+

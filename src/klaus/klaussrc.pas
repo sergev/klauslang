@@ -5218,7 +5218,7 @@ function tKlausRoutine.createExpression(aStmt: tKlausStatement; b: tKlausSyntaxB
       while stack.count > 0 do enqueue(pop);
       b.pause;
       result := build;
-      result.uop := aUop;
+      if aUop <> kuoInvalid then result.uop := aUop;
       result.point := aPoint;
     finally
       freeAndNil(stack);

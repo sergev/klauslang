@@ -116,7 +116,7 @@ const
   klausUnaryOperationName: array[tKlausUnaryOperation] of string = (
     'не определено', //kuoInvalid
     'минус',         //kuoMinus
-    'логическое НЕ'  //kuoNot
+    'отрицание'      //kuoNot
   );
 
 type
@@ -127,38 +127,41 @@ type
   // то их нужно добавлять именно в то место, где множество унарных операций пересекается
   // с множеством бинарных.
   tKlausBinaryOperation = (
-    kboInvalid, kboPlus, kboConcat, kboMulti, kboFDiv, kboIDiv, kboMod, kboPwr,
-    kboEq, kboNEq, kboLT, kboGT, kboLE, kboGE, kboAnd, kboOr, kboXor, kboMinus);
+    kboInvalid, kboPlus, kboConcat, kboMulti, kboFDiv, kboIDiv, kboMod, kboPwr, kboEq, kboNEq,
+    kboLT, kboGT, kboLE, kboGE, kboAnd, kboOr, kboXor, kboBitAnd, kboBitOr, kboBitXor, kboMinus);
   tKlausValidBinaryOperation = succ(kboInvalid)..high(tKlausBinaryOperation);
   tKlausBinOpSymbols = klsPlus..klsMinus;
 
 const
   // Символы бинарных операций
   klausSymToBinOp: array[tKlausBinOpSymbols] of tKlausValidBinaryOperation = (
-    kboPlus, kboConcat, kboMulti, kboFDiv, kboIDiv, kboMod, kboPwr,
-    kboEq, kboNEq, kboLT, kboGT, kboLE, kboGE, kboAnd, kboOr, kboXor, kboMinus);
+    kboPlus, kboConcat, kboMulti, kboFDiv, kboIDiv, kboMod, kboPwr, kboEq, kboNEq,
+    kboLT, kboGT, kboLE, kboGE, kboAnd, kboOr, kboXor, kboBitAnd, kboBitOr, kboBitXor, kboMinus);
 
 const
   // Приоритет бинарных операций
   klausBinOpPriority: array[tKlausBinaryOperation] of integer = (
     -1,  //kboInvalid
-    60,  //kboPlus
-    50,  //kboConcat
-    70,  //kboMulti
-    70,  //kboFDiv
-    70,  //kboIDiv
-    70,  //kboMod
-    80,  //kboPwr
-    40,  //kboEq
-    40,  //kboNEq
-    40,  //kboLT
-    40,  //kboGT
-    40,  //kboLE
-    40,  //kboGE
-    30,  //kboAnd
-    20,  //kboOr
-    20,  //kboXor
-    60   //kboMinus
+    70,  //kboPlus
+    40,  //kboConcat
+    80,  //kboMulti
+    80,  //kboFDiv
+    80,  //kboIDiv
+    80,  //kboMod
+    90,  //kboPwr
+    30,  //kboEq
+    30,  //kboNEq
+    30,  //kboLT
+    30,  //kboGT
+    30,  //kboLE
+    30,  //kboGE
+    20,  //kboAnd
+    10,  //kboOr
+    10,  //kboXor
+    60,  //kboBitAnd
+    50,  //kboBitOr
+    50,  //kboBitXor
+    70   //kboMinus
   );
 
 const
@@ -180,17 +183,21 @@ const
     'больше или равно',      //kboGE
     'логическое И',          //kboAnd
     'логическое ИЛИ',        //kboOr
-    'исключающее ИЛИ',       //kboXor
+    'логическое Искл. ИЛИ',  //kboXor
+    'побитовое И',           //kboBitAnd
+    'побитовое ИЛИ',         //kboBitOr
+    'побитовое Искл. ИЛИ',   //kboBitXor
     'вычитание'              //kboMinus
   );
 
 const
   // Символы инструкций присваивания
-  klausAssignSymbols = [klsAsgn..klsPwrAsgn];
+  klausAssignSymbols = [klsAsgn..klsXorAsgn];
 
   // Операции, выполняемые инструкциями присваивания
-  klausAsgnOp: array[klsAsgn..klsPwrAsgn] of tKlausBinaryOperation = (
-    kboInvalid, kboPlus, kboMinus, kboMulti, kboFDiv, kboIDiv, kboMod, kboPwr);
+  klausAsgnOp: array[klsAsgn..klsXorAsgn] of tKlausBinaryOperation = (
+    kboInvalid, kboPlus, kboMinus, kboMulti, kboFDiv, kboIDiv, kboMod, kboPwr,
+    kboBitAnd, kboBitOr, kboBitXor);
 
 type
   // Базовый класс унарной операции
@@ -399,7 +406,7 @@ type
   end;
 
 type
-  // Операция "И"
+  // Операция логическое "И"
   tKlausBinOpAnd = class(tKlausBinaryOperator)
     protected
       function getOp: tKlausBinaryOperation; override;
@@ -410,7 +417,7 @@ type
   end;
 
 type
-  // Операция "ИЛИ"
+  // Операция логическое "ИЛИ"
   tKlausBinOpOr = class(tKlausBinaryOperator)
     protected
       function getOp: tKlausBinaryOperation; override;
@@ -421,8 +428,41 @@ type
   end;
 
 type
-  // Операция "исключающее ИЛИ"
+  // Операция логическое "исключающее ИЛИ"
   tKlausBinOpXor = class(tKlausBinaryOperator)
+    protected
+      function getOp: tKlausBinaryOperation; override;
+    public
+      function defined(dtl, dtr: tKlausDataType): boolean; override;
+      function resultType(dtl, dtr: tKlausDataType; const at: tSrcPoint): tKlausDataType; override;
+      function evaluate(const vl, vr: tKlausSimpleValue; const at: tSrcPoint): tKlausSimpleValue; override;
+  end;
+
+type
+  // Операция побитовое "И"
+  tKlausBinOpBitAnd = class(tKlausBinaryOperator)
+    protected
+      function getOp: tKlausBinaryOperation; override;
+    public
+      function defined(dtl, dtr: tKlausDataType): boolean; override;
+      function resultType(dtl, dtr: tKlausDataType; const at: tSrcPoint): tKlausDataType; override;
+      function evaluate(const vl, vr: tKlausSimpleValue; const at: tSrcPoint): tKlausSimpleValue; override;
+  end;
+
+type
+  // Операция побитовое "ИЛИ"
+  tKlausBinOpBitOr = class(tKlausBinaryOperator)
+    protected
+      function getOp: tKlausBinaryOperation; override;
+    public
+      function defined(dtl, dtr: tKlausDataType): boolean; override;
+      function resultType(dtl, dtr: tKlausDataType; const at: tSrcPoint): tKlausDataType; override;
+      function evaluate(const vl, vr: tKlausSimpleValue; const at: tSrcPoint): tKlausSimpleValue; override;
+  end;
+
+type
+  // Операция побитовое "исключающее ИЛИ"
+  tKlausBinOpBitXor = class(tKlausBinaryOperator)
     protected
       function getOp: tKlausBinaryOperation; override;
     public
@@ -784,7 +824,7 @@ end;
 
 function tKlausUnOpNot.defined(dt: tKlausDataType): boolean;
 begin
-  result := dt = kdtBoolean;
+  result := dt in [kdtInteger, kdtBoolean];
 end;
 
 function tKlausUnOpNot.resultType(dt: tKlausDataType; const at: tSrcPoint): tKlausDataType;
@@ -796,7 +836,10 @@ end;
 function tKlausUnOpNot.evaluate(const v: tKlausSimpleValue; const at: tSrcPoint): tKlausSimpleValue;
 begin
   result.dataType := resultType(v.dataType, at);
-  result.bValue := not v.bValue;
+  case result.dataType of
+    kdtInteger: result.iValue := not v.iValue;
+    kdtBoolean: result.bValue := not v.bValue;
+  end;
 end;
 
 { tKlausUnaryOperator }
@@ -1212,6 +1255,78 @@ begin
   result.bValue := vl.bValue xor vr.bValue;
 end;
 
+{ tKlausBinOpBitAnd }
+
+function tKlausBinOpBitAnd.getOp: tKlausBinaryOperation;
+begin
+  result := kboBitAnd;
+end;
+
+function tKlausBinOpBitAnd.defined(dtl, dtr: tKlausDataType): boolean;
+begin
+  result := (dtl = kdtInteger) and (dtr = kdtInteger);
+end;
+
+function tKlausBinOpBitAnd.resultType(dtl, dtr: tKlausDataType; const at: tSrcPoint): tKlausDataType;
+begin
+  checkDefined(dtl, dtr, at);
+  result := kdtInteger;
+end;
+
+function tKlausBinOpBitAnd.evaluate(const vl, vr: tKlausSimpleValue; const at: tSrcPoint): tKlausSimpleValue;
+begin
+  result.dataType := resultType(vl.dataType, vr.dataType, at);
+  result.iValue := vl.iValue and vr.iValue;
+end;
+
+{ tKlausBinOpBitOr }
+
+function tKlausBinOpBitOr.getOp: tKlausBinaryOperation;
+begin
+  result := kboBitOr;
+end;
+
+function tKlausBinOpBitOr.defined(dtl, dtr: tKlausDataType): boolean;
+begin
+  result := (dtl = kdtInteger) and (dtr = kdtInteger);
+end;
+
+function tKlausBinOpBitOr.resultType(dtl, dtr: tKlausDataType; const at: tSrcPoint): tKlausDataType;
+begin
+  checkDefined(dtl, dtr, at);
+  result := kdtInteger;
+end;
+
+function tKlausBinOpBitOr.evaluate(const vl, vr: tKlausSimpleValue; const at: tSrcPoint): tKlausSimpleValue;
+begin
+  result.dataType := resultType(vl.dataType, vr.dataType, at);
+  result.iValue := vl.iValue or vr.iValue;
+end;
+
+{ tKlausBinOpBitXor }
+
+function tKlausBinOpBitXor.getOp: tKlausBinaryOperation;
+begin
+  result := kboBitXor;
+end;
+
+function tKlausBinOpBitXor.defined(dtl, dtr: tKlausDataType): boolean;
+begin
+  result := (dtl = kdtInteger) and (dtr = kdtInteger);
+end;
+
+function tKlausBinOpBitXor.resultType(dtl, dtr: tKlausDataType; const at: tSrcPoint): tKlausDataType;
+begin
+  checkDefined(dtl, dtr, at);
+  result := kdtInteger;
+end;
+
+function tKlausBinOpBitXor.evaluate(const vl, vr: tKlausSimpleValue; const at: tSrcPoint): tKlausSimpleValue;
+begin
+  result.dataType := resultType(vl.dataType, vr.dataType, at);
+  result.iValue := vl.iValue xor vr.iValue;
+end;
+
 { initialization }
 
 var
@@ -1241,6 +1356,9 @@ initialization
   klausBinOp[kboAnd] := tKlausBinOpAnd.create;
   klausBinOp[kboOr] := tKlausBinOpOr.create;
   klausBinOp[kboXor] := tKlausBinOpXor.create;
+  klausBinOp[kboBitAnd] := tKlausBinOpBitAnd.create;
+  klausBinOp[kboBitOr] := tKlausBinOpBitOr.create;
+  klausBinOp[kboBitXor] := tKlausBinOpBitXor.create;
   klausBinOp[kboMinus] := tKlausBinOpMinus.create;
 finalization
   for uop := low(uop) to high(uop) do freeAndNil(klausUnOp[uop]);

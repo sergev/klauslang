@@ -188,6 +188,9 @@ type
     klsAnd,       // логическое "и"
     klsOr,        // логическое "или"
     klsXor,       // логическое "исключающее или"
+    klsBitAnd,    // побитовое "и"
+    klsBitOr,     // побитовое "или"
+    klsBitXor,    // побитовое "исключающее или"
     klsMinus,     // унарный минус, вычитание
     klsNot,       // логическое отрицание
     klsAsgn,      // присвоить
@@ -198,6 +201,9 @@ type
     klsIDivAsgn,  // разделить (целочисленное деление) и присвоить
     klsModAsgn,   // присвоить остаток от целочисленного деления
     klsPwrAsgn,   // возвести в степень и присвоить
+    klsAndAsgn,   // вычислить И и присвоить
+    klsOrAsgn,    // вычислить ИЛИ и присвоить
+    klsXorAsgn,   // вычислить Искл.ИЛИ и присвоить
     klsComma,     // разделитель списка имён
     klsDot,       // обращение к полю структуры, конец программы
     klsColon,     // квалификатор определения
@@ -470,7 +476,6 @@ const
     (s: '^';  k: klsPwr),
     (s: '=';  k: klsEq),
     (s: '<>'; k: klsNEq),
-    (s: '!='; k: klsNEq),
     (s: '<';  k: klsLT),
     (s: '>';  k: klsGT),
     (s: '<='; k: klsLE),
@@ -479,7 +484,10 @@ const
     (s: '!'; k: klsNot),
     (s: '&&'; k: klsAnd),
     (s: '||'; k: klsOr),
-    (s: '~|'; k: klsXor),
+    (s: '~~'; k: klsXor),
+    (s: '&'; k: klsBitAnd),
+    (s: '|'; k: klsBitOr),
+    (s: '~'; k: klsBitXor),
     (s: ':='; k: klsAsgn),
     (s: '+='; k: klsAddAsgn),
     (s: '-='; k: klsSubAsgn),
@@ -488,6 +496,9 @@ const
     (s: '\='; k: klsIDivAsgn),
     (s: '%='; k: klsModAsgn),
     (s: '^='; k: klsPwrAsgn),
+    (s: '&='; k: klsAndAsgn),
+    (s: '|='; k: klsOrAsgn),
+    (s: '~='; k: klsXorAsgn),
     (s: ',';  k: klsComma),
     (s: '.';  k: klsDot),
     (s: ':';  k: klsColon),
