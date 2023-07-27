@@ -27,6 +27,11 @@ unit KlausUnitSystem;
 
 //todo: загл(), строч()
 
+//todo: файлСоздатьВрм()
+//todo: файлСвойства()
+
+//todo: константы режимов терминала и стилей шрифта
+
 {$mode ObjFPC}{$H+}
 {$i ../lib/klaus.inc}
 
