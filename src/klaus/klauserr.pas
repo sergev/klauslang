@@ -117,6 +117,7 @@ const
   ercValueCannotBeRead      = 67;
   ercInvalidFileType        = 68;
   ercUnexpectedObjectClass  = 69;
+  ercIllegalExpression      = 70;
 
 const
   // Классификация кодов eKlausError для трансляции в исключения языка
@@ -151,7 +152,7 @@ const
     ercIllegalFieldQualifier, ercCannotReturnValue, ercConstAsgnTarget, ercSubroutineRequired,
     ercMustReturnValue, ercWrongNumberOfParams, ercInvalidOutputParam, ercExceptionRequired,
     ercExceptBlockOnly, ercMixedExceptBlock, ercExceptAnyMustBeLast, ercExceptAlreadyHandled,
-    ercDuplicateCaseLabel],
+    ercDuplicateCaseLabel, ercIllegalExpression],
 
     //ksxInvalidChar
     [ercInvalidCharAtIndex, ercInvalidStringIndex],
@@ -267,6 +268,7 @@ resourcestring
   errValueCannotBeRead = 'Значение этого типа не может быть прочитано: %s.';
   errInvalidFileType = 'Неверный тип файла: %d.';
   errUnexpectedObjectClass = 'Неожиданный класс объекта. Требуется %s, передано %s.';
+  errIllegalExpression = 'Недопустимая конструкция.';
 
 { Globals }
 
@@ -368,6 +370,7 @@ begin
     ercValueCannotBeRead: result := errValueCannotBeRead;
     ercInvalidFileType: result := errInvalidFileType;
     ercUnexpectedObjectClass: result := errUnexpectedObjectClass;
+    ercIllegalExpression: result := errIllegalExpression;
   end;
 end;
 

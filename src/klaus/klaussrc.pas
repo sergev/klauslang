@@ -21,13 +21,8 @@ unit KlausSrc;
 
 //todo: пасхалка: три подряд инструкции `ничего` выводят в консоль текст из песни Бумбараша
 
-//todo: добавить конструкцию [`от` <expression>] в цикл для-каждого
-
 //todo: Кроме точки в тексте, исключения должны знать модуль, из которого они прилетели
 //todo: Добавить в VarPath возможность ссылки на модуль
-
-//todo: Тип данных `объект` -- т.е., handle: для файлов, окон, сетевых соединений и пр.
-//todo: Не открыть ли файлы для объектов 0, 1, 2?
 
 //todo: тип данных `данные` -- строка с произвольным содержимым
 //todo: Типы данных `любое` и `тип`, операция `есть`, функции тип(Икс) и новый(Т)
@@ -1116,11 +1111,13 @@ type
     private
       fKey: tKlausVarDecl;
       fDict: tKlausVarPath;
+      fStart: tKlausExpression;
       fReverse: boolean;
       fBody: tKlausStatement;
     public
       property key: tKlausVarDecl read fKey;
       property dict: tKlausVarPath read fDict;
+      property start: tKlausExpression read fStart;
       property reverse: boolean read fReverse;
       property body: tKlausStatement read fBody;
 
@@ -1291,6 +1288,7 @@ type
       destructor  destroy; override;
       procedure clear; override;
       function  has(const key: tKlausSimpleValue; const at: tSrcPoint): boolean;
+      function  findKey(const key: tKlausSimpleValue; out idx: integer): boolean;
       function  getKeyAt(idx: integer; const at: tSrcPoint): tKlausSimpleValue;
       function  getElmt(const key: tKlausSimpleValue; const at: tSrcPoint; mode: tKlausVarPathMode = vpmEvaluate): tKlausVarValue;
       function  getElmtAt(idx: integer; const at: tSrcPoint): tKlausVarValue;
@@ -1752,7 +1750,7 @@ end;
 function tKlausMap.find(const aKey: tKlausSimpleValue; out index: integer): boolean;
 begin
   assert(fKeyType = aKey.dataType, 'Key type mismatch in a tKlausMap');
-  result := inherited Find(@aKey, index);
+  result := inherited find(@aKey, index);
 end;
 
 function tKlausMap.tryGetData(const aKey: tKlausSimpleValue; out aData: tObject): boolean;
@@ -3282,10 +3280,10 @@ begin
     if v.value.dataType.dataType <> kdtInteger then raise eKlausError.create(ercInvalidLoopCounter, counter.point.line, counter.point.pos);
     cntr := v.value as tKlausVarValueSimple;
     sv := start.evaluate(frame);
-    if sv.dataType <> kdtInteger then raise eKlausError.create(ercTypeMismatch, start.point.line, start.point.pos);
+    if sv.dataType <> kdtInteger then raise eKlausError.create(ercTypeMismatch, start.point);
     strt := sv.iValue;
     sv := finish.evaluate(frame);
-    if sv.dataType <> kdtInteger then raise eKlausError.create(ercTypeMismatch, finish.point.line, finish.point.pos);
+    if sv.dataType <> kdtInteger then raise eKlausError.create(ercTypeMismatch, finish.point);
     fnsh := sv.iValue;
     try
       if reverse then begin
@@ -3344,14 +3342,23 @@ begin
   if pdt is tKlausTypeDefArray then kdt := kdtInteger
   else if pdt is tKlausTypeDefDict then kdt := (pdt as tKlausTypeDefDict).keyType
   else if pdt is tKlausTypeDefSimple then begin
-    if (pdt as tKlausTypeDefSimple).simpleType <> kdtString then raise eKlausError.create(ercInvalidForEachType, p2.line, p2.pos);
+    if (pdt as tKlausTypeDefSimple).simpleType <> kdtString then raise eKlausError.create(ercInvalidForEachType, p2);
     kdt := kdtInteger;
   end else
     raise eKlausError.create(ercInvalidForEachType, p2.line, p2.pos);
-  if (decl as tKlausVarDecl).dataType.dataType <> kdt then raise eKlausError.createFmt(ercForEachKeyTypeMismatch, p1.line, p1.pos, [klausDataTypeCaption[kdt]]);
+  if (decl as tKlausVarDecl).dataType.dataType <> kdt then raise eKlausError.createFmt(ercForEachKeyTypeMismatch, p1, [klausDataTypeCaption[kdt]]);
   fKey := decl as tKlausVarDecl;
   fDict := path;
   b.next;
+  if b.check(kkwdFrom, false) then begin
+    if pdt is tKlausTypeDefSimple then raise eKlauserror.create(ercIllegalExpression, b.lex.line, b.lex.pos);
+    b.next;
+    b.check('expression');
+    fStart := routine.createExpression(self, b);
+    if fStart.resultType <> kdt then raise eKlausError.create(ercTypeMismatch, fStart.point);
+    b.next;
+  end else
+    fStart := nil;
   if b.check(kkwdReverse, false) then begin
     fReverse := true;
     b.next;
@@ -3367,6 +3374,7 @@ destructor tKlausStmtForEach.destroy;
 begin
   freeAndNil(fDict);
   freeAndNil(fBody);
+  freeAndNil(fStart);
   inherited destroy;
 end;
 
@@ -3377,7 +3385,8 @@ var
   dv: tKlausVarValue;
   dvkt: tKlausSimpleType;
   sv: tKlausSimpleValue;
-  i, len: integer;
+  i, len, strt: integer;
+  found: boolean;
   s: string;
   p: pChar;
 begin
@@ -3390,9 +3399,17 @@ begin
     if dv is tKlausVarValueArray then begin
       if kv.dataType.dataType <> kdtInteger then raise eKlausError.createFmt(ercForEachKeyTypeMismatch, key.point.line, key.point.pos, [klausDataTypeCaption[kdtInteger]]);
       len := (dv as tKlausVarValueArray).count;
+      if start = nil then begin
+        if reverse then strt := len-1
+        else strt := 0;
+      end else begin
+        sv := start.evaluate(frame);
+        if sv.dataType <> kdtInteger then raise eKlausError.create(ercTypeMismatch, start.point);
+        strt := sv.iValue;
+      end;
       try
         if reverse then begin
-          for i := len-1 downto 0 do try
+          for i := strt downto 0 do try
             kv.setSimple(klausSimple(i), key.point);
             body.run(frame);
           except
@@ -3400,7 +3417,7 @@ begin
             else raise;
           end
         end else begin
-          for i := 0 to len-1 do try
+          for i := strt to len-1 do try
             kv.setSimple(klausSimple(i), key.point);
             body.run(frame);
           except
@@ -3416,9 +3433,18 @@ begin
       dvkt := (dv.dataType as tKlausTypeDefDict).keyType;
       if kv.dataType.dataType <> dvkt then raise eKlausError.createFmt(ercForEachKeyTypeMismatch, key.point.line, key.point.pos, [klausDataTypeCaption[dvkt]]);
       len := (dv as tKlausVarValueDict).count;
+      if start = nil then begin
+        if reverse then strt := len-1
+        else strt := 0;
+      end else begin
+        sv := start.evaluate(frame);
+        if sv.dataType <> dvkt then raise eKlausError.create(ercTypeMismatch, start.point);
+        found := (dv as tKlausVarValueDict).findKey(sv, strt);
+        if not found and reverse then dec(strt);
+      end;
       try
         if reverse then begin
-          for i := len-1 downto 0 do try
+          for i := strt downto 0 do try
             sv := (dv as tKlausVarValueDict).getKeyAt(i, dict.point);
             kv.setSimple(sv, key.point);
             body.run(frame);
@@ -3427,7 +3453,7 @@ begin
             else raise;
           end
         end else begin
-          for i := 0 to len-1 do try
+          for i := strt to len-1 do try
             sv := (dv as tKlausVarValueDict).getKeyAt(i, dict.point);
             kv.setSimple(sv, key.point);
             body.run(frame);
@@ -6169,6 +6195,11 @@ function tKlausVarValueDict.has(const key: tKlausSimpleValue; const at: tSrcPoin
 begin
   checkKeyType(key, at);
   result := fMap.indexOf(key) >= 0;
+end;
+
+function tKlausVarValueDict.findKey(const key: tKlausSimpleValue; out idx: integer): boolean;
+begin
+  result := fMap.find(key, idx);
 end;
 
 function tKlausVarValueDict.getElmt(const key: tKlausSimpleValue; const at: tSrcPoint; mode: tKlausVarPathMode): tKlausVarValue;

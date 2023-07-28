@@ -245,7 +245,7 @@ const
     def:   '`для` >>#id `от` <expression> `до` <expression> [`обратный`] `цикл` <statement>'),
 
     (name: 'for_each';
-    def:   '`для` >>`каждого` #id `из` <var_path> [`обратный`] `цикл` <statement>'),
+    def:   '`для` >>`каждого` #id `из` <var_path> [`от` <expression>] [`обратный`] `цикл` <statement>'),
 
     (name: 'while';
     def:   '`пока` <expression> `цикл` <statement>'),
