@@ -19,14 +19,6 @@ KlausLang — свободное программное обеспечение: 
 
 unit KlausUnitSystem;
 
-//todo: дата() и время() -- передавать необязательный параметр
-
-//todo: диапазон() для массивов и словарей
-//todo: найти() -- поиск подстроки в словаре со строковым ключом
-//todo: макс() и мин() значения ключа для словарей
-
-//todo: загл(), строч()
-
 {$mode ObjFPC}{$H+}
 {$i ../lib/klaus.inc}
 
@@ -53,6 +45,7 @@ const
 
 
 const
+  klausSysProcName_Destroy = 'уничтожить';
   klausSysProcName_ReadLn = 'ввести';
   klausSysProcName_Write = 'вывести';
   klausSysProcName_Report = 'сообщить';
@@ -73,6 +66,8 @@ const
   klausSysProcName_Find = 'найти';
   klausSysProcName_Replace = 'заменить';
   klausSysProcName_Format = 'формат';
+  klausSysProcName_Upper = 'загл';
+  klausSysProcName_Lower = 'строч';
   klausSysProcName_IsNaN = 'нечисло';
   klausSysProcName_IsFinite = 'конечно';
   klausSysProcName_Round = 'округл';
@@ -111,6 +106,19 @@ const
   klausSysProcName_FilePos = 'файлПоз';
   klausSysProcName_FileRead = 'файлПрочесть';
   klausSysProcName_FileWrite = 'файлЗаписать';
+  klausSysProcName_FileExists = 'файлЕсть';
+  klausSysProcName_FileDirExists = 'файлЕстьКат';
+  klausSysProcName_FileTempDir = 'файлВрмКат';
+  klausSysProcName_FileTempName = 'файлВрмИмя';
+  klausSysProcName_FileExpandName = 'файлПолныйПуть';
+  klausSysProcName_FileProgName = 'файлВыполняемый';
+  klausSysProcName_FileHomeDir = 'файлДомКат';
+  klausSysProcName_FileGetAttrs = 'файлАтрибуты';
+  klausSysProcName_FileGetAge = 'файлВозраст';
+  klausSysProcName_FileRename = 'файлПереместить';
+  klausSysProcName_FileDelete = 'файлУдалить';
+  klausSysProcName_FileFindFirst = 'файлПервый';
+  klausSysProcName_FileFindNext = 'файлСледующий';
 
 const
   klausConstNameNewline = 'НС';
@@ -131,6 +139,21 @@ const
   klausConstFilePosFromBeginning = 'фпОтНачала';
   klausConstFilePosFromEnd = 'фпОтКонца';
   klausConstFilePosFromCurrent = 'фпОтносительно';
+  klausConstFileAttrReadOnly = 'фаТолькоЧтение';
+  klausConstFileAttrHidden = 'фаСкрытый';
+  klausConstFileAttrSystem = 'фаСистемный';
+  klausConstFileAttrVolumeID = 'фаМеткаТома';
+  klausConstFileAttrDirectory = 'фаКаталог';
+  klausConstFileAttrArchive = 'фаАрхивный';
+  klausConstFileAttrNormal = 'фаНормальный';
+  klausConstFileAttrTemporary = 'фаВременный';
+  klausConstFileAttrSymLink = 'фаСимвСсылка';
+  klausConstFileAttrCompressed = 'фаСжатый';
+  klausConstFileAttrEncrypted = 'фаШифрованный';
+  klausConstFileAttrVirtual = 'фаВиртуальный';
+
+const
+  klausTypeNameFileInfo = 'тФайлИнфо';
 
 const
   klausVarNameCmdLineParams = '$cmdLineParams';
@@ -153,6 +176,7 @@ type
 
       procedure setArgs(val: tStrings);
       procedure createStdExceptions;
+      procedure createSystemTypes;
       procedure createSystemVariables;
       procedure createSystemRoutines;
     protected
@@ -172,6 +196,7 @@ type
   // часто используемые исключения и пр.
   tKlausSysProcDecl = class(tKlausInternalProcDecl)
     protected
+      function  findTypeDef(const typeName: string): tKlausTypeDef;
       procedure errWrongParamCount(given, min, max: integer; const at: tSrcPoint);
       procedure errTypeMismatch(const at: tSrcPoint);
       procedure checkCanAssign(dst: tKlausSimpleType; src: tKlausTypeDef; const at: tSrcPoint; strict: boolean = false);
@@ -310,6 +335,7 @@ begin
   fFileName := '';
   fArgs := tStringList.create;
   createStdExceptions;
+  createSystemTypes;
   createSystemVariables;
   createSystemRoutines;
 end;
@@ -333,6 +359,19 @@ begin
   fStdErrors[ksxRuntimeError] := tKlausExceptDecl.create(self, klausExceptionName_RuntimeError, zeroSrcPt, strRuntimeError);
   fStdErrors[ksxBadNumber] := tKlausExceptDecl.create(self, klausExceptionName_NotANumber, zeroSrcPt, strRuntimeError);
   fStdErrors[ksxInternalError] := tKlausExceptDecl.create(self, klausExceptionName_InternalError, zeroSrcPt, strInternalError);
+end;
+
+procedure tKlausUnitSystem.createSystemTypes;
+var
+  def: tKlausTypeDefStruct;
+begin
+  // тФайлИнфо
+  def := tKlausTypeDefStruct.create(source, zeroSrcPt);
+  tKlausStructMember.create(def, 'имя', zeroSrcPt, source.simpleTypes[kdtString]);
+  tKlausStructMember.create(def, 'размер', zeroSrcPt, source.simpleTypes[kdtInteger]);
+  tKlausStructMember.create(def, 'атрибуты', zeroSrcPt, source.simpleTypes[kdtInteger]);
+  tKlausStructMember.create(def, 'возраст', zeroSrcPt, source.simpleTypes[kdtMoment]);
+  tKlausTypeDecl.create(self, klausTypeNameFileInfo, zeroSrcPt, def);
 end;
 
 procedure tKlausUnitSystem.createSystemVariables;
@@ -361,6 +400,20 @@ begin
   tKlausConstDecl.create(self, klausConstFilePosFromBeginning, zeroSrcPt, klausSimple(klausFilePosFromBeginning));
   tKlausConstDecl.create(self, klausConstFilePosFromEnd, zeroSrcPt, klausSimple(klausFilePosFromEnd));
   tKlausConstDecl.create(self, klausConstFilePosFromCurrent, zeroSrcPt, klausSimple(klausFilePosFromCurrent));
+  tKlausConstDecl.create(self, klausConstFileAttrReadOnly, zeroSrcPt, klausSimple(tKlausInteger(faReadOnly)));
+  {$push}{$warnings off}
+  tKlausConstDecl.create(self, klausConstFileAttrHidden, zeroSrcPt, klausSimple(tKlausInteger(faHidden)));
+  tKlausConstDecl.create(self, klausConstFileAttrSystem, zeroSrcPt, klausSimple(tKlausInteger(faSysFile)));
+  tKlausConstDecl.create(self, klausConstFileAttrVolumeID, zeroSrcPt, klausSimple(tKlausInteger(faVolumeID)));
+  tKlausConstDecl.create(self, klausConstFileAttrDirectory, zeroSrcPt, klausSimple(tKlausInteger(faDirectory)));
+  tKlausConstDecl.create(self, klausConstFileAttrArchive, zeroSrcPt, klausSimple(tKlausInteger(faArchive)));
+  tKlausConstDecl.create(self, klausConstFileAttrNormal, zeroSrcPt, klausSimple(tKlausInteger(faNormal)));
+  tKlausConstDecl.create(self, klausConstFileAttrTemporary, zeroSrcPt, klausSimple(tKlausInteger(faTemporary)));
+  tKlausConstDecl.create(self, klausConstFileAttrSymLink, zeroSrcPt, klausSimple(tKlausInteger(faSymLink)));
+  tKlausConstDecl.create(self, klausConstFileAttrCompressed, zeroSrcPt, klausSimple(tKlausInteger(faCompressed)));
+  tKlausConstDecl.create(self, klausConstFileAttrEncrypted, zeroSrcPt, klausSimple(tKlausInteger(faEncrypted)));
+  tKlausConstDecl.create(self, klausConstFileAttrVirtual, zeroSrcPt, klausSimple(tKlausInteger(faVirtual)));
+  {$pop}
   // имя исполняемого файла
   tKlausVarDecl.create(self, klausVarNameExecFilename, zeroSrcPt, dtString, klausZeroValue(kdtString));
   // аргументы командной строки
@@ -369,6 +422,7 @@ end;
 
 procedure tKlausUnitSystem.createSystemRoutines;
 begin
+  tKlausSysProc_Destroy.create(self, zeroSrcPt);
   tKlausSysProc_ReadLn.create(self, zeroSrcPt);
   tKlausSysProc_Write.create(self, zeroSrcPt);
   tKlausSysProc_Report.create(self, zeroSrcPt);
@@ -389,6 +443,8 @@ begin
   tKlausSysProc_Find.create(self, zeroSrcPt);
   tKlausSysProc_Replace.create(self, zeroSrcPt);
   tKlausSysProc_Format.create(self, zeroSrcPt);
+  tKlausSysProc_Upper.create(self, zeroSrcPt);
+  tKlausSysProc_Lower.create(self, zeroSrcPt);
   tKlausSysProc_IsNaN.create(self, zeroSrcPt);
   tKlausSysProc_IsFinite.create(self, zeroSrcPt);
   tKlausSysProc_Round.create(self, zeroSrcPt);
@@ -426,6 +482,19 @@ begin
   tKlausSysProc_FileWrite.create(self, zeroSrcPt);
   tKlausSysProc_FileRead.create(self, zeroSrcPt);
   tKlausSysProc_FilePos.create(self, zeroSrcPt);
+  tKlausSysProc_FileExists.create(self, zeroSrcPt);
+  tKlausSysProc_FileDirExists.create(self, zeroSrcPt);
+  tKlausSysProc_FileTempDir.create(self, zeroSrcPt);
+  tKlausSysProc_FileTempName.create(self, zeroSrcPt);
+  tKlausSysProc_FileExpandName.create(self, zeroSrcPt);
+  tKlausSysProc_FileProgName.create(self, zeroSrcPt);
+  tKlausSysProc_FileHomeDir.create(self, zeroSrcPt);
+  tKlausSysProc_FileGetAttrs.create(self, zeroSrcPt);
+  tKlausSysProc_FileGetAge.create(self, zeroSrcPt);
+  tKlausSysProc_FileRename.create(self, zeroSrcPt);
+  tKlausSysProc_FileDelete.create(self, zeroSrcPt);
+  tKlausSysProc_FileFindFirst.create(self, zeroSrcPt);
+  tKlausSysProc_FileFindNext.create(self, zeroSrcPt);
 end;
 
 procedure tKlausUnitSystem.setArgs(val: tStrings);
@@ -470,6 +539,11 @@ procedure tKlausSysProcDecl.returnSimple(frame: tKlausStackFrame; rslt: tKlausSi
 begin
   assert(retValue <> nil, 'Internal procedure cannot return a value');
   (frame.varByDecl(retValue, point).value as tKlausVarValueSimple).setSimple(rslt, point);
+end;
+
+function tKlausSysProcDecl.findTypeDef(const typeName: string): tKlausTypeDef;
+begin
+  result := (find(typeName, knsGlobal) as tKlausTypeDecl).dataType;
 end;
 
 procedure tKlausSysProcDecl.errWrongParamCount(given, min, max: integer; const at: tSrcPoint);

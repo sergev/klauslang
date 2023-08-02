@@ -523,6 +523,7 @@ type
       property dataType: tKlausTypeDef read fDataType;
 
       constructor create(aOwner: tKlausRoutine; aName: string; aPoint: tSrcPoint; b: tKlausSyntaxBrowser);
+      constructor create(aOwner: tKlausRoutine; aName: string; aPoint: tSrcPoint; def: tKlausTypeDef);
   end;
 
 type
@@ -4444,6 +4445,12 @@ begin
   fDataType := owner.createDataType(b);
 end;
 
+constructor tKlausTypeDecl.create(aOwner: tKlausRoutine; aName: string; aPoint: tSrcPoint; def: tKlausTypeDef);
+begin
+  inherited create(aOwner, aName, aPoint);
+  fDataType := def;
+end;
+
 { tKlausDecl }
 
 constructor tKlausDecl.create(aOwner: tKlausRoutine; aName: string; aPoint: tSrcPoint);
@@ -4752,6 +4759,7 @@ begin
     b.next;
     b.check(klsParOpen);
     b.next;
+    if b.check(kkwdInput, false) then b.next;
     p := srcPoint(b.lex);
     arg := b.get(klxID);
     b.next;
@@ -6342,7 +6350,7 @@ end;
 function tKlausVarValueStruct.getMember(const name: string; const at: tSrcPoint): tKlausVarValue;
 begin
   result := findMember(name);
-  if result = nil then raise eKlausError.createFmt(ercStructMemberNotFound, at.line, at.pos, [name]);
+  if result = nil then raise eKlausError.createFmt(ercStructMemberNotFound, at, [name]);
 end;
 
 procedure tKlausVarValueStruct.clear;

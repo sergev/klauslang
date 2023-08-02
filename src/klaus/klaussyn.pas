@@ -99,7 +99,7 @@ const
     def:   '`программа` #id [<program_params>] ";" <routine> "."'), // uses'),
 
     (name: 'program_params';
-    def:   '"(" #id ":" `массив` `строк` ")"'),
+    def:   '"(" [`вх`] #id ":" `массив` `строк` ")"'),
 
     // (name: 'uses';
     // def:   '`используется` #id [* "," #id] ";"'),
