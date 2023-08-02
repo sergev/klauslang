@@ -27,6 +27,16 @@ uses
   Classes, SysUtils, U8, KlausErr, KlausLex, KlausDef, KlausSyn, KlausSrc, KlausUnitSystem;
 
 type
+  // процедура уничтожить(вв о: объект);
+  tKlausSysProc_Destroy = class(tKlausSysProcDecl)
+    private
+      fObj: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
   // функция прочесть(вых арг0, арг1, арг2, ...): целое;
   tKlausSysProc_ReadLn = class(tKlausSysProcDecl)
     private
@@ -73,18 +83,26 @@ type
 
 type
   // функция дата: момент;
+  // функция дата(м: момент): момент;
   tKlausSysProc_Date = class(tKlausSysProcDecl)
     public
       constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
-      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+      function  isCustomParamHandler: boolean; override;
+      procedure checkCallParamTypes(expr: array of tKlausExpression; at: tSrcPoint); override;
+      procedure getCustomParamModes(types: array of tKlausTypeDef; out modes: tKlausProcParamModes; const at: tSrcPoint); override;
+      procedure customRun(frame: tKlausStackFrame; values: array of tKlausVarValueAt; const at: tSrcPoint); override;
   end;
 
 type
   // функция время: момент;
+  // функция время(м: момент): момент;
   tKlausSysProc_Time = class(tKlausSysProcDecl)
     public
       constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
-      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+      function  isCustomParamHandler: boolean; override;
+      procedure checkCallParamTypes(expr: array of tKlausExpression; at: tSrcPoint); override;
+      procedure getCustomParamModes(types: array of tKlausTypeDef; out modes: tKlausProcParamModes; const at: tSrcPoint); override;
+      procedure customRun(frame: tKlausStackFrame; values: array of tKlausVarValueAt; const at: tSrcPoint); override;
   end;
 
 type
@@ -279,6 +297,26 @@ type
       procedure checkCallParamTypes(expr: array of tKlausExpression; at: tSrcPoint); override;
       procedure getCustomParamModes(types: array of tKlausTypeDef; out modes: tKlausProcParamModes; const at: tSrcPoint); override;
       procedure customRun(frame: tKlausStackFrame; values: array of tKlausVarValueAt; const at: tSrcPoint); override;
+  end;
+
+type
+  // функция загл(вх ст: строка): строка;
+  tKlausSysProc_Upper = class(tKlausSysProcDecl)
+    private
+      fStr: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  // функция строч(вх ст: строка): строка;
+  tKlausSysProc_Lower = class(tKlausSysProcDecl)
+    private
+      fStr: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
   end;
 
 type
@@ -551,7 +589,7 @@ type
   // процедура стильШрифта(вх стиль: целое);
   tKlausSysProc_FontStyle = class(tKlausSysTermProc)
     private
-      fStyle: tKlausProcParam; // 1 = bold, 2 = italic, 4 = underline, 8 = strikeout
+      fStyle: tKlausProcParam;
     public
       constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
       procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
@@ -677,6 +715,152 @@ type
       procedure customRun(frame: tKlausStackFrame; values: array of tKlausVarValueAt; const at: tSrcPoint); override;
   end;
 
+type
+  // функция файлЕсть(вх имя: строка): логическое;
+  tKlausSysProc_FileExists = class(tKlausSysProcDecl)
+    private
+      fName: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  // функция файлЕстьКат(вх имя: строка): логическое;
+  tKlausSysProc_FileDirExists = class(tKlausSysProcDecl)
+    private
+      fName: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  // функция файлВрмКат(вх общий: логическое): строка;
+  tKlausSysProc_FileTempDir = class(tKlausSysProcDecl)
+    private
+      fGlobal: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  // функция файлВрмИмя(вх общий: логическое; вх префикс: строка): строка;
+  tKlausSysProc_FileTempName = class(tKlausSysProcDecl)
+    private
+      fGlobal: tKlausProcParam;
+      fPrefix: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  // функция файлПолныйПуть(вх путь: строка): строка;
+  tKlausSysProc_FileExpandName = class(tKlausSysProcDecl)
+    private
+      fName: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  // функция файлПрограммы(): строка;
+  tKlausSysProc_FileProgName = class(tKlausSysProcDecl)
+    private
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  // функция файлДомКат(): строка;
+  tKlausSysProc_FileHomeDir = class(tKlausSysProcDecl)
+    private
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  // функция файлАтрибуты(вх имя: строка): целое;
+  tKlausSysProc_FileGetAttrs = class(tKlausSysProcDecl)
+    private
+      fName: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  // функция файлВозраст(вх имя: строка): момент;
+  tKlausSysProc_FileGetAge = class(tKlausSysProcDecl)
+    private
+      fName: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  // процедура файлПереместить(вх откуда, куда: строка);
+  tKlausSysProc_FileRename = class(tKlausSysProcDecl)
+    private
+      fName: tKlausProcParam;
+      fNewName: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  // процедура файлУдалить(вх имя: строка);
+  tKlausSysProc_FileDelete = class(tKlausSysProcDecl)
+    private
+      fName: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  tKlausFileSearch = class
+    public
+      searchRec: tSearchRec;
+      destructor  destroy; override;
+  end;
+
+type
+  // Базовый класс для функций листинга каталога
+  tKlausSysProcFileFind = class(tKlausSysProcDecl)
+    protected
+      procedure fillInFileInfo(search: tKlausFileSearch; v: tKlausVarValueStruct; const at: tSrcPoint);
+  end;
+
+type
+  // функция файлПервый(вх шаблон: строка; вых инфо: тФайлИнфо): объект;
+  tKlausSysProc_FileFindFirst = class(tKlausSysProcFileFind)
+    private
+      fMask: tKlausProcParam;
+      fInfo: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  // функция файлСледующий(вых инфо: тФайлИнфо): логический;
+  tKlausSysProc_FileFindNext = class(tKlausSysProcFileFind)
+    private
+      fObj: tKlausProcParam;
+      fInfo: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
 implementation
 
 uses
@@ -688,6 +872,29 @@ const
 resourcestring
   strOneOrMore = '1 или более';
 
+{ tKlausSysProc_Destroy }
+
+constructor tKlausSysProc_Destroy.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_Destroy, aPoint);
+  fObj := tKlausProcParam.create(self, 'о', aPoint, kpmInOut, source.simpleTypes[kdtObject]);
+  addParam(fObj);
+end;
+
+procedure tKlausSysProc_Destroy.run(frame: tKlausStackFrame; const at: tSrcPoint);
+var
+  v: tKlausObject;
+  o: tObject;
+begin
+  v := getSimpleObj(frame, fObj, at);
+  if frame.owner.objects.exists(v) then begin
+    o := frame.owner.objects.get(v, at);
+    freeAndNil(o);
+    frame.owner.objects.release(v, at);
+  end;
+  setSimple(frame, fObj, klausZeroValue(kdtObject), at);
+end;
+
 { tKlausSysProc_Date }
 
 constructor tKlausSysProc_Date.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
@@ -696,9 +903,38 @@ begin
   declareRetValue(kdtMoment);
 end;
 
-procedure tKlausSysProc_Date.run(frame: tKlausStackFrame; const at: tSrcPoint);
+function tKlausSysProc_Date.isCustomParamHandler: boolean;
 begin
-  returnSimple(frame, klausSimple(tKlausMoment(int(now))));
+  result := true;
+end;
+
+procedure tKlausSysProc_Date.checkCallParamTypes(expr: array of tKlausExpression; at: tSrcPoint);
+var
+  cnt: integer;
+begin
+  cnt := length(expr);
+  if cnt > 1 then errWrongParamCount(cnt, 0, 1, at);
+  if cnt > 0 then checkCanAssign(kdtMoment, expr[0].resultTypeDef, expr[0].point);
+end;
+
+procedure tKlausSysProc_Date.getCustomParamModes(
+  types: array of tKlausTypeDef; out modes: tKlausProcParamModes; const at: tSrcPoint);
+begin
+  modes := nil;
+  setLength(modes, length(types));
+  if length(modes) > 0 then modes[0] := kpmInput;
+end;
+
+procedure tKlausSysProc_Date.customRun(
+  frame: tKlausStackFrame; values: array of tKlausVarValueAt; const at: tSrcPoint);
+var
+  cnt: integer;
+  dt: tKlausMoment;
+begin
+  cnt := length(values);
+  if cnt > 1 then errWrongParamCount(cnt, 2, 3, at);
+  if cnt = 0 then dt := now else dt := getSimpleMoment(values[0]);
+  returnSimple(frame, klausSimple(tKlausMoment(int(dt))));
 end;
 
 { tKlausSysProc_Time }
@@ -709,9 +945,38 @@ begin
   declareRetValue(kdtMoment);
 end;
 
-procedure tKlausSysProc_Time.run(frame: tKlausStackFrame; const at: tSrcPoint);
+function tKlausSysProc_Time.isCustomParamHandler: boolean;
 begin
-  returnSimple(frame, klausSimple(tKlausMoment(frac(now))));
+  result := true;
+end;
+
+procedure tKlausSysProc_Time.checkCallParamTypes(expr: array of tKlausExpression; at: tSrcPoint);
+var
+  cnt: integer;
+begin
+  cnt := length(expr);
+  if cnt > 1 then errWrongParamCount(cnt, 0, 1, at);
+  if cnt > 0 then checkCanAssign(kdtMoment, expr[0].resultTypeDef, expr[0].point);
+end;
+
+procedure tKlausSysProc_Time.getCustomParamModes(
+  types: array of tKlausTypeDef; out modes: tKlausProcParamModes; const at: tSrcPoint);
+begin
+  modes := nil;
+  setLength(modes, length(types));
+  if length(modes) > 0 then modes[0] := kpmInput;
+end;
+
+procedure tKlausSysProc_Time.customRun(
+  frame: tKlausStackFrame; values: array of tKlausVarValueAt; const at: tSrcPoint);
+var
+  cnt: integer;
+  dt: tKlausMoment;
+begin
+  cnt := length(values);
+  if cnt > 1 then errWrongParamCount(cnt, 2, 3, at);
+  if cnt = 0 then dt := now else dt := getSimpleMoment(values[0]);
+  returnSimple(frame, klausSimple(tKlausMoment(frac(dt))));
 end;
 
 { tKlausSysProc_Now }
@@ -1636,6 +1901,36 @@ begin
   returnSimple(frame, klausSimple(rslt));
 end;
 
+{ tKlausSysProc_Upper }
+
+constructor tKlausSysProc_Upper.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_Upper, aPoint);
+  fStr := tKlausProcParam.create(self, 'стр', aPoint, kpmInput, source.simpleTypes[kdtString]);
+  addParam(fStr);
+  declareRetValue(kdtString);
+end;
+
+procedure tKlausSysProc_Upper.run(frame: tKlausStackFrame; const at: tSrcPoint);
+begin
+  returnSimple(frame, klausSimple(u8Upper(getSimpleStr(frame, fStr, at))));
+end;
+
+{ tKlausSysProc_Lower }
+
+constructor tKlausSysProc_Lower.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_Lower, aPoint);
+  fStr := tKlausProcParam.create(self, 'стр', aPoint, kpmInput, source.simpleTypes[kdtString]);
+  addParam(fStr);
+  declareRetValue(kdtString);
+end;
+
+procedure tKlausSysProc_Lower.run(frame: tKlausStackFrame; const at: tSrcPoint);
+begin
+  returnSimple(frame, klausSimple(u8Lower(getSimpleStr(frame, fStr, at))));
+end;
+
 { tKlausSysProc_IsNaN }
 
 constructor tKlausSysProc_IsNaN.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
@@ -2275,8 +2570,9 @@ var
   stream: tKlausFileStream;
 begin
   f := getSimpleObj(frame, fFile, at);
-  stream := tKlausFileStream(frame.owner.objects.release(f, at));
+  stream := getKlausObject(frame, f, tKlausFileStream, at) as tKlausFileStream;
   freeAndNil(stream);
+  frame.owner.objects.release(f, at);
   setSimple(frame, fFile, klausZeroValue(kdtObject), at);
 end;
 
@@ -2492,6 +2788,275 @@ begin
   except
     klausTranslateException(frame, at);
   end;
+end;
+
+{ tKlausSysProc_FileExists }
+
+constructor tKlausSysProc_FileExists.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_FileExists, aPoint);
+  fName := tKlausProcParam.create(self, 'имя', aPoint, kpmInput, source.simpleTypes[kdtString]);
+  addParam(fName);
+  declareRetValue(kdtBoolean);
+end;
+
+procedure tKlausSysProc_FileExists.run(frame: tKlausStackFrame; const at: tSrcPoint);
+var
+  fn: tKlausString;
+begin
+  fn := getSimpleStr(frame, fName, at);
+  returnSimple(frame, klausSimple(fileExists(fn)));
+end;
+
+{ tKlausSysProc_FileDirExists }
+
+constructor tKlausSysProc_FileDirExists.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_FileDirExists, aPoint);
+  fName := tKlausProcParam.create(self, 'имя', aPoint, kpmInput, source.simpleTypes[kdtString]);
+  addParam(fName);
+  declareRetValue(kdtBoolean);
+end;
+
+procedure tKlausSysProc_FileDirExists.run(frame: tKlausStackFrame; const at: tSrcPoint);
+var
+  fn: tKlausString;
+begin
+  fn := getSimpleStr(frame, fName, at);
+  returnSimple(frame, klausSimple(directoryExists(fn)));
+end;
+
+{ tKlausSysProc_FileTempDir }
+
+constructor tKlausSysProc_FileTempDir.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_FileTempDir, aPoint);
+  fGlobal := tKlausProcParam.create(self, 'общий', aPoint, kpmInput, source.simpleTypes[kdtBoolean]);
+  addParam(fGlobal);
+  declareRetValue(kdtString);
+end;
+
+procedure tKlausSysProc_FileTempDir.run(frame: tKlausStackFrame; const at: tSrcPoint);
+begin
+  returnSimple(frame, klausSimple(getTempDir(getSimpleBool(frame, fGlobal, at))));
+end;
+
+{ tKlausSysProc_FileTempName }
+
+constructor tKlausSysProc_FileTempName.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_FileTempName, aPoint);
+  fGlobal := tKlausProcParam.create(self, 'общий', aPoint, kpmInput, source.simpleTypes[kdtBoolean]);
+  addParam(fGlobal);
+  fPrefix := tKlausProcParam.create(self, 'префикс', aPoint, kpmInput, source.simpleTypes[kdtString]);
+  addParam(fPrefix);
+  declareRetValue(kdtString);
+end;
+
+procedure tKlausSysProc_FileTempName.run(frame: tKlausStackFrame; const at: tSrcPoint);
+var
+  td: string;
+begin
+  td := getTempDir(getSimpleBool(frame, fGlobal, at));
+  returnSimple(frame, klausSimple(getTempFileName(td, getSimpleStr(frame, fPrefix, at))));
+end;
+
+{ tKlausSysProc_FileExpandName }
+
+constructor tKlausSysProc_FileExpandName.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_FileExpandName, aPoint);
+  fName := tKlausProcParam.create(self, 'путь', aPoint, kpmInput, source.simpleTypes[kdtString]);
+  addParam(fName);
+  declareRetValue(kdtString);
+end;
+
+procedure tKlausSysProc_FileExpandName.run(frame: tKlausStackFrame; const at: tSrcPoint);
+begin
+  returnSimple(frame, klausSimple(expandFileName(getSimpleStr(frame, fName, at))));
+end;
+
+{ tKlausSysProc_FileProgName }
+
+constructor tKlausSysProc_FileProgName.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_FileProgName, aPoint);
+  declareRetValue(kdtString);
+end;
+
+procedure tKlausSysProc_FileProgName.run(frame: tKlausStackFrame; const at: tSrcPoint);
+var
+  v: tKlausVariable;
+begin
+  v := frame.varByName(klausVarNameExecFilename, at);
+  returnSimple(frame, (v.value as tKlausVarValueSimple).simple);
+end;
+
+{ tKlausSysProc_FileHomeDir }
+
+constructor tKlausSysProc_FileHomeDir.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_FileHomeDir, aPoint);
+  declareRetValue(kdtString);
+end;
+
+procedure tKlausSysProc_FileHomeDir.run(frame: tKlausStackFrame; const at: tSrcPoint);
+begin
+  returnSimple(frame, klausSimple(getUserDir));
+end;
+
+{ tKlausSysProc_FileGetAttrs }
+
+constructor tKlausSysProc_FileGetAttrs.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_FileGetAttrs, aPoint);
+  fName := tKlausProcParam.create(self, 'имя', aPoint, kpmInput, source.simpleTypes[kdtString]);
+  addParam(fName);
+  declareRetValue(kdtInteger);
+end;
+
+procedure tKlausSysProc_FileGetAttrs.run(frame: tKlausStackFrame; const at: tSrcPoint);
+var
+  rslt: tKlausInteger;
+begin
+  rslt := fileGetAttr(getSimpleStr(frame, fName, at));
+  if rslt = -1 then raise eInOutError.create(sysErrorMessage(getLastOsError));
+  returnSimple(frame, klausSimple(rslt));
+end;
+
+{ tKlausSysProc_FileGetAge }
+
+constructor tKlausSysProc_FileGetAge.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_FileGetAge, aPoint);
+  fName := tKlausProcParam.create(self, 'имя', aPoint, kpmInput, source.simpleTypes[kdtString]);
+  addParam(fName);
+  declareRetValue(kdtMoment);
+end;
+
+procedure tKlausSysProc_FileGetAge.run(frame: tKlausStackFrame; const at: tSrcPoint);
+var
+  rslt: longInt;
+begin
+  rslt := fileAge(getSimpleStr(frame, fName, at));
+  if rslt = -1 then raise eInOutError.create(sysErrorMessage(getLastOsError));
+  returnSimple(frame, klausSimple(tKlausMoment(fileDateToDateTime(rslt))));
+end;
+
+{ tKlausSysProc_FileRename }
+
+constructor tKlausSysProc_FileRename.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_FileRename, aPoint);
+  fName := tKlausProcParam.create(self, 'откуда', aPoint, kpmInput, source.simpleTypes[kdtString]);
+  addParam(fName);
+  fNewName := tKlausProcParam.create(self, 'куда', aPoint, kpmInput, source.simpleTypes[kdtString]);
+  addParam(fNewName);
+end;
+
+procedure tKlausSysProc_FileRename.run(frame: tKlausStackFrame; const at: tSrcPoint);
+var
+  rslt: boolean;
+begin
+  rslt := renameFile(getSimpleStr(frame, fName, at), getSimpleStr(frame, fNewName, at));
+  if not rslt then raise eInOutError.create(sysErrorMessage(getLastOsError));
+end;
+
+{ tKlausSysProc_FileDelete }
+
+constructor tKlausSysProc_FileDelete.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_FileDelete, aPoint);
+  fName := tKlausProcParam.create(self, 'имя', aPoint, kpmInput, source.simpleTypes[kdtString]);
+  addParam(fName);
+end;
+
+procedure tKlausSysProc_FileDelete.run(frame: tKlausStackFrame; const at: tSrcPoint);
+var
+  rslt: boolean;
+begin
+  rslt := deleteFile(getSimpleStr(frame, fName, at));
+  if not rslt then raise eInOutError.create(sysErrorMessage(getLastOsError));
+end;
+
+{ tKlausFileSearch }
+
+destructor tKlausFileSearch.destroy;
+begin
+  findClose(searchRec);
+  inherited destroy;
+end;
+
+{ tKlausSysProcFileFind }
+
+procedure tKlausSysProcFileFind.fillInFileInfo(search: tKlausFileSearch; v: tKlausVarValueStruct; const at: tSrcPoint);
+var
+  mv: tKlausVarValueSimple;
+begin
+  mv := v.getMember('имя', at) as tKlausVarValueSimple;
+  mv.setSimple(klausSimple(search.searchRec.name), at);
+  mv := v.getMember('размер', at) as tKlausVarValueSimple;
+  mv.setSimple(klausSimple(search.searchRec.size), at);
+  mv := v.getMember('атрибуты', at) as tKlausVarValueSimple;
+  mv.setSimple(klausSimple(search.searchRec.attr), at);
+  mv := v.getMember('возраст', at) as tKlausVarValueSimple;
+  mv.setSimple(klausSimple(tKlausMoment(fileDateToDateTime(search.searchRec.time))), at);
+end;
+
+{ tKlausSysProc_FileFindFirst }
+
+constructor tKlausSysProc_FileFindFirst.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_FileFindFirst, aPoint);
+  fMask := tKlausProcParam.create(self, 'шаблон', aPoint, kpmInput, source.simpleTypes[kdtString]);
+  addParam(fMask);
+  fInfo := tKlausProcParam.create(self, 'инфо', aPoint, kpmOutput, findTypeDef(klausTypeNameFileInfo));
+  addParam(fInfo);
+  declareRetValue(kdtObject);
+end;
+
+procedure tKlausSysProc_FileFindFirst.run(frame: tKlausStackFrame; const at: tSrcPoint);
+var
+  path: string;
+  rslt: tKlausObject = 0;
+  search: tKlausFileSearch;
+begin
+  search := tKlausFileSearch.create;
+  try
+    path := getSimpleStr(frame, fMask, at);
+    if findFirst(path, longInt($FFFFFFFF), search.searchRec) = 0 then begin
+      rslt := frame.owner.objects.allocate(search, at);
+      fillInFileInfo(search, frame.varByDecl(fInfo, at).value as tKlausVarValueStruct, at);
+    end else
+      freeAndNil(search);
+    returnSimple(frame, klausSimpleObj(rslt));
+  except
+    freeAndNil(search);
+    raise;
+  end;
+end;
+
+{ tKlausSysProc_FileFindNext }
+
+constructor tKlausSysProc_FileFindNext.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_FileFindNext, aPoint);
+  fObj := tKlausProcParam.create(self, 'о', aPoint, kpmInput, source.simpleTypes[kdtObject]);
+  addParam(fObj);
+  fInfo := tKlausProcParam.create(self, 'инфо', aPoint, kpmOutput, findTypeDef(klausTypeNameFileInfo));
+  addParam(fInfo);
+  declareRetValue(kdtBoolean);
+end;
+
+procedure tKlausSysProc_FileFindNext.run(frame: tKlausStackFrame; const at: tSrcPoint);
+var
+  rslt: tKlausBoolean;
+  search: tKlausFileSearch;
+begin
+  search := getKlausObject(frame, getSimpleObj(frame, fObj, at), tKlausFileSearch, at) as tKlausFileSearch;
+  rslt := findNext(search.searchRec) = 0;
+  if rslt then fillInFileInfo(search, frame.varByDecl(fInfo, at).value as tKlausVarValueStruct, at);
+  returnSimple(frame, klausSimple(rslt));
 end;
 
 end.
