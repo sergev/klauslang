@@ -26,6 +26,8 @@ unit KlausSrc;
 
 //todo: синонимы идентификаторов
 
+//todo: добавить `точность` в инструкцию `выбор` и в словарь для дробных чисел
+
 //todo: тип данных `данные` -- строка с произвольным содержимым
 //todo: Типы данных `любое` и `тип`, операция `есть`, функции тип(Икс) и новый(Т)
 
@@ -91,6 +93,7 @@ type
   tKlausStmtCompound = class;
   tKlausStmtRoutineBody = class;
   tKlausStmtIf = class;
+  tKlausStmtCase = class;
   tKlausStmtLoop = class;
   tKlausStmtFor = class;
   tKlausStmtForEach = class;
