@@ -160,7 +160,7 @@ const
     def:   '#id ["(" <exception_param> [* ";" <exception_param>] ")"] [`сообщение` #string] ";"'),
 
     (name: 'exception_param';
-    def:   '#id [* "," #id] ":" <simple_type>'),
+    def:   '[`вх`] #id [* "," #id] ":" <simple_type>'),
 
     (name: 'procedure';
     def:   '`процедура` #id ["(" <param> [* ";" <param>] ")"] ";" <routine> ";"'),

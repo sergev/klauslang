@@ -3884,6 +3884,7 @@ begin
       b.check('exception_param');
       idx := 0;
       b.next;
+      if b.check(kkwdInput, false) then b.next;
       b.check(klxID);
       setLength(names, idx+1);
       names[idx] := b.lex;

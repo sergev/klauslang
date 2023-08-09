@@ -43,7 +43,6 @@ const
   klausExceptionName_NotANumber = 'НеверноеЧисло';
   klausExceptionName_InternalError = 'ВнутренняяОшибка';
 
-
 const
   klausSysProcName_Destroy = 'уничтожить';
   klausSysProcName_ReadLn = 'ввести';
