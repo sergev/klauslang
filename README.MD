@@ -1,5 +1,6 @@
 # Последняя версия
-**Для Linux и Windows x64: [klaus-v1.1.0a.zip](https://gitflic.ru/project/czaerlag/klauslang/release/d2664580-8c9f-420d-9110-9e4d687b2546/klaus-v1.1.0a.zip/download)**
+**Для Linux и Windows x64: [klaus-v1.1.0a.zip](https://gitflic.ru/project/czaerlag/klauslang/release/d2664580-8c9f-420d-9110-9e4d687b2546/klaus-v1.1.0a.zip/download)**<br>
+(Ссылка не работает без регистрации, и это оченб плохо. Мы будем искать другой сервис...)
 
 Инсталляция не требуется. Достаточно распаковать архив и запустить исполняемый файл:
 - **klaus** -- для выполнения программы в командной строке
