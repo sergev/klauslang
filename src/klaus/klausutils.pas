@@ -1285,6 +1285,7 @@ begin
 end;
 
 initialization
+  defaultFormatSettings := klausLiteralFormat;
   //testKlstrFormat;
 finalization
 end.
