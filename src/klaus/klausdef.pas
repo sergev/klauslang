@@ -645,7 +645,7 @@ begin
     kdtInteger: result := src in [kdtChar, kdtString, kdtFloat, kdtMoment, kdtBoolean, kdtObject];
     kdtFloat: result := src in [kdtString, kdtInteger, kdtMoment];
     kdtMoment: result := src in [kdtString, kdtInteger, kdtFloat];
-    kdtBoolean: result := src = kdtInteger;
+    kdtBoolean: result := src in [kdtString, kdtInteger];
     kdtObject: result := false;
   else
     result := false;
@@ -701,7 +701,10 @@ begin
       kdtInteger: result.mValue := v.iValue;
       kdtFloat: result.mValue := v.fValue;
     end;
-    kdtBoolean: result.bValue := v.iValue <> 0;
+    kdtBoolean: case v.dataType of
+      kdtString: result.bValue := klausStrToBool(v.sValue);
+      kdtInteger: result.bValue := v.iValue <> 0;
+    end;
     kdtObject: raise eKlausError.create(ercInvalidTypecast, at);
   end;
 end;
