@@ -45,8 +45,8 @@ end;
 begin
   OnGetApplicationName:=@getAppName;
   RequireDerivedFormResource:=True;
-  Application.Title:='Klaus IDE';
   Application.Scaled:=True;
+  Application.Title:='Klaus IDE';
   Application.Initialize;
   Application.CreateForm(TMainForm, MainForm);
   Application.CreateForm(TSplashForm, SplashForm);
