@@ -44,8 +44,8 @@ type
 
   function u8Start(p: pChar): boolean; inline;
 
-  function u8CharCount(const s: string): PtrInt;
-  function u8CharCount(p: pChar; len: ptrInt): PtrInt;
+  function u8CharCount(const s: string): ptrInt;
+  function u8CharCount(p: pChar; len: ptrInt): ptrInt;
 
   function u8Chr(p: pChar): u8Char;
   function u8Chr(const s: string): u8Char;

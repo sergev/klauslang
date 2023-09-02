@@ -589,7 +589,7 @@ begin
   try
     if not handleAllocated then exit;
     if not fRedrawTimer.enabled then begin
-      {$ifdef windows}
+      {$if defined(windows) or defined(darwin)}
       if not fRedrawPosted then begin
         fRedrawPosted := true;
         postMessage(handle, KM_SetRedrawTimer, 0, 0);
@@ -1399,7 +1399,7 @@ begin
     if not handleAllocated then exit;
     if not fCaretInvalid then begin
       fCaretInvalid := true;
-      {$ifdef windows}
+      {$if defined(windows) or defined(darwin)}
       postMessage(handle, KM_UpdateCaretPos, 0, 0);
       {$else}
       sendMessage(handle, KM_UpdateCaretPos, 0, 0);

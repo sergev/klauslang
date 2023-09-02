@@ -125,7 +125,8 @@ begin
   fEdit.gutterBevel := kgbRaised;
   fEdit.gutterTextColor := lighterOrDarker(clBtnText, 0.3);
   fEdit.options := [keoWantReturns, keoWantTabs, keoAutoIndent, keoLineNumbers];
-  {$ifdef windows} fEdit.font.name := 'Courier New';
+  {$if defined(windows)} fEdit.font.name := 'Courier New';
+  {$elseif defined(darwin)} fEdit.font.name := 'Menlo';
   {$else} fEdit.font.name := 'Liberation Mono'; {$endif}
   fEdit.font.size := 11;
   fEdit.font.style := [];

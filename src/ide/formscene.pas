@@ -119,7 +119,8 @@ begin
   fConsole.parent := self;
   fConsole.borderStyle := bsSingle;
   fConsole.borderSpacing.around := 4;
-  {$ifdef windows} fConsole.font.name := 'Consolas';
+  {$if defined(windows)} fConsole.font.name := 'Consolas';
+  {$elseif defined(darwin)} fConsole.font.name := 'Menlo';
   {$else} fConsole.font.name := 'Monospace'; {$endif}
   fConsole.font.size := 11;
   fConsole.autoSize := true;
