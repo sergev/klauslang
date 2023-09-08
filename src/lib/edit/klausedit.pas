@@ -191,7 +191,6 @@ type
       fDefaultFontStyle: boolean;
       fDefaultFontColor: boolean;
       fDefaultBackColor: boolean;
-      fOnChange: tNotifyEvent;
 
       function  getActualBackColor: tColor;
       function  getActualFontColor: tColor;
@@ -204,12 +203,12 @@ type
       procedure setBackColor(value: tColor);
     protected
       procedure doChange;
+      procedure setDefaults(theme: tUITheme); virtual;
     public
       property owner: tKlausEditStyleSheet read fOwner;
       property index: tKlausEditStyleIndex read fIndex;
       property name: string read fName;
       property caption: string read fCaption;
-      property onChange: tNotifyEvent read fOnChange write fOnChange;
       property actualFontColor: tColor read getActualFontColor;
       property actualBackColor: tColor read getActualBackColor;
       property actualFontStyle: tFontStyles read getActualFontStyles;
@@ -249,6 +248,7 @@ type
       procedure setSelFontColor(value: tColor);
     protected
       procedure doChange; virtual;
+      procedure setDefaults(theme: tUITheme); virtual;
     public
       property style[idx: tKlausEditStyleIndex]: tKlausEditStyle read getStyle; default;
 
@@ -669,59 +669,124 @@ resourcestring
   errInvalidStrIndex = 'Invalid string list index: %d.';
 
 const
-  klausDefaultEditStyles: array[tKlausEditStyleIndex] of record
+  // Раскраска по умолчанию
+  klausDefaultEditStyles: array[tUITheme] of record
     fontColor: tColor;
     backColor: tColor;
-    fontStyle: tFontStyles;
-    defaultFontStyle: boolean;
-    defaultFontColor: boolean;
-    defaultBackColor: boolean;
+    selFontColor: tColor;
+    selBackColor: tColor;
+    styles: array [tKlausEditStyleIndex] of record
+      fontColor: tColor;
+      backColor: tColor;
+      fontStyle: tFontStyles;
+      defaultFontStyle: boolean;
+      defaultFontColor: boolean;
+      defaultBackColor: boolean;
+    end;
   end = (
-    // esiNone
-    (fontColor: clWindowText; backColor: clWindow; fontStyle: [];
-      defaultFontStyle: true; defaultFontColor: true; defaultBackColor: true),
-    // esiInvalid
-    (fontColor: clYellow; backColor: clRed; fontStyle: [];
-      defaultFontStyle: true; defaultFontColor: false; defaultBackColor: false),
-    // esiKeyword
-    (fontColor: clWindowText; backColor: clWindow; fontStyle: [fsBold];
-      defaultFontStyle: false; defaultFontColor: true; defaultBackColor: true),
-    // esiID
-    (fontColor: clNavy; backColor: clWindow; fontStyle: [];
-      defaultFontStyle: true; defaultFontColor: false; defaultBackColor: true),
-    // esiChar
-    (fontColor: $585800; backColor: clWindow; fontStyle: [];
-      defaultFontStyle: true; defaultFontColor: false; defaultBackColor: true),
-    // esiString
-    (fontColor: $005800; backColor: clWindow; fontStyle: [];
-      defaultFontStyle: true; defaultFontColor: false; defaultBackColor: true),
-    // esiInteger
-    (fontColor: clMaroon; backColor: clWindow; fontStyle: [];
-      defaultFontStyle: true; defaultFontColor: false; defaultBackColor: true),
-    // esiFloat
-    (fontColor: clMaroon; backColor: clWindow; fontStyle: [];
-      defaultFontStyle: true; defaultFontColor: false; defaultBackColor: true),
-    // esiMoment
-    (fontColor: clPurple; backColor: clWindow; fontStyle: [];
-      defaultFontStyle: true; defaultFontColor: false; defaultBackColor: true),
-    // esiSymbol
-    (fontColor: clBlack; backColor: clWindow; fontStyle: [];
-      defaultFontStyle: true; defaultFontColor: false; defaultBackColor: true),
-    // esiSLComment
-    (fontColor: clGray; backColor: clWindow; fontStyle: [fsItalic];
-      defaultFontStyle: false; defaultFontColor: false; defaultBackColor: true),
-    // esiMLComment
-    (fontColor: clGray; backColor: clWindow; fontStyle: [];
-      defaultFontStyle: true; defaultFontColor: false; defaultBackColor: true),
-    // esiExecPoint
-    (fontColor: clBlack; backColor: clAqua; fontStyle: [];
-      defaultFontStyle: true; defaultFontColor: false; defaultBackColor: false),
-    // esiBreakpoint
-    (fontColor: clWhite; backColor: clMaroon; fontStyle: [];
-      defaultFontStyle: true; defaultFontColor: false; defaultBackColor: false),
-    // esiErrorLine
-    (fontColor: clYellow; backColor: clRed; fontStyle: [];
-      defaultFontStyle: true; defaultFontColor: false; defaultBackColor: false));
+    // thLight
+    (fontColor: clWindowText;
+    backColor: clWindow;
+    selFontColor: clHighlightText;
+    selBackColor: clHighlight;
+    styles: (
+      // esiNone
+      (fontColor: clWindowText; backColor: clWindow; fontStyle: [];
+        defaultFontStyle: true; defaultFontColor: true; defaultBackColor: true),
+      // esiInvalid
+      (fontColor: clRed; backColor: clWindow; fontStyle: [];
+        defaultFontStyle: true; defaultFontColor: false; defaultBackColor: true),
+      // esiKeyword
+      (fontColor: clWindowText; backColor: clWindow; fontStyle: [fsBold];
+        defaultFontStyle: false; defaultFontColor: true; defaultBackColor: true),
+      // esiID
+      (fontColor: clNavy; backColor: clWindow; fontStyle: [];
+        defaultFontStyle: true; defaultFontColor: false; defaultBackColor: true),
+      // esiChar
+      (fontColor: $585800; backColor: clWindow; fontStyle: [];
+        defaultFontStyle: true; defaultFontColor: false; defaultBackColor: true),
+      // esiString
+      (fontColor: $005800; backColor: clWindow; fontStyle: [];
+        defaultFontStyle: true; defaultFontColor: false; defaultBackColor: true),
+      // esiInteger
+      (fontColor: clMaroon; backColor: clWindow; fontStyle: [];
+        defaultFontStyle: true; defaultFontColor: false; defaultBackColor: true),
+      // esiFloat
+      (fontColor: clMaroon; backColor: clWindow; fontStyle: [];
+        defaultFontStyle: true; defaultFontColor: false; defaultBackColor: true),
+      // esiMoment
+      (fontColor: clPurple; backColor: clWindow; fontStyle: [];
+        defaultFontStyle: true; defaultFontColor: false; defaultBackColor: true),
+      // esiSymbol
+      (fontColor: clBlack; backColor: clWindow; fontStyle: [];
+        defaultFontStyle: true; defaultFontColor: false; defaultBackColor: true),
+      // esiSLComment
+      (fontColor: clGray; backColor: clWindow; fontStyle: [fsItalic];
+        defaultFontStyle: false; defaultFontColor: false; defaultBackColor: true),
+      // esiMLComment
+      (fontColor: clGray; backColor: clWindow; fontStyle: [];
+        defaultFontStyle: true; defaultFontColor: false; defaultBackColor: true),
+      // esiExecPoint
+      (fontColor: clBlack; backColor: clAqua; fontStyle: [];
+        defaultFontStyle: true; defaultFontColor: false; defaultBackColor: false),
+      // esiBreakpoint
+      (fontColor: clWhite; backColor: clMaroon; fontStyle: [];
+        defaultFontStyle: true; defaultFontColor: false; defaultBackColor: false),
+      // esiErrorLine
+      (fontColor: clYellow; backColor: clRed; fontStyle: [];
+        defaultFontStyle: true; defaultFontColor: false; defaultBackColor: false))),
+    // thDark
+    (fontColor: $F0F0F0;
+    backColor: $002000;
+    selFontColor: clHighlightText;
+    selBackColor: clHighlight;
+    styles: (
+      // esiNone
+      (fontColor: clWindowText; backColor: clWindow; fontStyle: [];
+        defaultFontStyle: true; defaultFontColor: true; defaultBackColor: true),
+      // esiInvalid
+      (fontColor: clRed; backColor: clWindow; fontStyle: [];
+        defaultFontStyle: true; defaultFontColor: false; defaultBackColor: true),
+      // esiKeyword
+      (fontColor: clWindowText; backColor: clWindow; fontStyle: [];
+        defaultFontStyle: true; defaultFontColor: true; defaultBackColor: true),
+      // esiID
+      (fontColor: $00B8ED; backColor: clWindow; fontStyle: [];
+        defaultFontStyle: true; defaultFontColor: false; defaultBackColor: true),
+      // esiChar
+      (fontColor: $D0D000; backColor: clWindow; fontStyle: [];
+        defaultFontStyle: true; defaultFontColor: false; defaultBackColor: true),
+      // esiString
+      (fontColor: $00D000; backColor: clWindow; fontStyle: [];
+        defaultFontStyle: true; defaultFontColor: false; defaultBackColor: true),
+      // esiInteger
+      (fontColor: $3080FF; backColor: clWindow; fontStyle: [];
+        defaultFontStyle: true; defaultFontColor: false; defaultBackColor: true),
+      // esiFloat
+      (fontColor: $3080FF; backColor: clWindow; fontStyle: [];
+        defaultFontStyle: true; defaultFontColor: false; defaultBackColor: true),
+      // esiMoment
+      (fontColor: $E700E7; backColor: clWindow; fontStyle: [];
+        defaultFontStyle: true; defaultFontColor: false; defaultBackColor: true),
+      // esiSymbol
+      (fontColor: clWindowText; backColor: clWindow; fontStyle: [];
+        defaultFontStyle: true; defaultFontColor: true; defaultBackColor: true),
+      // esiSLComment
+      (fontColor: clGray; backColor: clWindow; fontStyle: [fsItalic];
+        defaultFontStyle: false; defaultFontColor: false; defaultBackColor: true),
+      // esiMLComment
+      (fontColor: clGray; backColor: clWindow; fontStyle: [];
+        defaultFontStyle: true; defaultFontColor: false; defaultBackColor: true),
+      // esiExecPoint
+      (fontColor: clBlack; backColor: clAqua; fontStyle: [];
+        defaultFontStyle: true; defaultFontColor: false; defaultBackColor: false),
+      // esiBreakpoint
+      (fontColor: clWhite; backColor: clMaroon; fontStyle: [];
+        defaultFontStyle: true; defaultFontColor: false; defaultBackColor: false),
+      // esiErrorLine
+      (fontColor: clYellow; backColor: clRed; fontStyle: [];
+        defaultFontStyle: true; defaultFontColor: false; defaultBackColor: false)))
+  );
 
 { Globals }
 
@@ -748,14 +813,12 @@ begin
   fIndex := idx;
   fName := klausEditStyleName(idx);
   fCaption := klausEditStyleCaption[idx];
-  with klausDefaultEditStyles[idx] do begin
-    fFontColor := fontColor;
-    fBackColor := backColor;
-    fFontStyle := fontStyle;
-    fDefaultFontStyle := defaultFontStyle;
-    fDefaultFontColor := defaultFontColor;
-    fDefaultBackColor := defaultBackColor;
-  end;
+  fFontColor := clWindowText;
+  fBackColor := clWindow;
+  fFontStyle := [];
+  fDefaultFontStyle := true;
+  fDefaultFontColor := true;
+  fDefaultBackColor := true;
 end;
 
 procedure tKlausEditStyle.beginUpdate;
@@ -814,6 +877,18 @@ begin
   with fOwner do begin
     beginUpdate;
     endUpdate;
+  end;
+end;
+
+procedure tKlausEditStyle.setDefaults(theme: tUITheme);
+begin
+  with klausDefaultEditStyles[theme].styles[index] do begin
+    fFontColor := fontColor;
+    fBackColor := backColor;
+    fFontStyle := fontStyle;
+    fDefaultFontStyle := defaultFontStyle;
+    fDefaultFontColor := defaultFontColor;
+    fDefaultBackColor := defaultBackColor;
   end;
 end;
 
@@ -896,15 +971,16 @@ end;
 
 constructor tKlausEditStyleSheet.create;
 var
+  theme: tUITheme;
   idx: tKlausEditStyleIndex;
 begin
   inherited;
-  fFontColor := clWindowText;
-  fBackColor := clWindow;
-  fSelFontColor := clHighlightText;
-  fSelBackColor := clHighlight;
-  for idx := low(idx) to high(idx) do
+  theme := getCurrentTheme;
+  setDefaults(theme);
+  for idx := low(idx) to high(idx) do begin
     fStyles[idx] := tKlausEditStyle.create(self, idx);
+    fStyles[idx].setDefaults(theme);
+  end;
 end;
 
 destructor tKlausEditStyleSheet.destroy;
@@ -925,6 +1001,16 @@ begin
   if assigned(fOnChange) then fOnChange(self);
 end;
 
+procedure tKlausEditStyleSheet.setDefaults(theme: tUITheme);
+begin
+  with klausDefaultEditStyles[theme] do begin
+    fFontColor := fontColor;
+    fBackColor := backColor;
+    fSelFontColor := selFontColor;
+    fSelBackColor := selBackColor;
+  end;
+end;
+
 procedure tKlausEditStyleSheet.endUpdate;
 begin
   if fChangeCount > 0 then begin
@@ -935,10 +1021,11 @@ end;
 
 procedure tKlausEditStyleSheet.saveToIni(storage: TIniPropStorage);
 var
-  sect: string;
+  sect, theme: string;
   idx: tKlausEditStyleIndex;
 begin
-  sect := klausEditStyleIniSection;
+  theme := uiThemeName[getCurrentTheme];
+  sect := klausEditStyleIniSection+'.'+theme;
   storage.doWriteString(sect, 'fontStyle', fontStyleToString(fontStyle));
   storage.doWriteString(sect, 'fontColor', colorToString(fontColor));
   storage.doWriteString(sect, 'backColor', colorToString(backColor));
@@ -950,22 +1037,28 @@ end;
 
 procedure tKlausEditStyleSheet.loadFromIni(storage: TIniPropStorage);
 var
-  sect, s: string;
+  sect, s, theme: string;
   idx: tKlausEditStyleIndex;
 begin
-  sect := klausEditStyleIniSection;
-  s := storage.doReadString(sect, 'fontStyle', 'default');
-  if s <> 'default' then fontStyle := stringToFontStyle(s);
-  s := storage.doReadString(sect, 'fontColor', 'default');
-  if s <> 'default' then fontColor := stringToColor(s);
-  s := storage.doReadString(sect, 'backColor', 'default');
-  if s <> 'default' then backColor := stringToColor(s);
-  s := storage.doReadString(sect, 'selFontColor', 'default');
-  if s <> 'default' then selFontColor := stringToColor(s);
-  s := storage.doReadString(sect, 'selBackColor', 'default');
-  if s <> 'default' then selBackColor := stringToColor(s);
-  for idx := low(idx) to high(idx) do
-    style[idx].loadFromIni(sect+'.'+style[idx].name, storage);
+  theme := uiThemeName[getCurrentTheme];
+  sect := klausEditStyleIniSection+'.'+theme;
+  beginUpdate;
+  try
+    s := storage.doReadString(sect, 'fontStyle', 'default');
+    if s <> 'default' then fontStyle := stringToFontStyle(s);
+    s := storage.doReadString(sect, 'fontColor', 'default');
+    if s <> 'default' then fontColor := stringToColor(s);
+    s := storage.doReadString(sect, 'backColor', 'default');
+    if s <> 'default' then backColor := stringToColor(s);
+    s := storage.doReadString(sect, 'selFontColor', 'default');
+    if s <> 'default' then selFontColor := stringToColor(s);
+    s := storage.doReadString(sect, 'selBackColor', 'default');
+    if s <> 'default' then selBackColor := stringToColor(s);
+    for idx := low(idx) to high(idx) do
+      style[idx].loadFromIni(sect+'.'+style[idx].name, storage);
+  finally
+    endUpdate;
+  end;
 end;
 
 procedure tKlausEditStyleSheet.beginUpdate;
@@ -1809,7 +1902,11 @@ begin
   end;
   if lr.bottom < r.bottom then begin
     lr := rect(lr.left, lr.bottom, lr.right, r.bottom);
-    with cnv.brush do begin color := self.color; style := bsSolid; end;
+    with cnv.brush do begin
+      if fStyles = nil then color := self.color
+      else color := fStyles.backColor;
+      style := bsSolid;
+    end;
     cnv.fillRect(lr);
   end;
 end;
@@ -1828,22 +1925,19 @@ end;
 procedure tCustomKlausEdit.paintLine(cnv: tCanvas; r: tRect; line: integer; selStart, selEnd: integer);
 // if selStart is -1, no text is selected.
 // if selEnd is -1, the entire line after selStart is selected (including LF).
+var
+  defFC, defBC, selFC, selBC: tColor;
 
   procedure setTextAttrs(cnv: tCanvas; stl: tKlausEditStyleIndex; highlight: boolean);
   begin
     if highlight then begin
-      if fStyles = nil then begin
-        cnv.brush.color := fSelBackColor;
-        cnv.font.color := fSelTextColor;
-      end else begin
-        cnv.brush.color := fStyles.selBackColor;
-        cnv.font.color := fStyles.selFontColor;
-      end;
+      cnv.brush.color := selBC;
+      cnv.font.color := selFC;
     end else if fStyles <> nil then begin
       fStyles[stl].setTextAttrs(cnv);
     end else begin
-      cnv.brush.color := self.color;
-      cnv.font.color := self.font.color;
+      cnv.brush.color := defBC;
+      cnv.font.color := defFC;
     end;
   end;
 
@@ -1891,6 +1985,17 @@ var
   pr: tRect = (left: 0; top: 0; right: 0; bottom: 0);
   dr: tRect = (left: 0; top: 0; right: 0; bottom: 0);
 begin
+  if fStyles = nil then begin
+    defBC := self.color;
+    defFC := self.font.color;
+    selBC := self.selBackColor;
+    selFC := self.selTextColor;
+  end else begin
+    defBC := fStyles.backColor;
+    defFC := fStyles.fontColor;
+    selBC := fStyles.selBackColor;
+    selFC := fStyles.selFontColor;
+  end;
   x := r.left - fScrollPos;
   y := r.top;
   cnv.brush.style := bsSolid;
@@ -1916,8 +2021,8 @@ begin
     x += w;
   until chr >= len;
   if (selStart >= len) or (selEnd >= len) then begin
-    if selStart >= len then cnv.brush.color := fSelBackColor
-    else cnv.brush.color := self.color;
+    if selStart >= len then cnv.brush.color := selBC
+    else cnv.brush.color := defBC;
     cnv.fillRect(rect(x, r.top, r.right, r.bottom));
   end;
 end;

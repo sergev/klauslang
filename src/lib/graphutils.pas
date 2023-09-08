@@ -80,6 +80,12 @@ const
     $a8a8a8, $b2b2b2, $bcbcbc, $c6c6c6, $d0d0d0, $dadada, $e4e4e4, $eeeeee);
 
 type
+  tUITheme = (thLight, thDark);
+
+const
+  uiThemeName: array[tUITheme] of string = ('light', 'dark');
+
+type
   tHSL = record
     hue: double;
     sat: double;
@@ -95,6 +101,8 @@ function rgbTo256(r, g, b: byte): byte;
 
 function fontStyleToString(fs: tFontStyles): string;
 function stringToFontStyle(const s: string): tFontStyles;
+
+function getCurrentTheme: tUITheme;
 
 implementation
 
@@ -234,6 +242,15 @@ begin
   finally
     freeAndNil(sl);
   end;
+end;
+
+function getCurrentTheme: tUITheme;
+var
+  hslw, hslt: tHSL;
+begin
+  hslw := colorToHSL(clWindow);
+  hslt := colorToHSL(clWindowText);
+  if hslt.lum < hslw.lum then result := thLight else result := thDark;
 end;
 
 end.
