@@ -66,6 +66,7 @@ type
     actEditIndentBlock: TAction;
     actEditUnindentBlock: TAction;
     actHelpAbout: TAction;
+    actFileOptions: TAction;
     actRunInterceptKeyboard: TAction;
     actRunToCursor: TAction;
     actRunToggleBreakpoint: TAction;
@@ -111,6 +112,7 @@ type
     bvDebugSizer: TBevel;
     editLineImages: TImageList;
     MenuItem1: TMenuItem;
+    miFileOptions: TMenuItem;
     miRunInterceptKeyboard: TMenuItem;
     miHelpAbout: TMenuItem;
     miHelp: TMenuItem;
@@ -188,6 +190,7 @@ type
     Separator11: TMenuItem;
     Separator12: TMenuItem;
     Separator13: TMenuItem;
+    Separator14: TMenuItem;
     Separator2: TMenuItem;
     Separator3: TMenuItem;
     Separator4: TMenuItem;
@@ -213,6 +216,8 @@ type
     tbRunStepInto: TToolButton;
     tbRunStepOver: TToolButton;
     tbRunShowExecPoint: TToolButton;
+    tbFileOptions: TToolButton;
+    ToolButton12: TToolButton;
     ToolButton14: TToolButton;
     ToolButton2: TToolButton;
     tbRunCheckSyntax: TToolButton;
@@ -245,6 +250,7 @@ type
     procedure actFileExitExecute(sender: TObject);
     procedure actFileNewExecute(sender: TObject);
     procedure actFileOpenExecute(sender: TObject);
+    procedure actFileOptionsExecute(Sender: TObject);
     procedure actFileSaveAllExecute(Sender: TObject);
     procedure actFileSaveAsExecute(sender: TObject);
     procedure actFileSaveExecute(sender: TObject);
@@ -291,7 +297,7 @@ type
     fScene: tSceneForm;
     fExecPoint: tExecPointInfo;
     fRunToCursor: tKlausBreakpoint;
-    fEditStyles: tKlausEditStyleSheet;
+    fEditStyles: tKlausEditorOptions;
     fBreakpoints: tKlausBreakpoints;
     fBreakpointListInvalid: boolean;
     fFocusedStackFrame: integer;
@@ -336,7 +342,7 @@ type
     property isRunning: boolean read getIsRunning;
     property execPoint: tExecPointInfo read fExecPoint;
     property debugView[dvt: tDebugViewType]: tDebugViewFrame read getDebugView;
-    property editStyles: tKlausEditStyleSheet read fEditStyles;
+    property editStyles: tKlausEditorOptions read fEditStyles;
     property runToCursor: tKlausBreakpoint read fRunToCursor;
     property breakpointCount: integer read getBreakpointCount;
     property breakpoint[idx: integer]: tKlausBreakpoint read getBreakpoint;
@@ -374,7 +380,7 @@ var
 implementation
 
 uses
-  LCLIntf, Math, Clipbrd, DlgCmdLineArgs, DlgSearchReplace, FormSplash;
+  LCLIntf, Math, Clipbrd, DlgCmdLineArgs, DlgSearchReplace, FormSplash, DlgOptions;
 
 resourcestring
   strKlaus = 'Клаус';
@@ -395,7 +401,7 @@ constructor tMainForm.create(aOwner: tComponent);
 begin
   fPropsLoading := true;
   fCtlStateClients := tList.create;
-  fEditStyles := tKlausEditStyleSheet.create;
+  fEditStyles := tKlausEditorOptions.create;
   inherited create(aOwner);
   fRecentFiles := tStringList.create;
   propStorage.iniFileName := configFileName;
@@ -748,6 +754,17 @@ procedure tMainForm.actFileOpenExecute(sender: TObject);
 begin
   if openDialog.execute then
     openEditFrame(openDialog.fileName);
+end;
+
+procedure tMainForm.actFileOptionsExecute(Sender: TObject);
+begin
+  with tOptionsDlg.create(application) do try
+    editorOptions := fEditStyles;
+    if showModal = mrOK then
+      fEditStyles.assign(editorOptions);
+  finally
+    free;
+  end;
 end;
 
 procedure tMainForm.actFileSaveAllExecute(Sender: TObject);

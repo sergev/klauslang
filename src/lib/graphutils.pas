@@ -100,6 +100,7 @@ function lighterOrDarker(c: tColor; delta: double): tColor;
 function rgbTo256(r, g, b: byte): byte;
 
 function fontStyleToString(fs: tFontStyles): string;
+function fontStyleToText(fs: tFontStyles): string;
 function stringToFontStyle(const s: string): tFontStyles;
 
 function getCurrentTheme: tUITheme;
@@ -108,6 +109,12 @@ implementation
 
 uses
   Math, TypInfo, U8;
+
+resourcestring
+  strBold = 'жирный';
+  strItalic = 'курсив';
+  strUnderline = 'подчёркнутый';
+  strStrikeOut = 'зачёркнутый';
 
 function colorToHSL(const color: tColor): tHSL;
 var
@@ -219,6 +226,20 @@ begin
   for i := low(i) to high(i) do
     if i in fs then begin
       result += sep + getEnumName(typeInfo(tFontStyle), ord(i));
+      sep := ', ';
+    end;
+end;
+
+function fontStyleToText(fs: tFontStyles): string;
+var
+  fontStyleName: array[TFontStyle] of string = (strBold, strItalic, strUnderline, strStrikeOut);
+  i: tFontStyle;
+  sep: string = '';
+begin
+  result := '';
+  for i := low(i) to high(i) do
+    if i in fs then begin
+      result += sep + fontStyleName[i];
       sep := ', ';
     end;
 end;

@@ -107,6 +107,25 @@ type
   tKlausEditLineFlags = packed set of tKlausEditLineFlag;
 
 const
+  klausEditStyleCaption: array[tKlausEditStyleIndex] of string = (
+    'Пробелы',                   // esiNone
+    'Неверный символ',           // esiInvalid
+    'Ключевое слово',            // esiKeyword
+    'Идентификатор',             // esiID
+    'Символьный литерал',        // esiChar
+    'Строковый литерал',         // esiString
+    'Целочисленный литерал',     // esiInteger
+    'Вещественный литерал',      // esiFloat
+    'Литерал момента',           // esiMoment
+    'Знак языка',                // esiSymbol
+    'Однострочный комментарий',  // esiSLComment
+    'Многострочный комментарий', // esiMLComment
+    'Выполняемая строка',        // esiExecPoint
+    'Точка останова',            // esiBreakpoint
+    'Строка с ошибкой'           // esiErrorLine
+  );
+
+const
   klausEditDefaultOptions = [keoHideSelection, keoWantTabs, keoWantReturns];
 
 type
@@ -204,6 +223,7 @@ type
     protected
       procedure doChange;
       procedure setDefaults(theme: tUITheme); virtual;
+      procedure assignTo(dest: tPersistent); override;
     public
       property owner: tKlausEditStyleSheet read fOwner;
       property index: tKlausEditStyleIndex read fIndex;
@@ -231,6 +251,7 @@ type
 type
   tKlausEditStyleSheet = class(tPersistent)
     private
+      fChangeHandlers: tFPList;
       fStyles: array[tKlausEditStyleIndex] of tKlausEditStyle;
       fChangeCount: integer;
       fFontStyle: tFontStyles;
@@ -249,6 +270,10 @@ type
     protected
       procedure doChange; virtual;
       procedure setDefaults(theme: tUITheme); virtual;
+      procedure assignTo(dest: tPersistent); override;
+      procedure doSaveToIni(storage: TIniPropStorage; const section: string); virtual;
+      procedure doLoadFromIni(storage: TIniPropStorage; const section: string); virtual;
+      procedure updateChangeHandler(edit: tCustomKlausEdit); virtual;
     public
       property style[idx: tKlausEditStyleIndex]: tKlausEditStyle read getStyle; default;
 
@@ -256,6 +281,8 @@ type
       destructor  destroy; override;
       procedure beginUpdate;
       procedure endUpdate;
+      procedure addChangeHandler(handler: tCustomKlausEdit);
+      procedure removeChangeHandler(handler: tCustomKlausEdit);
       procedure saveToIni(storage: TIniPropStorage);
       procedure loadFromIni(storage: TIniPropStorage);
     published
@@ -413,7 +440,7 @@ type
       procedure marginsChange(sender: tObject);
       function  getAreaRect(index: tKlausEditArea): tRect;
       procedure setOptions(const value: tKlausEditOptions);
-      procedure setStyles(AValue: tKlausEditStyleSheet);
+      procedure setStyles(value: tKlausEditStyleSheet);
       procedure updateTextMetrics;
       function  getSelExists: boolean;
       function  getSelStart: tPoint;
@@ -503,7 +530,6 @@ type
       property margins: tKlausEditMargins read fMargins write setMargins;
       property parentColor default FALSE;
       property tabStop default TRUE;
-      property tabSize: integer read fTabSize write fTabSize default klausEditDefaultTabSize;
       property readOnly: boolean read fReadOnly write fReadOnly default false;
       property selBackColor: tColor read fSelBackColor write setSelBackColor default clHighlight;
       property selTextColor: tColor read fSelTextColor write setSelTextColor default clHighlightText;
@@ -535,6 +561,7 @@ type
       property selEnd: tPoint read getSelEnd write setSelEnd;
       property selText: string read getSelText;
       property caretPos: tPoint read fSelVariable;
+      property tabSize: integer read fTabSize write fTabSize default klausEditDefaultTabSize;
 
       constructor create(aOwner: tComponent); override;
       destructor  destroy; override;
@@ -646,23 +673,6 @@ uses
   LCLIntf, WSLCLClasses, TypInfo, Math, klausUtils;
 
 const
-  klausEditStyleCaption: array[tKlausEditStyleIndex] of string = (
-    'Пробелы',                   // esiNone
-    'Неверный символ',           // esiInvalid
-    'Ключевое слово',            // esiKeyword
-    'Идентификатор',             // esiID
-    'Символьный литерал',        // esiChar
-    'Строковый литерал',         // esiString
-    'Целочисленный литерал',     // esiInteger
-    'Вещественный литерал',      // esiFloat
-    'Литерал момента',           // esiMoment
-    'Знак языка',                // esiSymbol
-    'Однострочный комментарий',  // esiSLComment
-    'Многострочный комментарий', // esiMLComment
-    'Выполняемая строка',        // esiExecPoint
-    'Точка останова',            // esiBreakpoint
-    'Строка с ошибкой'           // esiErrorLine
-  );
   klausEditStyleIniSection = 'KlausSourceEditorColors';
 
 resourcestring
@@ -671,6 +681,7 @@ resourcestring
 const
   // Раскраска по умолчанию
   klausDefaultEditStyles: array[tUITheme] of record
+    fontStyle: tFontStyles;
     fontColor: tColor;
     backColor: tColor;
     selFontColor: tColor;
@@ -685,7 +696,8 @@ const
     end;
   end = (
     // thLight
-    (fontColor: clWindowText;
+    (fontStyle: [];
+    fontColor: clWindowText;
     backColor: clWindow;
     selFontColor: clHighlightText;
     selBackColor: clHighlight;
@@ -736,7 +748,8 @@ const
       (fontColor: clYellow; backColor: clRed; fontStyle: [];
         defaultFontStyle: true; defaultFontColor: false; defaultBackColor: false))),
     // thDark
-    (fontColor: $F0F0F0;
+    (fontStyle: [];
+    fontColor: $F0F0F0;
     backColor: $002000;
     selFontColor: clHighlightText;
     selBackColor: clHighlight;
@@ -892,6 +905,24 @@ begin
   end;
 end;
 
+procedure tKlausEditStyle.assignTo(dest: tPersistent);
+begin
+  if not (dest is tKLausEditStyle) then inherited
+  else with dest as tKlausEditStyle do begin
+    beginUpdate;
+    try
+      fontColor := self.fontColor;
+      backColor := self.backColor;
+      fontStyle := self.fontStyle;
+      defaultFontStyle := self.defaultFontStyle;
+      defaultFontColor := self.defaultFontColor;
+      defaultBackColor := self.defaultBackColor;
+    finally
+      endUpdate;
+    end;
+  end;
+end;
+
 procedure tKlausEditStyle.setFontColor(value: tColor);
 begin
   if fFontColor <> value then begin
@@ -975,12 +1006,11 @@ var
   idx: tKlausEditStyleIndex;
 begin
   inherited;
+  fChangeHandlers := tFPList.create;
+  for idx := low(idx) to high(idx) do
+    fStyles[idx] := tKlausEditStyle.create(self, idx);
   theme := getCurrentTheme;
   setDefaults(theme);
-  for idx := low(idx) to high(idx) do begin
-    fStyles[idx] := tKlausEditStyle.create(self, idx);
-    fStyles[idx].setDefaults(theme);
-  end;
 end;
 
 destructor tKlausEditStyleSheet.destroy;
@@ -988,6 +1018,7 @@ var
   idx: tKlausEditStyleIndex;
 begin
   for idx := low(idx) to high(idx) do fStyles[idx].free;
+  freeAndNil(fChangeHandlers);
   inherited;
 end;
 
@@ -997,17 +1028,46 @@ begin
 end;
 
 procedure tKlausEditStyleSheet.doChange;
+var
+  i: integer;
 begin
+  for i := 0 to fChangeHandlers.count-1 do
+    updateChangeHandler(tCustomKlausEdit(fChangeHandlers[i]));
   if assigned(fOnChange) then fOnChange(self);
 end;
 
 procedure tKlausEditStyleSheet.setDefaults(theme: tUITheme);
+var
+  idx: tKlausEditStyleIndex;
 begin
   with klausDefaultEditStyles[theme] do begin
+    fFontStyle := fontStyle;
     fFontColor := fontColor;
     fBackColor := backColor;
     fSelFontColor := selFontColor;
     fSelBackColor := selBackColor;
+    for idx := low(idx) to high(idx) do fStyles[idx].setDefaults(theme);
+  end;
+end;
+
+procedure tKlausEditStyleSheet.assignTo(dest: tPersistent);
+var
+  idx: tKlausEditStyleIndex;
+begin
+  if not (dest is tKlausEditStyleSheet) then inherited
+  else with dest as tKlausEditStyleSheet do begin
+    beginUpdate;
+    try
+      fontStyle := self.fontStyle;
+      fontColor := self.fontColor;
+      backColor := self.backColor;
+      selFontColor := self.selFontColor;
+      selBackColor := self.selBackColor;
+      for idx := low(idx) to high(idx) do
+        self.style[idx].assignTo(style[idx]);
+    finally
+      endUpdate;
+    end;
   end;
 end;
 
@@ -1019,43 +1079,71 @@ begin
   end;
 end;
 
+procedure tKlausEditStyleSheet.addChangeHandler(handler: tCustomKlausEdit);
+begin
+  fChangeHandlers.add(handler);
+end;
+
+procedure tKlausEditStyleSheet.removeChangeHandler(handler: tCustomKlausEdit);
+begin
+  fChangeHandlers.remove(handler);
+end;
+
+procedure tKlausEditStyleSheet.doSaveToIni(storage: TIniPropStorage; const section: string);
+var
+  idx: tKlausEditStyleIndex;
+begin
+  storage.doWriteString(section, 'fontStyle', fontStyleToString(fontStyle));
+  storage.doWriteString(section, 'fontColor', colorToString(fontColor));
+  storage.doWriteString(section, 'backColor', colorToString(backColor));
+  storage.doWriteString(section, 'selFontColor', colorToString(selFontColor));
+  storage.doWriteString(section, 'selBackColor', colorToString(selBackColor));
+  for idx := low(idx) to high(idx) do
+    style[idx].saveToIni(section+'.'+style[idx].name, storage);
+end;
+
 procedure tKlausEditStyleSheet.saveToIni(storage: TIniPropStorage);
 var
   sect, theme: string;
-  idx: tKlausEditStyleIndex;
 begin
   theme := uiThemeName[getCurrentTheme];
   sect := klausEditStyleIniSection+'.'+theme;
-  storage.doWriteString(sect, 'fontStyle', fontStyleToString(fontStyle));
-  storage.doWriteString(sect, 'fontColor', colorToString(fontColor));
-  storage.doWriteString(sect, 'backColor', colorToString(backColor));
-  storage.doWriteString(sect, 'selFontColor', colorToString(selFontColor));
-  storage.doWriteString(sect, 'selBackColor', colorToString(selBackColor));
+  doSaveToIni(storage, sect);
+end;
+
+procedure tKlausEditStyleSheet.doLoadFromIni(storage: TIniPropStorage; const section: string);
+var
+  s: string;
+  idx: tKlausEditStyleIndex;
+begin
+  s := storage.doReadString(section, 'fontStyle', 'default');
+  if s <> 'default' then fontStyle := stringToFontStyle(s);
+  s := storage.doReadString(section, 'fontColor', 'default');
+  if s <> 'default' then fontColor := stringToColor(s);
+  s := storage.doReadString(section, 'backColor', 'default');
+  if s <> 'default' then backColor := stringToColor(s);
+  s := storage.doReadString(section, 'selFontColor', 'default');
+  if s <> 'default' then selFontColor := stringToColor(s);
+  s := storage.doReadString(section, 'selBackColor', 'default');
+  if s <> 'default' then selBackColor := stringToColor(s);
   for idx := low(idx) to high(idx) do
-    style[idx].saveToIni(sect+'.'+style[idx].name, storage);
+    style[idx].loadFromIni(section+'.'+style[idx].name, storage);
+end;
+
+procedure tKlausEditStyleSheet.updateChangeHandler(edit: tCustomKlausEdit);
+begin
+  edit.invalidate;
 end;
 
 procedure tKlausEditStyleSheet.loadFromIni(storage: TIniPropStorage);
 var
-  sect, s, theme: string;
-  idx: tKlausEditStyleIndex;
+  sect, theme: string;
 begin
   theme := uiThemeName[getCurrentTheme];
   sect := klausEditStyleIniSection+'.'+theme;
   beginUpdate;
   try
-    s := storage.doReadString(sect, 'fontStyle', 'default');
-    if s <> 'default' then fontStyle := stringToFontStyle(s);
-    s := storage.doReadString(sect, 'fontColor', 'default');
-    if s <> 'default' then fontColor := stringToColor(s);
-    s := storage.doReadString(sect, 'backColor', 'default');
-    if s <> 'default' then backColor := stringToColor(s);
-    s := storage.doReadString(sect, 'selFontColor', 'default');
-    if s <> 'default' then selFontColor := stringToColor(s);
-    s := storage.doReadString(sect, 'selBackColor', 'default');
-    if s <> 'default' then selBackColor := stringToColor(s);
-    for idx := low(idx) to high(idx) do
-      style[idx].loadFromIni(sect+'.'+style[idx].name, storage);
+    doLoadFromIni(storage, sect);
   finally
     endUpdate;
   end;
@@ -1538,6 +1626,7 @@ begin
   freeAndNil(fLines);
   freeAndNil(fMargins);
   freeAndNil(fLexParser);
+  if fStyles <> nil then fStyles.removeChangeHandler(self);
   inherited;
 end;
 
@@ -2092,10 +2181,12 @@ begin
   end;
 end;
 
-procedure tCustomKlausEdit.setStyles(AValue: tKlausEditStyleSheet);
+procedure tCustomKlausEdit.setStyles(value: tKlausEditStyleSheet);
 begin
-  if fStyles <> aValue then begin
-    fStyles := AValue;
+  if fStyles <> value then begin
+    if fStyles <> nil then fStyles.removeChangeHandler(self);
+    fStyles := value;
+    if fStyles <> nil then fStyles.addChangeHandler(self);
     invalidate;
   end;
 end;

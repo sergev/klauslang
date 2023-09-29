@@ -298,6 +298,13 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="KlausConKeys"/>
       </Unit>
+      <Unit>
+        <Filename Value="dlgsyntaxhighlight.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="Form1"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="DlgEditorOptions"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

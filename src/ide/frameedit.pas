@@ -112,6 +112,8 @@ resourcestring
 { tEditFrame }
 
 constructor tEditFrame.create(aOwner: tComponent);
+var
+  opt: tKlausEditOptions = [keoWantReturns, keoWantTabs, keoLineNumbers];
 begin
   inherited create(aOwner);
   mainForm.addControlStateClient(self);
@@ -124,14 +126,11 @@ begin
   fEdit.gutterWidth := 75;
   fEdit.gutterBevel := kgbRaised;
   fEdit.gutterTextColor := lighterOrDarker(clBtnText, 0.3);
-  fEdit.options := [keoWantReturns, keoWantTabs, keoAutoIndent, keoLineNumbers];
-  {$if defined(windows)} fEdit.font.name := 'Courier New';
-  {$elseif defined(darwin)} fEdit.font.name := 'Menlo';
-  {$else} fEdit.font.name := 'Liberation Mono'; {$endif}
-  fEdit.font.size := 11;
-  fEdit.font.style := [];
-  fEdit.font.color := clBlack;
+  if mainForm.editStyles.autoIndent then include(opt, keoAutoIndent);
+  fEdit.options := opt;
   fEdit.styles := mainForm.editStyles;
+  fEdit.font.assign(mainForm.editStyles.font);
+  fEdit.tabSize := mainForm.editStyles.tabSize;
   fEdit.lineImages := mainForm.editLineImages;
   fEdit.onChange := @editChange;
   fEdit.onMoveCaret := @editMoveCaret;
