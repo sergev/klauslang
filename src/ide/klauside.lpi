@@ -188,27 +188,6 @@
         <UnitName Value="FormMain"/>
       </Unit>
       <Unit>
-        <Filename Value="frameklausedit.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="editFrame"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Frame"/>
-        <UnitName Value="frameKlausEdit"/>
-      </Unit>
-      <Unit>
-        <Filename Value="frameklausdebug.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="debugViewFrame"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Frame"/>
-        <UnitName Value="frameKlausDebug"/>
-      </Unit>
-      <Unit>
-        <Filename Value="globals.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="Globals"/>
-      </Unit>
-      <Unit>
         <Filename Value="formscene.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="SceneForm"/>
@@ -220,10 +199,6 @@
         <Filename Value="../lib/console/klausconsole.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="KlausConsole"/>
-      </Unit>
-      <Unit>
-        <Filename Value="../klaus/klausrun.pas"/>
-        <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="framedebugvariables.pas"/>
@@ -250,19 +225,9 @@
         <UnitName Value="DlgCmdLineArgs"/>
       </Unit>
       <Unit>
-        <Filename Value="../klaus/klausmodulesystem.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="KlausModuleSystem"/>
-      </Unit>
-      <Unit>
         <Filename Value="../klaus/klausunitsystem_proc.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="KlausUnitSystem_Proc"/>
-      </Unit>
-      <Unit>
-        <Filename Value="../klaus/klausstrutils.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="KlausStrUtils"/>
       </Unit>
       <Unit>
         <Filename Value="framedebugbreakpoints.pas"/>
@@ -281,11 +246,6 @@
         <UnitName Value="DlgSearchReplace"/>
       </Unit>
       <Unit>
-        <Filename Value="../klaus/klausop.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="KlausOp"/>
-      </Unit>
-      <Unit>
         <Filename Value="formsplash.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="SplashForm"/>
@@ -297,13 +257,6 @@
         <Filename Value="../lib/console/klausconkeys.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="KlausConKeys"/>
-      </Unit>
-      <Unit>
-        <Filename Value="dlgsyntaxhighlight.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="Form1"/>
-        <ResourceBaseClass Value="Form"/>
-        <UnitName Value="DlgEditorOptions"/>
       </Unit>
     </Units>
   </ProjectOptions>

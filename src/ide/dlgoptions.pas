@@ -68,6 +68,7 @@ type
     edTabSize: TSpinEdit;
     tsEditor: TTabSheet;
     procedure cbBackColorChange(Sender: TObject);
+    procedure colorBoxGetColors(Sender: TCustomColorBox; Items: TStrings);
     procedure cbSelectionChange(Sender: TObject);
     procedure cbSelectionTextChange(Sender: TObject);
     procedure cbStyleBackColorChange(Sender: TObject);
@@ -115,6 +116,7 @@ uses
   GraphUtils;
 
 resourcestring
+  strCustomColor = 'Настроить...';
   strFont = '%s %dpt %s';
   strSampleEditText =
     'программа Пример;'#10+
@@ -292,6 +294,18 @@ begin
   if refreshing then exit;
   fEditorOptions.backColor := cbBackColor.selected;
   refreshWindow;
+end;
+
+procedure TOptionsDlg.colorBoxGetColors(Sender: TCustomColorBox; Items: TStrings);
+var
+  i: integer;
+  c: tColor;
+begin
+  items.strings[0] := strCustomColor;
+  for i := 1 to items.count-1 do begin
+    c := tColor(ptrInt(items.objects[i]));
+    items.strings[i] := colorCaption(c);
+  end;
 end;
 
 procedure TOptionsDlg.cbSelectionChange(Sender: TObject);

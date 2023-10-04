@@ -184,7 +184,8 @@ object OptionsDlg: TOptionsDlg
               Height = 29
               Top = 0
               Width = 250
-              Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbCustomColor, cbPrettyNames]
+              Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbCustomColor, cbPrettyNames, cbCustomColors]
+              OnGetColors = colorBoxGetColors
               ColorDialog = colorDialog
               Align = alClient
               Constraints.MinWidth = 250
@@ -224,7 +225,8 @@ object OptionsDlg: TOptionsDlg
               Height = 29
               Top = 0
               Width = 250
-              Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbCustomColor, cbPrettyNames]
+              Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbCustomColor, cbPrettyNames, cbCustomColors]
+              OnGetColors = colorBoxGetColors
               ColorDialog = colorDialog
               Align = alClient
               Constraints.MinWidth = 250
@@ -264,7 +266,8 @@ object OptionsDlg: TOptionsDlg
               Height = 29
               Top = 0
               Width = 250
-              Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbCustomColor, cbPrettyNames]
+              Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbCustomColor, cbPrettyNames, cbCustomColors]
+              OnGetColors = colorBoxGetColors
               ColorDialog = colorDialog
               Align = alClient
               Constraints.MinWidth = 250
@@ -304,7 +307,8 @@ object OptionsDlg: TOptionsDlg
               Height = 29
               Top = 0
               Width = 250
-              Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbCustomColor, cbPrettyNames]
+              Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbCustomColor, cbPrettyNames, cbCustomColors]
+              OnGetColors = colorBoxGetColors
               ColorDialog = colorDialog
               Align = alClient
               Constraints.MinWidth = 250
@@ -521,7 +525,8 @@ object OptionsDlg: TOptionsDlg
                 Height = 29
                 Top = 0
                 Width = 214
-                Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbIncludeDefault, cbCustomColor, cbPrettyNames]
+                Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbIncludeDefault, cbCustomColor, cbPrettyNames, cbCustomColors]
+                OnGetColors = colorBoxGetColors
                 ColorDialog = colorDialog
                 Align = alClient
                 Constraints.MinWidth = 150
@@ -559,7 +564,8 @@ object OptionsDlg: TOptionsDlg
                 Height = 29
                 Top = 0
                 Width = 214
-                Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbIncludeDefault, cbCustomColor, cbPrettyNames]
+                Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbIncludeDefault, cbCustomColor, cbPrettyNames, cbCustomColors]
+                OnGetColors = colorBoxGetColors
                 ColorDialog = colorDialog
                 Align = alClient
                 Constraints.MinWidth = 150

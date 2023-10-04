@@ -32,7 +32,7 @@ uses
   Forms, KlausGlobals, FormMain, FrameEdit, FrameDebugView, formScene,
   KlausConsole, FrameDebugVariables, FrameDebugCallStack, DlgCmdLineArgs,
   KlausUnitSystem_Proc, FrameDebugBreakpoints, DlgSearchReplace, KlausUtils,
-  KlausDef, FormSplash, KlausConKeys, DlgEditorOptions;
+  KlausDef, FormSplash, KlausConKeys, DlgOptions;
   { you can add units after this }
 
 {$R *.res}

@@ -105,6 +105,8 @@ function stringToFontStyle(const s: string): tFontStyles;
 
 function getCurrentTheme: tUITheme;
 
+function colorCaption(c: tColor): string;
+
 implementation
 
 uses
@@ -115,6 +117,60 @@ resourcestring
   strItalic = 'курсив';
   strUnderline = 'подчёркнутый';
   strStrikeOut = 'зачёркнутый';
+
+  rsBlackColorCaption = 'Чёрный';
+  rsMaroonColorCaption = 'Бордовый';
+  rsGreenColorCaption = 'Зелёный';
+  rsOliveColorCaption = 'Оливковый';
+  rsNavyColorCaption = 'Тёмно-синий';
+  rsPurpleColorCaption = 'Лиловый';
+  rsTealColorCaption = 'Бирюзовый';
+  rsGrayColorCaption = 'Тёмно-серый';
+  rsSilverColorCaption = 'Светло-серый';
+  rsRedColorCaption = 'Красный';
+  rsLimeColorCaption = 'Светло-зелёный';
+  rsYellowColorCaption = 'Жёлтый';
+  rsBlueColorCaption = 'Синий';
+  rsFuchsiaColorCaption = 'Фиолетовый';
+  rsAquaColorCaption = 'Морской волны';
+  rsWhiteColorCaption = 'Белый';
+  rsMoneyGreenColorCaption = 'Бледно-зелёный';
+  rsSkyBlueColorCaption = 'Бледно-голубой';
+  rsCreamColorCaption = 'Кремовый';
+  rsMedGrayColorCaption = 'Серый';
+  rsNoneColorCaption = '(Нет)';
+  rsDefaultColorCaption = '(По умолчанию)';
+  rsScrollBarColorCaption = 'Полоса прокрутки';
+  rsBackgroundColorCaption = 'Рабочий стол';
+  rsActiveCaptionColorCaption = 'Заголовок активного окна';
+  rsInactiveCaptionColorCaption = 'Заголовок неактивного окна';
+  rsMenuColorCaption = 'Меню';
+  rsWindowColorCaption = 'Окно';
+  rsWindowFrameColorCaption = 'Рамка окна';
+  rsMenuTextColorCaption = 'Текст меню';
+  rsWindowTextColorCaption = 'Текст окна';
+  rsCaptionTextColorCaption = 'Текст заголовка активного окна';
+  rsActiveBorderColorCaption = 'Граница активного окна';
+  rsInactiveBorderColorCaption = 'Граница неактивного окна';
+  rsAppWorkspaceColorCaption = 'Рабочая область приложения';
+  rsHighlightColorCaption = 'Выделение';
+  rsHighlightTextColorCaption = 'Выделенный текст';
+  rsBtnFaceColorCaption = 'Поверхность кнопки';
+  rsBtnShadowColorCaption = 'Тёмная сторона кнопки';
+  rsGrayTextColorCaption = 'Серый текст';
+  rsBtnTextColorCaption = 'Текст кнопки';
+  rsInactiveCaptionText = 'Текст заголовка неактивного окна';
+  rsBtnHighlightColorCaption = 'Светлая сторона кнопки';
+  rs3DDkShadowColorCaption = 'Тёмная сторона 3D';
+  rs3DLightColorCaption = 'Светлая сторона 3D';
+  rsInfoTextColorCaption = 'Текст подсказки';
+  rsInfoBkColorCaption = 'Фон подсказки';
+  rsHotLightColorCaption = 'Подсветка';
+  rsGradientActiveCaptionColorCaption = 'Градиент активного заголовка';
+  rsGradientInactiveCaptionColorCaption = 'Градиент неактивного заголовка';
+  rsMenuHighlightColorCaption = 'Выбранный пункт меню';
+  rsMenuBarColorCaption = 'Строка меню';
+  rsFormColorCaption = 'Форма';
 
 function colorToHSL(const color: tColor): tHSL;
 var
@@ -272,6 +328,66 @@ begin
   hslw := colorToHSL(clWindow);
   hslt := colorToHSL(clWindowText);
   if hslt.lum < hslw.lum then result := thLight else result := thDark;
+end;
+
+function colorCaption(c: tColor): string;
+begin
+  result := '';
+  case c of
+    clBlack                   : result := rsBlackColorCaption;
+    clMaroon                  : result := rsMaroonColorCaption;
+    clGreen                   : result := rsGreenColorCaption;
+    clOlive                   : result := rsOliveColorCaption;
+    clNavy                    : result := rsNavyColorCaption;
+    clPurple                  : result := rsPurpleColorCaption;
+    clTeal                    : result := rsTealColorCaption;
+    clGray                    : result := rsGrayColorCaption;
+    clSilver                  : result := rsSilverColorCaption;
+    clRed                     : result := rsRedColorCaption;
+    clLime                    : result := rsLimeColorCaption;
+    clYellow                  : result := rsYellowColorCaption;
+    clBlue                    : result := rsBlueColorCaption;
+    clFuchsia                 : result := rsFuchsiaColorCaption;
+    clAqua                    : result := rsAquaColorCaption;
+    clWhite                   : result := rsWhiteColorCaption;
+    clMoneyGreen              : result := rsMoneyGreenColorCaption;
+    clSkyBlue                 : result := rsSkyBlueColorCaption;
+    clCream                   : result := rsCreamColorCaption;
+    clMedGray                 : result := rsMedGrayColorCaption;
+    clNone                    : result := rsNoneColorCaption;
+    clDefault                 : result := rsDefaultColorCaption;
+    clScrollBar               : result := rsScrollBarColorCaption;
+    clBackground              : result := rsBackgroundColorCaption;
+    clActiveCaption           : result := rsActiveCaptionColorCaption;
+    clInactiveCaption         : result := rsInactiveCaptionColorCaption;
+    clMenu                    : result := rsMenuColorCaption;
+    clWindow                  : result := rsWindowColorCaption;
+    clWindowFrame             : result := rsWindowFrameColorCaption;
+    clMenuText                : result := rsMenuTextColorCaption;
+    clWindowText              : result := rsWindowTextColorCaption;
+    clCaptionText             : result := rsCaptionTextColorCaption;
+    clActiveBorder            : result := rsActiveBorderColorCaption;
+    clInactiveBorder          : result := rsInactiveBorderColorCaption;
+    clAppWorkspace            : result := rsAppWorkspaceColorCaption;
+    clHighlight               : result := rsHighlightColorCaption;
+    clHighlightText           : result := rsHighlightTextColorCaption;
+    clBtnFace                 : result := rsBtnFaceColorCaption;
+    clBtnShadow               : result := rsBtnShadowColorCaption;
+    clGrayText                : result := rsGrayTextColorCaption;
+    clBtnText                 : result := rsBtnTextColorCaption;
+    clInactiveCaptionText     : result := rsInactiveCaptionText;
+    clBtnHighlight            : result := rsBtnHighlightColorCaption;
+    cl3DDkShadow              : result := rs3DDkShadowColorCaption;
+    cl3DLight                 : result := rs3DLightColorCaption;
+    clInfoText                : result := rsInfoTextColorCaption;
+    clInfoBk                  : result := rsInfoBkColorCaption;
+    clHotLight                : result := rsHotLightColorCaption;
+    clGradientActiveCaption   : result := rsGradientActiveCaptionColorCaption;
+    clGradientInactiveCaption : result := rsGradientInactiveCaptionColorCaption;
+    clMenuHighlight           : result := rsMenuHighlightColorCaption;
+    clMenuBar                 : result := rsMenuBarColorCaption;
+    clForm                    : result := rsFormColorCaption;
+  end;
 end;
 
 end.
