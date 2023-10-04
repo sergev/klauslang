@@ -67,7 +67,7 @@ object OptionsDlg: TOptionsDlg
         BevelOuter = bvNone
         ClientHeight = 98
         ClientWidth = 814
-        TabOrder = 1
+        TabOrder = 3
         object Panel3: TPanel
           Left = 20
           Height = 34
@@ -117,6 +117,7 @@ object OptionsDlg: TOptionsDlg
             MaxLength = 0
             NumGlyphs = 1
             OnButtonClick = edFontButtonClick
+            OnKeyDown = edFontKeyDown
             PasswordChar = #0
             TabOrder = 0
           end
@@ -207,7 +208,7 @@ object OptionsDlg: TOptionsDlg
             BevelOuter = bvNone
             ClientHeight = 29
             ClientWidth = 398
-            TabOrder = 1
+            TabOrder = 2
             object Label4: TLabel
               Left = 0
               Height = 29
@@ -248,7 +249,7 @@ object OptionsDlg: TOptionsDlg
             BevelOuter = bvNone
             ClientHeight = 29
             ClientWidth = 348
-            TabOrder = 2
+            TabOrder = 1
             object Label6: TLabel
               Left = 0
               Height = 29
@@ -331,7 +332,7 @@ object OptionsDlg: TOptionsDlg
         ChildSizing.Layout = cclTopToBottomThenLeftToRight
         ClientHeight = 21
         ClientWidth = 794
-        TabOrder = 2
+        TabOrder = 4
         object Label2: TLabel
           Left = 0
           Height = 17
@@ -363,7 +364,7 @@ object OptionsDlg: TOptionsDlg
         BevelOuter = bvNone
         ClientHeight = 372
         ClientWidth = 814
-        TabOrder = 3
+        TabOrder = 5
         object Panel9: TPanel
           Left = 0
           Height = 372
@@ -437,7 +438,7 @@ object OptionsDlg: TOptionsDlg
                 end>
               FlowLayout = tlTop
               FlowStyle = fsLeftRightTopBottom
-              TabOrder = 0
+              TabOrder = 2
               object chStyleDefault: TCheckBox
                 Left = 0
                 Height = 23
@@ -447,7 +448,7 @@ object OptionsDlg: TOptionsDlg
                 Caption = 'Стиль шрифта по умолчанию'
                 Constraints.MinWidth = 250
                 OnClick = chStyleDefaultClick
-                TabOrder = 4
+                TabOrder = 0
               end
               object chStyleBold: TCheckBox
                 Left = 0
@@ -458,7 +459,7 @@ object OptionsDlg: TOptionsDlg
                 Caption = 'Жирный'
                 Constraints.MinWidth = 140
                 OnClick = chStyleBoldClick
-                TabOrder = 0
+                TabOrder = 1
               end
               object chStyleItalic: TCheckBox
                 Left = 150
@@ -470,7 +471,7 @@ object OptionsDlg: TOptionsDlg
                 Caption = 'Курсив'
                 Constraints.MinWidth = 140
                 OnClick = chStyleItalicClick
-                TabOrder = 1
+                TabOrder = 2
               end
               object chStyleUnderline: TCheckBox
                 Left = 0
@@ -481,7 +482,7 @@ object OptionsDlg: TOptionsDlg
                 Caption = 'Подчёркнутый'
                 Constraints.MinWidth = 140
                 OnClick = chStyleUnderlineClick
-                TabOrder = 2
+                TabOrder = 3
               end
               object chStyleStrikeOut: TCheckBox
                 Left = 150
@@ -493,7 +494,7 @@ object OptionsDlg: TOptionsDlg
                 Caption = 'Зачёркнутый'
                 Constraints.MinWidth = 140
                 OnClick = chStyleStrikeOutClick
-                TabOrder = 3
+                TabOrder = 4
               end
             end
             object Panel11: TPanel
@@ -546,7 +547,7 @@ object OptionsDlg: TOptionsDlg
               BevelOuter = bvNone
               ClientHeight = 29
               ClientWidth = 312
-              TabOrder = 2
+              TabOrder = 0
               object Label8: TLabel
                 Left = 0
                 Height = 29
@@ -601,7 +602,7 @@ object OptionsDlg: TOptionsDlg
         ChildSizing.Layout = cclTopToBottomThenLeftToRight
         ClientHeight = 21
         ClientWidth = 794
-        TabOrder = 4
+        TabOrder = 2
         object Label9: TLabel
           Left = 0
           Height = 17
@@ -634,7 +635,7 @@ object OptionsDlg: TOptionsDlg
         BevelOuter = bvNone
         ClientHeight = 36
         ClientWidth = 814
-        TabOrder = 5
+        TabOrder = 1
         object Panel8: TPanel
           Left = 20
           Height = 34

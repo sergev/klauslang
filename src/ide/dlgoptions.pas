@@ -81,6 +81,7 @@ type
     procedure chStyleStrikeOutClick(Sender: TObject);
     procedure chStyleUnderlineClick(Sender: TObject);
     procedure edFontButtonClick(Sender: TObject);
+    procedure edFontKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure edTabSizeChange(Sender: TObject);
     procedure lbStylesClick(Sender: TObject);
   private
@@ -113,7 +114,7 @@ type
 implementation
 
 uses
-  GraphUtils;
+  GraphUtils, LCLType;
 
 resourcestring
   strCustomColor = 'Настроить...';
@@ -155,6 +156,7 @@ begin
   fSampleEdit.readOnly := true;
   fSampleEdit.align := alClient;
   fSampleEdit.borderStyle := bsSingle;
+  fSampleEdit.options := [];
   fSampleEdit.styles := fEditorOptions;
   fSampleEdit.onGetLineStyle := @sampleEditGetLineStyle;
   for i := low(i) to high(i) do
@@ -209,6 +211,12 @@ begin
       refreshWindow;
     end;
   end;
+end;
+
+procedure TOptionsDlg.edFontKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  shift := shift * [ssShift, ssCtrl, ssAlt];
+  if (key = VK_F2) and (shift = []) then edFont.button.click;
 end;
 
 procedure TOptionsDlg.chAutoIndentClick(Sender: TObject);

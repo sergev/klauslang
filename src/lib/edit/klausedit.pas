@@ -2693,7 +2693,7 @@ begin
       if canUndo then undo;
       key := 0;
     end;
-    VK_TAB: if (keoWantTabs in fOptions) and (shift = []) then begin
+    VK_TAB: if not readOnly and (keoWantTabs in fOptions) and (shift = []) then begin
       cnt := ((selStart.x-1) div tabSize)*tabSize+tabSize-selStart.x+1;
       beginEdit(kegTyping);
       try
