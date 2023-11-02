@@ -706,8 +706,8 @@ const
       (fontColor: clWindowText; backColor: clWindow; fontStyle: [];
         defaultFontStyle: true; defaultFontColor: true; defaultBackColor: true),
       // esiInvalid
-      (fontColor: clRed; backColor: clWindow; fontStyle: [];
-        defaultFontStyle: true; defaultFontColor: false; defaultBackColor: true),
+      (fontColor: clRed; backColor: clWindow; fontStyle: [fsBold];
+        defaultFontStyle: false; defaultFontColor: false; defaultBackColor: true),
       // esiKeyword
       (fontColor: clWindowText; backColor: clWindow; fontStyle: [fsBold];
         defaultFontStyle: false; defaultFontColor: true; defaultBackColor: true),
@@ -758,8 +758,8 @@ const
       (fontColor: clWindowText; backColor: clWindow; fontStyle: [];
         defaultFontStyle: true; defaultFontColor: true; defaultBackColor: true),
       // esiInvalid
-      (fontColor: clRed; backColor: clWindow; fontStyle: [];
-        defaultFontStyle: true; defaultFontColor: false; defaultBackColor: true),
+      (fontColor: clRed; backColor: clWindow; fontStyle: [fsBold];
+        defaultFontStyle: false; defaultFontColor: false; defaultBackColor: true),
       // esiKeyword
       (fontColor: clWindowText; backColor: clWindow; fontStyle: [];
         defaultFontStyle: true; defaultFontColor: true; defaultBackColor: true),

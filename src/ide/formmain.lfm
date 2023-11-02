@@ -962,7 +962,7 @@ object MainForm: TMainForm
     object actEditIndentBlock: TAction
       Category = 'Правка'
       Caption = 'Увеличить отступ'
-      Hint = 'Увеличить отступ|Сдвинуть выделенный блок право на размер табуляции'
+      Hint = 'Увеличить отступ|Сдвинуть выделенный блок вправо на размер табуляции'
       ImageIndex = 30
       OnExecute = actEditIndentBlockExecute
       ShortCut = 16457
