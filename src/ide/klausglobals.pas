@@ -58,7 +58,36 @@ type
       procedure doLoadFromIni(storage: TIniPropStorage; const section: string); override;
   end;
 
+type
+  tKlausRunOptions = class(tPersistent)
+    private
+      fCmdLine: string;
+      fStdIn: string;
+      fStdOut: string;
+      fAppendStdOut: boolean;
+    protected
+      procedure assignTo(dest: tPersistent); override;
+    public
+      property cmdLine: string read fCmdLine write fCmdLine;
+      property stdIn: string read fStdIn write fStdIn;
+      property stdOut: string read fStdOut write fStdOut;
+      property appendStdOut: boolean read fAppendStdOut write fAppendStdOut;
+  end;
+
 implementation
+
+{ tKlausRunOptions }
+
+procedure tKlausRunOptions.assignTo(dest: tPersistent);
+begin
+  if not (dest is tKlausRunOptions) then inherited
+  else with dest as tKlausRunOptions do begin
+    cmdLine := self.cmdLine;
+    stdIn := self.stdIn;
+    stdOut := self.stdOut;
+    appendStdOut := self.appendStdOut;
+  end;
+end;
 
 { tKlausEditorOptions }
 

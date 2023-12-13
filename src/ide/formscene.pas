@@ -26,7 +26,7 @@ interface
 
 uses
   Classes, SysUtils, Messages, LMessages, Forms, Controls, Graphics, Dialogs,
-  ActnList, KlausGlobals, KlausConsole, KlausSrc, KlausLex, KlausSyn, KlausErr;
+  ActnList, U8, KlausGlobals, KlausConsole, KlausSrc, KlausLex, KlausSyn, KlausErr;
 
 type
   tSceneActionStateFlag = (
@@ -49,11 +49,13 @@ type
   private
     fConsole: tKlausConsole;
     fFileName: string;
-    fCmdLine: string;
+    fRunOptions: tKlausRunOptions;
     fStepMode: boolean;
     fSource: tKlausSource;
     fThread: tKlausDebugThread;
     fExitCode: integer;
+    fInStream: tFileStream;
+    fOutStream: tFileStream;
 
     function  getActionState: tSceneActionState;
     function  getFinished: boolean;
@@ -70,10 +72,13 @@ type
     procedure setConsoleRawMode(raw: boolean);
   protected
     procedure enableDisable(var msg: tMessage); message APPM_UpdateControlState;
+    function  inStreamHasChar: boolean;
+    procedure inStreamReadChar(out c: u8Char);
+    procedure outStreamWrite(const s: string);
   public
     property source: tKlausSource read fSource;
     property fileName: string read fFileName;
-    property cmdLine: string read fCmdLine;
+    property runOptions: tKlausRunOptions read fRunOptions;
     property stepMode: boolean read getStepMode;
     property thread: tKlausDebugThread read fThread;
     property actionState: tSceneActionState read getActionState;
@@ -83,7 +88,7 @@ type
     property previewShortCuts: boolean read getPreviewShortCuts write setPreviewShortCuts;
 
     constructor create(aOwner: tComponent); override;
-    constructor create(aSource: tKlausSource; aFileName: string; aCmdLine: string; aStepMode: boolean);
+    constructor create(aSource: tKlausSource; aFileName: string; aRunOptions: tKlausRunOptions; aStepMode: boolean);
     destructor  destroy; override;
     procedure invalidateControlState;
     procedure updateBreakpointList;
@@ -112,6 +117,7 @@ resourcestring
 constructor tSceneForm.create(aOwner: tComponent);
 begin
   inherited create(aOwner);
+  fRunOptions := tKlausRunOptions.create;
   assert(mainForm.scene = nil, 'Cannot open multiple execution scenes');
   mainForm.scene := self;
   fSource := nil;
@@ -131,12 +137,12 @@ begin
   invalidateControlState;
 end;
 
-constructor tSceneForm.create(aSource: tKlausSource; aFileName: string; aCmdLine: string; aStepMode: boolean);
+constructor tSceneForm.create(aSource: tKlausSource; aFileName: string; aRunOptions: tKlausRunOptions; aStepMode: boolean);
 begin
   create(application);
   fSource := aSource;
   setFileName(aFileName);
-  fCmdLine := aCmdLine;
+  fRunOptions.assign(aRunOptions);
   fStepMode := aStepMode;
 end;
 
@@ -145,8 +151,11 @@ begin
   invalidateControlState;
   mainForm.removeControlStateClient(self);
   if fThread <> nil then freeAndNil(fThread);
+  if assigned(fInStream) then freeAndNil(fInStream);
+  if assigned(fOutStream) then freeAndNil(fOutStream);
   if fSource <> nil then freeAndNil(fSource);
   if mainForm.scene = self then mainForm.scene := nil;
+  freeAndNil(fRunOptions);
   inherited destroy;
 end;
 
@@ -223,9 +232,9 @@ var
   sl: tStringList = nil;
 begin
   try
-    if cmdLine <> '' then begin
+    if runOptions.cmdLine <> '' then begin
       sl := tStringList.create;
-      splitCmdLineParams(cmdLine, sl, true);
+      splitCmdLineParams(runOptions.cmdLine, sl, true);
     end;
     startDebugThread(sl);
   except
@@ -254,8 +263,21 @@ begin
 end;
 
 procedure tSceneForm.startDebugThread(args: tStrings);
+const
+  outStreamMode: array[boolean] of word = (fmCreate, fmOpenWrite);
 begin
-  if (fFileName = '') or not assigned(source) then exit;
+  try
+    if (fFileName = '') or not assigned(source) then abort;
+    if runOptions.stdIn <> '' then
+      fInStream := tFileStream.create(runOptions.stdIn, fmOpenRead or fmShareDenyNone);
+    if runOptions.stdOut <> '' then begin
+      fOutStream := tFileStream.create(runOptions.stdOut, outStreamMode[runOptions.appendStdOut] or fmShareDenyWrite);
+      fOutStream.seek(0, soFromEnd);
+    end;
+  except
+    fExitCode := -1;
+    raise;
+  end;
   fThread := tKlausDebugThread.create(source, fileName, args);
   fThread.onTerminate := @threadTerminate;
   fThread.onStateChange := @threadStateChange;
@@ -292,9 +314,15 @@ end;
 procedure tSceneForm.threadAssignStdIO(sender: tObject; var io: tKlausInOutMethods);
 begin
   io.setRaw := @setConsoleRawMode;
-  io.hasChar := @fConsole.hasChar;
-  io.readChar := @fConsole.readChar;
-  io.writeOut := @fConsole.write;
+  if runOptions.stdIn = '' then begin
+    io.hasChar := @fConsole.hasChar;
+    io.readChar := @fConsole.readChar;
+  end else begin
+    io.hasChar := @inStreamHasChar;
+    io.readChar := @inStreamReadChar;
+  end;
+  if runOptions.stdOut = '' then io.writeOut := @fConsole.write
+  else io.writeOut := @outStreamWrite;
   io.writeErr := @fConsole.write;
 end;
 
@@ -319,6 +347,25 @@ begin
   actCloseFinished.enabled := finished;
 end;
 
+function tSceneForm.inStreamHasChar: boolean;
+begin
+  result := true;
+end;
+
+procedure tSceneForm.inStreamReadChar(out c: u8Char);
+begin
+  if fInStream = nil then raise eKlausError.create(ercStreamNotOpen, 0, 0);
+  with fInStream do
+    if position = size then c := #26
+    else c := u8ReadChar(fInStream);
+end;
+
+procedure tSceneForm.outStreamWrite(const s: string);
+begin
+  if fOutStream = nil then raise eKlausError.create(ercStreamNotOpen, 0, 0);
+  if s <> '' then fOutStream.write(pChar(s)^, length(s));
+end;
+
 function tSceneForm.getActionState: tSceneActionState;
 begin
   result := [sasCanStop];
@@ -332,7 +379,7 @@ end;
 
 function tSceneForm.getFinished: boolean;
 begin
-  if fThread = nil then result := false
+  if fThread = nil then result := true
   else result := fThread.state = kdsFinished;
 end;
 

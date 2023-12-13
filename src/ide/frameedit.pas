@@ -17,7 +17,7 @@ KlausLang — свободное программное обеспечение: 
 ознакомиться здесь: <https://www.gnu.org/licenses/>.
 }
 
-unit frameEdit;
+unit FrameEdit;
 
 {$mode ObjFPC}{$H+}
 {$i ../lib/klaus.inc}
@@ -59,7 +59,7 @@ type
     fModified: boolean;
     fErrorInfo: tKlausEditErrorInfo;
     fErrorLine: integer;
-    fCmdLine: string;
+    fRunOptions: tKlausRunOptions;
 
     function  getCaption: string;
     procedure editChange(sender: tObject);
@@ -79,7 +79,7 @@ type
     property fileName: string read fFileName;
     property modified: boolean read fModified;
     property caption: string read getCaption;
-    property cmdLine: string read fCmdLine write fCmdLine;
+    property runOptions: tKlausRunOptions read fRunOptions write fRunOptions;
 
     constructor create(aOwner: tComponent); override;
     destructor  destroy; override;
@@ -119,6 +119,7 @@ begin
   mainForm.addControlStateClient(self);
   fModified := false;
   fErrorLine := -1;
+  fRunOptions := tKlausRunOptions.create;
   fEdit := tKlausEdit.create(self);
   fEdit.parent := self;
   fEdit.align := alClient;
@@ -146,6 +147,7 @@ destructor tEditFrame.destroy;
 begin
   mainForm.invalidateBreakpointList;
   mainForm.removeControlStateClient(self);
+  freeAndNil(fRunOptions);
   inherited destroy;
 end;
 

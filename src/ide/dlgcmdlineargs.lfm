@@ -1,15 +1,15 @@
 object CmdLineArgsDlg: TCmdLineArgsDlg
-  Left = 618
-  Height = 126
-  Top = 347
+  Left = 621
+  Height = 276
+  Top = 348
   Width = 645
   BorderStyle = bsDialog
   Caption = 'Аргументы командной строки'
-  ClientHeight = 126
+  ClientHeight = 276
   ClientWidth = 645
   OnClose = FormClose
   Position = poScreenCenter
-  SessionProperties = 'cbArgs.Items'
+  SessionProperties = 'cbArgs.Items;cbStdIn.Items;cbStdOut.Items'
   LCLVersion = '2.2.4.0'
   object lblCaption: TLabel
     Left = 24
@@ -35,28 +35,123 @@ object CmdLineArgsDlg: TCmdLineArgsDlg
   object pbCancel: TButton
     Left = 416
     Height = 32
-    Top = 80
+    Top = 230
     Width = 104
     Anchors = [akRight, akBottom]
     Cancel = True
     Caption = 'Отменить'
     ModalResult = 2
-    TabOrder = 1
+    TabOrder = 3
   end
   object pbSave: TButton
     Left = 528
     Height = 32
-    Top = 80
+    Top = 230
     Width = 104
     Anchors = [akRight, akBottom]
     Caption = 'Применить'
     Default = True
     ModalResult = 1
+    TabOrder = 4
+  end
+  object lblCaption1: TLabel
+    Left = 24
+    Height = 17
+    Top = 76
+    Width = 608
+    Anchors = [akTop, akLeft, akRight]
+    AutoSize = False
+    Caption = 'Поток ввода из файла'
+    ParentColor = False
+  end
+  object cbStdIn: TComboBox
+    Left = 16
+    Height = 34
+    Top = 96
+    Width = 576
+    Anchors = [akTop, akLeft, akRight]
+    AutoComplete = True
+    AutoCompleteText = [cbactEnabled, cbactEndOfLineComplete, cbactRetainPrefixCase, cbactSearchAscending]
+    ItemHeight = 0
+    TabOrder = 1
+  end
+  object lblCaption2: TLabel
+    Left = 24
+    Height = 17
+    Top = 140
+    Width = 608
+    Anchors = [akTop, akLeft, akRight]
+    AutoSize = False
+    Caption = 'Поток вывода в файл'
+    ParentColor = False
+  end
+  object cbStdOut: TComboBox
+    Left = 16
+    Height = 34
+    Top = 160
+    Width = 576
+    Anchors = [akTop, akLeft, akRight]
+    AutoComplete = True
+    AutoCompleteText = [cbactEnabled, cbactEndOfLineComplete, cbactRetainPrefixCase, cbactSearchAscending]
+    ItemHeight = 0
     TabOrder = 2
+  end
+  object sbStdInBrowse: TSpeedButton
+    Left = 598
+    Height = 34
+    Top = 96
+    Width = 34
+    Glyph.Data = {
+      F6000000424DF600000000000000760000002800000010000000100000000100
+      0400000000008000000000000000000000000000000000000000000000000000
+      8000008000000080800080000000800080008080000080808000C0C0C0000000
+      FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00DDD000000000
+      000DDD77777777777700DD7FB8B8B8B8B700D7FB8B8B8B8B8070D7F8B8B8B8B8
+      70707F8B8B8B8B8B07707FFFFFFFFFF708707777777777777B70D7F8B8B8B8B8
+      B870D7FB8B8B8FFFFF70D7F8B8B8F777777DDD7FFFFF7DDDDDDDDDD77777DDDD
+      D000DDDDDDDDDDDDDD00DDDDDDDDD0DDD0D0DDDDDDDDDD000DDD
+    }
+    OnClick = sbStdInBrowseClick
+  end
+  object sbStdOutBrowse: TSpeedButton
+    Left = 598
+    Height = 34
+    Top = 160
+    Width = 34
+    Glyph.Data = {
+      F6000000424DF600000000000000760000002800000010000000100000000100
+      0400000000008000000000000000000000000000000000000000000000000000
+      8000008000000080800080000000800080008080000080808000C0C0C0000000
+      FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00DDD000000000
+      000DDD77777777777700DD7FB8B8B8B8B700D7FB8B8B8B8B8070D7F8B8B8B8B8
+      70707F8B8B8B8B8B07707FFFFFFFFFF708707777777777777B70D7F8B8B8B8B8
+      B870D7FB8B8B8FFFFF70D7F8B8B8F777777DDD7FFFFF7DDDDDDDDDD77777DDDD
+      D000DDDDDDDDDDDDDD00DDDDDDDDD0DDD0D0DDDDDDDDDD000DDD
+    }
+    OnClick = sbStdOutBrowseClick
+  end
+  object chAppendStdOut: TCheckBox
+    Left = 16
+    Height = 23
+    Top = 200
+    Width = 264
+    Caption = 'Дописывать вывод в конец файла'
+    TabOrder = 5
   end
   object propStorage: TIniPropStorage
     StoredValues = <>
-    Left = 52
-    Top = 72
+    Left = 44
+    Top = 228
+  end
+  object stdInDialog: TOpenDialog
+    Title = 'Поток ввода из файла'
+    Options = [ofPathMustExist, ofFileMustExist, ofEnableSizing, ofViewDetail]
+    Left = 148
+    Top = 228
+  end
+  object stdOutDialog: TSaveDialog
+    Title = 'Поток вывода в файл'
+    Left = 252
+    Top = 228
   end
 end

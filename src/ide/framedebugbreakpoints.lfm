@@ -1,16 +1,16 @@
 object DebugBreakpointsFrame: TDebugBreakpointsFrame
   Left = 0
-  Height = 240
+  Height = 180
   Top = 0
   Width = 320
-  ClientHeight = 240
+  ClientHeight = 180
   ClientWidth = 320
   TabOrder = 0
   DesignLeft = 451
   DesignTop = 156
   object lbBreakpoints: TListBox
     Left = 0
-    Height = 240
+    Height = 180
     Top = 0
     Width = 320
     Align = alClient

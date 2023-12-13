@@ -26,24 +26,45 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  IniPropStorage;
+  IniPropStorage, Buttons;
 
 type
   tCmdLineArgsDlg = class(TForm)
+    cbStdIn: TComboBox;
+    cbStdOut: TComboBox;
+    chAppendStdOut: TCheckBox;
+    lblCaption1: TLabel;
+    lblCaption2: TLabel;
+    stdOutDialog: TSaveDialog;
+    stdInDialog: TOpenDialog;
     propStorage: TIniPropStorage;
     pbCancel: TButton;
     pbSave: TButton;
     cbArgs: TComboBox;
     lblCaption: TLabel;
+    sbStdInBrowse: TSpeedButton;
+    sbStdOutBrowse: TSpeedButton;
     procedure formClose(sender: tObject; var closeAction: tCloseAction);
+    procedure sbStdInBrowseClick(Sender: TObject);
+    procedure sbStdOutBrowseClick(Sender: TObject);
   private
     fFileName: string;
 
+    function  getAppendStdOut: boolean;
     function  getArgs: string;
+    function  getStdIn: string;
+    function  getStdOut: string;
+    procedure setAppendStdOut(val: boolean);
     procedure setArgs(val: string);
+    procedure setStdIn(val: string);
+    procedure setStdOut(val: string);
+    procedure updateCombo(cb: tComboBox);
   public
     property fileName: string read fFileName;
     property args: string read getArgs write setArgs;
+    property stdIn: string read getStdIn write setStdIn;
+    property stdOut: string read getStdOut write setStdOut;
+    property appendStdOut: boolean read getAppendStdOut write setAppendStdOut;
 
     constructor create(aOwner: tComponent; aFileName: string); overload;
   end;
@@ -59,22 +80,48 @@ resourcestring
 
 { tCmdLineArgsDlg }
 
-procedure tCmdLineArgsDlg.formClose(sender: TObject; var closeAction: tCloseAction);
+constructor tCmdLineArgsDlg.create(aOwner: tComponent; aFileName: string);
+begin
+  create(aOwner);
+  fFileName := aFileName;
+  caption := format(strCaption, [extractFileName(fFileName)]);
+  propStorage.iniFileName := mainForm.configFileName;
+  propStorage.iniSection := fileName;
+end;
+
+procedure tCmdLineArgsDlg.updateCombo(cb: tComboBox);
 var
   s: string;
   idx: integer;
 begin
+  s := cb.text;
+  if s <> '' then with cb.items do begin
+    idx := indexOf(s);
+    if idx >= 0 then delete(idx);
+    insert(0, s);
+    while count > maxCmdLineArgHistoryItems do delete(count-1);
+    cb.text := s;
+  end;
+end;
+
+procedure tCmdLineArgsDlg.formClose(sender: tObject; var closeAction: tCloseAction);
+begin
   if modalResult = mrOK then begin
-    s := cbArgs.text;
-    if s <> '' then with cbArgs.items do begin
-      idx := indexOf(s);
-      if idx >= 0 then delete(idx);
-      insert(0, s);
-      while count > maxCmdLineArgHistoryItems do delete(count-1);
-      cbArgs.text := s;
-    end;
+    updateCombo(cbArgs);
+    updateCombo(cbStdIn);
+    updateCombo(cbStdOut);
   end else
     propStorage.active := false;
+end;
+
+procedure tCmdLineArgsDlg.sbStdInBrowseClick(Sender: TObject);
+begin
+  if stdInDialog.execute then cbStdIn.text := stdInDialog.fileName;
+end;
+
+procedure tCmdLineArgsDlg.sbStdOutBrowseClick(Sender: TObject);
+begin
+  if stdOutDialog.execute then cbStdOut.text := stdOutDialog.fileName;
 end;
 
 function tCmdLineArgsDlg.getArgs: string;
@@ -82,20 +129,40 @@ begin
   result := cbArgs.text;
 end;
 
+function tCmdLineArgsDlg.getAppendStdOut: boolean;
+begin
+  result := chAppendStdOut.checked;
+end;
+
+function tCmdLineArgsDlg.getStdIn: string;
+begin
+  result := cbStdIn.text;
+end;
+
+function tCmdLineArgsDlg.getStdOut: string;
+begin
+  result := cbStdOut.text;
+end;
+
+procedure tCmdLineArgsDlg.setAppendStdOut(val: boolean);
+begin
+  chAppendStdOut.checked := val;
+end;
+
 procedure tCmdLineArgsDlg.setArgs(val: string);
 begin
   cbArgs.text := val;
 end;
 
-constructor tCmdLineArgsDlg.create(aOwner: tComponent; aFileName: string);
+procedure tCmdLineArgsDlg.setStdIn(val: string);
 begin
-  create(aOwner);
-  fFileName := aFileName;
-  lblCaption.caption := format(strCaption, [extractFileName(fFileName)]);
-  propStorage.iniFileName := mainForm.configFileName;
-  propStorage.iniSection := fileName;
+  cbStdIn.text := val;
 end;
 
+procedure tCmdLineArgsDlg.setStdOut(val: string);
+begin
+  cbStdOut.text := val;
+end;
 
 end.
 

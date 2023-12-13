@@ -1,16 +1,16 @@
 object DebugCallStackFrame: TDebugCallStackFrame
   Left = 0
-  Height = 240
+  Height = 180
   Top = 0
   Width = 320
-  ClientHeight = 240
+  ClientHeight = 180
   ClientWidth = 320
   TabOrder = 0
   DesignLeft = 462
   DesignTop = 156
   object lbCallStack: TListBox
     Left = 0
-    Height = 240
+    Height = 180
     Top = 0
     Width = 320
     Align = alClient

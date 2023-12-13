@@ -122,6 +122,9 @@ const
 const
   klausConstNameNewline = 'НС';
   klausConstNameTab = 'Таб';
+  klausConstNameEOF = 'КФ';
+  klausConstNameCR = 'ВК';
+  klausConstNameLF = 'ПС';
   klausConstNameMinInt = 'минЦелое';
   klausConstNameMaxInt = 'максЦелое';
   klausConstNameMinFloat = 'минДробное';
@@ -382,7 +385,10 @@ begin
   dtStrArray := source.arrayTypes[kdtString];
   // константы
   tKlausConstDecl.create(self, klausConstNameNewline, zeroSrcPt, klausSimple(#13#10));
-  tKlausConstDecl.create(self, klausConstNameTab, zeroSrcPt, klausSimple(#9));
+  tKlausConstDecl.create(self, klausConstNameTab, zeroSrcPt, klausSimple(tKlausChar(#9)));
+  tKlausConstDecl.create(self, klausConstNameCR, zeroSrcPt, klausSimple(tKlausChar(#13)));
+  tKlausConstDecl.create(self, klausConstNameLF, zeroSrcPt, klausSimple(tKlausChar(#10)));
+  tKlausConstDecl.create(self, klausConstNameEOF, zeroSrcPt, klausSimple(tKlausChar(#26)));
   tKlausConstDecl.create(self, klausConstNameMaxInt, zeroSrcPt, klausSimple(high(tKlausInteger)));
   tKlausConstDecl.create(self, klausConstNameMinInt, zeroSrcPt, klausSimple(low(tKlausInteger)));
   tKlausConstDecl.create(self, klausConstNameMaxFloat, zeroSrcPt, klausSimple(klausMaxFloat));

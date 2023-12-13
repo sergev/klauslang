@@ -118,12 +118,13 @@ const
   ercInvalidFileType        = 68;
   ercUnexpectedObjectClass  = 69;
   ercIllegalExpression      = 70;
+  ercStreamNotOpen          = 71;
 
 const
   // Классификация кодов eKlausError для трансляции в исключения языка
   klausCodeToStdErr: array[tKlausStdException] of set of byte = (
     //ksxInOutError
-    [ercStreamError, ercInvalidFileType],
+    [ercStreamError, ercInvalidFileType, ercStreamNotOpen],
 
     //ksxConvertError
     [ercInvalidLiteralValue, ercInvalidFormatSpecifier, ercInvalidFormatArgIdx,
@@ -269,6 +270,7 @@ resourcestring
   errInvalidFileType = 'Неверный тип файла: %d.';
   errUnexpectedObjectClass = 'Неожиданный класс объекта. Требуется %s, передано %s.';
   errIllegalExpression = 'Недопустимая конструкция.';
+  errStreamNotOpen = 'Поток ввода-вывода не был открыт.';
 
 { Globals }
 
@@ -371,6 +373,7 @@ begin
     ercInvalidFileType: result := errInvalidFileType;
     ercUnexpectedObjectClass: result := errUnexpectedObjectClass;
     ercIllegalExpression: result := errIllegalExpression;
+    ercStreamNotOpen: result := errStreamNotOpen;
   end;
 end;
 

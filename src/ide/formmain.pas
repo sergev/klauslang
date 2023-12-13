@@ -837,8 +837,16 @@ begin
   if not saveEditFrame(fr) then exit;
   dlg := tCmdLineArgsDlg.create(application, fr.fileName);
   try
-    dlg.args := fr.cmdLine;
-    if dlg.showModal = mrOK then fr.cmdLine := dlg.args;
+    dlg.args := fr.runOptions.cmdLine;
+    dlg.stdIn := fr.runOptions.stdIn;
+    dlg.stdOut := fr.runOptions.stdOut;
+    dlg.appendStdOut := fr.runOptions.appendStdOut;
+    if dlg.showModal = mrOK then begin
+      fr.runOptions.cmdLine := dlg.args;
+      fr.runOptions.stdIn := dlg.stdIn;
+      fr.runOptions.stdOut := dlg.stdOut;
+      fr.runOptions.appendStdOut := dlg.appendStdOut;
+    end;
   finally
     freeAndNil(dlg);
   end;
@@ -853,7 +861,7 @@ begin
   if not saveEditFrame(fr) then exit;
   src := fr.createSource;
   if src <> nil then begin
-    f := tSceneForm.create(src, fr.fileName, fr.cmdLine, stepMode);
+    f := tSceneForm.create(src, fr.fileName, fr.runOptions, stepMode);
     f.previewShortcuts := actRunInterceptKeyboard.checked;
     f.show;
   end;
@@ -1383,13 +1391,22 @@ var
   dvt: tDebugViewType;
 begin
   result :=
+    'Height;Left;Top;Width;WindowState;recentFiles;debugViews;'+
+    'actRunInterceptKeyboard.checked';
+  for dvt := low(dvt) to high(dvt) do begin
+    if debugView[dvt] = nil then continue;
+    n := debugView[dvt].name;
+    result += ';'+n+'.Position';
+  end;
+  { Плохо работает при масштабировании на высоких разрешениях экрана
+  result :=
     'Height;Left;Top;Width;WindowState;recentFiles;sbDebug.Width;debugViews;'+
     'actRunInterceptKeyboard.checked';
   for dvt := low(dvt) to high(dvt) do begin
     if debugView[dvt] = nil then continue;
     n := debugView[dvt].name;
     result += ';'+n+'.Height;'+n+'.Position';
-  end;
+  end;}
 end;
 
 procedure tMainForm.createWnd;

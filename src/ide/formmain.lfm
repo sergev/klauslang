@@ -1001,6 +1001,7 @@ object MainForm: TMainForm
   object actionImages: TImageList
     BlendColor = clSilver
     Height = 22
+    Scaled = True
     Width = 22
     Left = 280
     Top = 176
@@ -1125,6 +1126,7 @@ object MainForm: TMainForm
     Top = 260
   end
   object editLineImages: TImageList
+    Scaled = True
     Left = 401
     Top = 176
     Bitmap = {

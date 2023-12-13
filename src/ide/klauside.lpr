@@ -48,6 +48,9 @@ begin
   Application.Scaled:=True;
   Application.Title:='Klaus IDE';
   Application.Initialize;
+  {$push}{$warn SYMBOL_PLATFORM off}
+  Application.updateFormatSettings := false;
+  {$pop}
   Application.CreateForm(TMainForm, MainForm);
   Application.CreateForm(TSplashForm, SplashForm);
   splashForm.showModal;
