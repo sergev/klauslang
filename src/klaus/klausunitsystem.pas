@@ -155,7 +155,7 @@ const
   klausConstFileAttrVirtual = 'фаВиртуальный';
 
 const
-  klausTypeNameFileInfo = 'тФайлИнфо';
+  klausTypeNameFileInfo = 'ФайлИнфо';
 
 const
   klausVarNameCmdLineParams = '$cmdLineParams';
@@ -367,13 +367,13 @@ procedure tKlausUnitSystem.createSystemTypes;
 var
   def: tKlausTypeDefStruct;
 begin
-  // тФайлИнфо
+  // ФайлИнфо
   def := tKlausTypeDefStruct.create(source, zeroSrcPt);
   tKlausStructMember.create(def, 'имя', zeroSrcPt, source.simpleTypes[kdtString]);
   tKlausStructMember.create(def, 'размер', zeroSrcPt, source.simpleTypes[kdtInteger]);
   tKlausStructMember.create(def, 'атрибуты', zeroSrcPt, source.simpleTypes[kdtInteger]);
   tKlausStructMember.create(def, 'возраст', zeroSrcPt, source.simpleTypes[kdtMoment]);
-  tKlausTypeDecl.create(self, klausTypeNameFileInfo, zeroSrcPt, def);
+  tKlausTypeDecl.create(self, [klausTypeNameFileInfo], zeroSrcPt, def);
 end;
 
 procedure tKlausUnitSystem.createSystemVariables;

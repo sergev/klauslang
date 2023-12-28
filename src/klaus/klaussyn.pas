@@ -115,7 +115,7 @@ const
     def:   '`тип` (* <type_decl>)'),
 
     (name: 'type_decl';
-    def:   '#id "=" <type_def> ";"'),
+    def:   '#id [* "/" #id] "=" <type_def> ";"'),
 
     (name: 'simple_type';
     def:   '(`символ` | `строка` | `целое` | `дробное` | `момент` | `логическое` | `объект`)'),
