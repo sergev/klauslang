@@ -489,6 +489,9 @@ function klausSimple(const m: tKlausMoment): tKlausSimpleValue;
 function klausSimple(const b: tKlausBoolean): tKlausSimpleValue;
 function klausSimpleObj(const o: tKlausObject): tKlausSimpleValue;
 
+// Возвращает true, если тип src можно неявно привести к типу dt
+function klausCanAssign(src, dt: tKlausDataType): boolean;
+
 // Возвращает true, если тип src можно привести к типу dt
 function klausCanTypecast(src, dt: tKlausDataType): boolean;
 
@@ -506,6 +509,7 @@ function klausCanCompare(v1, v2: tKlausSimpleValue): boolean;
 
 // Сравнивает простые значение
 function klausCompare(v1, v2: tKlausSimpleValue; const at: tSrcPoint): integer;
+function klausCompare(v1, v2: tKlausSimpleValue; accuracy: tKlausFloat; const at: tSrcPoint): integer;
 
 // Возвращает значение, преобразованное к строке
 // для отображения в отладочных окнах среды.
@@ -634,6 +638,25 @@ begin
   result.oValue := o;
 end;
 
+// Возвращает true, если тип src можно неявно привести к типу dt
+function klausCanAssign(src, dt: tKlausDataType): boolean;
+begin
+  if (src = kdtComplex) or (dt = kdtComplex) then exit(false);
+  if src = dt then exit(true);
+  case dt of
+    kdtChar: result := src = kdtChar;
+    kdtString: result := src in [kdtChar, kdtString];
+    kdtInteger: result := src = kdtInteger;
+    kdtFloat: result := src in [kdtInteger, kdtFloat];
+    kdtMoment: result := src = kdtMoment;
+    kdtBoolean: result := src = kdtBoolean;
+    kdtObject: result := src = kdtObject;
+  else
+    result := false;
+    assert(false, 'Invalid data type');
+  end;
+end;
+
 // Возвращает true, если тип src можно привести к типу dt
 function klausCanTypecast(src, dt: tKlausDataType): boolean;
 begin
@@ -733,8 +756,13 @@ begin
   end;
 end;
 
-// Сравнивает простые значение
 function klausCompare(v1, v2: tKlausSimpleValue; const at: tSrcPoint): integer;
+begin
+  result := klausCompare(v1, v2, 0, at);
+end;
+
+// Сравнивает простые значение
+function klausCompare(v1, v2: tKlausSimpleValue; accuracy: tKlausFloat; const at: tSrcPoint): integer;
 begin
   result := 0;
   if not klausCanCompare(v1.dataType, v2.dataType) then
@@ -747,21 +775,21 @@ begin
         result := klausCmp(v1.iValue, v2.iValue)
       else begin
         if isNaN(v2.fValue) then raise eKlausError.create(ercArgumentIsNaN, at);
-        result := klausCmp(v1.iValue, v2.fValue);
+        result := klausCmp(v1.iValue, v2.fValue, accuracy);
       end;
     end;
     kdtFloat: begin
       if isNaN(v1.fValue) then raise eKlausError.create(ercArgumentIsNaN, at);
       if v2.dataType = kdtInteger then
-        result := klausCmp(v1.fValue, v2.iValue)
+        result := klausCmp(v1.fValue, v2.iValue, accuracy)
       else begin
         if isNaN(v2.fValue) then raise eKlausError.create(ercArgumentIsNaN, at);
-        result := klausCmp(v1.fValue, v2.fValue);
+        result := klausCmp(v1.fValue, v2.fValue, accuracy);
       end;
     end;
     kdtMoment: begin
       if isNaN(v1.mValue) or isNaN(v2.mValue) then raise eKlausError.create(ercArgumentIsNaN, at);
-      result := klausCmp(v1.mValue, v2.mValue);
+      result := klausCmp(v1.mValue, v2.mValue, accuracy);
     end;
     kdtBoolean: result := klausCmp(v1.bValue, v2.bValue);
     kdtObject: result := klausCmp(v1.oValue, v2.oValue);

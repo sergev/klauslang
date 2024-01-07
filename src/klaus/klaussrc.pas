@@ -24,8 +24,6 @@ unit KlausSrc;
 
 //todo: добавить `точность` в инструкцию `выбор` и в словарь для дробных чисел
 
-//todo: добавить пару переменных в цикл для каждого: "для каждого и, симв из стр цикл"
-
 //todo: тип данных `данные` -- строка с произвольным содержимым
 //todo: типы данных `любое` и `тип`, операция `есть`, функции тип(Икс) и новый(Т)
 
@@ -170,6 +168,7 @@ type
   tKlausMap = class(tFPSMap)
     private
       fKeyType: tKlausSimpleType;
+      fAccuracy: tKlausFloat;
     protected
       procedure copyItem(src, dest: pointer); override;
       procedure copyKey(src, dest: pointer); override;
@@ -185,11 +184,12 @@ type
       procedure putData(index: integer; const newData: tObject);
     public
       property keyType: tKlausSimpleType read fKeyType;
+      property accuracy: tKlausFloat read fAccuracy;
       property keys[index: integer]: tKlausSimpleValue read getKey write putKey;
       property data[index: integer]: tObject read getData write putData;
       property keyData[const aKey: tKlausSimpleValue]: tObject read getKeyData write putKeyData; default;
 
-      constructor create(aKeyType: tKlausSimpleType);
+      constructor create(aKeyType: tKlausSimpleType; aAccuracy: tKlausFloat);
       function  add(const aKey: tKlausSimpleValue; const aData: tObject): integer;
       function  add(const aKey: tKlausSimpleValue): integer;
       function  find(const aKey: tKlausSimpleValue; out index: integer): boolean;
@@ -470,9 +470,11 @@ type
     private
       fKeyType: tKlausSimpleType;
       fValueType: tKlausTypeDef;
+      fAccuracy: tKlausFloat;
     public
       property keyType: tKlausSimpleType read fKeyType;
       property valueType: tKlausTypeDef read fValueType;
+      property accuracy: tKlausFloat read fAccuracy;
 
       constructor create(context: tKlausRoutine; aPoint: tSrcPoint; b: tKlausSyntaxBrowser);
       function  canAssign(src: tKlausTypeDef; strict: boolean = false): boolean; override;
@@ -1171,6 +1173,7 @@ type
   tKlausStmtCase = class(tKlausStmtCtlStruct)
     private
       fExpr: tKlausExpression;
+      fAccuracy: tKlausFloat;
       fItems: array of tKlausStatement;
       fItemMap: tKlausMap;
       fElseStmt: tKlausStatement;
@@ -1182,6 +1185,7 @@ type
       procedure removeItem(item: tKlausStatement); override;
     public
       property expr: tKlausExpression read fExpr;
+      property accuracy: tKlausFloat read fAccuracy;
       property count: integer read getCount;
       property items[idx: integer]: tKlausStatement read getItems;
       property elseStmt: tKlausStatement read fElseStmt;
@@ -1674,9 +1678,10 @@ end;
 
 { tKlausMap }
 
-constructor tKlausMap.create(aKeyType: tKlausSimpleType);
+constructor tKlausMap.create(aKeyType: tKlausSimpleType; aAccuracy: tKlausFloat);
 begin
   fKeyType := aKeyType;
+  fAccuracy := aAccuracy;
   inherited create(sizeOf(tKlausSimpleValue), sizeOf(tKlausVarValue));
 end;
 
@@ -1719,7 +1724,7 @@ end;
 function tKlausMap.keyCompare(key1, key2: pointer): integer;
 begin
   assert(pKlausSimpleValue(key1)^.dataType = pKlausSimpleValue(key2)^.dataType, 'Dissimilar key data in a tKlausMap');
-  result := klausCompare(pKlausSimpleValue(key1)^, pKlausSimpleValue(key2)^, zeroSrcPt);
+  result := klausCompare(pKlausSimpleValue(key1)^, pKlausSimpleValue(key2)^, accuracy, zeroSrcPt);
 end;
 
 procedure tKlausMap.InitOnPtrCompare;
@@ -1951,7 +1956,7 @@ begin
         result := (result as tKlausTypeDefArray).elmtType;
       end else if result is tKlausTypeDefDict then begin
         kt := (result as tKlausTypeDefDict).keyType;
-        if steps[idx].indices[i].resultType <> kt then
+        if not klausCanAssign(steps[idx].indices[i].resultType, kt) then
           raise eKlausError.create(ercTypeMismatch, steps[idx].point.line, steps[idx].point.pos);
         result := (result as tKlausTypeDefDict).valueType;
       end else
@@ -1989,8 +1994,8 @@ begin
       end else if result is tKlausVarValueDict then begin
         kt := ((result as tKlausVarValueDict).dataType as tKlausTypeDefDict).keyType;
         sv := steps[idx].indices[i].evaluate(frame);
-        if sv.dataType <> kt then
-          raise eKlausError.create(ercTypeMismatch, steps[idx].point.line, steps[idx].point.pos);
+        if klausCanAssign(sv.dataType, kt) then sv := klausTypecast(sv, kt, steps[idx].point)
+        else raise eKlausError.create(ercTypeMismatch, steps[idx].point);
         result := (result as tKlausVarValueDict).getElmt(sv, steps[idx].point, mode);
         if result = nil then exit;
       end else
@@ -3625,6 +3630,8 @@ var
   end = nil;
   x: tKlausExpression;
   stmt: tKlausStatement;
+  li: tKlausLexInfo;
+  sv: tKlausSimpleValue;
 begin
   inherited create(aOwner, aPoint);
   b.next;
@@ -3634,7 +3641,19 @@ begin
   fExpr := routine.createExpression(self, b);
   kdt := expr.resultType;
   if not (kdt in klausSimpleTypes) then raise eKlausError.create(ercCaseExprMustBeSimple, expr.point.line, expr.point.pos);
-  fItemMap := tKlausMap.create(kdt);
+  b.next;
+  if b.check(kkwdAccuracy, false) then begin
+    if not (kdt in [kdtFloat, kdtMoment]) then raise eKlausError.create(ercAccuracyNotApplicable, b.lex.line, b.lex.pos);
+    b.next;
+    li := b.lex;
+    b.pause;
+    sv := routine.createConstExpression(b);
+    if not klausCanAssign(sv.dataType, kdtFloat) then raise eKlausError.create(ercTypeMismatch, li.line, li.pos);
+    fAccuracy := klausTypecast(sv, kdtFloat, srcPoint(li)).fValue;
+    if fAccuracy < 0 then raise eKlausError.create(ercNegativeAccuracy, li.line, li.pos);
+  end else
+    fAccuracy := 0;
+  fItemMap := tKlausMap.create(kdt, fAccuracy);
   fItemMap.sorted := true;
   fItemMap.duplicates := dupError;
   b.next;
@@ -3666,7 +3685,8 @@ begin
     b.next;
     b.check(klsSemicolon);
     for i := 0 to length(va)-1 do begin
-      if va[i].v.dataType <> kdt then raise eKlausError.create(ercTypeMismatch, va[i].pt.line, va[i].pt.pos);
+      if klausCanAssign(va[i].v.dataType, kdt) then va[i].v := klausTypecast(va[i].v, kdt, va[i].pt)
+      else raise eKlausError.create(ercTypeMismatch, va[i].pt.line, va[i].pt.pos);
       idx := fItemMap.indexOf(va[i].v);
       if idx >= 0 then raise eKlausError.create(ercDuplicateCaseLabel, va[i].pt.line, va[i].pt.pos);
       fItemMap.add(va[i].v, stmt);
@@ -4003,19 +4023,8 @@ end;
 
 function tKlausTypeDefSimple.canAssign(src: tKlausTypeDef; strict: boolean = false): boolean;
 begin
-  if strict then
-    result := src.dataType = self.dataType
-  else case dataType of
-    kdtChar: result := src.dataType = kdtChar;
-    kdtString: result := src.dataType in [kdtChar, kdtString];
-    kdtInteger: result := src.dataType = kdtInteger;
-    kdtFloat: result := src.dataType in [kdtInteger, kdtFloat];
-    kdtMoment: result := src.dataType = kdtMoment;
-    kdtBoolean: result := src.dataType = kdtBoolean;
-    kdtObject: result := src.dataType = kdtObject;
-  else
-    result := false;
-  end;
+  if strict then result := src.dataType = self.dataType
+  else result := klausCanAssign(src.dataType, self.dataType);
 end;
 
 function tKlausTypeDefSimple.zeroValue: tKlausSimpleValue;
@@ -4378,6 +4387,9 @@ end;
 { tKlausTypeDefDict }
 
 constructor tKlausTypeDefDict.create(context: tKlausRoutine; aPoint: tSrcPoint; b: tKlausSyntaxBrowser);
+var
+  li: tKlausLexInfo;
+  sv: tKlausSimpleValue;
 begin
   inherited create(context.source, aPoint);
   b.next;
@@ -4386,6 +4398,20 @@ begin
   b.next;
   b.check(kkwdKey);
   fKeyType := context.createSimpleType(b, true).simpleType;
+  b.next;
+  if b.check(kkwdAccuracy, false) then begin
+    if not (fKeyType in [kdtFloat, kdtMoment]) then raise eKlausError.create(ercAccuracyNotApplicable, b.lex.line, b.lex.pos);
+    b.next;
+    li := b.lex;
+    b.pause;
+    sv := context.createConstExpression(b);
+    if not klausCanAssign(sv.dataType, kdtFloat) then raise eKlausError.create(ercTypeMismatch, li.line, li.pos);
+    fAccuracy := klausTypecast(sv, kdtFloat, srcPoint(li)).fValue;
+    if fAccuracy < 0 then raise eKlausError.create(ercNegativeAccuracy, li.line, li.pos);
+  end else begin
+    fAccuracy := 0;
+    b.pause;
+  end;
 end;
 
 function tKlausTypeDefDict.canAssign(src: tKlausTypeDef; strict: boolean = false): boolean;
@@ -5065,7 +5091,7 @@ end;
 procedure tKlausRoutine.createTypeDeclarations(b: tKlausSyntaxBrowser);
 var
   i: integer;
-  ids: array of string;
+  ids: array of string = nil;
   p: tSrcPoint;
 begin
   b.next;
@@ -6213,7 +6239,8 @@ constructor tKlausVarValueDict.create(dt: tKlausTypeDef);
 begin
   assert(dt is tKlausTypeDefDict, 'Invalid typdef class for an array');
   inherited create(dt);
-  fMap := tKlausMap.create((dt as tKlausTypeDefDict).keyType);
+  with dt as tKlausTypeDefDict do
+    fMap := tKlausMap.create(keyType, accuracy);
   fMap.sorted := true;
   fMap.duplicates := dupError;
 end;

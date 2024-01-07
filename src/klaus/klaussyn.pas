@@ -130,7 +130,7 @@ const
     def:   '`массив` [* `массивов`] <type_def>'),
 
     (name: 'type_def_dict';
-    def:   '`словарь` <type_def> `ключ` <simple_type>'),
+    def:   '`словарь` <type_def> `ключ` <simple_type> [`точность` <expression>]'),
 
     (name: 'type_def_struct';
     def:   '`структура` <struct_body> `окончание`'),
@@ -254,7 +254,7 @@ const
     def:   '`цикл` <statement> `пока` <expression>'),
 
     (name: 'case';
-    def:   '`выбор` <expression> `из` <case_body> `окончание`'),
+    def:   '`выбор` <expression> [`точность` <expression>] `из` <case_body> `окончание`'),
 
     (name: 'case_body';
     def:   '<case_item> [* <case_item>] [<case_else>]'),

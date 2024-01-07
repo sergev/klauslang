@@ -119,6 +119,8 @@ const
   ercUnexpectedObjectClass  = 69;
   ercIllegalExpression      = 70;
   ercStreamNotOpen          = 71;
+  ercAccuracyNotApplicable  = 72;
+  ercNegativeAccuracy       = 73;
 
 const
   // Классификация кодов eKlausError для трансляции в исключения языка
@@ -153,7 +155,7 @@ const
     ercIllegalFieldQualifier, ercCannotReturnValue, ercConstAsgnTarget, ercSubroutineRequired,
     ercMustReturnValue, ercWrongNumberOfParams, ercInvalidOutputParam, ercExceptionRequired,
     ercExceptBlockOnly, ercMixedExceptBlock, ercExceptAnyMustBeLast, ercExceptAlreadyHandled,
-    ercDuplicateCaseLabel, ercIllegalExpression],
+    ercDuplicateCaseLabel, ercIllegalExpression, ercAccuracyNotApplicable, ercNegativeAccuracy],
 
     //ksxInvalidChar
     [ercInvalidCharAtIndex, ercInvalidStringIndex],
@@ -271,6 +273,8 @@ resourcestring
   errUnexpectedObjectClass = 'Неожиданный класс объекта. Требуется %s, передано %s.';
   errIllegalExpression = 'Недопустимая конструкция.';
   errStreamNotOpen = 'Поток ввода-вывода не был открыт.';
+  errAccuracyNotApplicable = 'Указание точности сравнения допустимо только для дробных чисел и моментов.';
+  errNegativeAccuracy = 'Точность сравнения не может быть отрицательным числом.';
 
 { Globals }
 
@@ -374,6 +378,8 @@ begin
     ercUnexpectedObjectClass: result := errUnexpectedObjectClass;
     ercIllegalExpression: result := errIllegalExpression;
     ercStreamNotOpen: result := errStreamNotOpen;
+    ercAccuracyNotApplicable: result := errAccuracyNotApplicable;
+    ercNegativeAccuracy: result := errNegativeAccuracy;
   end;
 end;
 

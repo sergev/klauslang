@@ -134,8 +134,8 @@ function klausStringLiteral(const s: string): string;
 function klausCmp(v1, v2: tKlausChar): integer;
 function klausCmp(v1, v2: tKlausString): integer;
 function klausCmp(v1, v2: tKlausInteger): integer;
-function klausCmp(v1, v2: tKlausFloat): integer;
-function klausCmp(v1, v2: tKlausMoment): integer;
+function klausCmp(v1, v2: tKlausFloat; accuracy: tKlausFloat = 0): integer;
+function klausCmp(v1, v2: tKlausMoment; accuracy: tKlausFloat = 0): integer;
 function klausCmp(v1, v2: tKlausBoolean): integer;
 function klausCmp(v1, v2: tKlausObject): integer;
 
@@ -371,18 +371,18 @@ begin
   else result := 0;
 end;
 
-function klausCmp(v1, v2: tKlausFloat): integer;
+function klausCmp(v1, v2: tKlausFloat; accuracy: tKlausFloat = 0): integer;
 begin
-  if v1 > v2 then result := 1
-  else if v1 < v2 then result := -1
-  else result := 0;
+  result := 1;
+  if abs(v1-v2) <= accuracy then result := 0
+  else if v1 < v2 then result := -1;
 end;
 
-function klausCmp(v1, v2: tKlausMoment): integer;
+function klausCmp(v1, v2: tKlausMoment; accuracy: tKlausFloat = 0): integer;
 begin
-  if v1 > v2 then result := 1
-  else if v1 < v2 then result := -1
-  else result := 0;
+  result := 1;
+  if abs(v1-v2) <= accuracy then result := 0
+  else if v1 < v2 then result := -1;
 end;
 
 function klausCmp(v1, v2: tKlausBoolean): integer;

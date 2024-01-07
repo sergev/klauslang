@@ -750,7 +750,7 @@ const
     // thDark
     (fontStyle: [];
     fontColor: $F0F0F0;
-    backColor: $002000;
+    backColor: $001C00;
     selFontColor: clHighlightText;
     selBackColor: clHighlight;
     styles: (
