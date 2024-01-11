@@ -6,18 +6,74 @@ object DebugBreakpointsFrame: TDebugBreakpointsFrame
   ClientHeight = 180
   ClientWidth = 320
   TabOrder = 0
-  DesignLeft = 451
-  DesignTop = 156
+  DesignLeft = 489
+  DesignTop = 190
   object lbBreakpoints: TListBox
     Left = 0
-    Height = 180
-    Top = 0
+    Height = 156
+    Top = 24
     Width = 320
     Align = alClient
     ItemHeight = 0
+    OnClick = lbBreakpointsClick
     OnDblClick = lbBreakpointsDblClick
-    OnKeyDown = lbBreakpointsKeyDown
     TabOrder = 0
     TopIndex = -1
+  end
+  object toolBar: TToolBar
+    Left = 0
+    Height = 24
+    Top = 0
+    Width = 320
+    Caption = 'toolBar'
+    Images = actionImages
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 1
+    object ToolButton3: TToolButton
+      Left = 1
+      Top = 2
+      Action = actGoto
+    end
+    object ToolButton2: TToolButton
+      Left = 24
+      Top = 2
+      Action = actDelete
+    end
+  end
+  object actionImages: TImageList
+    Height = 18
+    Scaled = True
+    Width = 18
+    Left = 96
+    Top = 100
+    Bitmap = {
+      4C7A020000001200000012000000C70000000000000078DAED955B12C3200845
+      59BA4B7367B4998AA504E542DA7C350EE3E4E1F1040D61E2D97AEFBC0BA6B81D
+      CF11D1361096705607CA9A3E32CEF6E35EC4427C84BB639D7C242FF63CC897F5
+      793168E91871C87298FCBC657DD8F72AF9785E551FE354F651EB5EF671D62CED
+      633D2A3EC1FE867CA23EE22462F78D6502A96BDF6C57E6D7E3BC7C20CC4CAEC3
+      3AF68CD6DA7BDEB1D6727EDC43EA98C758B1EED83FDA49BBE96BE83FE363CC78
+      9FAB9CBFCFEF7D58ED41ED8570F4BE5FC59C27512BEEAE610FE1F4EAFE
+    }
+  end
+  object actionList: TActionList
+    Images = actionImages
+    Left = 244
+    Top = 100
+    object actGoto: TAction
+      Caption = 'Найти в коде'
+      Hint = 'Найти в коде|Найти определение переменной в исходном коде программы'
+      ImageIndex = 0
+      OnExecute = actGotoExecute
+      ShortCut = 13
+    end
+    object actDelete: TAction
+      Caption = 'Удалить'
+      Hint = 'Удалить|Удалить выбранную точку останова'
+      ImageIndex = 1
+      OnExecute = actDeleteExecute
+      ShortCut = 46
+    end
   end
 end

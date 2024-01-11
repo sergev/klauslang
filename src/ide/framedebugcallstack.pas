@@ -25,18 +25,26 @@ unit FrameDebugCallStack;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, StdCtrls, FrameDebugView, KlausSrc;
+  Classes, SysUtils, Forms, Controls, StdCtrls, ActnList, ComCtrls,
+  FrameDebugView, KlausSrc;
 
 type
   tDebugCallStackFrame = class(tDebugViewContent)
+    actGoto: TAction;
+    actionImages: TImageList;
+    actionList: TActionList;
     lbCallStack: TListBox;
+    toolBar: TToolBar;
+    ToolButton3: TToolButton;
+    procedure actGotoExecute(Sender: TObject);
     procedure lbCallStackClick(Sender: TObject);
     procedure lbCallStackDblClick(Sender: TObject);
-    procedure lbCallStackKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
   private
-
+  protected
+    function getActions: tCustomActionList; override;
   public
     procedure updateContent; override;
+    procedure enableDisable; override;
   end;
 
 implementation
@@ -49,11 +57,13 @@ uses LCLType, FormMain, FormScene;
 
 procedure tDebugCallStackFrame.lbCallStackClick(Sender: TObject);
 begin
-  with lbCallStack do
+  with lbCallStack do begin
+    if itemIndex < 0 then exit;
     mainForm.focusedStackFrame := ptrInt(items.objects[itemIndex]);
+  end;
 end;
 
-procedure tDebugCallStackFrame.lbCallStackDblClick(Sender: TObject);
+procedure tDebugCallStackFrame.actGotoExecute(Sender: TObject);
 var
   idx, l, c: integer;
   r: tKlausRuntime;
@@ -74,9 +84,14 @@ begin
   end;
 end;
 
-procedure tDebugCallStackFrame.lbCallStackKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+procedure tDebugCallStackFrame.lbCallStackDblClick(Sender: TObject);
 begin
-  if (key = VK_RETURN) and (shift = []) then lbCallStackDblClick(lbCallStack);
+  actGoto.execute;
+end;
+
+function tDebugCallStackFrame.getActions: tCustomActionList;
+begin
+  result := actionList;
 end;
 
 procedure tDebugCallStackFrame.updateContent;
@@ -84,16 +99,25 @@ var
   i: integer;
   r: tKlausRuntime;
 begin
-  lbCallStack.clear;
-  if not mainForm.isRunning then exit;
-  if sasHasExecPoint in mainForm.scene.actionState then begin
-    r := mainForm.scene.thread.runtime;
-    if r <> nil then
-      for i := r.stackCount-1 downto 0 do begin
-        {$ifndef debugide}if r.stackFrames[i].routine.hidden then continue;{$endif}
-        lbCallStack.items.addObject(r.stackFrames[i].routine.displayName, tObject(ptrInt(i)));
-      end;
+  try
+    lbCallStack.clear;
+    if not mainForm.isRunning then exit;
+    if sasHasExecPoint in mainForm.scene.actionState then begin
+      r := mainForm.scene.thread.runtime;
+      if r <> nil then
+        for i := r.stackCount-1 downto 0 do begin
+          {$ifndef debugide}if r.stackFrames[i].routine.hidden then continue;{$endif}
+          lbCallStack.items.addObject(r.stackFrames[i].routine.displayName, tObject(ptrInt(i)));
+        end;
+    end;
+  finally
+    enableDisable;
   end;
+end;
+
+procedure tDebugCallStackFrame.enableDisable;
+begin
+  actGoto.enabled := lbCallStack.itemIndex >= 0;
 end;
 
 initialization

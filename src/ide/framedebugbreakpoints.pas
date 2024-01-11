@@ -24,23 +24,34 @@ unit FrameDebugBreakpoints;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, StdCtrls, KlausSrc, FrameDebugView;
+  Classes, SysUtils, Forms, Controls, StdCtrls, ActnList, ComCtrls, KlausSrc,
+  FrameDebugView;
 
 type
   TDebugBreakpointsFrame = class(tDebugViewContent)
+    actGoto: TAction;
+    actDelete: TAction;
+    actionImages: TImageList;
+    actionList: TActionList;
     lbBreakpoints: TListBox;
+    toolBar: TToolBar;
+    ToolButton2: TToolButton;
+    ToolButton3: TToolButton;
+    procedure actDeleteExecute(Sender: TObject);
+    procedure actGotoExecute(Sender: TObject);
+    procedure lbBreakpointsClick(Sender: TObject);
     procedure lbBreakpointsDblClick(Sender: TObject);
-    procedure lbBreakpointsKeyDown(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
   private
-
+  protected
+    function getActions: tCustomActionList; override;
   public
     procedure updateContent; override;
+    procedure enableDisable; override;
   end;
 
 implementation
 
-uses LCLType, FormMain;
+uses LCLType, FormMain, FrameEdit;
 
 {$R *.lfm}
 
@@ -54,10 +65,32 @@ begin
   mainForm.gotoBreakpoint(lbBreakpoints.itemIndex);
 end;
 
-procedure TDebugBreakpointsFrame.lbBreakpointsKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+function TDebugBreakpointsFrame.getActions: tCustomActionList;
 begin
-  if (key = VK_RETURN) and (shift = []) then
-    mainForm.gotoBreakpoint(lbBreakpoints.itemIndex);
+  result := actionList;
+end;
+
+procedure TDebugBreakpointsFrame.actGotoExecute(Sender: TObject);
+begin
+  mainForm.gotoBreakpoint(lbBreakpoints.itemIndex);
+end;
+
+procedure TDebugBreakpointsFrame.lbBreakpointsClick(Sender: TObject);
+begin
+  enableDisable;
+end;
+
+procedure TDebugBreakpointsFrame.actDeleteExecute(Sender: TObject);
+var
+  idx: integer;
+  bp: tKlausBreakpoint;
+  frm: tEditFrame;
+begin
+  idx := lbBreakpoints.itemIndex;
+  if idx < 0 then exit;
+  bp := mainForm.breakpoint[idx];
+  frm := mainForm.findEditFrame(bp.fileName);
+  if frm <> nil then frm.toggleBreakpoint(bp.line-1, tbmDelete);
 end;
 
 procedure TDebugBreakpointsFrame.updateContent;
@@ -65,11 +98,21 @@ var
   i: integer;
   b: tKlausBreakpoint;
 begin
-  lbBreakpoints.clear;
-  for i := 0 to mainForm.breakpointCount-1 do begin
-    b := mainForm.breakpoint[i];
-    lbBreakpoints.items.add(format(strBreakpointInfo, [b.line, extractFileName(b.fileName)]));
+  try
+    lbBreakpoints.clear;
+    for i := 0 to mainForm.breakpointCount-1 do begin
+      b := mainForm.breakpoint[i];
+      lbBreakpoints.items.add(format(strBreakpointInfo, [b.line, extractFileName(b.fileName)]));
+    end;
+  finally
+    enableDisable;
   end;
+end;
+
+procedure TDebugBreakpointsFrame.enableDisable;
+begin
+  actGoto.enabled := lbBreakpoints.itemIndex >= 0;
+  actDelete.enabled := lbBreakpoints.itemIndex >= 0;
 end;
 
 initialization

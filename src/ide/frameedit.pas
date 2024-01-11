@@ -43,6 +43,9 @@ type
   end;
 
 type
+  tToggleBreakpointMode = (tbmSet, tbmDelete, tbmToggle);
+
+type
   tEditFrame = class(tFrame)
     Image1: TImage;
     lblErrorInfo: TLabel;
@@ -90,7 +93,7 @@ type
     function  createSource: tKlausSource;
     procedure toggleBookmark(n: integer);
     procedure gotoBookmark(n: integer);
-    procedure toggleBreakpoint(line: integer = -1);
+    procedure toggleBreakpoint(line: integer = -1; mode: tToggleBreakpointMode = tbmToggle);
     procedure searchReplace(info: tSearchInfo);
     procedure replaceAll(info: tSearchInfo);
     procedure deleteLine;
@@ -225,7 +228,7 @@ end;
 
 procedure tEditFrame.editSetLineFlags(sender: tObject; line: integer; old, new: tKlausEditLineFlags);
 begin
-  if elfBreakpoint in old >< new then mainForm.invalidateBreakPointList;
+  if elfBreakpoint in (old >< new) then mainForm.invalidateBreakPointList;
 end;
 
 procedure tEditFrame.editLineDelete(sender: tObject; line: integer);
@@ -364,13 +367,19 @@ begin
       end;
 end;
 
-procedure tEditFrame.toggleBreakpoint(line: integer);
+procedure tEditFrame.toggleBreakpoint(line: integer; mode: tToggleBreakpointMode);
 begin
   if line < 0 then line := fEdit.caretPos.y;
   with fEdit.lines as tKlausEditStrings do begin
     if line >= count then exit;
-    if elfBreakpoint in flags[line] then flags[line] := flags[line]-[elfBreakpoint]
-    else flags[line] := flags[line]+[elfBreakpoint];
+    case mode of
+      tbmSet: flags[line] := flags[line]+[elfBreakpoint];
+      tbmDelete: flags[line] := flags[line]-[elfBreakpoint];
+      else begin
+        if elfBreakpoint in flags[line] then flags[line] := flags[line]-[elfBreakpoint]
+        else flags[line] := flags[line]+[elfBreakpoint];
+      end;
+    end;
   end;
 end;
 

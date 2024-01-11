@@ -31,8 +31,8 @@ uses
   Classes, SysUtils, Interfaces, // this includes the LCL widgetset
   Forms, KlausGlobals, FormMain, FrameEdit, FrameDebugView, formScene,
   KlausConsole, FrameDebugVariables, FrameDebugCallStack, DlgCmdLineArgs,
-  KlausUnitSystem_Proc, FrameDebugBreakpoints, DlgSearchReplace, KlausUtils,
-  KlausDef, FormSplash, KlausConKeys, DlgOptions;
+  KlausUnitSystem_Proc, FrameDebugBreakpoints, FrameDebugWatches, DlgSearchReplace,
+  KlausUtils, KlausDef, FormSplash, KlausConKeys, DlgOptions, DlgEvaluate;
   { you can add units after this }
 
 {$R *.res}

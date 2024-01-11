@@ -34,7 +34,8 @@ const
   maxRecentFiles = 5;
   maxCmdLineArgHistoryItems = 100;
   maxSearchHistoryItems     = 100;
-  maxreplaceHistoryItems    = 100;
+  maxReplaceHistoryItems    = 100;
+  maxEvaluateHistoryItems   = 100;
 
 type
   tRunMode = (rmNonStop, rmToCursor, rmStepOver, rmStepInto);
@@ -67,14 +68,16 @@ type
     actEditUnindentBlock: TAction;
     actHelpAbout: TAction;
     actFileOptions: TAction;
+    actDebugWatches: TAction;
+    actDebugEvaluateWatch: TAction;
     actRunInterceptKeyboard: TAction;
-    actRunToCursor: TAction;
-    actRunToggleBreakpoint: TAction;
+    actDebugRunToCursor: TAction;
+    actDebugToggleBreakpoint: TAction;
     actRunShowScene: TAction;
     actRunStartArgs: TAction;
-    actRunShowExecPoint: TAction;
-    actRunStepInto: TAction;
-    actRunStepOver: TAction;
+    actDebugShowExecPoint: TAction;
+    actDebugStepInto: TAction;
+    actDebugStepOver: TAction;
     actRunStop: TAction;
     actRunPause: TAction;
     actRunStart: TAction;
@@ -99,9 +102,9 @@ type
     actGotoBookmark7: TAction;
     actGotoBookmark8: TAction;
     actGotoBookmark9: TAction;
-    actWindowBreakpoints: TAction;
-    actWindowCallStack: TAction;
-    actWindowLocalVariables: TAction;
+    actDebugBreakpoints: TAction;
+    actDebugCallStack: TAction;
+    actDebugLocalVariables: TAction;
     actWindowMoveTabRight: TAction;
     actWindowMoveTabLeft: TAction;
     actWindowPrevTab: TAction;
@@ -112,6 +115,17 @@ type
     bvDebugSizer: TBevel;
     editLineImages: TImageList;
     MenuItem1: TMenuItem;
+    MenuItem2: TMenuItem;
+    miDebug: TMenuItem;
+    miDebugBreakpoints: TMenuItem;
+    miDebugCallStack: TMenuItem;
+    miDebugLocalVariables: TMenuItem;
+    miDebugRunToCursor: TMenuItem;
+    miDebugShowExecPoint: TMenuItem;
+    miDebugStepInto: TMenuItem;
+    miDebugStepOver: TMenuItem;
+    miDebugToggleBreakpoint: TMenuItem;
+    miDebugWatches: TMenuItem;
     miFileOptions: TMenuItem;
     miRunInterceptKeyboard: TMenuItem;
     miHelpAbout: TMenuItem;
@@ -200,6 +214,7 @@ type
     Separator8: TMenuItem;
     Separator9: TMenuItem;
     statusBar: TStatusBar;
+    tbWindowWatches: TToolButton;
     toolBar: TToolBar;
     tbFileNew: TToolButton;
     tbEditReplace: TToolButton;
@@ -217,7 +232,9 @@ type
     tbRunStepOver: TToolButton;
     tbRunShowExecPoint: TToolButton;
     tbFileOptions: TToolButton;
+    ToolButton11: TToolButton;
     ToolButton12: TToolButton;
+    ToolButton13: TToolButton;
     ToolButton14: TToolButton;
     ToolButton2: TToolButton;
     tbRunCheckSyntax: TToolButton;
@@ -237,6 +254,7 @@ type
     tbRunStop: TToolButton;
     ToolButton8: TToolButton;
     ToolButton9: TToolButton;
+    procedure actDebugEvaluateWatchExecute(Sender: TObject);
     procedure actEditCopyExecute(Sender: TObject);
     procedure actEditCutExecute(Sender: TObject);
     procedure actEditDeleteLineExecute(Sender: TObject);
@@ -258,26 +276,28 @@ type
     procedure actRunCheckSyntaxExecute(Sender: TObject);
     procedure actRunInterceptKeyboardExecute(Sender: TObject);
     procedure actRunPauseExecute(Sender: TObject);
-    procedure actRunShowExecPointExecute(Sender: TObject);
+    procedure actDebugShowExecPointExecute(Sender: TObject);
     procedure actRunShowSceneExecute(Sender: TObject);
     procedure actRunStartArgsExecute(Sender: TObject);
     procedure actRunStartExecute(Sender: TObject);
-    procedure actRunStepIntoExecute(Sender: TObject);
-    procedure actRunStepOverExecute(Sender: TObject);
+    procedure actDebugStepIntoExecute(Sender: TObject);
+    procedure actDebugStepOverExecute(Sender: TObject);
     procedure actRunStopExecute(Sender: TObject);
-    procedure actRunToCursorExecute(Sender: TObject);
-    procedure actRunToggleBreakpointExecute(Sender: TObject);
+    procedure actDebugRunToCursorExecute(Sender: TObject);
+    procedure actDebugToggleBreakpointExecute(Sender: TObject);
     procedure actToggleBookmarkExecute(Sender: TObject);
     procedure actGotoBookmarkExecute(Sender: TObject);
-    procedure actWindowBreakpointsExecute(Sender: TObject);
-    procedure actWindowCallStackExecute(Sender: TObject);
-    procedure actWindowLocalVariablesExecute(Sender: TObject);
+    procedure actDebugBreakpointsExecute(Sender: TObject);
+    procedure actDebugCallStackExecute(Sender: TObject);
+    procedure actDebugLocalVariablesExecute(Sender: TObject);
     procedure actWindowMoveTabLeftExecute(Sender: TObject);
     procedure actWindowMoveTabRightExecute(Sender: TObject);
     procedure actWindowNextTabExecute(Sender: TObject);
     procedure actWindowPrevTabExecute(Sender: TObject);
+    procedure actDebugWatchesExecute(Sender: TObject);
     procedure applicationHint(sender: tObject);
     procedure formCloseQuery(sender: TObject; var canClose: boolean);
+    procedure formShortCut(var Msg: TLMKey; var Handled: Boolean);
     procedure pageControlChange(sender: TObject);
     procedure propStorageRestoreProperties(Sender: TObject);
     procedure bvDebugSizerMouseDown(sender: tObject; button: tMouseButton; shift: tShiftState; x, y: integer);
@@ -380,7 +400,7 @@ var
 implementation
 
 uses
-  LCLIntf, Math, Clipbrd, DlgCmdLineArgs, DlgSearchReplace, FormSplash, DlgOptions;
+  LCLIntf, Math, Clipbrd, DlgCmdLineArgs, DlgSearchReplace, FormSplash, DlgOptions, DlgEvaluate;
 
 resourcestring
   strKlaus = 'Клаус';
@@ -505,23 +525,23 @@ begin
     sas := scene.actionState;
     actRunStartArgs.enabled := false;
     actRunStart.enabled := sasCanRun in sas;
-    actRunToCursor.enabled := sasCanRun in sas;
+    actDebugRunToCursor.enabled := sasCanRun in sas;
     actRunStop.enabled := sasCanStop in sas;
     actRunPause.enabled := sasCanPause in sas;
-    actRunStepInto.enabled := sasCanStepInto in sas;
-    actRunStepOver.enabled := sasCanStepOver in sas;
-    actRunShowExecPoint.enabled := sasHasExecPoint in sas;
+    actDebugStepInto.enabled := sasCanStepInto in sas;
+    actDebugStepOver.enabled := sasCanStepOver in sas;
+    actDebugShowExecPoint.enabled := sasHasExecPoint in sas;
     actRunShowScene.enabled := true;
   end else begin
     caption := strKlaus;
     actRunStartArgs.enabled := fr <> nil;
     actRunStart.enabled := fr <> nil;
-    actRunToCursor.enabled := fr <> nil;
+    actDebugRunToCursor.enabled := fr <> nil;
     actRunStop.enabled := false;
     actRunPause.enabled := false;
-    actRunStepInto.enabled := fr <> nil;
-    actRunStepOver.enabled := fr <> nil;
-    actRunShowExecPoint.enabled := false;
+    actDebugStepInto.enabled := fr <> nil;
+    actDebugStepOver.enabled := fr <> nil;
+    actDebugShowExecPoint.enabled := false;
     actRunShowScene.enabled := false;
   end;
   if fr <> nil then begin
@@ -552,7 +572,7 @@ begin
   actEditSearch.enabled := editFocused;
   actEditSearchNext.enabled := editFocused;
   actEditReplace.enabled := editFocused;
-  actRunToggleBreakpoint.enabled := editFocused;
+  actDebugToggleBreakpoint.enabled := editFocused;
   actToggleBookmark0.enabled := editFocused;
   actToggleBookmark1.enabled := editFocused;
   actToggleBookmark2.enabled := editFocused;
@@ -582,11 +602,10 @@ begin
     actWindowMoveTabRight.enabled := false;
   end;
   b := false;
-  for dvt := low(dvt) to high(dvt) do
-    if debugView[dvt].visible then begin
-      b := true;
-      break;
-    end;
+  for dvt := low(dvt) to high(dvt) do begin
+    if debugView[dvt].visible then b := true;
+    debugView[dvt].enableDisable;
+  end;
   sbDebug.visible := b;
 end;
 
@@ -715,6 +734,7 @@ begin
       width := pnDebugContent.width;
       parent := pnDebugContent;
       visible := false;
+      updateContent;
     end;
   end;
 end;
@@ -817,7 +837,7 @@ begin
   if isRunning then scene.pause;
 end;
 
-procedure tMainForm.actRunShowExecPointExecute(Sender: TObject);
+procedure tMainForm.actDebugShowExecPointExecute(Sender: TObject);
 begin
   showExecPoint;
 end;
@@ -913,7 +933,8 @@ begin
   setLength(fBreakpoints, idx);
   fBreakpointListInvalid := false;
   if isRunning then scene.updateBreakpointList;
-  updateDebugInfo;
+  debugView[dvtBreakpoints].updateContent;
+  invalidateControlState;
 end;
 
 function tMainForm.getBreakpoints: tKlausBreakpoints;
@@ -968,22 +989,22 @@ begin
   run(rmNonStop);
 end;
 
-procedure tMainForm.actRunToCursorExecute(Sender: TObject);
+procedure tMainForm.actDebugRunToCursorExecute(Sender: TObject);
 begin
   run(rmToCursor);
 end;
 
-procedure tMainForm.actRunStepIntoExecute(Sender: TObject);
+procedure tMainForm.actDebugStepIntoExecute(Sender: TObject);
 begin
   run(rmStepInto);
 end;
 
-procedure tMainForm.actRunStepOverExecute(Sender: TObject);
+procedure tMainForm.actDebugStepOverExecute(Sender: TObject);
 begin
   run(rmStepOver);
 end;
 
-procedure tMainForm.actRunToggleBreakpointExecute(Sender: TObject);
+procedure tMainForm.actDebugToggleBreakpointExecute(Sender: TObject);
 begin
   if activeFrame <> nil then activeFrame.toggleBreakpoint;
 end;
@@ -1006,17 +1027,17 @@ begin
     activeFrame.gotoBookmark((sender as tComponent).tag);
 end;
 
-procedure tMainForm.actWindowBreakpointsExecute(Sender: TObject);
+procedure tMainForm.actDebugBreakpointsExecute(Sender: TObject);
 begin
   debugView[dvtBreakpoints].visible := true;
 end;
 
-procedure tMainForm.actWindowCallStackExecute(Sender: TObject);
+procedure tMainForm.actDebugCallStackExecute(Sender: TObject);
 begin
   debugView[dvtCallStack].visible := true;
 end;
 
-procedure tMainForm.actWindowLocalVariablesExecute(Sender: TObject);
+procedure tMainForm.actDebugLocalVariablesExecute(Sender: TObject);
 begin
   debugView[dvtVariables].visible := true;
 end;
@@ -1047,6 +1068,11 @@ end;
 procedure tMainForm.actWindowPrevTabExecute(Sender: TObject);
 begin
   pageControl.selectNextPage(false);
+end;
+
+procedure tMainForm.actDebugWatchesExecute(Sender: TObject);
+begin
+  //!!!debugView[dvtWatches].visible := true;
 end;
 
 procedure tMainForm.actFileExitExecute(sender: TObject);
@@ -1155,6 +1181,15 @@ begin
   fr := activeFrame;
   if fr = nil then exit;
   fr.edit.copyToClipboard;
+end;
+
+procedure tMainForm.actDebugEvaluateWatchExecute(Sender: TObject);
+begin
+  {!!!with tEvaluateDlg.create(application) do try
+    showModal;
+  finally
+    free;
+  end;}
 end;
 
 function tMainForm.getFrameCount: integer;
@@ -1346,6 +1381,25 @@ begin
   for i := 0 to frameCount-1 do
     if not promptToSaveEditFrame(frames[i]) then exit;
   canClose := true;
+end;
+
+procedure tMainForm.formShortCut(var Msg: TLMKey; var Handled: Boolean);
+var
+  ctl: tWinControl;
+  frm: tDebugViewContent;
+begin
+  handled := false;
+  ctl := activeControl;
+  while ctl <> nil do begin
+    if ctl is tDebugViewContent then begin
+      frm := ctl as tDebugViewContent;
+      break;
+    end;
+    ctl := ctl.parent;
+    if ctl = nil then exit;
+  end;
+  if frm.actions <> nil then
+    handled := frm.actions.isShortcut(msg);
 end;
 
 procedure tMainForm.pageControlChange(sender: TObject);

@@ -10,15 +10,56 @@ object DebugCallStackFrame: TDebugCallStackFrame
   DesignTop = 156
   object lbCallStack: TListBox
     Left = 0
-    Height = 180
-    Top = 0
+    Height = 156
+    Top = 24
     Width = 320
     Align = alClient
     ItemHeight = 0
     OnClick = lbCallStackClick
     OnDblClick = lbCallStackDblClick
-    OnKeyDown = lbCallStackKeyDown
     TabOrder = 0
     TopIndex = -1
+  end
+  object toolBar: TToolBar
+    Left = 0
+    Height = 24
+    Top = 0
+    Width = 320
+    Caption = 'toolBar'
+    Images = actionImages
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 1
+    object ToolButton3: TToolButton
+      Left = 1
+      Top = 2
+      Action = actGoto
+    end
+  end
+  object actionImages: TImageList
+    Height = 18
+    Scaled = True
+    Width = 18
+    Left = 96
+    Top = 100
+    Bitmap = {
+      4C7A010000001200000012000000790000000000000078DA9D93010A00210804
+      F7FFAFF267C671678467AE9A4844350C5A0ADD21229AA582C7730E409A159671
+      6EA3CADA3E76CFCFDF1E63557C8C9BB17E3E5617BF26F5F23E2F035747C681E7
+      28E2BA757D34F61AF9445E531FE734F639FA3EF6097AD6F6F11E131FF2BE4B3E
+      6C669C46667FAC93E7DD0508BD138D
+    }
+  end
+  object actionList: TActionList
+    Images = actionImages
+    Left = 244
+    Top = 100
+    object actGoto: TAction
+      Caption = 'Найти в коде'
+      Hint = 'Найти в коде|Найти вызов подпрограммы в исходном коде программы'
+      ImageIndex = 0
+      OnExecute = actGotoExecute
+      ShortCut = 13
+    end
   end
 end

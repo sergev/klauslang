@@ -1,0 +1,100 @@
+object EvaluateDlg: TEvaluateDlg
+  Left = 636
+  Height = 422
+  Top = 308
+  Width = 644
+  BorderStyle = bsDialog
+  Caption = 'Вычислить/Наблюдать'
+  ClientHeight = 422
+  ClientWidth = 644
+  OnClose = FormClose
+  Position = poScreenCenter
+  SessionProperties = 'cbText.Items'
+  LCLVersion = '2.2.4.0'
+  object pbCancel: TButton
+    Left = 411
+    Height = 32
+    Top = 374
+    Width = 104
+    Anchors = [akRight, akBottom]
+    Cancel = True
+    Caption = 'Отменить'
+    ModalResult = 2
+    TabOrder = 0
+  end
+  object pbAddWatch: TButton
+    Left = 524
+    Height = 32
+    Top = 374
+    Width = 104
+    Anchors = [akRight, akBottom]
+    Caption = 'Наблюдать'
+    ModalResult = 1
+    TabOrder = 1
+  end
+  object pbEvaluate: TButton
+    Left = 16
+    Height = 32
+    Top = 374
+    Width = 120
+    Anchors = [akLeft, akBottom]
+    Caption = 'Вычислить'
+    Default = True
+    OnClick = pbEvaluateClick
+    TabOrder = 2
+  end
+  object cbText: TComboBox
+    Left = 16
+    Height = 34
+    Top = 32
+    Width = 612
+    Anchors = [akTop, akLeft, akRight]
+    AutoComplete = True
+    AutoCompleteText = [cbactEnabled, cbactEndOfLineComplete, cbactRetainPrefixCase, cbactSearchAscending]
+    ItemHeight = 0
+    TabOrder = 3
+  end
+  object lblExpression: TLabel
+    Left = 24
+    Height = 17
+    Top = 12
+    Width = 604
+    Anchors = [akTop, akLeft, akRight]
+    AutoSize = False
+    Caption = 'Выражение'
+    ParentColor = False
+  end
+  object lblResult: TLabel
+    Left = 24
+    Height = 17
+    Top = 104
+    Width = 604
+    Anchors = [akTop, akLeft, akRight]
+    AutoSize = False
+    Caption = 'Результат'
+    ParentColor = False
+  end
+  object mlResult: TMemo
+    Left = 16
+    Height = 231
+    Top = 128
+    Width = 612
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    ReadOnly = True
+    ScrollBars = ssAutoVertical
+    TabOrder = 4
+  end
+  object chAllowFunctions: TCheckBox
+    Left = 16
+    Height = 23
+    Top = 68
+    Width = 214
+    Caption = 'Разрешить вызов функций'
+    TabOrder = 5
+  end
+  object propStorage: TIniPropStorage
+    StoredValues = <>
+    Left = 308
+    Top = 208
+  end
+end

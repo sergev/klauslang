@@ -3651,12 +3651,12 @@ begin
     if not klausCanAssign(sv.dataType, kdtFloat) then raise eKlausError.create(ercTypeMismatch, li.line, li.pos);
     fAccuracy := klausTypecast(sv, kdtFloat, srcPoint(li)).fValue;
     if fAccuracy < 0 then raise eKlausError.create(ercNegativeAccuracy, li.line, li.pos);
+    b.next;
   end else
     fAccuracy := 0;
   fItemMap := tKlausMap.create(kdt, fAccuracy);
   fItemMap.sorted := true;
   fItemMap.duplicates := dupError;
-  b.next;
   b.check(kkwdOf);
   b.next;
   b.check('case_body');

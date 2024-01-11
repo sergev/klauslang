@@ -10,13 +10,72 @@ object DebugVariablesFrame: TDebugVariablesFrame
   DesignTop = 336
   object lbVariables: TListBox
     Left = 0
-    Height = 180
-    Top = 0
+    Height = 156
+    Top = 24
     Width = 320
     Align = alClient
     ItemHeight = 0
+    OnClick = lbVariablesClick
+    OnDblClick = lbVariablesDblClick
     Sorted = True
     TabOrder = 0
     TopIndex = -1
+  end
+  object toolBar: TToolBar
+    Left = 0
+    Height = 24
+    Top = 0
+    Width = 320
+    Caption = 'toolBar'
+    Images = actionImages
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 1
+    object ToolButton2: TToolButton
+      Left = 1
+      Top = 2
+      Action = actRefresh
+    end
+    object ToolButton3: TToolButton
+      Left = 24
+      Top = 2
+      Action = actGoto
+    end
+  end
+  object actionImages: TImageList
+    Height = 18
+    Scaled = True
+    Width = 18
+    Left = 68
+    Top = 72
+    Bitmap = {
+      4C7A020000001200000012000000D90000000000000078DAC594090E84200C45
+      7BFF5371B34E4C006BF95D33464D63A0F0797491895F7DC718FC0F0D2262AD75
+      8D976534968ED49273E80CC4B18DEF3DDBC7CF795303BD73CFE1575A8F35110F
+      F0A1FB58F1D171B6FC28A6285F5E4EAD39AF163C1D79AFEEBD519C8F7C67E39C
+      C975B57E029E4A3DA39EA8F65794AFAFFF25D5F33CABFCBB3CCBC6F75A6B3D59
+      ADBB4EE63EFD9DBE6CED783C4BD7D33A78761FA971102FCD237BC1E2F3FB4BE9
+      30E1B855791873B5781057974731B57944DEDB3C2067651ECDD1E109EA3BC513
+      7D239D82793D5631B9F7074DB1B231
+    }
+  end
+  object actionList: TActionList
+    Images = actionImages
+    Left = 216
+    Top = 72
+    object actRefresh: TAction
+      Caption = 'Обновить'
+      Hint = 'Обновить|Заново вычислить значения наблюдений'
+      ImageIndex = 0
+      OnExecute = actRefreshExecute
+      ShortCut = 116
+    end
+    object actGoto: TAction
+      Caption = 'Найти в коде'
+      Hint = 'Найти в коде|Найти определение переменной в исходном коде программы'
+      ImageIndex = 1
+      OnExecute = actGotoExecute
+      ShortCut = 13
+    end
   end
 end

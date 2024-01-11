@@ -25,23 +25,34 @@ unit FrameDebugView;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, ExtCtrls, Buttons, StdCtrls;
+  Classes, SysUtils, Messages, Forms, Controls, ExtCtrls, Buttons, StdCtrls, ActnList,
+  KlausGlobals;
 
 type
-  tDebugViewType = (dvtVariables, dvtCallStack, {dvtWatches,} dvtBreakpoints);
+  tDebugViewType = (dvtVariables, dvtCallStack, {dvtWatches, }dvtBreakpoints);
   tDebugViewTypes = set of tDebugViewType;
 
 const
   debugViewName: array[tDebugViewType] of string = (
-    'frameDebugVariables', 'frameDebugCallStack', {'frameDebugWatches',} 'frameDebugBreakpoints');
+    'frameDebugVariables', 'frameDebugCallStack', {'frameDebugWatches', }'frameDebugBreakpoints');
 
   debugViewCaption: array[tDebugViewType] of string = (
-    'Переменные', 'Стек вызовов', {'Наблюдения',} 'Точки останова');
+    'Переменные', 'Стек вызовов', {'Наблюдения', }'Точки останова');
 
 type
   tDebugViewContent = class(tFrame)
+    private
+      fControlStateInvalid: boolean;
+    protected
+      procedure createWnd; override;
+      function  getActions: tCustomActionList; virtual;
+      procedure invalidateControlState;
+      procedure APPMUpdateControlState(var msg: tMessage); message APPM_UpdateControlState;
     public
+      property actions: tCustomActionList read getActions;
+
       procedure updateContent; virtual; abstract;
+      procedure enableDisable; virtual;
   end;
   tDebugViewContentClass = class of tDebugViewContent;
 
@@ -51,6 +62,7 @@ var
 type
   tDebugViewFrame = class(TFrame)
     bvSizer: TBevel;
+    buttonImages: TImageList;
     lblCaption: TLabel;
     pnContent: TPanel;
     pnHeader: TPanel;
@@ -86,6 +98,7 @@ type
     destructor  destroy; override;
     procedure invalidateControlState;
     procedure updateContent;
+    procedure enableDisable;
   published
     property position: integer read getPosition write setPosition;
   end;
@@ -93,9 +106,40 @@ type
 implementation
 
 uses
-  Math, KlausUtils, formMain;
+  Math, LCLIntf, KlausUtils, FormMain;
 
 {$R *.lfm}
+
+{ tDebugViewContent }
+
+procedure tDebugViewContent.createWnd;
+begin
+  inherited;
+  if fControlStateInvalid then postMessage(handle, APPM_UpdateControlState, 0, 0);
+end;
+
+function tDebugViewContent.getActions: tCustomActionList;
+begin
+  result := nil;
+end;
+
+procedure tDebugViewContent.invalidateControlState;
+begin
+  if not fControlStateInvalid then begin
+    fControlStateInvalid := true;
+    if handleAllocated then postMessage(handle, APPM_UpdateControlState, 0, 0);
+  end;
+end;
+
+procedure tDebugViewContent.APPMUpdateControlState(var msg: tMessage);
+begin
+  fControlStateInvalid := false;
+  enableDisable;
+end;
+
+procedure tDebugViewContent.enableDisable;
+begin
+end;
 
 { tDebugViewFrame }
 
@@ -138,6 +182,11 @@ end;
 procedure tDebugViewFrame.updateContent;
 begin
   if assigned(fContent) then fContent.updateContent;
+end;
+
+procedure tDebugViewFrame.enableDisable;
+begin
+  if assigned(fContent) then fContent.invalidateControlState;
 end;
 
 function tDebugViewFrame.getCaption: string;

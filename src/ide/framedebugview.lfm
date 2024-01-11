@@ -5,6 +5,7 @@ object DebugViewFrame: TDebugViewFrame
   Width = 352
   ClientHeight = 180
   ClientWidth = 352
+  LCLVersion = '2.2.4.0'
   TabOrder = 0
   DesignLeft = 774
   DesignTop = 300
@@ -39,7 +40,7 @@ object DebugViewFrame: TDebugViewFrame
       Left = 328
       Height = 16
       Top = 3
-      Width = 17
+      Width = 16
       Anchors = [akTop, akRight]
       Glyph.Data = {
         C6000000424DC60000000000000076000000280000000B0000000A0000000100
@@ -50,6 +51,8 @@ object DebugViewFrame: TDebugViewFrame
         0000DDDD000DDDD00000DDD00D00DDD00000DD00DDD00DD00000DDDDDDDDDDD0
         0000DDDDDDDDDDD00000
       }
+      Images = buttonImages
+      ImageIndex = 0
       OnClick = sbCloseClick
     end
     object sbMoveDown: TSpeedButton
@@ -65,6 +68,8 @@ object DebugViewFrame: TDebugViewFrame
         FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00888008888800
         0088800000080000000088888888
       }
+      Images = buttonImages
+      ImageIndex = 2
       Layout = blGlyphTop
       OnClick = sbMoveDownClick
     end
@@ -81,6 +86,8 @@ object DebugViewFrame: TDebugViewFrame
         FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00888888880000
         0000800000088800008888800888
       }
+      Images = buttonImages
+      ImageIndex = 1
       Layout = blGlyphTop
       OnClick = sbMoveUpClick
     end
@@ -104,5 +111,17 @@ object DebugViewFrame: TDebugViewFrame
     BorderSpacing.Right = 4
     BevelOuter = bvNone
     TabOrder = 1
+  end
+  object buttonImages: TImageList
+    Height = 10
+    Scaled = True
+    Width = 10
+    Left = 164
+    Top = 72
+    Bitmap = {
+      4C7A030000000A0000000A000000480000000000000078DAFBCFF09FEA100840
+      C47F4262E8E2B8D4A0ABC5A7865875C4D84B8A3FA8050F1C3840530C733F316A
+      F0A94557834D2D2E35C4B8611493167EA4843129F130D8E20A005A9B4145
+    }
   end
 end

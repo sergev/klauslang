@@ -25,15 +25,29 @@ unit FrameDebugVariables;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, StdCtrls, KlausSrc, FrameDebugView;
+  Classes, SysUtils, Forms, Controls, StdCtrls, ActnList, ComCtrls, KlausSrc,
+  FrameDebugView;
 
 type
   tDebugVariablesFrame = class(tDebugViewContent)
+    actGoto: TAction;
+    actionImages: TImageList;
+    actionList: TActionList;
+    actRefresh: TAction;
     lbVariables: TListBox;
+    toolBar: TToolBar;
+    ToolButton2: TToolButton;
+    ToolButton3: TToolButton;
+    procedure actGotoExecute(Sender: TObject);
+    procedure actRefreshExecute(Sender: TObject);
+    procedure lbVariablesClick(Sender: TObject);
+    procedure lbVariablesDblClick(Sender: TObject);
   private
-
+  protected
+    function getActions: tCustomActionList; override;
   public
     procedure updateContent; override;
+    procedure enableDisable; override;
   end;
 
 implementation
@@ -44,6 +58,40 @@ uses FormMain, FormScene;
 
 { tDebugVariablesFrame }
 
+procedure tDebugVariablesFrame.actRefreshExecute(Sender: TObject);
+begin
+  updateContent;
+end;
+
+procedure tDebugVariablesFrame.lbVariablesClick(Sender: TObject);
+begin
+  enableDisable;
+end;
+
+procedure tDebugVariablesFrame.lbVariablesDblClick(Sender: TObject);
+begin
+  actGoto.execute;
+end;
+
+function tDebugVariablesFrame.getActions: tCustomActionList;
+begin
+  result := actionList;
+end;
+
+procedure tDebugVariablesFrame.actGotoExecute(Sender: TObject);
+var
+  v: tKlausVariable;
+  l, c: integer;
+begin
+  with lbVariables do begin
+    if itemIndex < 0 then exit;
+    v := items.objects[itemIndex] as tKlausVariable;
+  end;
+  l := v.decl.point.line;
+  c := v.decl.point.pos;
+  mainForm.gotoSrcPoint(mainForm.scene.fileName, l, c);
+end;
+
 procedure tDebugVariablesFrame.updateContent;
 var
   s: string;
@@ -52,21 +100,31 @@ var
   v: tKlausVariable;
   fr: tKlausStackFrame;
 begin
-  lbVariables.clear;
-  if not mainForm.isRunning then exit;
-  if sasHasExecPoint in mainForm.scene.actionState then begin
-    r := mainForm.scene.thread.runtime;
-    idx := mainForm.focusedStackFrame;
-    if (idx >= 0) and (idx < r.stackCount) then fr := r.stackFrames[idx]
-    else fr := r.stackTop;
-    if fr <> nil then
-      for i := 0 to fr.varCount-1 do begin
-        v := fr.vars[i];
-        {$ifndef debugide}if v.decl.hidden then continue;{$endif}
-        s := v.decl.name + ': ' + v.displayValue;
-        lbVariables.items.add(s);
-      end;
+  try
+    lbVariables.clear;
+    if not mainForm.isRunning then exit;
+    if sasHasExecPoint in mainForm.scene.actionState then begin
+      r := mainForm.scene.thread.runtime;
+      idx := mainForm.focusedStackFrame;
+      if (idx >= 0) and (idx < r.stackCount) then fr := r.stackFrames[idx]
+      else fr := r.stackTop;
+      if fr <> nil then
+        for i := 0 to fr.varCount-1 do begin
+          v := fr.vars[i];
+          {$ifndef debugide}if v.decl.hidden then continue;{$endif}
+          s := v.decl.name + ': ' + v.displayValue;
+          lbVariables.items.addObject(s, v);
+        end;
+    end;
+  finally
+    enableDisable;
   end;
+end;
+
+procedure tDebugVariablesFrame.enableDisable;
+begin
+  actRefresh.enabled := mainForm.isRunning;
+  actGoto.enabled := lbVariables.itemIndex >= 0;
 end;
 
 initialization
