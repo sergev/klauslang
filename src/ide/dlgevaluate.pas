@@ -19,7 +19,7 @@ type
     pbEvaluate: TButton;
     pbAddWatch: TButton;
     propStorage: TIniPropStorage;
-    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
+    procedure formClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure pbEvaluateClick(Sender: TObject);
   private
     function  getAllowFunctions: boolean;
@@ -28,25 +28,35 @@ type
     procedure setText(val: string);
     procedure updateCombo;
   public
-     property text: string read getText write setText;
-     property allowFunctions: boolean read getAllowFunctions write setAllowFunctions;
+    property text: string read getText write setText;
+    property allowFunctions: boolean read getAllowFunctions write setAllowFunctions;
   end;
 
 implementation
 
 uses
-  FormMain;
+  FormMain, KlausSrc, U8;
 
 {$R *.lfm}
 
 { tEvaluateDlg }
 
 procedure tEvaluateDlg.pbEvaluateClick(Sender: TObject);
+var
+  s: string;
+  fr: tKlausStackFrame;
 begin
   updateCombo;
+  mlResult.text := '';
+  if cbText.text = '' then exit;
+  fr := mainForm.focusedStackFrame;
+  if fr <> nil then begin
+    s := fr.owner.evaluate(fr, cbText.text, allowFunctions);
+    mlResult.text := u8Copy(s, 0, 65535);
+  end;
 end;
 
-procedure tEvaluateDlg.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+procedure tEvaluateDlg.formClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
   if modalResult = mrOK then updateCombo;
 end;

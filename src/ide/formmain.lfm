@@ -1029,17 +1029,14 @@ object MainForm: TMainForm
       Hint = 'Наблюдения|Открыть список наблюдений'
       ImageIndex = 25
       OnExecute = actDebugWatchesExecute
-      Visible = False
     end
     object actDebugEvaluateWatch: TAction
       Category = 'Отладка'
       Caption = 'Вычислить/Наблюдать...'
-      Enabled = False
       Hint = 'Вычислить/Наблюдать|Вычислить выражение или добавить в список наблюдений'
       ImageIndex = 32
       OnExecute = actDebugEvaluateWatchExecute
       ShortCut = 16502
-      Visible = False
     end
   end
   object actionImages: TImageList

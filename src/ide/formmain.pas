@@ -320,7 +320,7 @@ type
     fEditStyles: tKlausEditorOptions;
     fBreakpoints: tKlausBreakpoints;
     fBreakpointListInvalid: boolean;
-    fFocusedStackFrame: integer;
+    fStackFrameIdx: integer;
     fSearchInfo: tSearchInfo;
 
     function  getActiveFrame: tEditFrame;
@@ -334,7 +334,7 @@ type
     function  getFrames(idx: integer): tEditFrame;
     function  getRecentFiles: tStrings;
     procedure setActiveFrame(val: tEditFrame; focus: boolean = true);
-    procedure setFocusedStackFrame(value: integer);
+    procedure setStackFrameIdx(value: integer);
     procedure setRecentFiles(val: tStrings);
     procedure updateRecentMenuItems;
     procedure enableRecentMenuItems;
@@ -366,7 +366,7 @@ type
     property runToCursor: tKlausBreakpoint read fRunToCursor;
     property breakpointCount: integer read getBreakpointCount;
     property breakpoint[idx: integer]: tKlausBreakpoint read getBreakpoint;
-    property focusedStackFrame: integer read fFocusedStackFrame write setFocusedStackFrame;
+    property stackFrameIdx: integer read fStackFrameIdx write setStackFrameIdx;
 
     constructor create(aOwner: tComponent); override;
     destructor  destroy; override;
@@ -389,6 +389,7 @@ type
     function  isBreakpoint(const fileName: string; line: integer): boolean;
     procedure gotoSrcPoint(const fileName: string; line, char: integer);
     procedure gotoBreakpoint(idx: integer);
+    function  focusedStackFrame: tKlausStackFrame;
   published
     property recentFiles: tStrings read getRecentFiles write setRecentFiles;
     property debugViews: tDebugViewTypes read getDebugViews write setDebugViews;
@@ -613,7 +614,7 @@ procedure tMainForm.updateDebugInfo;
 var
   dwt: tDebugViewType;
 begin
-  fFocusedStackFrame := -1;
+  fStackFrameIdx := -1;
   for dwt := low(dwt) to high(dwt) do debugView[dwt].updateContent;
   showExecPoint;
   invalidateControlState;
@@ -984,6 +985,21 @@ begin
   gotoSrcPoint(fBreakpoints[idx].fileName, fBreakpoints[idx].line, 1);
 end;
 
+function tMainForm.focusedStackFrame: tKlausStackFrame;
+var
+  idx: integer;
+  r: tKlausRuntime;
+begin
+  result := nil;
+  if not isRunning then exit;
+  if sasHasExecPoint in scene.actionState then begin
+    r := scene.thread.runtime;
+    idx := stackFrameIdx;
+    if (idx < 0) or (idx >= r.stackCount) then result := r.stackTop
+    else result := r.stackFrames[idx];
+  end;
+end;
+
 procedure tMainForm.actRunStartExecute(Sender: TObject);
 begin
   run(rmNonStop);
@@ -1072,7 +1088,7 @@ end;
 
 procedure tMainForm.actDebugWatchesExecute(Sender: TObject);
 begin
-  //!!!debugView[dvtWatches].visible := true;
+  debugView[dvtWatches].visible := true;
 end;
 
 procedure tMainForm.actFileExitExecute(sender: TObject);
@@ -1185,11 +1201,11 @@ end;
 
 procedure tMainForm.actDebugEvaluateWatchExecute(Sender: TObject);
 begin
-  {!!!with tEvaluateDlg.create(application) do try
+  with tEvaluateDlg.create(application) do try
     showModal;
   finally
     free;
-  end;}
+  end;
 end;
 
 function tMainForm.getFrameCount: integer;
@@ -1263,10 +1279,10 @@ begin
   if focus then val.edit.setFocus;
 end;
 
-procedure tMainForm.setFocusedStackFrame(value: integer);
+procedure tMainForm.setStackFrameIdx(value: integer);
 begin
-  if fFocusedStackFrame <> value then begin
-    fFocusedStackFrame := value;
+  if fStackFrameIdx <> value then begin
+    fStackFrameIdx := value;
     debugView[dvtVariables].updateContent;
   end;
 end;

@@ -29,15 +29,15 @@ uses
   KlausGlobals;
 
 type
-  tDebugViewType = (dvtVariables, dvtCallStack, {dvtWatches, }dvtBreakpoints);
+  tDebugViewType = (dvtVariables, dvtCallStack, dvtWatches, dvtBreakpoints);
   tDebugViewTypes = set of tDebugViewType;
 
 const
   debugViewName: array[tDebugViewType] of string = (
-    'frameDebugVariables', 'frameDebugCallStack', {'frameDebugWatches', }'frameDebugBreakpoints');
+    'frameDebugVariables', 'frameDebugCallStack', 'frameDebugWatches', 'frameDebugBreakpoints');
 
   debugViewCaption: array[tDebugViewType] of string = (
-    'Переменные', 'Стек вызовов', {'Наблюдения', }'Точки останова');
+    'Переменные', 'Стек вызовов', 'Наблюдения', 'Точки останова');
 
 type
   tDebugViewContent = class(tFrame)

@@ -25,7 +25,7 @@ unit FrameDebugVariables;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, StdCtrls, ActnList, ComCtrls, KlausSrc,
+  Classes, SysUtils, Forms, Controls, StdCtrls, ActnList, ComCtrls, U8, KlausSrc,
   FrameDebugView;
 
 type
@@ -95,27 +95,20 @@ end;
 procedure tDebugVariablesFrame.updateContent;
 var
   s: string;
-  i, idx: integer;
-  r: tKlausRuntime;
+  i: integer;
   v: tKlausVariable;
   fr: tKlausStackFrame;
 begin
   try
     lbVariables.clear;
-    if not mainForm.isRunning then exit;
-    if sasHasExecPoint in mainForm.scene.actionState then begin
-      r := mainForm.scene.thread.runtime;
-      idx := mainForm.focusedStackFrame;
-      if (idx >= 0) and (idx < r.stackCount) then fr := r.stackFrames[idx]
-      else fr := r.stackTop;
-      if fr <> nil then
-        for i := 0 to fr.varCount-1 do begin
-          v := fr.vars[i];
-          {$ifndef debugide}if v.decl.hidden then continue;{$endif}
-          s := v.decl.name + ': ' + v.displayValue;
-          lbVariables.items.addObject(s, v);
-        end;
-    end;
+    fr := mainForm.focusedStackFrame;
+    if fr <> nil then
+      for i := 0 to fr.varCount-1 do begin
+        v := fr.vars[i];
+        {$ifndef debugide}if v.decl.hidden then continue;{$endif}
+        s := u8Copy(v.decl.name + ': ' + v.displayValue, 0, 255);
+        lbVariables.items.addObject(s, v);
+      end;
   finally
     enableDisable;
   end;

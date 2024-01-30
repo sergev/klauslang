@@ -93,7 +93,7 @@ const
   // Синтаксические правила
   klausSynRules: array of tKlausSynRuleRec = (
     (name: klausSynRuleRoot;
-    def: '<program>'), // def: '(<program> | <unit>)'),
+    def: '(<program> | <expression>)'), // def: '(<program> | <unit>)'),
 
     (name: 'program';
     def:   '`программа` #id [<program_params>] ";" <routine> "."'), // uses'),
@@ -769,7 +769,8 @@ var
   li: tKlausLexInfo;
 begin
   if fLexIdx < fLexLen-1 then begin
-    if (fLexInfo[fLexIdx]).lexem <> klxEOF then fLexIdx += 1;
+    if fLexIdx < 0 then fLexIdx += 1
+    else if (fLexInfo[fLexIdx]).lexem <> klxEOF then fLexIdx += 1;
   end else begin
     fLexLen += 1;
     if fLexLen > length(fLexInfo) then
@@ -785,7 +786,7 @@ end;
 procedure tKlausSyntax.prevLexInfo(count: integer);
 begin
   if count <= 0 then exit;
-  assert(fLexIdx >= count, 'Cannot feed back');
+  assert(fLexIdx >= count-1, 'Cannot feed back');
   fLexIdx -= count;
 end;
 

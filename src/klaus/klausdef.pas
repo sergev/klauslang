@@ -97,10 +97,6 @@ type
       kdtObject: (oValue: tKlausObject);
   end;
 
-const
-  // Максимальная длина строки для отображения в отладочных окнах
-  klausMaxVarDisplayValue = 255;
-
 type
   // Унарная операция
   tKlausUnaryOperation = (kuoInvalid, kuoMinus, kuoNot);
@@ -513,7 +509,7 @@ function klausCompare(v1, v2: tKlausSimpleValue; accuracy: tKlausFloat; const at
 
 // Возвращает значение, преобразованное к строке
 // для отображения в отладочных окнах среды.
-function klausDisplayValue(val: tKlausSimpleValue): string;
+function klausDisplayValue(val: tKlausSimpleValue; long: boolean = false): string;
 
 var
   // Экземпляры операторов для унарных операций
@@ -800,20 +796,14 @@ end;
 
 // Возвращает значение, преобразованное к строке
 // для отображения в отладочных окнах среды.
-function klausDisplayValue(val: tKlausSimpleValue): string;
+function klausDisplayValue(val: tKlausSimpleValue; long: boolean = false): string;
 var
   p: pChar;
 begin
   try
     result := klausTypecast(val, kdtString, zeroSrcPt).sValue;
-    if val.dataType = kdtString then begin
-      if length(result) > klausMaxVarDisplayValue then begin
-        p := u8SkipCharsLeft(result, klausMaxVarDisplayValue, 1);
-        result := copy(result, 1, p-pChar(result)) + ' <...>';
-      end;
-      result := klausStringLiteral(result);
-    end else if val.dataType = kdtMoment then
-      result := '`'+result+'`';;
+    if val.dataType = kdtString then result := klausStringLiteral(result)
+    else if val.dataType = kdtMoment then result := '`'+result+'`';
   except
     on e: exception do result := e.className + ': ' + e.message;
   end;

@@ -59,7 +59,7 @@ procedure tDebugCallStackFrame.lbCallStackClick(Sender: TObject);
 begin
   with lbCallStack do begin
     if itemIndex < 0 then exit;
-    mainForm.focusedStackFrame := ptrInt(items.objects[itemIndex]);
+    mainForm.stackFrameIdx := ptrInt(items.objects[itemIndex]);
   end;
 end;
 

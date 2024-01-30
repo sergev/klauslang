@@ -55,6 +55,6 @@ begin
 end;
 
 initialization
-  //!!!debugViewContentClass[dvtWatches] := tDebugWatchesFrame;
+  debugViewContentClass[dvtWatches] := tDebugWatchesFrame;
 end.
 

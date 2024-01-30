@@ -121,6 +121,7 @@ const
   ercStreamNotOpen          = 71;
   ercAccuracyNotApplicable  = 72;
   ercNegativeAccuracy       = 73;
+  ercCallsNotAllowed        = 74;
 
 const
   // Классификация кодов eKlausError для трансляции в исключения языка
@@ -162,7 +163,7 @@ const
 
     //ksxRuntimeError
     [ercStackTooBig, ercInaccurateCleanup, ercInvalidKlausHandle, ercTooManyHandles,
-    ercUnexpectedObjectClass],
+    ercUnexpectedObjectClass, ercCallsNotAllowed],
 
     //ksxBadNumber
     [ercArgumentIsNaN, ercArgumentIsNotFinite],
@@ -275,6 +276,7 @@ resourcestring
   errStreamNotOpen = 'Поток ввода-вывода не был открыт.';
   errAccuracyNotApplicable = 'Указание точности сравнения допустимо только для дробных чисел и моментов.';
   errNegativeAccuracy = 'Точность сравнения не может быть отрицательным числом.';
+  errCallsNotAllowed = 'Вызовы функций не разрешены.';
 
 { Globals }
 
@@ -380,6 +382,7 @@ begin
     ercStreamNotOpen: result := errStreamNotOpen;
     ercAccuracyNotApplicable: result := errAccuracyNotApplicable;
     ercNegativeAccuracy: result := errNegativeAccuracy;
+    ercCallsNotAllowed: result := errCallsNotAllowed;
   end;
 end;
 

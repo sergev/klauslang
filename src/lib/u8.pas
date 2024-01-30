@@ -61,6 +61,8 @@ type
   function u8SkipChars(p: pChar; count: integer): pChar;
   function u8SkipChars(s: string; count: integer): pChar;
 
+  function u8Copy(const s: string; idx, count: integer): string;
+
   function u8SkipCharsLeft(p, bound: pChar; count: integer): pChar;
   function u8SkipCharsLeft(s: string; idx, count: integer): pChar;
 
@@ -186,6 +188,19 @@ end;
 function u8SkipChars(s: string; count: integer): pChar;
 begin
   result := u8SkipChars(pChar(s), count);
+end;
+
+function u8Copy(const s: string; idx, count: integer): string;
+// Возвращает подстроку переданной строки длиной count символов, начаиная с указанного idx символа
+var
+  p1, p2: pChar;
+begin
+  p1 := u8SkipChars(s, idx);
+  if p1 = nil then exit('');
+  p2 := u8SkipChars(p1, count);
+  if p2 = nil then exit('');
+  setLength(result, p2-p1);
+  move(p1^, pChar(result)^, p2-p1);
 end;
 
 // Возвращает указатель, сдвинутый влево на указанное кол-во символов,
