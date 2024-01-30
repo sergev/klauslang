@@ -1346,6 +1346,7 @@ begin
   if fStackFrameIdx <> value then begin
     fStackFrameIdx := value;
     debugView[dvtVariables].updateContent;
+    debugView[dvtWatches].updateContent;
   end;
 end;
 
@@ -1464,7 +1465,7 @@ end;
 procedure tMainForm.formShortCut(var Msg: TLMKey; var Handled: Boolean);
 var
   ctl: tWinControl;
-  frm: tDebugViewContent;
+  frm: tDebugViewContent = nil;
 begin
   handled := false;
   ctl := activeControl;

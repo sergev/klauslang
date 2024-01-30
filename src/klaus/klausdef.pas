@@ -797,8 +797,6 @@ end;
 // Возвращает значение, преобразованное к строке
 // для отображения в отладочных окнах среды.
 function klausDisplayValue(val: tKlausSimpleValue; long: boolean = false): string;
-var
-  p: pChar;
 begin
   try
     result := klausTypecast(val, kdtString, zeroSrcPt).sValue;
