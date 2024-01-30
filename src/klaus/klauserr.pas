@@ -58,7 +58,7 @@ const
   ercInvalidFloat           = 08;
   ercInvalidHexadecimal     = 09;
   ercInvalidCharCode        = 10;
-  ercExpected               = 11;
+  ercSyntaxError            = 11;
   ercTextAfterEnd           = 12;
   ercUnexpectedSyntax       = 13;
   ercDuplicateName          = 14;
@@ -150,7 +150,7 @@ const
 
     //ksxSyntaxError
     [ercQuoteNotClosed, ercCommentNotClosed, ercEmptyChar, ercCharTooLong, ercApostropheNotClosed,
-    ercInvalidInteger, ercInvalidFloat, ercInvalidHexadecimal, ercInvalidCharCode, ercExpected,
+    ercInvalidInteger, ercInvalidFloat, ercInvalidHexadecimal, ercInvalidCharCode, ercSyntaxError,
     ercTextAfterEnd, ercDuplicateName, ercTypeNameRequired, ercMomentNotClosed, ercInvalidMoment,
     ercLoopCtlOutsideLoop, ercNotConstantValue, ercValueDeclRequired, ercIllegalIndexQualifier,
     ercIllegalFieldQualifier, ercCannotReturnValue, ercConstAsgnTarget, ercSubroutineRequired,
@@ -213,7 +213,7 @@ resourcestring
   errInvalidFloat = 'Неверный вещественный литерал';
   errInvalidHexadecimal = 'Неверный шестнадцатиричный целочисленный литерал.';
   errInvalidCharCode = 'Неверный литерал Unicode. Ожидается шестнадцатиричное целое число.';
-  errExpected = 'Ожидается: %s';
+  errSyntaxError = 'Синтаксическая ошибка.';
   errTextAfterEnd = 'Недопустимый текст после окончания исходного кода.';
   errUnexpectedSyntax = 'Внутренняя ошибка. Неожиданный синтаксис.';
   errDuplicateName = 'Повторное определение имени: "%s"';
@@ -319,7 +319,7 @@ begin
     ercInvalidFloat: result := errInvalidFloat;
     ercInvalidHexadecimal: result := errInvalidHexadecimal;
     ercInvalidCharCode: result := errInvalidCharCode;
-    ercExpected: result := errExpected;
+    ercSyntaxError: result := errSyntaxError;
     ercTextAfterEnd: result := errTextAfterEnd;
     ercUnexpectedSyntax: result := errUnexpectedSyntax;
     ercDuplicateName: result := errDuplicateName;

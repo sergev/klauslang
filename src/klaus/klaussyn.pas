@@ -361,7 +361,6 @@ type
       constructor create(aSyntax: tKlausSyntax; aName: string; def: string = '');
       destructor  destroy; override;
       function toString: string; override;
-      function errInfo: string; virtual;
   end;
 
 type
@@ -373,7 +372,6 @@ type
       function match(require: boolean): boolean; virtual; abstract;
     public
       constructor create(aSyntax: tKlausSyntax);
-      function errInfo: string; virtual; abstract;
   end;
 
 type
@@ -386,7 +384,6 @@ type
     public
       constructor create(aSyntax: tKlausSyntax; subRuleName: string);
       function toString: string; override;
-      function errInfo: string; override;
   end;
 
 type
@@ -399,7 +396,6 @@ type
     public
       constructor create(aSyntax: tKlausSyntax; aKeyword: tKlausKeyword);
       function toString: string; override;
-      function errInfo: string; override;
   end;
 
 type
@@ -412,7 +408,6 @@ type
     public
       constructor create(aSyntax: tKlausSyntax; aLexem: tKlausLexem);
       function toString: string; override;
-      function errInfo: string; override;
   end;
 
 type
@@ -425,7 +420,6 @@ type
     public
       constructor create(aSyntax: tKlausSyntax; aSymbol: tKlausSymbol);
       function toString: string; override;
-      function errInfo: string; override;
   end;
 
 type
@@ -448,7 +442,6 @@ type
       constructor create(aSyntax: tKlausSyntax; aOptional, aMultiple: boolean);
       destructor  destroy; override;
       function toString: string; override;
-      function errInfo: string; override;
   end;
 
 type
@@ -905,18 +898,6 @@ begin
   result += cc[fOptional];
 end;
 
-function tKlausSynGroup.errInfo: string;
-var
-  i: integer;
-  sep: string = '';
-begin
-  result := '';
-  for i := 0 to count-1 do begin
-    result += sep + items[i].errInfo;
-    sep := ', ';
-  end;
-end;
-
 function tKlausSynGroup.getCount: integer;
 begin
   result := length(fItems);
@@ -952,7 +933,7 @@ begin
   until not (fMultiple and found);
   if not fOptional and not result and require then begin
     fSyntax.nextLexInfo;
-    raise eKlausError.createFmt(ercExpected, fSyntax.curLine, fSyntax.curPos, [errInfo]);
+    raise eKlausError.create(ercSyntaxError, fSyntax.curLine, fSyntax.curPos);
   end;
 end;
 
@@ -975,7 +956,7 @@ begin
     fSyntax.addMatchedLexem
   else begin
     if not require then fSyntax.prevLexInfo
-    else raise eKlausError.createFmt(ercExpected, li.line, li.pos, [errInfo]);
+    else raise eKlausError.create(ercSyntaxError, li.line, li.pos);
   end;
   logln('syntax', ' >> %s ("%s")'#10, [result, li.text]);
 end;
@@ -983,11 +964,6 @@ end;
 function tKlausSynSymbol.toString: string;
 begin
   result := ansiQuotedStr(tKlausLexParser.symbolValue(fSymbol), '"');
-end;
-
-function tKlausSynSymbol.errInfo: string;
-begin
-  result := '"' + tKlausLexParser.symbolValue(fSymbol) + '"';
 end;
 
 { tKlausSynLexem }
@@ -1009,7 +985,7 @@ begin
     fSyntax.addMatchedLexem
   else begin
     if not require then fSyntax.prevLexInfo
-    else raise eKlausError.createFmt(ercExpected, li.line, li.pos, [errInfo]);
+    else raise eKlausError.create(ercSyntaxError, li.line, li.pos);
   end;
   logln('syntax', ' >> %s ("%s")'#10, [result, li.text]);
 end;
@@ -1017,11 +993,6 @@ end;
 function tKlausSynLexem.toString: string;
 begin
   result := '#'+u8Lower(klausLexemName(fLexem));
-end;
-
-function tKlausSynLexem.errInfo: string;
-begin
-  result := klausLexemCaption[fLexem];
 end;
 
 { tKlausSynKeyword }
@@ -1043,7 +1014,7 @@ begin
     fSyntax.addMatchedLexem
   else begin
     if not require then fSyntax.prevLexInfo
-    else raise eKlausError.createFmt(ercExpected, li.line, li.pos, [errInfo]);
+    else raise eKlausError.create(ercSyntaxError, li.line, li.pos);
   end;
   logln('syntax', ' >> %s ("%s")'#10, [result, li.text]);
 end;
@@ -1051,11 +1022,6 @@ end;
 function tKlausSynKeyword.toString: string;
 begin
   result := '`'+tKlausLexParser.keywordValue(fKeyword)+'`';
-end;
-
-function tKlausSynKeyword.errInfo: string;
-begin
-  result := '`' + tKlausLexParser.keywordValue(fKeyword) + '`';
 end;
 
 { tKlausSynSubRule }
@@ -1075,11 +1041,6 @@ end;
 function tKlausSynSubRule.toString: string;
 begin
   result := '<' + fSubRule.name + '>';
-end;
-
-function tKlausSynSubRule.errInfo: string;
-begin
-  result := fSubRule.errInfo;
 end;
 
 { tKlausSynRule }
@@ -1121,12 +1082,6 @@ begin
     result += sep + entries[i].toString;
     sep := ' ';
   end;
-end;
-
-function tKlausSynRule.errInfo: string;
-begin
-  if count <= 0 then result := ''
-  else result := entries[0].errInfo;
 end;
 
 function tKlausSynRule.getCount: integer;

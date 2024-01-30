@@ -2,9 +2,9 @@ object tDebugWatchesFrame: tDebugWatchesFrame
   Left = 0
   Height = 184
   Top = 0
-  Width = 362
+  Width = 340
   ClientHeight = 184
-  ClientWidth = 362
+  ClientWidth = 340
   TabOrder = 0
   DesignLeft = 637
   DesignTop = 330
@@ -12,7 +12,7 @@ object tDebugWatchesFrame: tDebugWatchesFrame
     Left = 0
     Height = 24
     Top = 0
-    Width = 362
+    Width = 340
     Caption = 'toolBar'
     Images = actionImages
     ParentShowHint = False
@@ -39,15 +39,39 @@ object tDebugWatchesFrame: tDebugWatchesFrame
       Action = actRefresh
     end
   end
-  object lbContent: TListBox
+  object sgContent: TStringGrid
     Left = 0
     Height = 160
     Top = 24
-    Width = 362
+    Width = 340
     Align = alClient
-    ItemHeight = 0
+    AutoEdit = False
+    AutoFillColumns = True
+    CellHintPriority = chpAll
+    ColCount = 2
+    Columns = <    
+      item
+        SizePriority = 0
+        Title.Caption = 'Выражение'
+        Width = 100
+      end    
+      item
+        Title.Caption = 'Значение'
+        Width = 238
+      end>
+    DefaultRowHeight = 20
+    FixedCols = 0
+    Options = [goVertLine, goColSizing, goRowSelect, goCellHints, goRowHighlight]
+    ParentShowHint = False
+    RowCount = 1
+    ShowHint = True
     TabOrder = 1
-    TopIndex = -1
+    OnDblClick = sgContentDblClick
+    OnGetCellHint = sgContentGetCellHint
+    ColWidths = (
+      100
+      238
+    )
   end
   object actionImages: TImageList
     Height = 18
@@ -85,18 +109,21 @@ object tDebugWatchesFrame: tDebugWatchesFrame
       Caption = 'Редактировать'
       Hint = 'Редактировать|Редактировать выбранное наблюдение'
       ImageIndex = 2
+      OnExecute = actEditExecute
       ShortCut = 113
     end
     object actDelete: TAction
       Caption = 'Удалить'
       Hint = 'Удалить|Удалить выбранное наблюдение'
       ImageIndex = 3
+      OnExecute = actDeleteExecute
       ShortCut = 46
     end
     object actRefresh: TAction
       Caption = 'Обновить'
       Hint = 'Обновить|Заново вычислить значения наблюдений'
       ImageIndex = 0
+      OnExecute = actRefreshExecute
       ShortCut = 116
     end
   end

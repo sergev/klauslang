@@ -7,7 +7,10 @@ object EvaluateDlg: TEvaluateDlg
   Caption = 'Вычислить/Наблюдать'
   ClientHeight = 422
   ClientWidth = 644
+  KeyPreview = True
   OnClose = FormClose
+  OnKeyDown = FormKeyDown
+  OnShow = FormShow
   Position = poScreenCenter
   SessionProperties = 'cbText.Items'
   LCLVersion = '2.2.4.0'
@@ -25,11 +28,14 @@ object EvaluateDlg: TEvaluateDlg
   object pbAddWatch: TButton
     Left = 524
     Height = 32
+    Hint = 'Ctrl+Enter'
     Top = 374
     Width = 104
     Anchors = [akRight, akBottom]
     Caption = 'Наблюдать'
     ModalResult = 1
+    ParentShowHint = False
+    ShowHint = True
     TabOrder = 5
   end
   object pbEvaluate: TButton
@@ -52,6 +58,7 @@ object EvaluateDlg: TEvaluateDlg
     AutoComplete = True
     AutoCompleteText = [cbactEnabled, cbactEndOfLineComplete, cbactRetainPrefixCase, cbactSearchAscending]
     ItemHeight = 0
+    OnChange = cbTextChange
     TabOrder = 0
   end
   object lblExpression: TLabel

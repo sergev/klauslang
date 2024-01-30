@@ -46,7 +46,15 @@ type
     fileName: string;
   end;
 
+  tWatchInfo = record
+    text: string;
+    allowFunctions: boolean;
+  end;
+
 type
+
+  { tMainForm }
+
   tMainForm = class(tForm)
     actFileNew: TAction;
     actFileOpen: TAction;
@@ -322,6 +330,7 @@ type
     fBreakpointListInvalid: boolean;
     fStackFrameIdx: integer;
     fSearchInfo: tSearchInfo;
+    fWatches: array of tWatchInfo;
 
     function  getActiveFrame: tEditFrame;
     function  getBreakpointCount: integer;
@@ -329,6 +338,8 @@ type
     function  getConfigFileName: string;
     function  getDebugViews: tDebugViewTypes;
     function  getIsRunning: boolean;
+    function  getWatchCount: integer;
+    function  getWatches(idx: integer): tWatchInfo;
     procedure setDebugViews(val: tDebugViewTypes);
     function  getFrameCount: integer;
     function  getFrames(idx: integer): tEditFrame;
@@ -367,6 +378,8 @@ type
     property breakpointCount: integer read getBreakpointCount;
     property breakpoint[idx: integer]: tKlausBreakpoint read getBreakpoint;
     property stackFrameIdx: integer read fStackFrameIdx write setStackFrameIdx;
+    property watchCount: integer read getWatchCount;
+    property watches[idx: integer]: tWatchInfo read getWatches;
 
     constructor create(aOwner: tComponent); override;
     destructor  destroy; override;
@@ -390,6 +403,9 @@ type
     procedure gotoSrcPoint(const fileName: string; line, char: integer);
     procedure gotoBreakpoint(idx: integer);
     function  focusedStackFrame: tKlausStackFrame;
+    procedure addWatch(const txt: string; allowFunctions: boolean);
+    procedure editWatch(idx: integer; const txt: string; allowFunctions: boolean);
+    procedure deleteWatch(idx: integer);
   published
     property recentFiles: tStrings read getRecentFiles write setRecentFiles;
     property debugViews: tDebugViewTypes read getDebugViews write setDebugViews;
@@ -1000,6 +1016,40 @@ begin
   end;
 end;
 
+procedure tMainForm.addWatch(const txt: string; allowFunctions: boolean);
+var
+  idx: integer;
+begin
+  idx := watchCount;
+  setLength(fWatches, idx+1);
+  fWatches[idx].text := txt;
+  fWatches[idx].allowFunctions := allowFunctions;
+  debugView[dvtWatches].updateContent;
+  invalidateControlState;
+end;
+
+procedure tMainForm.editWatch(idx: integer; const txt: string; allowFunctions: boolean);
+begin
+  assert((idx >= 0) and (idx < length(fWatches)), 'Invalid item index');
+  fWatches[idx].text := txt;
+  fWatches[idx].allowFunctions := allowFunctions;
+  debugView[dvtWatches].updateContent;
+  invalidateControlState;
+end;
+
+procedure tMainForm.deleteWatch(idx: integer);
+var
+  i, cnt: integer;
+begin
+  cnt := length(fWatches);
+  assert((idx >= 0) and (idx < cnt), 'Invalid item index');
+  for i := idx to cnt-2 do
+    fWatches[idx] := fWatches[idx+1];
+  setLength(fWatches, cnt-1);
+  debugView[dvtWatches].updateContent;
+  invalidateControlState;
+end;
+
 procedure tMainForm.actRunStartExecute(Sender: TObject);
 begin
   run(rmNonStop);
@@ -1202,7 +1252,8 @@ end;
 procedure tMainForm.actDebugEvaluateWatchExecute(Sender: TObject);
 begin
   with tEvaluateDlg.create(application) do try
-    showModal;
+    if showModal = mrOK then
+      if text <> '' then addWatch(text, allowFunctions);
   finally
     free;
   end;
@@ -1249,6 +1300,17 @@ begin
   result := scene <> nil;
   if result then result := scene.thread <> nil;
   if result then result := not scene.thread.finished;
+end;
+
+function tMainForm.getWatchCount: integer;
+begin
+  result := length(fWatches);
+end;
+
+function tMainForm.getWatches(idx: integer): tWatchInfo;
+begin
+  assert((idx >= 0) and (idx < length(fWatches)), 'Invalid item index');
+  result := fWatches[idx];
 end;
 
 procedure tMainForm.setDebugViews(val: tDebugViewTypes);
