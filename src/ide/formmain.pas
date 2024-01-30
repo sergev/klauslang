@@ -52,9 +52,6 @@ type
   end;
 
 type
-
-  { tMainForm }
-
   tMainForm = class(tForm)
     actFileNew: TAction;
     actFileOpen: TAction;

@@ -9,9 +9,6 @@ uses
   Dialogs, StdCtrls, Grids;
 
 type
-
-  { tDebugWatchesFrame }
-
   tDebugWatchesFrame = class(tDebugViewContent)
     actAdd: TAction;
     actEdit: TAction;

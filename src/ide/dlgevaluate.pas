@@ -9,9 +9,6 @@ uses
   IniPropStorage;
 
 type
-
-  { tEvaluateDlg }
-
   tEvaluateDlg = class(TForm)
     cbText: TComboBox;
     chAllowFunctions: TCheckBox;
@@ -137,7 +134,7 @@ end;
 
 procedure tEvaluateDlg.enableDisable;
 begin
-  pbEvaluate.enabled := cbText.text <> '';
+  pbEvaluate.enabled := (cbText.text <> '') and (mainForm.focusedStackFrame <> nil);
   pbAddWatch.enabled := cbText.text <> '';
 end;
 
