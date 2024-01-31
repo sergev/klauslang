@@ -116,7 +116,7 @@ end;
 
 procedure tDebugVariablesFrame.enableDisable;
 begin
-  actRefresh.enabled := mainForm.isRunning;
+  actRefresh.enabled := mainForm.focusedStackFrame <> nil;
   actGoto.enabled := lbVariables.itemIndex >= 0;
 end;
 

@@ -78,10 +78,10 @@ object EvaluateDlg: TEvaluateDlg
     Width = 604
     Anchors = [akTop, akLeft, akRight]
     AutoSize = False
-    Caption = 'Результат'
+    Caption = 'Значение'
     ParentColor = False
   end
-  object mlResult: TMemo
+  object mlValue: TMemo
     Left = 16
     Height = 231
     Top = 128

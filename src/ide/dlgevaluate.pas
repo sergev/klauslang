@@ -14,7 +14,7 @@ type
     chAllowFunctions: TCheckBox;
     lblExpression: TLabel;
     lblResult: TLabel;
-    mlResult: TMemo;
+    mlValue: TMemo;
     pbCancel: TButton;
     pbEvaluate: TButton;
     pbAddWatch: TButton;
@@ -55,12 +55,12 @@ var
   fr: tKlausStackFrame;
 begin
   updateCombo;
-  mlResult.text := '';
+  mlValue.text := '';
   if cbText.text = '' then exit;
   fr := mainForm.focusedStackFrame;
   if fr <> nil then begin
     s := fr.owner.evaluate(fr, cbText.text, allowFunctions);
-    mlResult.text := u8Copy(s, 0, 65535);
+    mlValue.text := u8Copy(s, 0, 65535);
   end;
 end;
 
@@ -99,7 +99,7 @@ end;
 
 function tEvaluateDlg.getValue: string;
 begin
-  result := mlResult.text;
+  result := mlValue.text;
 end;
 
 procedure tEvaluateDlg.setAllowFunctions(val: boolean);
@@ -114,7 +114,7 @@ end;
 
 procedure tEvaluateDlg.setValue(val: string);
 begin
-  mlResult.text := val;
+  mlValue.text := val;
 end;
 
 procedure tEvaluateDlg.updateCombo;

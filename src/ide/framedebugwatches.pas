@@ -118,6 +118,7 @@ end;
 
 procedure tDebugWatchesFrame.enableDisable;
 begin
+  with mainForm do actRefresh.enabled := (focusedStackFrame <> nil) and (watchCount > 0);
   actEdit.enabled := sgContent.row >= 1;
   actDelete.enabled := sgContent.row >= 1;
 end;
