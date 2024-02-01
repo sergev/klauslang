@@ -548,6 +548,24 @@ type
   end;
 
 type
+  // процедура запомнитьКурсор();
+  tKlausSysProc_CursorSave = class(tKlausSysTermProc)
+    private
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  // процедура вернутьКурсор();
+  tKlausSysProc_CursorRestore = class(tKlausSysTermProc)
+    private
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
   // процедура скрытьКурсор;
   tKlausSysProc_HideCursor = class(tKlausSysTermProc)
     private
@@ -2328,6 +2346,30 @@ var
 begin
   x := getSimpleInt(frame, fHorz, at)+1;
   writeStdStream(frame, format(#27'[%d`', [word(x)]));
+end;
+
+{ tKlausSysProc_CursorSave }
+
+constructor tKlausSysProc_CursorSave.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_CursorSave, aPoint);
+end;
+
+procedure tKlausSysProc_CursorSave.run(frame: tKlausStackFrame; const at: tSrcPoint);
+begin
+  writeStdStream(frame, #27'[s');
+end;
+
+{ tKlausSysProc_CursorRestore }
+
+constructor tKlausSysProc_CursorRestore.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_CursorRestore, aPoint);
+end;
+
+procedure tKlausSysProc_CursorRestore.run(frame: tKlausStackFrame; const at: tSrcPoint);
+begin
+  writeStdStream(frame, #27'[u');
 end;
 
 { tKlausSysProc_HideCursor }

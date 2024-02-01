@@ -133,6 +133,7 @@ type
       fCharSize: tSize;
       fCaretType: tKlsConCaretType;
       fCaretPos: tPoint;
+      fSaveCaret: tPoint;
       fCaretOrigin: tPoint;
       fCaretEnabled: boolean;
       fCaretVisible: boolean;
@@ -478,6 +479,7 @@ begin
   fBuffer.onFeed := @bufferFeed;
   fCaretOrigin := point(0, 0);
   fCaretPos := point(0, 0);
+  fSaveCaret := point(0, 0);
   fCaretEnabled := true;
   fCaretVisible := false;
   fTextAttr.bc := cl16Black;
@@ -541,6 +543,7 @@ begin
     fTextAttr.fs := 0;
     fBuffer.clear(longWord(fTextAttr));
     fCaretPos := point(0, 0);
+    fSaveCaret := point(0, 0);
     fCaretEnabled := true;
     invalidateCaretPos;
     invalidateAll;
@@ -842,6 +845,7 @@ begin
             if length(prm) <> 3 then abort;
             if prm[0] <> '8' then abort;
             setWindowSize(strToInt(prm[2]), strToInt(prm[1]));
+            fSaveCaret := point(0, 0);
           end;
           'K': begin // очистить строку
             prm := getParams(s);
@@ -852,6 +856,12 @@ begin
               1: clearLine(caret.y, 0, caret.x);
               2: clearLine(caret.y, 0, fBuffer.width-1);
             end;
+          end;
+          's': begin // запомнить позицию курсора
+            fSaveCaret := caretPos;
+          end;
+          'u': begin // восстановить позицию курсора
+            caretPos := fSaveCaret;
           end;
           'f': begin // установить курсор X, Y
             prm := getParams(s);
