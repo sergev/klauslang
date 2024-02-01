@@ -647,6 +647,7 @@ type
       fDecl: tKlausValueDecl;
       fSteps: tKlausVarPathSteps;
 
+      function getIsConstant: boolean;
       function getStepCount: integer;
       function getIsVariable: boolean;
       function getPoint: tSrcPoint;
@@ -657,6 +658,7 @@ type
       property steps[idx: integer]: tKlausVarPathStep read getSteps;
       property point: tSrcPoint read getPoint;
       property isVariable: boolean read getIsVariable;
+      property isConstant: boolean read getIsConstant;
 
       constructor create(context: tKlausStatement; b: tKlausSyntaxBrowser);
       destructor  destroy; override;
@@ -1921,9 +1923,14 @@ begin
   result := length(fSteps);
 end;
 
+function tKlausVarPath.getIsConstant: boolean;
+begin
+  result := decl is tKlausConstDecl;
+end;
+
 function tKlausVarPath.getIsVariable: boolean;
 begin
-  result := (decl is tKlausvarDecl) and (stepCount = 1) and (length(steps[0].indices) = 0);
+  result := (decl is tKlausVarDecl) and (stepCount = 1) and (length(steps[0].indices) = 0);
 end;
 
 function tKlausVarPath.getSteps(idx: integer): tKlausVarPathStep;
@@ -2511,6 +2518,7 @@ begin
   b.next;
   b.check('var_path');
   fDest := tKlausVarPath.create(self, b);
+  if fDest.isConstant then raise eKlausError.create(ercConstAsgnTarget, fDest.point);
   b.next;
   b.check('assign_symbol');
   b.next;
@@ -4936,7 +4944,10 @@ begin
   if length(expr) <> paramCount then raise eKlausError.createFmt(ercWrongNumberOfParams, at.line, at.pos, [length(expr), intToStr(paramCount)]);
   for i := 0 to length(expr)-1 do begin
     outp := params[i].mode <> kpmInput;
-    if outp and not expr[i].isVarPath then raise eKlausError.create(ercInvalidOutputParam, expr[i].point.line, expr[i].point.pos);
+    if outp then begin
+      if not expr[i].isVarPath then raise eKlausError.create(ercInvalidOutputParam, expr[i].point);
+      if (expr[i].left as tKlausOpndVarPath).path.isConstant then raise eKlausError.create(ercConstOutputParam, expr[i].point);
+    end;
     if not params[i].dataType.canAssign(expr[i].resultTypeDef, outp) then raise eKlausError.create(ercTypeMismatch, expr[i].point.line, expr[i].point.pos);
   end;
 end;
@@ -5913,6 +5924,9 @@ procedure tKlausStackFrame.call(
       if mode <> kpmInput then raise eKlausError.create(ercInvalidOutputParam, expr.point.line, expr.point.pos);
       expr.evaluateAsCall(self, result);
       if result <> nil then deferRelease(result);
+    end else begin
+      if (mode <> kpmInput) and (expr.left as tKlausOpndVarPath).path.isConstant then
+        raise eKlausError.create(ercConstOutputParam, expr.point);
     end;
     if result = nil then begin
       ssv := expr.evaluate(self, true);

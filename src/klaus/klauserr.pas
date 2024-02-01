@@ -122,6 +122,7 @@ const
   ercAccuracyNotApplicable  = 72;
   ercNegativeAccuracy       = 73;
   ercCallsNotAllowed        = 74;
+  ercConstOutputParam       = 75;
 
 const
   // Классификация кодов eKlausError для трансляции в исключения языка
@@ -156,7 +157,8 @@ const
     ercIllegalFieldQualifier, ercCannotReturnValue, ercConstAsgnTarget, ercSubroutineRequired,
     ercMustReturnValue, ercWrongNumberOfParams, ercInvalidOutputParam, ercExceptionRequired,
     ercExceptBlockOnly, ercMixedExceptBlock, ercExceptAnyMustBeLast, ercExceptAlreadyHandled,
-    ercDuplicateCaseLabel, ercIllegalExpression, ercAccuracyNotApplicable, ercNegativeAccuracy],
+    ercDuplicateCaseLabel, ercIllegalExpression, ercAccuracyNotApplicable, ercNegativeAccuracy,
+    ercConstOutputParam],
 
     //ksxInvalidChar
     [ercInvalidCharAtIndex, ercInvalidStringIndex],
@@ -277,6 +279,7 @@ resourcestring
   errAccuracyNotApplicable = 'Указание точности сравнения допустимо только для дробных чисел и моментов.';
   errNegativeAccuracy = 'Точность сравнения не может быть отрицательным числом.';
   errCallsNotAllowed = 'Вызовы функций не разрешены.';
+  errConstOutputParam = 'Нельзя использовать константу в качестве выходного параметра.';
 
 { Globals }
 
@@ -383,6 +386,7 @@ begin
     ercAccuracyNotApplicable: result := errAccuracyNotApplicable;
     ercNegativeAccuracy: result := errNegativeAccuracy;
     ercCallsNotAllowed: result := errCallsNotAllowed;
+    ercConstOutputParam: result := errConstOutputParam;
   end;
 end;
 
