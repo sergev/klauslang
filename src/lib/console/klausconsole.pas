@@ -870,6 +870,19 @@ begin
             y := max(0, min(fBuffer.height-1, strToInt(prm[0])-1));
             caretPos := point(x, y);
           end;
+          'A', 'B', 'C', 'D': begin // подвинуть курсор
+            prm := getParams(s);
+            if length(prm) <> 1 then abort;
+            x := caretPos.x;
+            y := caretPos.y;
+            case c of
+              'C': x := max(0, min(fBuffer.width-1, x + strToInt(prm[0])));
+              'D': x := max(0, min(fBuffer.width-1, x - strToInt(prm[0])));
+              'A': y := max(0, min(fBuffer.height-1, y - strToInt(prm[0])));
+              'B': y := max(0, min(fBuffer.height-1, y + strToInt(prm[0])));
+            end;
+            caretPos := point(x, y);
+          end;
           'd': begin // установить курсор Y
             prm := getParams(s);
             if length(prm) <> 1 then abort;

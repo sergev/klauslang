@@ -548,6 +548,17 @@ type
   end;
 
 type
+  // процедура подвинутьКурсор(вх горз, верт: целое);
+  tKlausSysProc_CursorMove = class(tKlausSysTermProc)
+    private
+      fHorz: tKlausProcParam;
+      fVert: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
   // процедура запомнитьКурсор();
   tKlausSysProc_CursorSave = class(tKlausSysTermProc)
     private
@@ -2346,6 +2357,34 @@ var
 begin
   x := getSimpleInt(frame, fHorz, at)+1;
   writeStdStream(frame, format(#27'[%d`', [word(x)]));
+end;
+
+{ tKlausSysProc_CursorMove }
+
+constructor tKlausSysProc_CursorMove.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_CursorMove, aPoint);
+  fHorz := tKlausProcParam.create(self, 'горз', aPoint, kpmInput, source.simpleTypes[kdtInteger]);
+  addParam(fHorz);
+  fVert := tKlausProcParam.create(self, 'верт', aPoint, kpmInput, source.simpleTypes[kdtInteger]);
+  addParam(fVert);
+end;
+
+procedure tKlausSysProc_CursorMove.run(frame: tKlausStackFrame; const at: tSrcPoint);
+var
+  vs, hs: string;
+  x, y: tKlausInteger;
+begin
+  x := getSimpleInt(frame, fHorz, at);
+  y := getSimpleInt(frame, fVert, at);
+  if y < 0 then vs := format(#27'[%dA', [-y])
+  else if y > 0 then vs := format(#27'[%dB', [y])
+  else vs := '';
+  if x < 0 then hs := format(#27'[%dD', [-x])
+  else if x > 0 then hs := format(#27'[%dC', [x])
+  else hs := '';
+  if hs <> '' then writeStdStream(frame, hs);
+  if vs <> '' then writeStdStream(frame, vs);
 end;
 
 { tKlausSysProc_CursorSave }

@@ -17,9 +17,6 @@ KlausLang — свободное программное обеспечение: 
 ознакомиться здесь: <https://www.gnu.org/licenses/>.
 }
 
-
-// todo: Относительные перемещения курсора
-
 unit KlausUnitSystem;
 
 {$mode ObjFPC}{$H+}
@@ -92,6 +89,7 @@ const
   klausSysProcName_SetCursorPos = 'курсор';
   klausSysProcName_SetCursorPosVert = 'курсорВерт';
   klausSysProcName_SetCursorPosHorz = 'курсорГорз';
+  klausSysProcName_CursorMove = 'подвинутьКурсор';
   klausSysProcName_CursorSave = 'запомнитьКурсор';
   klausSysProcName_CursorRestore = 'вернутьКурсор';
   klausSysProcName_HideCursor = 'скрытьКурсор';
@@ -476,6 +474,7 @@ begin
   tKlausSysProc_SetCursorPos.create(self, zeroSrcPt);
   tKlausSysProc_SetCursorPosVert.create(self, zeroSrcPt);
   tKlausSysProc_SetCursorPosHorz.create(self, zeroSrcPt);
+  tKlausSysProc_CursorMove.create(self, zeroSrcPt);
   tKlausSysProc_CursorSave.create(self, zeroSrcPt);
   tKlausSysProc_CursorRestore.create(self, zeroSrcPt);
   tKlausSysProc_ShowCursor.create(self, zeroSrcPt);
