@@ -163,10 +163,10 @@ const
     def:   '[`вх`] #id [* "," #id] ":" <simple_type>'),
 
     (name: 'procedure';
-    def:   '`процедура` #id ["(" <param> [* ";" <param>] ")"] ";" <routine> ";"'),
+    def:   '`процедура` #id "(" [<param> [* ";" <param>]] ")" ";" (`дальше` | <routine>) ";"'),
 
     (name: 'function';
-    def:   '`функция` #id ["(" <param> [* ";" <param>] ")"] ":" <type_id> ";" <routine> ";"'),
+    def:   '`функция` #id "(" [<param> [* ";" <param>]] ")" ":" <type_id> ";" (`дальше` | <routine>) ";"'),
 
     (name: 'param';
     def:   '[`вх` | `вых` | `вв`] #id [* "," #id] ":" <type_id>'),

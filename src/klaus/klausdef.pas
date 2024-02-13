@@ -521,7 +521,7 @@ var
 
 implementation
 
-uses Math, U8, KlausUtils;
+uses Math, KlausUtils;
 
 { Globals }
 

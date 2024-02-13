@@ -616,14 +616,22 @@ type
   // Определение процедуры/функции
   tKlausProcDecl = class(tKlausRoutine)
     private
+      fFwd: boolean;
+      fImplPos: integer;
+
       function getIsFunction: boolean;
     protected
       function getDisplayName: string; override;
     public
       property isFunction: boolean read getIsFunction;
+      property fwd: boolean read fFwd;
+      property implPos: integer read fImplPos;
 
       constructor create(aOwner: tKlausRoutine; aName: string; aPoint: tSrcPoint);
-      constructor create(aOwner: tKlausRoutine; aName: string; aPoint: tSrcPoint; isFunc: boolean; b: tKlausSyntaxBrowser);
+      constructor create(aOwner: tKlausRoutine; aName: string; isFunc: boolean; b: tKlausSyntaxBrowser);
+      constructor createHeader(aOwner: tKlausRoutine; aName: string; isFunc: boolean; b: tKlausSyntaxBrowser);
+      procedure resolveForwardDeclaration(isFunc: boolean; b: tKlausSyntaxBrowser);
+      function  matchHeader(pd: tKlausProcDecl): boolean;
   end;
 
 type
@@ -3799,9 +3807,10 @@ end;
 constructor tKlausProcDecl.create(aOwner: tKlausRoutine; aName: string; aPoint: tSrcPoint);
 begin
   inherited create(aOwner, aName, aPoint);
+  fImplPos := position;
 end;
 
-constructor tKlausProcDecl.create(aOwner: tKlausRoutine; aName: string; aPoint: tSrcPoint; isFunc: boolean; b: tKlausSyntaxBrowser);
+constructor tKlausProcDecl.createHeader(aOwner: tKlausRoutine; aName: string; isFunc: boolean; b: tKlausSyntaxBrowser);
 var
   p: tSrcPoint;
   i, idx: integer;
@@ -3809,12 +3818,12 @@ var
   mode: tKlausProcParamMode;
   nms: array of tKlausLexInfo = nil;
 begin
-  create(aOwner, aName, aPoint);
+  create(aOwner, aName, srcPoint(b.lex));
   b.next;
-  if b.check(klsParOpen, false) then begin
+  b.check(klsParOpen);
+  b.next;
+  if b.check('param', false) then begin
     repeat
-      b.next;
-      b.check('param');
       idx := 0;
       b.next;
       mode := kpmInput;
@@ -3847,10 +3856,12 @@ begin
         addParam(tKlausProcParam.create(self, nms[i].text, srcPoint(nms[i]), mode, dt));
       end;
       b.next;
-    until not b.check(klsSemicolon, false);
-    b.check(klsParClose);
-    b.next;
+      if not b.check(klsSemicolon, false) then break;
+      b.next;
+    until false;
   end;
+  b.check(klsParClose);
+  b.next;
   if isFunc then begin
     b.check(klsColon);
     b.next;
@@ -3861,9 +3872,60 @@ begin
   end else
     fRetValue := nil;
   b.check(klsSemicolon);
+end;
+
+constructor tKlausProcDecl.create(aOwner: tKlausRoutine; aName: string; isFunc: boolean; b: tKlausSyntaxBrowser);
+begin
+  createHeader(aOwner, aName, isFunc, b);
   b.next;
+  if b.check(kkwdForward, false) then
+    fFwd := true
+  else begin
+    b.check('routine');
+    createRoutine(b);
+  end;
+end;
+
+procedure tKlausProcDecl.resolveForwardDeclaration(isFunc: boolean; b: tKlausSyntaxBrowser);
+var
+  pd: tKlausProcDecl;
+begin
+  pd := tKlausProcDecl.createHeader(owner, '$$fwd$$'+name, isFunc, b);
+  try
+    if not pd.matchHeader(self) then raise eKlausError.create(ercWrongForwardSignature, pd.point);
+    fImplPos := pd.position;
+  finally
+    freeAndNil(pd);
+  end;
+  b.next;
+  if b.check(kkwdForward, false) then raise eKlausError.create(ercDuplicateForward, b.lex.line, b.lex.pos);
+  fFwd := false;
   b.check('routine');
   createRoutine(b);
+end;
+
+function tKlausProcDecl.matchHeader(pd: tKlausProcDecl): boolean;
+var
+  i: integer;
+  p: tKlausProcParam;
+begin
+  result := false;
+  if retValue <> nil then begin
+    if pd.retValue = nil then exit;
+    if retValue.dataType <> pd.retValue.dataType then exit;
+  end else
+    if pd.retValue <> nil then exit;
+  if paramCount <> pd.paramCount then exit;
+  for i := 0 to paramCount-1 do begin
+    p := pd.params[i];
+    with params[i] do begin
+      if u8Lower(name) <> u8Lower(p.name) then exit;
+      if mode <> p.mode then exit;
+      if dataType <> p.dataType then exit;
+      if klausCompare(initial, p.initial, point) <> 0 then exit;
+    end;
+  end;
+  result := true;
 end;
 
 function tKlausProcDecl.getIsFunction: boolean;
@@ -4931,11 +4993,6 @@ begin
   result := fSource;
 end;
 
-function tKlausRoutine.find(aName: string; scope: tKlausNameScope): tKlausDecl;
-begin
-  result := findDecl(aName, scope, maxInt);
-end;
-
 procedure tKlausRoutine.checkCallParamTypes(expr: array of tKlausExpression; at: tSrcPoint);
 var
   i: integer;
@@ -4961,6 +5018,11 @@ begin
   end;
 end;
 
+function tKlausRoutine.find(aName: string; scope: tKlausNameScope): tKlausDecl;
+begin
+  result := findDecl(aName, scope, maxInt);
+end;
+
 function tKlausRoutine.findDecl(aName: string; scope: tKlausNameScope; before: integer): tKlausDecl;
 var
   pos: integer;
@@ -4973,8 +5035,10 @@ begin
   if (result = nil) and (scope = knsGlobal) then begin
     p := self;
     while p.upperScope <> nil do begin
-      if p.upperScope = p.owner then pos := p.position else pos := maxInt;
-      result := p.upperScope.findDecl(aName, scope, pos);
+      if p.upperScope <> p.owner then pos := maxInt
+      else if p is tKlausProcDecl then pos := (p as tKlausProcDecl).implPos
+      else pos := p.position;
+      result := p.upperScope.findDecl(aName, knsGlobal, pos);
       if result <> nil then exit(result);
       p := p.upperScope;
     end;
@@ -5015,12 +5079,18 @@ begin
 end;
 
 procedure tKlausRoutine.createRoutine(b: tKlausSyntaxBrowser);
+var
+  i: integer;
 begin
   b.next;
   if b.check('declarations', false) then begin
     createDeclarations(b);
     b.next;
   end;
+  for i := 0 to declCount-1 do
+    if decls[i] is tKlausProcDecl then
+      if (decls[i] as tKlausProcDecl).fwd then
+        raise eKlausError.create(ercUndefinedForward, decls[i].point);
   b.check('compound');
   fBody.createCompound(b);
 end;
@@ -5468,15 +5538,21 @@ end;
 procedure tKlausRoutine.createProcDeclaration(b: tKlausSyntaxBrowser);
 var
   id: string;
-  p: tSrcPoint;
+  d: tKlausDecl;
 begin
   b.next;
   b.check(kkwdProcedure);
   b.next;
-  p := srcPoint(b.lex);
   id := b.get(klxID).text;
-  if find(id, knsLocal) <> nil then raise eKlausError.createFmt(ercDuplicateName, b.lex.line, b.lex.pos, [id]);
-  tKlausProcDecl.create(self, id, p, false, b);
+  d := find(id, knsLocal);
+  if d <> nil then begin
+    if d is tKlausProcDecl then with d as tKlausProcDecl do begin
+      if fwd then resolveForwardDeclaration(false, b)
+      else raise eKlausError.createFmt(ercDuplicateName, b.lex.line, b.lex.pos, [id]);
+    end else
+      raise eKlausError.createFmt(ercDuplicateName, b.lex.line, b.lex.pos, [id]);
+  end else
+    tKlausProcDecl.create(self, id, false, b);
   b.next;
   b.check(klsSemicolon);
 end;
@@ -5484,15 +5560,21 @@ end;
 procedure tKlausRoutine.createFuncDeclaration(b: tKlausSyntaxBrowser);
 var
   id: string;
-  p: tSrcPoint;
+  d: tKlausDecl;
 begin
   b.next;
   b.check(kkwdFunction);
   b.next;
-  p := srcPoint(b.lex);
   id := b.get(klxID).text;
-  if find(id, knsLocal) <> nil then raise eKlausError.createFmt(ercDuplicateName, b.lex.line, b.lex.pos, [id]);
-  tKlausProcDecl.create(self, id, p, true, b);
+  d := find(id, knsLocal);
+  if d <> nil then begin
+    if d is tKlausProcDecl then with d as tKlausProcDecl do begin
+      if fwd then resolveForwardDeclaration(true, b)
+      else raise eKlausError.createFmt(ercDuplicateName, b.lex.line, b.lex.pos, [id]);
+    end else
+      raise eKlausError.createFmt(ercDuplicateName, b.lex.line, b.lex.pos, [id]);
+  end else
+    tKlausProcDecl.create(self, id, true, b);
   b.next;
   b.check(klsSemicolon);
 end;

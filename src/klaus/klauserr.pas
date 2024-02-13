@@ -123,6 +123,9 @@ const
   ercNegativeAccuracy       = 73;
   ercCallsNotAllowed        = 74;
   ercConstOutputParam       = 75;
+  ercUndefinedForward       = 76;
+  ercDuplicateForward       = 77;
+  ercWrongForwardSignature  = 78;
 
 const
   // Классификация кодов eKlausError для трансляции в исключения языка
@@ -158,7 +161,7 @@ const
     ercMustReturnValue, ercWrongNumberOfParams, ercInvalidOutputParam, ercExceptionRequired,
     ercExceptBlockOnly, ercMixedExceptBlock, ercExceptAnyMustBeLast, ercExceptAlreadyHandled,
     ercDuplicateCaseLabel, ercIllegalExpression, ercAccuracyNotApplicable, ercNegativeAccuracy,
-    ercConstOutputParam],
+    ercConstOutputParam, ercUndefinedForward, ercDuplicateForward, ercWrongForwardSignature],
 
     //ksxInvalidChar
     [ercInvalidCharAtIndex, ercInvalidStringIndex],
@@ -280,6 +283,9 @@ resourcestring
   errNegativeAccuracy = 'Точность сравнения не может быть отрицательным числом.';
   errCallsNotAllowed = 'Вызовы функций не разрешены.';
   errConstOutputParam = 'Нельзя использовать константу в качестве выходного параметра.';
+  errUndefinedForward = 'Отсутствует реализация для предварительного определения.';
+  errDuplicateForward = 'Повторное предварительное определение.';
+  errWrongForwardSignature = 'Определение подпрограммы не соответствует предварительному определению.';
 
 { Globals }
 
@@ -387,6 +393,9 @@ begin
     ercNegativeAccuracy: result := errNegativeAccuracy;
     ercCallsNotAllowed: result := errCallsNotAllowed;
     ercConstOutputParam: result := errConstOutputParam;
+    ercUndefinedForward: result := errUndefinedForward;
+    ercDuplicateForward: result := errDuplicateForward;
+    ercWrongForwardSignature: result := errWrongForwardSignature;
   end;
 end;
 

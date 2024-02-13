@@ -161,7 +161,8 @@ type
     kkwdExists,
     kkwdNotExists,
     kkwdEmpty,
-    kkwdAccuracy
+    kkwdAccuracy,
+    kkwdForward
   );
 
 type
@@ -462,7 +463,8 @@ const
     (s: 'есть'; k: kkwdExists),
     (s: 'нету'; k: kkwdNotExists),
     (s: 'пусто'; k: kkwdEmpty),
-    (s: 'точность'; k: kkwdAccuracy)
+    (s: 'точность'; k: kkwdAccuracy),
+    (s: 'дальше'; k: kkwdForward)
   );
 
 const
