@@ -58,6 +58,7 @@ object EditFrame: TEditFrame
       Align = alClient
       Caption = 'Сообщение об ошибке'
       ParentColor = False
+      ShowAccelChar = False
       WordWrap = True
       OnClick = errorInfoClick
     end

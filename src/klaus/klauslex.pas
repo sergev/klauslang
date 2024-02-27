@@ -80,7 +80,7 @@ const
     'символьный литерал',
     'строковый литерал',
     'целочисленный литерал',
-    'вещественный литерал',
+    'дробный литерал',
     'литерал момента',
     'знак языка',
     'однострочный комментарий',
@@ -331,6 +331,7 @@ type
 type
   // Парсер лексики языка Клаус
   tKlausLexParser = class(tCustomLexParser)
+    //todo: добавить массивы для keywordValue() и symbolValue()
     private
       procedure setLexInfo(s: string; aLexem: tKlausLexem; out li: tKlausLexInfo);
       procedure setLexInfo(s: string; aSymbol: tKlausValidSymbol; out li: tKlausLexInfo);

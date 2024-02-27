@@ -215,7 +215,7 @@ resourcestring
   errCharTooLong = 'Слишком длинный символьный литерал. Ожидается ровно один символ.';
   errApostropheNotClosed = 'Ожидается закрывающий апостроф, а обнаружен конец строки.';
   errInvalidInteger = 'Неверный целочисленный литерал.';
-  errInvalidFloat = 'Неверный вещественный литерал';
+  errInvalidFloat = 'Неверный дробный литерал.';
   errInvalidHexadecimal = 'Неверный шестнадцатиричный целочисленный литерал.';
   errInvalidCharCode = 'Неверный литерал Unicode. Ожидается шестнадцатиричное целое число.';
   errSyntaxError = 'Синтаксическая ошибка.';

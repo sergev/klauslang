@@ -76,9 +76,8 @@ uses
 // Если в группе несколько частей, разделённых знаками "|", то маркерный элемент
 // работает только в пределах своей части группы между знаками "|".
 //
-// См. примеры:
-// <call> -- после идентификатора ожидается открывающая круглая скобка.
-// <assignment> -- после идентификатора ожидается один из знаков присваивания.
+// Знак ">>" следует использовать с осторожностью, т.к. из-за него криво собираются
+// сообщения о синтаксических ошибках.
 
 type
   tKlausSynRuleRec = record
@@ -177,19 +176,19 @@ const
     (name: 'statement';
     def:   '(`ничего` | `прервать` | `продолжить` | `завершить` <expression> | '+
            '`ошибка` [<exception>] | `бросить` | `вернуть` [<expression>] | '+
-           '<call> | <assignment> | <compound> | <control_structure>)'),
+           '<compound> | <control_structure> | <call> | <assignment>)'),
 
     (name: 'exception';
     def:   '#id ["(" <expression> [* "," <expression>] ")"] [`сообщение` <expression>]'),
 
     (name: 'typecast';
-    def:   '<simple_type> >>"(" <expression> ")"'),
+    def:   '<simple_type> "(" <expression> ")"'),
 
     (name: 'call';
     def:   '#id >>"(" [<expression> [* "," <expression>]] ")"'),
 
     (name: 'assignment';
-    def:   '<var_path> >><assign_symbol> <expression>'),
+    def:   '<var_path> <assign_symbol> <expression>'),
 
     (name: 'var_path';
     def:   '<var_ref> [* "." <var_ref>]'),
@@ -224,7 +223,7 @@ const
     def:   '`начало` <statements> [`исключение` <except_block>] [`напоследок` <statements>] `окончание`'),
 
     (name: 'except_block';
-    def:   '(<except_else> | <except_handler> [* <except_handler>] [<except_else>] | <statements>)'),
+    def:   '(<statements> | <except_else> | <except_handler> [* <except_handler>] [<except_else>])'),
 
     (name: 'except_handler';
     def:   '`когда` >>(#id >>":" #id | #id [* "," #id]) `тогда` <statement> ";"'),
@@ -352,7 +351,7 @@ type
       procedure parseDef(def: string);
       function  parse(p: tKlausSynLexParser; stopAt: tKlSynSymbolSet = []): tKlSynSymbol;
       procedure addEntry(entry: tKlausSynEntry; setMarker: boolean);
-      function  match(require: boolean): boolean; virtual;
+      function  match(require: boolean): boolean;
     public
       property name: string read fName;
       property count: integer read getCount;
@@ -519,13 +518,14 @@ type
       fLexLen: integer;
       fTree: tKlausSrcNodeRule;
       fNowMatching: tKlausSrcNodeRule;
+      fErrInfo: tStringList;
 
-      function getCurLexInfo: pKlausLexInfo;
-      function getCurLine: integer;
-      function getCurPos: integer;
-      function getLexCount: integer;
-      function getLexInfo(idx: integer): tKlausLexInfo;
-      function getRule(aName: string): tKlausSynRule;
+      function  getCurLexInfo: pKlausLexInfo;
+      function  getCurLine: integer;
+      function  getCurPos: integer;
+      function  getLexCount: integer;
+      function  getLexInfo(idx: integer): tKlausLexInfo;
+      function  getRule(aName: string): tKlausSynRule;
     protected
       property curLexIndex: integer read fLexIdx;
       property curLexInfo: pKlausLexInfo read getCurLexInfo;
@@ -535,10 +535,14 @@ type
 
       function  nextLexInfo: tKlausLexInfo;
       procedure prevLexInfo(count: integer = 1);
+      function  lastLexInfo: tKlausLexInfo;
       procedure matching(rule: tKlausSynRule);
       procedure recognized(rule: tKlausSynRule);
       procedure matched(rule: tKlausSynRule);
       procedure addMatchedLexem;
+      procedure addErrInfo(const s: string);
+      procedure clearErrInfo;
+      function  formatErrInfo: string;
     public
       property rules: tKlausSynRules read fRules;
       property lexCount: integer read getLexCount;
@@ -555,6 +559,10 @@ implementation
 
 uses
   KlausLog;
+
+resourcestring
+  strExpectedOne = 'Ожидается: %s';
+  strExpectedMany = 'Ожидается одно из: %s';
 
 const
   // Знаки языка описания синтаксиса языка Клаус
@@ -708,6 +716,9 @@ begin
   fLexIdx := -1;
   fTree := nil;
   fNowMatching := nil;
+  fErrInfo := tStringList.create;
+  fErrInfo.sorted := true;
+  fErrInfo.duplicates := dupIgnore;
   getRule(klausSynRuleRoot);
 end;
 
@@ -719,6 +730,7 @@ begin
   fNowMatching := nil;
   for i := fRules.count-1 downto 0 do fRules.data[i].free;
   freeAndNil(fRules);
+  freeAndNil(fErrInfo);
   inherited destroy;
 end;
 
@@ -776,6 +788,11 @@ begin
   result := fLexInfo[fLexIdx];
 end;
 
+function tKlausSyntax.lastLexInfo: tKlausLexInfo;
+begin
+  while fLexIdx < fLexLen-1 do result := nextLexInfo;
+end;
+
 procedure tKlausSyntax.prevLexInfo(count: integer);
 begin
   if count <= 0 then exit;
@@ -820,12 +837,47 @@ begin
   assert(assigned(fNowMatching), 'Syntax rule stack integrity violation');
   assert(rule = nowMatching.rule, 'Syntax rule stack integrity violation');
   fNowMatching.fRecognized := true;
+  clearErrInfo;
 end;
 
 procedure tKlausSyntax.addMatchedLexem;
 begin
   assert(assigned(fNowMatching), 'Syntax rule stack integrity violation');
   tKlausSrcNodeLexem.create(self, fNowMatching, curLexIndex);
+  clearErrInfo;
+end;
+
+procedure tKlausSyntax.addErrInfo(const s: string);
+begin
+  fErrInfo.add(s);
+end;
+
+procedure tKlausSyntax.clearErrInfo;
+begin
+  fErrInfo.clear;
+end;
+
+function tKlausSyntax.formatErrInfo: string;
+
+  function list: string;
+  var
+    i: integer;
+    sep: string = '';
+  begin
+    result := '';
+    for i := 0 to fErrInfo.count-1 do begin
+      result += sep + fErrInfo[i];
+      sep := ' ';
+    end
+  end;
+
+begin
+  case fErrInfo.count of
+    0: result := '';
+    1: result := format(strExpectedOne, [list]);
+    else result := format(strExpectedMany, [list]);
+  end;
+  clearErrInfo;
 end;
 
 function tKlausSyntax.getRule(aName: string): tKlausSynRule;
@@ -932,7 +984,7 @@ begin
       end;
   until not (fMultiple and found);
   if not fOptional and not result and require then begin
-    fSyntax.nextLexInfo;
+    fSyntax.lastLexInfo;
     raise eKlausError.create(ercSyntaxError, fSyntax.curLine, fSyntax.curPos);
   end;
 end;
@@ -950,13 +1002,14 @@ var
   li: tKlausLexInfo;
 begin
   logln('syntax', boolStr(require, 'req ', 'opt ') + toString);
+  fSyntax.addErrInfo('"'+tKlausLexParser.symbolValue(fSymbol)+'"');
   li := fSyntax.nextLexInfo;
   result := (li.lexem = klxSymbol) and (li.symbol = fSymbol);
   if result then
     fSyntax.addMatchedLexem
   else begin
-    if not require then fSyntax.prevLexInfo
-    else raise eKlausError.create(ercSyntaxError, li.line, li.pos);
+    if require then raise eKlausError.create(ercSyntaxError, li.line, li.pos)
+    else fSyntax.prevLexInfo;
   end;
   logln('syntax', ' >> %s ("%s")'#10, [result, li.text]);
 end;
@@ -979,13 +1032,14 @@ var
   li: tKlausLexInfo;
 begin
   logln('syntax', boolStr(require, 'req ', 'opt ') + toString);
+  fSyntax.addErrInfo('<'+klausLexemCaption[fLexem]+'>');
   li := fSyntax.nextLexInfo;
   result := li.lexem = fLexem;
   if result then
     fSyntax.addMatchedLexem
   else begin
-    if not require then fSyntax.prevLexInfo
-    else raise eKlausError.create(ercSyntaxError, li.line, li.pos);
+    if require then raise eKlausError.create(ercSyntaxError, li.line, li.pos)
+    else fSyntax.prevLexInfo;
   end;
   logln('syntax', ' >> %s ("%s")'#10, [result, li.text]);
 end;
@@ -1008,13 +1062,14 @@ var
   li: tKlausLexInfo;
 begin
   logln('syntax', boolStr(require, 'req ', 'opt ') + toString);
+  fSyntax.addErrInfo('"'+tKlausLexParser.keywordValue(fKeyword)+'"');
   li := fSyntax.nextLexInfo;
   result := (li.lexem = klxKeyword) and (li.keyword = fKeyword);
   if result then
     fSyntax.addMatchedLexem
   else begin
-    if not require then fSyntax.prevLexInfo
-    else raise eKlausError.create(ercSyntaxError, li.line, li.pos);
+    if require then raise eKlausError.create(ercSyntaxError, li.line, li.pos)
+    else fSyntax.prevLexInfo;
   end;
   logln('syntax', ' >> %s ("%s")'#10, [result, li.text]);
 end;
@@ -1196,26 +1251,35 @@ var
   matched: boolean = false;
 begin
   logln('syntax', boolStr(require, 'req ', 'opt ') + 'rule: ' + toString + #10);
-  fSyntax.matching(self);
   try
-    cnt := 0;
-    result := true;
-    for i := 0 to count-1 do begin
-      if fEntries[i].match(require) then begin
-        matched := true;
-        inc(cnt);
-      end else if not opt(fEntries[i]) then begin
-        fSyntax.prevLexInfo(cnt);
-        exit(false);
+    fSyntax.matching(self);
+    try
+      cnt := 0;
+      result := true;
+      for i := 0 to count-1 do begin
+        if fEntries[i].match(require) then begin
+          matched := true;
+          inc(cnt);
+        end else if not opt(fEntries[i]) then begin
+          fSyntax.prevLexInfo(cnt);
+          exit(false);
+        end;
+        if matched and (i >= fMarker) then begin
+          if not recognized then fSyntax.recognized(self);
+          recognized := true;
+          require := true;
+        end;
       end;
-      if matched and (i >= fMarker) then begin
-        if not recognized then fSyntax.recognized(self);
-        recognized := true;
-        require := true;
-      end;
+    finally
+      fSyntax.matched(self);
     end;
-  finally
-    fSyntax.matched(self);
+  except
+    on e: eKlausError do begin
+      if e.code = ercSyntaxError then
+        e.message := e.message + ' ' + fSyntax.formatErrInfo;
+      raise;
+    end;
+    else raise;
   end;
 end;
 
