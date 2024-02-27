@@ -1,0 +1,729 @@
+object EditorOptionsFrame: TEditorOptionsFrame
+  Left = 0
+  Height = 629
+  Top = 0
+  Width = 814
+  ClientHeight = 629
+  ClientWidth = 814
+  TabOrder = 0
+  DesignLeft = 719
+  DesignTop = 280
+  object Panel1: TPanel
+    Left = 10
+    Height = 21
+    Top = 10
+    Width = 794
+    Align = alTop
+    AutoSize = True
+    BorderSpacing.Around = 10
+    BevelOuter = bvNone
+    ChildSizing.Layout = cclTopToBottomThenLeftToRight
+    ClientHeight = 21
+    ClientWidth = 794
+    TabOrder = 0
+    object Label1: TLabel
+      Left = 0
+      Height = 17
+      Top = 0
+      Width = 789
+      Align = alClient
+      BorderSpacing.Right = 5
+      Caption = 'Общие'
+      Font.Style = [fsBold]
+      ParentColor = False
+      ParentFont = False
+    end
+    object Bevel1: TBevel
+      Left = 0
+      Height = 4
+      Top = 17
+      Width = 794
+      Align = alBottom
+      Constraints.MaxHeight = 4
+      Shape = bsBottomLine
+    end
+  end
+  object pnFontAndColors: TPanel
+    Left = 0
+    Height = 98
+    Top = 118
+    Width = 814
+    Align = alTop
+    AutoSize = True
+    BevelOuter = bvNone
+    ClientHeight = 98
+    ClientWidth = 814
+    TabOrder = 3
+    object Panel3: TPanel
+      Left = 20
+      Height = 34
+      Top = 0
+      Width = 784
+      Align = alTop
+      AutoSize = True
+      BorderSpacing.Left = 20
+      BorderSpacing.Right = 10
+      BorderSpacing.Bottom = 2
+      BevelOuter = bvNone
+      ClientHeight = 34
+      ClientWidth = 784
+      TabOrder = 0
+      object Label3: TLabel
+        Left = 0
+        Height = 34
+        Top = 0
+        Width = 90
+        Align = alLeft
+        BorderSpacing.Right = 8
+        Caption = 'Шрифт:'
+        Constraints.MinWidth = 90
+        Layout = tlCenter
+        ParentColor = False
+      end
+      object edFont: TEditButton
+        Left = 98
+        Height = 34
+        Top = 0
+        Width = 500
+        Align = alClient
+        ButtonHint = 'Выбрать шрифт'
+        ButtonWidth = 34
+        Constraints.MaxWidth = 500
+        DirectInput = False
+        Glyph.Data = {
+          F6000000424DF600000000000000760000002800000010000000100000000100
+          0400000000008000000000000000000000000000000000000000000000000000
+          8000008000000080800080000000800080008080000080808000C0C0C0000000
+          FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00DDD000000000
+          000DDD77777777777700DD7FB8B8B8B8B700D7FB8B8B8B8B8070D7F8B8B8B8B8
+          70707F8B8B8B8B8B07707FFFFFFFFFF708707777777777777B70D7F8B8B8B8B8
+          B870D7FB8B8B8FFFFF70D7F8B8B8F777777DDD7FFFFF7DDDDDDDDDD77777DDDD
+          D000DDDDDDDDDDDDDD00DDDDDDDDD0DDD0D0DDDDDDDDDD000DDD
+        }
+        MaxLength = 0
+        NumGlyphs = 1
+        OnButtonClick = edFontButtonClick
+        OnKeyDown = edFontKeyDown
+        PasswordChar = #0
+        TabOrder = 0
+      end
+    end
+    object FlowPanel1: TFlowPanel
+      Left = 0
+      Height = 62
+      Top = 36
+      Width = 814
+      Align = alTop
+      AutoSize = True
+      BevelOuter = bvNone
+      ControlList = <      
+        item
+          Control = Panel6
+          WrapAfter = waForbid
+          Index = 0
+        end      
+        item
+          Control = Panel4
+          WrapAfter = waForce
+          Index = 1
+        end      
+        item
+          Control = Panel5
+          WrapAfter = waForbid
+          Index = 2
+        end      
+        item
+          Control = Panel7
+          WrapAfter = waForce
+          Index = 3
+        end>
+      FlowLayout = tlTop
+      FlowStyle = fsLeftRightTopBottom
+      TabOrder = 1
+      object Panel6: TPanel
+        Left = 20
+        Height = 29
+        Top = 0
+        Width = 348
+        Anchors = []
+        AutoSize = True
+        BorderSpacing.Left = 20
+        BorderSpacing.Right = 10
+        BorderSpacing.Bottom = 2
+        BevelOuter = bvNone
+        ClientHeight = 29
+        ClientWidth = 348
+        TabOrder = 0
+        object Label5: TLabel
+          Left = 0
+          Height = 29
+          Top = 0
+          Width = 90
+          Align = alLeft
+          BorderSpacing.Right = 8
+          Caption = 'Цвет фона:'
+          Constraints.MinWidth = 90
+          Layout = tlCenter
+          ParentColor = False
+        end
+        object cbBackColor: TColorBox
+          Left = 98
+          Height = 29
+          Top = 0
+          Width = 250
+          Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbCustomColor, cbPrettyNames, cbCustomColors]
+          OnGetColors = colorBoxGetColors
+          Align = alClient
+          Constraints.MinWidth = 250
+          ItemHeight = 0
+          OnChange = cbBackColorChange
+          TabOrder = 0
+        end
+      end
+      object Panel4: TPanel
+        Left = 398
+        Height = 29
+        Top = 0
+        Width = 398
+        Anchors = []
+        AutoSize = True
+        BorderSpacing.Left = 20
+        BorderSpacing.Right = 10
+        BorderSpacing.Bottom = 2
+        BevelOuter = bvNone
+        ClientHeight = 29
+        ClientWidth = 398
+        TabOrder = 2
+        object Label4: TLabel
+          Left = 0
+          Height = 29
+          Top = 0
+          Width = 140
+          Align = alLeft
+          BorderSpacing.Right = 8
+          Caption = 'Выделение:'
+          Constraints.MinWidth = 140
+          Layout = tlCenter
+          ParentColor = False
+        end
+        object cbSelection: TColorBox
+          Left = 148
+          Height = 29
+          Top = 0
+          Width = 250
+          Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbCustomColor, cbPrettyNames, cbCustomColors]
+          OnGetColors = colorBoxGetColors
+          Align = alClient
+          Constraints.MinWidth = 250
+          ItemHeight = 0
+          OnChange = cbSelectionChange
+          TabOrder = 0
+        end
+      end
+      object Panel5: TPanel
+        Left = 20
+        Height = 29
+        Top = 31
+        Width = 348
+        Anchors = []
+        AutoSize = True
+        BorderSpacing.Left = 20
+        BorderSpacing.Right = 10
+        BorderSpacing.Bottom = 2
+        BevelOuter = bvNone
+        ClientHeight = 29
+        ClientWidth = 348
+        TabOrder = 1
+        object Label6: TLabel
+          Left = 0
+          Height = 29
+          Top = 0
+          Width = 90
+          Align = alLeft
+          BorderSpacing.Right = 8
+          Caption = 'Цвет текста:'
+          Constraints.MinWidth = 90
+          Layout = tlCenter
+          ParentColor = False
+        end
+        object cbTextColor: TColorBox
+          Left = 98
+          Height = 29
+          Top = 0
+          Width = 250
+          Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbCustomColor, cbPrettyNames, cbCustomColors]
+          OnGetColors = colorBoxGetColors
+          Align = alClient
+          Constraints.MinWidth = 250
+          ItemHeight = 0
+          OnChange = cbTextColorChange
+          TabOrder = 0
+        end
+      end
+      object Panel7: TPanel
+        Left = 398
+        Height = 29
+        Top = 31
+        Width = 398
+        Anchors = []
+        AutoSize = True
+        BorderSpacing.Left = 20
+        BorderSpacing.Right = 10
+        BorderSpacing.Bottom = 2
+        BevelOuter = bvNone
+        ClientHeight = 29
+        ClientWidth = 398
+        TabOrder = 3
+        object Label7: TLabel
+          Left = 0
+          Height = 29
+          Top = 0
+          Width = 140
+          Align = alLeft
+          BorderSpacing.Right = 8
+          Caption = 'Выделенный текст:'
+          Constraints.MinWidth = 140
+          Layout = tlCenter
+          ParentColor = False
+        end
+        object cbSelectionText: TColorBox
+          Left = 148
+          Height = 29
+          Top = 0
+          Width = 250
+          Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbCustomColor, cbPrettyNames, cbCustomColors]
+          OnGetColors = colorBoxGetColors
+          Align = alClient
+          Constraints.MinWidth = 250
+          ItemHeight = 0
+          OnChange = cbSelectionTextChange
+          TabOrder = 0
+        end
+      end
+    end
+  end
+  object Panel2: TPanel
+    Left = 10
+    Height = 21
+    Top = 226
+    Width = 794
+    Align = alTop
+    AutoSize = True
+    BorderSpacing.Around = 10
+    BevelOuter = bvNone
+    ChildSizing.Layout = cclTopToBottomThenLeftToRight
+    ClientHeight = 21
+    ClientWidth = 794
+    TabOrder = 4
+    object Label2: TLabel
+      Left = 0
+      Height = 17
+      Top = 0
+      Width = 789
+      Align = alClient
+      BorderSpacing.Right = 5
+      Caption = 'Подсветка синтаксиса'
+      Font.Style = [fsBold]
+      ParentColor = False
+      ParentFont = False
+    end
+    object Bevel2: TBevel
+      Left = 0
+      Height = 4
+      Top = 17
+      Width = 794
+      Align = alBottom
+      Constraints.MaxHeight = 4
+      Shape = bsBottomLine
+    end
+  end
+  object pnSyntaxHighlight: TPanel
+    Left = 0
+    Height = 372
+    Top = 257
+    Width = 814
+    Align = alClient
+    BevelOuter = bvNone
+    ClientHeight = 372
+    ClientWidth = 814
+    TabOrder = 5
+    object Panel9: TPanel
+      Left = 0
+      Height = 372
+      Top = 0
+      Width = 332
+      Align = alLeft
+      BevelOuter = bvNone
+      ClientHeight = 372
+      ClientWidth = 332
+      TabOrder = 0
+      object lbStyles: TListBox
+        Left = 20
+        Height = 225
+        Top = 0
+        Width = 312
+        Align = alClient
+        BorderSpacing.Left = 20
+        ItemHeight = 0
+        TabOrder = 0
+        TopIndex = -1
+        OnClick = lbStylesClick
+      end
+      object Panel10: TPanel
+        Left = 0
+        Height = 137
+        Top = 235
+        Width = 332
+        Align = alBottom
+        AutoSize = True
+        BorderSpacing.Top = 10
+        BevelOuter = bvNone
+        ClientHeight = 137
+        ClientWidth = 332
+        TabOrder = 1
+        object FlowPanel3: TFlowPanel
+          Left = 20
+          Height = 69
+          Top = 62
+          Width = 302
+          Align = alTop
+          AutoSize = True
+          BevelOuter = bvNone
+          BorderSpacing.Left = 20
+          BorderSpacing.Right = 10
+          BorderSpacing.Bottom = 6
+          ControlList = <          
+            item
+              Control = chStyleDefault
+              WrapAfter = waForce
+              Index = 0
+            end          
+            item
+              Control = chStyleBold
+              WrapAfter = waForbid
+              Index = 1
+            end          
+            item
+              Control = chStyleItalic
+              WrapAfter = waForce
+              Index = 2
+            end          
+            item
+              Control = chStyleUnderline
+              WrapAfter = waForbid
+              Index = 3
+            end          
+            item
+              Control = chStyleStrikeOut
+              WrapAfter = waAuto
+              Index = 4
+            end>
+          FlowLayout = tlTop
+          FlowStyle = fsLeftRightTopBottom
+          TabOrder = 2
+          object chStyleDefault: TCheckBox
+            Left = 0
+            Height = 23
+            Top = 0
+            Width = 250
+            Anchors = []
+            Caption = 'Стиль шрифта по умолчанию'
+            Constraints.MinWidth = 250
+            TabOrder = 0
+            OnClick = chStyleDefaultClick
+          end
+          object chStyleBold: TCheckBox
+            Left = 0
+            Height = 23
+            Top = 23
+            Width = 140
+            Anchors = []
+            Caption = 'Жирный'
+            Constraints.MinWidth = 140
+            TabOrder = 1
+            OnClick = chStyleBoldClick
+          end
+          object chStyleItalic: TCheckBox
+            Left = 150
+            Height = 23
+            Top = 23
+            Width = 140
+            Anchors = []
+            BorderSpacing.Left = 10
+            Caption = 'Курсив'
+            Constraints.MinWidth = 140
+            TabOrder = 2
+            OnClick = chStyleItalicClick
+          end
+          object chStyleUnderline: TCheckBox
+            Left = 0
+            Height = 23
+            Top = 46
+            Width = 140
+            Anchors = []
+            Caption = 'Подчёркнутый'
+            Constraints.MinWidth = 140
+            TabOrder = 3
+            OnClick = chStyleUnderlineClick
+          end
+          object chStyleStrikeOut: TCheckBox
+            Left = 150
+            Height = 23
+            Top = 46
+            Width = 140
+            Anchors = []
+            BorderSpacing.Left = 10
+            Caption = 'Зачёркнутый'
+            Constraints.MinWidth = 140
+            TabOrder = 4
+            OnClick = chStyleStrikeOutClick
+          end
+        end
+        object Panel11: TPanel
+          Left = 20
+          Height = 29
+          Top = 31
+          Width = 312
+          Align = alTop
+          BorderSpacing.Left = 20
+          BorderSpacing.Bottom = 2
+          BevelOuter = bvNone
+          ClientHeight = 29
+          ClientWidth = 312
+          TabOrder = 1
+          object Label10: TLabel
+            Left = 0
+            Height = 29
+            Top = 0
+            Width = 90
+            Align = alLeft
+            BorderSpacing.Right = 8
+            Caption = 'Цвет текста:'
+            Constraints.MinWidth = 90
+            Layout = tlCenter
+            ParentColor = False
+          end
+          object cbStyleTextColor: TColorBox
+            Left = 98
+            Height = 29
+            Top = 0
+            Width = 214
+            Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbIncludeDefault, cbCustomColor, cbPrettyNames, cbCustomColors]
+            OnGetColors = colorBoxGetColors
+            Align = alClient
+            Constraints.MinWidth = 150
+            ItemHeight = 0
+            OnChange = cbStyleTextColorChange
+            TabOrder = 0
+          end
+        end
+        object Panel12: TPanel
+          Left = 20
+          Height = 29
+          Top = 0
+          Width = 312
+          Align = alTop
+          BorderSpacing.Left = 20
+          BorderSpacing.Bottom = 2
+          BevelOuter = bvNone
+          ClientHeight = 29
+          ClientWidth = 312
+          TabOrder = 0
+          object Label8: TLabel
+            Left = 0
+            Height = 29
+            Top = 0
+            Width = 90
+            Align = alLeft
+            BorderSpacing.Right = 8
+            Caption = 'Цвет фона:'
+            Constraints.MinWidth = 90
+            Layout = tlCenter
+            ParentColor = False
+          end
+          object cbStyleBackColor: TColorBox
+            Left = 98
+            Height = 29
+            Top = 0
+            Width = 214
+            Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbIncludeDefault, cbCustomColor, cbPrettyNames, cbCustomColors]
+            OnGetColors = colorBoxGetColors
+            Align = alClient
+            Constraints.MinWidth = 150
+            ItemHeight = 0
+            OnChange = cbStyleBackColorChange
+            TabOrder = 0
+          end
+        end
+      end
+    end
+    object pnSample: TPanel
+      Left = 342
+      Height = 362
+      Top = 0
+      Width = 462
+      Align = alClient
+      BorderSpacing.Left = 10
+      BorderSpacing.Right = 10
+      BorderSpacing.Bottom = 10
+      BevelOuter = bvNone
+      TabOrder = 1
+    end
+  end
+  object Panel13: TPanel
+    Left = 10
+    Height = 21
+    Top = 87
+    Width = 794
+    Align = alTop
+    AutoSize = True
+    BorderSpacing.Around = 10
+    BevelOuter = bvNone
+    ChildSizing.Layout = cclTopToBottomThenLeftToRight
+    ClientHeight = 21
+    ClientWidth = 794
+    TabOrder = 2
+    object Label9: TLabel
+      Left = 0
+      Height = 17
+      Top = 0
+      Width = 789
+      Align = alClient
+      BorderSpacing.Right = 5
+      Caption = 'Шрифт и цвет'
+      Font.Style = [fsBold]
+      ParentColor = False
+      ParentFont = False
+    end
+    object Bevel3: TBevel
+      Left = 0
+      Height = 4
+      Top = 17
+      Width = 794
+      Align = alBottom
+      Constraints.MaxHeight = 4
+      Shape = bsBottomLine
+    end
+  end
+  object pnCommon: TPanel
+    Left = 0
+    Height = 36
+    Top = 41
+    Width = 814
+    Align = alTop
+    AutoSize = True
+    BevelOuter = bvNone
+    ClientHeight = 36
+    ClientWidth = 814
+    TabOrder = 1
+    object Panel8: TPanel
+      Left = 20
+      Height = 34
+      Top = 0
+      Width = 784
+      Align = alTop
+      AutoSize = True
+      BorderSpacing.Left = 20
+      BorderSpacing.Right = 10
+      BorderSpacing.Bottom = 2
+      BevelOuter = bvNone
+      ClientHeight = 34
+      ClientWidth = 784
+      TabOrder = 0
+      object Panel14: TPanel
+        Left = 0
+        Height = 34
+        Top = 0
+        Width = 192
+        Align = alLeft
+        AutoSize = True
+        BevelOuter = bvNone
+        ClientHeight = 34
+        ClientWidth = 192
+        TabOrder = 0
+        object Label11: TLabel
+          Left = 0
+          Height = 34
+          Top = 0
+          Width = 134
+          Align = alLeft
+          BorderSpacing.Right = 8
+          Caption = 'Размер табуляции:'
+          Layout = tlCenter
+          ParentColor = False
+        end
+        object edTabSize: TSpinEdit
+          Left = 142
+          Height = 34
+          Top = 0
+          Width = 50
+          Align = alClient
+          MaxValue = 8
+          MinValue = 1
+          OnChange = edTabSizeChange
+          TabOrder = 0
+          Value = 1
+        end
+      end
+      object Panel15: TPanel
+        Left = 192
+        Height = 34
+        Top = 0
+        Width = 582
+        Align = alClient
+        BorderSpacing.Right = 10
+        BevelOuter = bvNone
+        ClientHeight = 34
+        ClientWidth = 582
+        TabOrder = 1
+        object chAutoIndent: TCheckBox
+          Left = 15
+          Height = 34
+          Top = 0
+          Width = 105
+          Align = alLeft
+          BorderSpacing.Left = 15
+          Caption = 'Автоотступ'
+          TabOrder = 0
+          OnClick = chAutoIndentClick
+        end
+      end
+    end
+  end
+  object fontDialog: TFontDialog
+    Title = 'Выбор шрифта'
+    MinFontSize = 0
+    MaxFontSize = 0
+    Options = [fdEffects, fdFixedPitchOnly, fdForceFontExist]
+    Left = 526
+    Top = 357
+  end
+  object colorDialog: TColorDialog
+    Title = 'Выбор цвета'
+    Color = clBlack
+    CustomColors.Strings = (
+      'ColorA=000000'
+      'ColorB=000080'
+      'ColorC=008000'
+      'ColorD=008080'
+      'ColorE=800000'
+      'ColorF=800080'
+      'ColorG=808000'
+      'ColorH=808080'
+      'ColorI=C0C0C0'
+      'ColorJ=0000FF'
+      'ColorK=00FF00'
+      'ColorL=00FFFF'
+      'ColorM=FF0000'
+      'ColorN=FF00FF'
+      'ColorO=FFFF00'
+      'ColorP=FFFFFF'
+      'ColorQ=C0DCC0'
+      'ColorR=F0CAA6'
+      'ColorS=F0FBFF'
+      'ColorT=A4A0A0'
+    )
+    Left = 654
+    Top = 357
+  end
+end

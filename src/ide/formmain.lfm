@@ -4,12 +4,12 @@ object MainForm: TMainForm
   Top = 168
   Width = 963
   Caption = 'Клаус'
-  ClientHeight = 534
+  ClientHeight = 559
   ClientWidth = 963
   Menu = mainMenu
   OnCloseQuery = formCloseQuery
   OnShortCut = FormShortCut
-  LCLVersion = '2.2.4.0'
+  LCLVersion = '3.0.0.3'
   object toolBar: TToolBar
     Left = 0
     Top = 0
@@ -241,7 +241,7 @@ object MainForm: TMainForm
   object statusBar: TStatusBar
     Left = 2
     Height = 19
-    Top = 513
+    Top = 538
     Width = 959
     BorderSpacing.Left = 2
     BorderSpacing.Right = 2
@@ -260,7 +260,7 @@ object MainForm: TMainForm
   end
   object pageControl: TPageControl
     Left = 0
-    Height = 481
+    Height = 506
     Top = 32
     Width = 689
     Align = alClient
@@ -270,7 +270,7 @@ object MainForm: TMainForm
   end
   object sbDebug: TScrollBox
     Left = 689
-    Height = 481
+    Height = 506
     Top = 32
     Width = 274
     HorzScrollBar.Page = 1
@@ -278,13 +278,13 @@ object MainForm: TMainForm
     VertScrollBar.Page = 50
     Align = alRight
     BorderStyle = bsNone
-    ClientHeight = 481
+    ClientHeight = 506
     ClientWidth = 274
     TabOrder = 3
     object bvDebugSizer: TBevel
       Cursor = crHSplit
       Left = 0
-      Height = 481
+      Height = 506
       Top = 0
       Width = 5
       Align = alLeft
@@ -295,7 +295,7 @@ object MainForm: TMainForm
     end
     object pnDebugContent: TFlowPanel
       Left = 5
-      Height = 481
+      Height = 506
       Top = 0
       Width = 269
       Align = alClient
@@ -657,6 +657,7 @@ object MainForm: TMainForm
       Category = 'Правка'
       Caption = 'Выделить всё'
       Hint = 'Выделить всё|Выделить весь текст'
+      OnExecute = actEditSelectAllExecute
       ShortCut = 16449
     end
     object actEditSearch: TAction

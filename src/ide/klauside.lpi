@@ -281,6 +281,14 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="DlgEvaluate"/>
       </Unit>
+      <Unit>
+        <Filename Value="frameeditoroptions.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="EditorOptionsFrame"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="FrameEditorOptions"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

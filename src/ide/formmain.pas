@@ -267,6 +267,7 @@ type
     procedure actEditPasteExecute(Sender: TObject);
     procedure actEditSearchNextExecute(Sender: TObject);
     procedure actEditSearchReplaceExecute(Sender: TObject);
+    procedure actEditSelectAllExecute(Sender: TObject);
     procedure actEditUndoExecute(Sender: TObject);
     procedure actEditUnindentBlockExecute(Sender: TObject);
     procedure actFileCloseExecute(sender: TObject);
@@ -1235,6 +1236,15 @@ begin
   finally
     freeAndNil(dlg);
   end;
+end;
+
+procedure tMainForm.actEditSelectAllExecute(Sender: TObject);
+var
+  fr: tEditFrame;
+begin
+  fr := activeFrame;
+  if fr = nil then exit;
+  fr.edit.selectAll;
 end;
 
 procedure tMainForm.actEditCopyExecute(Sender: TObject);
