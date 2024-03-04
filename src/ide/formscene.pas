@@ -56,6 +56,7 @@ type
     fExitCode: integer;
     fInStream: tFileStream;
     fOutStream: tFileStream;
+    fAutoClose: boolean;
 
     function  getActionState: tSceneActionState;
     function  getFinished: boolean;
@@ -86,6 +87,7 @@ type
     property finished: boolean read getFinished;
     property exitCode: integer read fExitCode;
     property previewShortCuts: boolean read getPreviewShortCuts write setPreviewShortCuts;
+    property autoClose: boolean read fAutoClose write fAutoClose;
 
     constructor create(aOwner: tComponent); override;
     constructor create(aSource: tKlausSource; aFileName: string; aRunOptions: tKlausRunOptions; aStepMode: boolean);
@@ -125,10 +127,11 @@ begin
   fConsole.parent := self;
   fConsole.borderStyle := bsSingle;
   fConsole.borderSpacing.around := 4;
-  {$if defined(windows)} fConsole.font.name := 'Courier New';
-  {$elseif defined(darwin)} fConsole.font.name := 'Menlo';
-  {$else} fConsole.font.name := 'Monospace'; {$endif}
-  fConsole.font.size := 11;
+  with mainForm.consoleOptions do begin
+    fConsole.font := font;
+    if stayOnTop then self.formStyle := fsStayOnTop;
+    self.autoClose := autoClose;
+  end;
   fConsole.autoSize := true;
   fConsole.caretType := kctHorzLine;
   fConsole.onInput := @consoleInput;
@@ -345,6 +348,7 @@ begin
   if finished then caption := format(strFinished, [exitCode, s])
   else caption := format(strExecuting, [s]);
   actCloseFinished.enabled := finished;
+  if assigned(fThread) and (fThread.state = kdsFinished) and autoClose then actCloseFinished.execute;
 end;
 
 function tSceneForm.inStreamHasChar: boolean;

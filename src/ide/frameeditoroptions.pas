@@ -192,7 +192,6 @@ begin
   with fontDialog do begin
     font := fEditorOptions.font;
     font.style := fEditorOptions.fontStyle;
-    font.color := fEditorOptions.fontColor;
     if execute then begin
       fEditorOptions.beginUpdate;
       try

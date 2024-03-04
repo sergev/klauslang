@@ -289,6 +289,14 @@
         <ResourceBaseClass Value="Frame"/>
         <UnitName Value="FrameEditorOptions"/>
       </Unit>
+      <Unit>
+        <Filename Value="frameconsoleoptions.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="ConsoleOptionsFrame"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="FrameConsoleOptions"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

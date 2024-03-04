@@ -14,7 +14,7 @@ object SceneForm: TSceneForm
   OnCloseQuery = FormCloseQuery
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '2.2.4.0'
+  LCLVersion = '3.2.0.0'
   object actionList: TActionList
     Left = 475
     Top = 106

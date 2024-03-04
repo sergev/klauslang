@@ -26,7 +26,7 @@ interface
 
 uses
   Messages, LMessages, SysUtils, Classes, Graphics, Controls, Dialogs, Types, LCLType,
-  Forms, CustomTimer, U8, KlausConKeys;
+  Forms, CustomTimer, U8, GraphUtils, KlausConKeys;
 
 const
   KM_InvalidateSize = $7FFA;
@@ -36,6 +36,8 @@ const
 const
   klsConDefaultScreenWidth  = 80;
   klsConDefaultScreenHeight = 25;
+  klsConDefaultFontColor    = cl16Silver;
+  klsConDefaultBackColor    = cl16Black;
   klsConMinScreenWidth      = 16;
   klsConMinScreenHeight     = 5;
   klsConMaxScreenWidth      = 160;
@@ -127,6 +129,16 @@ type
 
 type
   tCustomKlausConsole = class(tCustomControl)
+    private class var
+      fDefaultWidth: integer;
+      fDefaultHeight: integer;
+      fDefaultFontColor: byte;
+      fDefaultBackColor: byte;
+    public
+      class property defaultWidth: integer read fDefaultWidth write fDefaultWidth;
+      class property defaultHeight: integer read fDefaultHeight write fDefaultHeight;
+      class property defaultFontColor: byte read fDefaultFontColor write fDefaultFontColor;
+      class property defaultBackColor: byte read fDefaultBackColor write fDefaultBackColor;
     private
       fLatch: tRTLCriticalSection;
       fBuffer: tScreenBuffer;
@@ -297,7 +309,7 @@ type
 implementation
 
 uses
-  LCLIntf, Math, Clipbrd, GraphUtils, KlausUtils;
+  LCLIntf, Math, Clipbrd, KlausUtils;
 
 resourcestring
   errInvalidRowIndex = 'Номер строки вне допустимых пределов: %d.';
@@ -331,8 +343,8 @@ var
 begin
   inherited create;
   with attr do begin
-    bc := cl16Black;
-    fc := cl16Silver;
+    bc := tCustomKlausConsole.defaultBackColor;
+    fc := tCustomKlausConsole.defaultFontColor;
     fs := 0;
     dummy := 0;
   end;
@@ -475,15 +487,15 @@ constructor tCustomKlausConsole.create(aOwner: tComponent);
 begin
   inherited create(aOwner);
   initCriticalSection(fLatch);
-  fBuffer := tScreenBuffer.create(self, klsConDefaultScreenWidth, klsConDefaultScreenHeight);
+  fBuffer := tScreenBuffer.create(self, defaultWidth, defaultHeight);
   fBuffer.onFeed := @bufferFeed;
   fCaretOrigin := point(0, 0);
   fCaretPos := point(0, 0);
   fSaveCaret := point(0, 0);
   fCaretEnabled := true;
   fCaretVisible := false;
-  fTextAttr.bc := cl16Black;
-  fTextAttr.fc := cl16Silver;
+  fTextAttr.bc := defaultBackColor;
+  fTextAttr.fc := defaultFontColor;
   fTextAttr.fs := 0;
   fTabWidth := klsConDefaultTabWidth;
   fInputValue := '';
@@ -538,8 +550,8 @@ begin
   lock;
   try
     endInput(true);
-    fTextAttr.bc := cl16Black;
-    fTextAttr.fc := cl16Silver;
+    fTextAttr.bc := defaultBackColor;
+    fTextAttr.fc := defaultFontColor;
     fTextAttr.fs := 0;
     fBuffer.clear(longWord(fTextAttr));
     fCaretPos := point(0, 0);
@@ -832,7 +844,9 @@ begin
   try
     try
       if s = #27'c' then
-        reset // очистить
+        reset // очистить и установить параметры по умолчанию
+      else if s = #27'[2J' then
+        clear // очистить
       else if s = #27'[?25l' then
         caretEnabled := false // скрыть курсор
       else if s = #27'[?25h' then
@@ -903,8 +917,8 @@ begin
             case strToInt(prm[0]) of
               0: begin  // сбросить всё
                 if length(prm) <> 1 then abort;
-                fTextAttr.bc := cl16Black;
-                fTextAttr.fc := cl16Silver;
+                fTextAttr.bc := defaultBackColor;
+                fTextAttr.fc := defaultFontColor;
                 fTextAttr.fs := 0;
               end;
               48: begin // цвет фона
@@ -1632,5 +1646,12 @@ begin
   end;
 end;
 
+initialization
+  with tCustomKlausConsole do begin
+    defaultWidth := klsConDefaultScreenWidth;
+    defaultHeight := klsConDefaultScreenHeight;
+    defaultFontColor := klsConDefaultFontColor;
+    defaultBackColor := klsConDefaultBackColor;
+  end;
 end.
 

@@ -2,9 +2,9 @@ object EditorOptionsFrame: TEditorOptionsFrame
   Left = 0
   Height = 629
   Top = 0
-  Width = 814
+  Width = 823
   ClientHeight = 629
-  ClientWidth = 814
+  ClientWidth = 823
   TabOrder = 0
   DesignLeft = 719
   DesignTop = 280
@@ -12,20 +12,20 @@ object EditorOptionsFrame: TEditorOptionsFrame
     Left = 10
     Height = 21
     Top = 10
-    Width = 794
+    Width = 803
     Align = alTop
     AutoSize = True
     BorderSpacing.Around = 10
     BevelOuter = bvNone
     ChildSizing.Layout = cclTopToBottomThenLeftToRight
     ClientHeight = 21
-    ClientWidth = 794
+    ClientWidth = 803
     TabOrder = 0
     object Label1: TLabel
       Left = 0
       Height = 17
       Top = 0
-      Width = 789
+      Width = 798
       Align = alClient
       BorderSpacing.Right = 5
       Caption = 'Общие'
@@ -37,7 +37,7 @@ object EditorOptionsFrame: TEditorOptionsFrame
       Left = 0
       Height = 4
       Top = 17
-      Width = 794
+      Width = 803
       Align = alBottom
       Constraints.MaxHeight = 4
       Shape = bsBottomLine
@@ -47,18 +47,18 @@ object EditorOptionsFrame: TEditorOptionsFrame
     Left = 0
     Height = 98
     Top = 118
-    Width = 814
+    Width = 823
     Align = alTop
     AutoSize = True
     BevelOuter = bvNone
     ClientHeight = 98
-    ClientWidth = 814
+    ClientWidth = 823
     TabOrder = 3
     object Panel3: TPanel
       Left = 20
       Height = 34
       Top = 0
-      Width = 784
+      Width = 793
       Align = alTop
       AutoSize = True
       BorderSpacing.Left = 20
@@ -66,7 +66,7 @@ object EditorOptionsFrame: TEditorOptionsFrame
       BorderSpacing.Bottom = 2
       BevelOuter = bvNone
       ClientHeight = 34
-      ClientWidth = 784
+      ClientWidth = 793
       TabOrder = 0
       object Label3: TLabel
         Left = 0
@@ -112,7 +112,7 @@ object EditorOptionsFrame: TEditorOptionsFrame
       Left = 0
       Height = 62
       Top = 36
-      Width = 814
+      Width = 823
       Align = alTop
       AutoSize = True
       BevelOuter = bvNone
@@ -306,20 +306,20 @@ object EditorOptionsFrame: TEditorOptionsFrame
     Left = 10
     Height = 21
     Top = 226
-    Width = 794
+    Width = 803
     Align = alTop
     AutoSize = True
     BorderSpacing.Around = 10
     BevelOuter = bvNone
     ChildSizing.Layout = cclTopToBottomThenLeftToRight
     ClientHeight = 21
-    ClientWidth = 794
+    ClientWidth = 803
     TabOrder = 4
     object Label2: TLabel
       Left = 0
       Height = 17
       Top = 0
-      Width = 789
+      Width = 798
       Align = alClient
       BorderSpacing.Right = 5
       Caption = 'Подсветка синтаксиса'
@@ -331,7 +331,7 @@ object EditorOptionsFrame: TEditorOptionsFrame
       Left = 0
       Height = 4
       Top = 17
-      Width = 794
+      Width = 803
       Align = alBottom
       Constraints.MaxHeight = 4
       Shape = bsBottomLine
@@ -341,11 +341,11 @@ object EditorOptionsFrame: TEditorOptionsFrame
     Left = 0
     Height = 372
     Top = 257
-    Width = 814
+    Width = 823
     Align = alClient
     BevelOuter = bvNone
     ClientHeight = 372
-    ClientWidth = 814
+    ClientWidth = 823
     TabOrder = 5
     object Panel9: TPanel
       Left = 0
@@ -561,7 +561,7 @@ object EditorOptionsFrame: TEditorOptionsFrame
       Left = 342
       Height = 362
       Top = 0
-      Width = 462
+      Width = 471
       Align = alClient
       BorderSpacing.Left = 10
       BorderSpacing.Right = 10
@@ -574,20 +574,20 @@ object EditorOptionsFrame: TEditorOptionsFrame
     Left = 10
     Height = 21
     Top = 87
-    Width = 794
+    Width = 803
     Align = alTop
     AutoSize = True
     BorderSpacing.Around = 10
     BevelOuter = bvNone
     ChildSizing.Layout = cclTopToBottomThenLeftToRight
     ClientHeight = 21
-    ClientWidth = 794
+    ClientWidth = 803
     TabOrder = 2
     object Label9: TLabel
       Left = 0
       Height = 17
       Top = 0
-      Width = 789
+      Width = 798
       Align = alClient
       BorderSpacing.Right = 5
       Caption = 'Шрифт и цвет'
@@ -599,7 +599,7 @@ object EditorOptionsFrame: TEditorOptionsFrame
       Left = 0
       Height = 4
       Top = 17
-      Width = 794
+      Width = 803
       Align = alBottom
       Constraints.MaxHeight = 4
       Shape = bsBottomLine
@@ -609,18 +609,18 @@ object EditorOptionsFrame: TEditorOptionsFrame
     Left = 0
     Height = 36
     Top = 41
-    Width = 814
+    Width = 823
     Align = alTop
     AutoSize = True
     BevelOuter = bvNone
     ClientHeight = 36
-    ClientWidth = 814
+    ClientWidth = 823
     TabOrder = 1
     object Panel8: TPanel
       Left = 20
       Height = 34
       Top = 0
-      Width = 784
+      Width = 793
       Align = alTop
       AutoSize = True
       BorderSpacing.Left = 20
@@ -628,7 +628,7 @@ object EditorOptionsFrame: TEditorOptionsFrame
       BorderSpacing.Bottom = 2
       BevelOuter = bvNone
       ClientHeight = 34
-      ClientWidth = 784
+      ClientWidth = 793
       TabOrder = 0
       object Panel14: TPanel
         Left = 0
@@ -636,7 +636,6 @@ object EditorOptionsFrame: TEditorOptionsFrame
         Top = 0
         Width = 192
         Align = alLeft
-        AutoSize = True
         BevelOuter = bvNone
         ClientHeight = 34
         ClientWidth = 192
@@ -669,12 +668,12 @@ object EditorOptionsFrame: TEditorOptionsFrame
         Left = 192
         Height = 34
         Top = 0
-        Width = 582
+        Width = 591
         Align = alClient
         BorderSpacing.Right = 10
         BevelOuter = bvNone
         ClientHeight = 34
-        ClientWidth = 582
+        ClientWidth = 591
         TabOrder = 1
         object chAutoIndent: TCheckBox
           Left = 15

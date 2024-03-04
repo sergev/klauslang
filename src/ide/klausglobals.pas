@@ -59,6 +59,37 @@ type
   end;
 
 type
+  tKlausConsoleOptions = class(tPersistent)
+    private
+      fFont: tFont;
+      fWidth: integer;
+      fHeight: integer;
+      fFontColor: byte;
+      fBackColor: byte;
+      fAutoClose: boolean;
+      fStayOnTop: boolean;
+
+      procedure setFont(val: tFont);
+    protected
+      procedure assignTo(dest: tPersistent); override;
+      procedure setDefaults;
+    public
+      property font: tFont read fFont write setFont;
+      property width: integer read fWidth write fWidth;
+      property height: integer read fHeight write fHeight;
+      property fontColor: byte read fFontColor write fFontColor;
+      property backColor: byte read fBackColor write fBackColor;
+      property autoClose: boolean read fAutoClose write fAutoClose;
+      property stayOnTop: boolean read fStayOnTop write fStayOnTop;
+
+      constructor create;
+      destructor destroy; override;
+      procedure saveToIni(storage: tIniPropStorage);
+      procedure loadFromIni(storage: tIniPropStorage);
+      procedure updateConsoleDefaults;
+  end;
+
+type
   tKlausRunOptions = class(tPersistent)
     private
       fCmdLine: string;
@@ -75,6 +106,12 @@ type
   end;
 
 implementation
+
+uses
+  klausConsole;
+
+resourcestring
+  klausConsoleOptionsIniSection = 'KlausConsoleOptions';
 
 { tKlausRunOptions }
 
@@ -181,7 +218,7 @@ begin
   storage.doWriteString(section, 'fontName', font.name);
   storage.doWriteString(section, 'fontSize', intToStr(font.size));
   storage.doWriteString(section, 'tabSize', intToStr(tabSize));
-  storage.doWriteString(section, 'autoIndent', boolToStr(autoIndent));
+  storage.doWriteString(section, 'autoIndent', boolToStr(autoIndent, true));
 end;
 
 procedure tKlausEditorOptions.doLoadFromIni(storage: TIniPropStorage; const section: string);
@@ -197,6 +234,104 @@ begin
   if s <> 'default' then tabSize := strToInt(s);
   s := storage.doReadString(section, 'autoIndent', 'default');
   if s <> 'default' then autoIndent := strToBool(s);
+end;
+
+{ tKlausConsoleOptions }
+
+constructor tKlausConsoleOptions.create;
+begin
+  inherited;
+  fFont := tFont.create;
+  setDefaults;
+end;
+
+destructor tKlausConsoleOptions.destroy;
+begin
+  freeAndNil(fFont);
+  inherited destroy;
+end;
+
+procedure tKlausConsoleOptions.setFont(val: tFont);
+begin
+  if fFont.isEqual(val) then exit;
+  fFont.assign(val);
+end;
+
+procedure tKlausConsoleOptions.assignTo(dest: tPersistent);
+begin
+  if not (dest is tKlausConsoleOptions) then
+    inherited assignTo(dest)
+  else with dest as tKlausConsoleOptions do begin
+    font := self.font;
+    width := self.width;
+    height := self.height;
+    fontColor := self.fontColor;
+    backColor := self.backColor;
+    autoClose := self.autoClose;
+    stayOnTop := self.stayOnTop;
+  end;
+end;
+
+procedure tKlausConsoleOptions.setDefaults;
+begin
+  {$if defined(windows)} font.name := 'Courier New';
+  {$elseif defined(darwin)} font.name := 'Menlo';
+  {$else} font.name := 'Monospace'; {$endif}
+  font.size := 11;
+  width := klsConDefaultScreenWidth;
+  height := klsConDefaultScreenHeight;
+  fontColor := cl16Silver;
+  backColor := cl16Black;
+  autoClose := false;
+  stayOnTop := true;
+end;
+
+procedure tKlausConsoleOptions.loadFromIni(storage: tIniPropStorage);
+var
+  section, s: string;
+begin
+  section := klausConsoleOptionsIniSection;
+  s := storage.doReadString(section, 'fontName', 'default');
+  if s <> 'default' then font.name := s;
+  s := storage.doReadString(section, 'fontSize', 'default');
+  if s <> 'default' then font.size := strToInt(s);
+  s := storage.doReadString(section, 'windowWidth', 'default');
+  if s <> 'default' then width := strToInt(s);
+  s := storage.doReadString(section, 'windowHeight', 'default');
+  if s <> 'default' then height := strToInt(s);
+  s := storage.doReadString(section, 'autoClose', 'default');
+  if s <> 'default' then autoClose := strToBool(s);
+  s := storage.doReadString(section, 'stayOnTop', 'default');
+  if s <> 'default' then stayOnTop := strToBool(s);
+  s := storage.doReadString(section, 'fontColor', 'default');
+  if s <> 'default' then fontColor := byte(strToInt(s));
+  s := storage.doReadString(section, 'backColor', 'default');
+  if s <> 'default' then backColor := byte(strToInt(s));
+end;
+
+procedure tKlausConsoleOptions.updateConsoleDefaults;
+begin
+  with tCustomKlausConsole do begin
+    defaultWidth := self.width;
+    defaultHeight := self.height;
+    defaultFontColor := self.fontColor;
+    defaultBackColor := self.backColor;
+  end;
+end;
+
+procedure tKlausConsoleOptions.saveToIni(storage: tIniPropStorage);
+var
+  sect: string;
+begin
+  sect := klausConsoleOptionsIniSection;
+  storage.doWriteString(sect, 'fontName', font.name);
+  storage.doWriteString(sect, 'fontSize', intToStr(font.size));
+  storage.doWriteString(sect, 'windowWidth', intToStr(width));
+  storage.doWriteString(sect, 'windowHeight', intToStr(height));
+  storage.doWriteString(sect, 'autoClose', boolToStr(autoClose, true));
+  storage.doWriteString(sect, 'stayOnTop', boolToStr(stayOnTop, true));
+  storage.doWriteString(sect, 'fontColor', intToStr(fontColor));
+  storage.doWriteString(sect, 'backColor', intToStr(backColor));
 end;
 
 end.

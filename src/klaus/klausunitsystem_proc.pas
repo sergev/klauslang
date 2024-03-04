@@ -2283,7 +2283,7 @@ end;
 
 procedure tKlausSysProc_ClearScreen.run(frame: tKlausStackFrame; const at: tSrcPoint);
 begin
-  writeStdStream(frame, #27'c');
+  writeStdStream(frame, #27'[2J');
 end;
 
 { tKlausSysProc_ClearLine }

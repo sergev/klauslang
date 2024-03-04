@@ -324,6 +324,7 @@ type
     fExecPoint: tExecPointInfo;
     fRunToCursor: tKlausBreakpoint;
     fEditStyles: tKlausEditorOptions;
+    fConsoleOptions: tKlausConsoleOptions;
     fBreakpoints: tKlausBreakpoints;
     fBreakpointListInvalid: boolean;
     fStackFrameIdx: integer;
@@ -372,6 +373,7 @@ type
     property execPoint: tExecPointInfo read fExecPoint;
     property debugView[dvt: tDebugViewType]: tDebugViewFrame read getDebugView;
     property editStyles: tKlausEditorOptions read fEditStyles;
+    property consoleOptions: tKlausConsoleOptions read fConsoleOptions;
     property runToCursor: tKlausBreakpoint read fRunToCursor;
     property breakpointCount: integer read getBreakpointCount;
     property breakpoint[idx: integer]: tKlausBreakpoint read getBreakpoint;
@@ -437,6 +439,7 @@ begin
   fPropsLoading := true;
   fCtlStateClients := tList.create;
   fEditStyles := tKlausEditorOptions.create;
+  fConsoleOptions := tklausConsoleOptions.create;
   inherited create(aOwner);
   fRecentFiles := tStringList.create;
   propStorage.iniFileName := configFileName;
@@ -450,6 +453,7 @@ begin
   inherited destroy;
   freeAndNil(fCtlStateClients);
   freeAndNil(fEditStyles);
+  freeAndNil(fConsoleOptions);
 end;
 
 procedure tMainForm.addControlStateClient(ctl: tControl);
@@ -795,8 +799,11 @@ procedure tMainForm.actFileOptionsExecute(Sender: TObject);
 begin
   with tOptionsDlg.create(application) do try
     editorOptions := fEditStyles;
-    if showModal = mrOK then
+    consoleOptions := fConsoleOptions;
+    if showModal = mrOK then begin
       fEditStyles.assign(editorOptions);
+      fConsoleOptions.assign(consoleOptions);
+    end;
   finally
     free;
   end;
@@ -896,6 +903,7 @@ begin
   if not saveEditFrame(fr) then exit;
   src := fr.createSource;
   if src <> nil then begin
+    consoleOptions.updateConsoleDefaults;
     f := tSceneForm.create(src, fr.fileName, fr.runOptions, stepMode);
     f.previewShortcuts := actRunInterceptKeyboard.checked;
     f.show;
@@ -1558,6 +1566,7 @@ end;
 procedure tMainForm.propStorageRestoringProperties(Sender: TObject);
 begin
   fEditStyles.loadFromIni(propStorage);
+  fConsoleOptions.loadFromIni(propStorage);
   sessionProperties := getSessionProperties;
 end;
 
@@ -1565,6 +1574,7 @@ procedure tMainForm.propStorageSavingProperties(Sender: TObject);
 begin
   sessionProperties := getSessionProperties;
   fEditStyles.saveToIni(propStorage);
+  fConsoleOptions.saveToIni(propStorage);
 end;
 
 procedure tMainForm.propStorageRestoreProperties(Sender: TObject);

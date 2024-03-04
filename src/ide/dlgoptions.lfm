@@ -21,6 +21,9 @@ object OptionsDlg: TOptionsDlg
     object tsEditor: TTabSheet
       Caption = 'Редактор'
     end
+    object tsConsole: TTabSheet
+      Caption = 'Консоль'
+    end
   end
   object pnButtons: TPanel
     Left = 0

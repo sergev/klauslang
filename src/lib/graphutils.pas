@@ -45,7 +45,7 @@ const
   cl16Aqua    = 14;
   cl16White   = 15;
 
-  colors256: array[0..255] of tColor = (
+  colors256: array[byte] of tColor = (
     $000000, $000080, $008000, $008080, $800000, $800080, $808000, $c0c0c0,
     $808080, $0000ff, $00ff00, $00ffff, $ff0000, $ff00ff, $ffff00, $ffffff,
     $000000, $5f0000, $870000, $af0000, $d70000, $ff0000, $005f00, $5f5f00,
@@ -98,6 +98,7 @@ function lighter(c: tColor; delta: double): tColor;
 function darker(c: tColor; delta: double): tColor;
 function lighterOrDarker(c: tColor; delta: double): tColor;
 function rgbTo256(r, g, b: byte): byte;
+function colorTo256(const color: tColor): byte;
 
 function fontStyleToString(fs: tFontStyles): string;
 function fontStyleToText(fs: tFontStyles): string;
@@ -271,6 +272,14 @@ begin
   g := round(g / 255 * 5);
   b := round(b / 255 * 5);
   result := 16 + 36*r + 6*g + b;
+end;
+
+function colorTo256(const color: tColor): byte;
+var
+  r, g, b: byte;
+begin
+  redGreenBlue(colorToRGB(color), r, g, b);
+  result := rgbTo256(r, g, b);
 end;
 
 function fontStyleToString(fs: tFontStyles): string;

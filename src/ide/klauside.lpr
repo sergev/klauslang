@@ -33,7 +33,7 @@ uses
   KlausConsole, FrameDebugVariables, FrameDebugCallStack, DlgCmdLineArgs,
   KlausUnitSystem_Proc, FrameDebugBreakpoints, FrameDebugWatches,
   DlgSearchReplace, KlausUtils, KlausDef, FormSplash, KlausConKeys, DlgOptions,
-  DlgEvaluate, FrameEditorOptions;
+  DlgEvaluate, FrameEditorOptions, FrameConsoleOptions;
   { you can add units after this }
 
 {$R *.res}
