@@ -109,7 +109,8 @@ uses
 
 resourcestring
   strExecuting = 'Выполняется: %s';
-  strFinished = 'Завершено с кодом %d: %s';
+  strFinishedOK = 'Завершено успешно: %s';
+  strFinishedErr = 'Завершено с ошибкой %d: %s';
   strRuntimeError = 'Исключение %s';
   strAtLinePos = 'Строка %d, символ %d.';
   strConfirmAbort = 'Прервать выполнение программы?';
@@ -345,8 +346,11 @@ var
   s: string;
 begin
   s := extractFileName(fFileName);
-  if finished then caption := format(strFinished, [exitCode, s])
-  else caption := format(strExecuting, [s]);
+  if finished then begin
+    if exitCode = 0 then caption := format(strFinishedOK, [s])
+    else caption := format(strFinishedErr, [exitCode, s]);
+  end else
+    caption := format(strExecuting, [s]);
   actCloseFinished.enabled := finished;
   if assigned(fThread) and (fThread.state = kdsFinished) and autoClose then actCloseFinished.execute;
 end;

@@ -174,7 +174,7 @@ const
     def:   '<statement> ";" [* <statement> ";"]'),
 
     (name: 'statement';
-    def:   '(`ничего` | `прервать` | `продолжить` | `завершить` <expression> | '+
+    def:   '(`ничего` | `прервать` | `продолжить` | `завершить` [<expression>] | '+
            '`ошибка` [<exception>] | `бросить` | `вернуть` [<expression>] | '+
            '<compound> | <control_structure> | <call> | <assignment>)'),
 

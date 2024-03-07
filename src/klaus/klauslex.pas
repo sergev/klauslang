@@ -331,7 +331,6 @@ type
 type
   // Парсер лексики языка Клаус
   tKlausLexParser = class(tCustomLexParser)
-    //todo: добавить массивы для keywordValue() и symbolValue()
     private
       procedure setLexInfo(s: string; aLexem: tKlausLexem; out li: tKlausLexInfo);
       procedure setLexInfo(s: string; aSymbol: tKlausValidSymbol; out li: tKlausLexInfo);
@@ -585,6 +584,10 @@ const
 implementation
 
 uses TypInfo, KlausUtils, KlausDef, KlausErr;
+
+var
+  klausKwd: array[tKlausKeyword] of string;
+  klausSym: array[tKlausSymbol] of string;
 
 // Возвращает имя переданной лексемы
 function klausLexemName(lex: tKlausLexem): string;
@@ -946,12 +949,8 @@ end;
 // Возвращает текст ключевого слова.
 // Если определено несколько ключевых слов, возвращает первый по порядку.
 class function tKlausLexParser.keywordValue(k: tKlausValidKeyword): string;
-var
-  i: integer;
 begin
-  for i := low(klausKeywords) to high(klausKeywords) do
-    if (klausKeywords[i].k) = k then exit(klausKeywords[i].s);
-  result := '';
+  result := klausKwd[k];
 end;
 
 // Возвращает знак языка или klssInvalid, если s не найдена в списке знаков
@@ -967,12 +966,8 @@ end;
 // Возвращает текст знака языка.
 // Если определено несколько синонимичных знаков, возвращает первый по порядку.
 class function tKlausLexParser.symbolValue(k: tKlausValidSymbol): string;
-var
-  i: integer;
 begin
-  for i := low(klausSymbols) to high(klausSymbols) do
-    if klausSymbols[i].k = k then exit(klausSymbols[i].s);
-  result := '';
+  result := klausSym[k];
 end;
 
 // Заполняет структуру lu
@@ -1235,5 +1230,12 @@ begin
   except error(ercInvalidMoment, li.line, li.pos); exit; end;
 end;
 
+var
+  i: integer;
+initialization
+  for i := high(klausKeywords) downto low(klausKeywords) do
+    klausKwd[klausKeywords[i].k] := klausKeywords[i].s;
+  for i := high(klausSymbols) downto low(klausSymbols) do
+    klausSym[klausSymbols[i].k] := klausSymbols[i].s;
 end.
 

@@ -2448,10 +2448,14 @@ constructor tKlausStmtHalt.create(aOwner: tKlausStmtCtlStruct; aPoint: tSrcPoint
 begin
   inherited create(aOwner, aPoint);
   b.next;
-  b.check('expression');
-  fRetCode := routine.createExpression(self, b);
-  if fRetCode.resultType <> kdtInteger then
-    raise eKlausError.create(ercTypeMismatch, fRetCode.point.line, fRetCode.point.pos);
+  if b.check('expression', false) then begin
+    fRetCode := routine.createExpression(self, b);
+    if fRetCode.resultType <> kdtInteger then
+      raise eKlausError.create(ercTypeMismatch, fRetCode.point.line, fRetCode.point.pos);
+  end else begin
+    fRetCode := nil;
+    b.pause;
+  end;
 end;
 
 destructor tKlausStmtHalt.destroy;
@@ -2466,8 +2470,11 @@ var
 begin
   klausDebuggerStep(frame, point);
   try
-    code := retCode.evaluate(frame, true);
-    if code.dataType <> kdtInteger then raise eKlausError.create(ercTypeMismatch, retCode.point.line, retCode.point.pos);
+    if assigned(fRetCode) then begin
+      code := retCode.evaluate(frame, true);
+      if code.dataType <> kdtInteger then raise eKlausError.create(ercTypeMismatch, retCode.point.line, retCode.point.pos);
+    end else
+      code := klausSimple(tKlausInteger(0));
     raise eKlausHalt.create(code.iValue);
   except
     klausTranslateException(frame, point);
