@@ -9,7 +9,7 @@ object MainForm: TMainForm
   Menu = mainMenu
   OnCloseQuery = formCloseQuery
   OnShortCut = FormShortCut
-  LCLVersion = '3.0.0.3'
+  LCLVersion = '3.2.0.0'
   object toolBar: TToolBar
     Left = 0
     Top = 0

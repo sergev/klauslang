@@ -17,9 +17,6 @@ KlausLang — свободное программное обеспечение: 
 ознакомиться здесь: <https://www.gnu.org/licenses/>.
 }
 
-//todo: Разобраться с масштабированием  tImageList
-//todo: Восстановить сохранение размеров виджетов отладчика
-
 unit FormMain;
 
 {$mode objfpc}{$H+}
@@ -339,6 +336,7 @@ type
     function  getBreakpoint(idx: integer): tKlausBreakpoint;
     function  getConfigFileName: string;
     function  getDebugViews: tDebugViewTypes;
+    function  getDbgWgtStoredWidth: integer;
     function  getIsRunning: boolean;
     function  getWatchCount: integer;
     function  getWatches(idx: integer): tWatchInfo;
@@ -347,6 +345,7 @@ type
     function  getFrames(idx: integer): tEditFrame;
     function  getRecentFiles: tStrings;
     procedure setActiveFrame(val: tEditFrame; focus: boolean = true);
+    procedure setDbgWgtStoredWidth(val: integer);
     procedure setStackFrameIdx(value: integer);
     procedure setRecentFiles(val: tStrings);
     procedure updateRecentMenuItems;
@@ -412,6 +411,7 @@ type
   published
     property recentFiles: tStrings read getRecentFiles write setRecentFiles;
     property debugViews: tDebugViewTypes read getDebugViews write setDebugViews;
+    property dbgWgtStoredWidth: integer read getDbgWgtStoredWidth write setDbgWgtStoredWidth;
   end;
 
 var
@@ -420,7 +420,7 @@ var
 implementation
 
 uses
-  LCLIntf, Math, Clipbrd, DlgCmdLineArgs, DlgSearchReplace, FormSplash, DlgOptions, DlgEvaluate;
+  LCLIntf, LCLType, Math, Clipbrd, DlgCmdLineArgs, DlgSearchReplace, FormSplash, DlgOptions, DlgEvaluate;
 
 resourcestring
   strKlaus = 'Клаус';
@@ -1313,6 +1313,18 @@ begin
     if fDebugView[dvt].visible then include(result, dvt);
 end;
 
+function tMainForm.getDbgWgtStoredWidth: integer;
+begin
+  result := mulDiv(sbDebug.width, designTimePPI, screenInfo.pixelsPerInchX);
+end;
+
+procedure tMainForm.setDbgWgtStoredWidth(val: integer);
+begin
+  // здесь не масштабируем, иначе при высоких разрешениях экрана
+  // размер растёт при каждом запуске среды
+  sbDebug.width := val;
+end;
+
 function tMainForm.getIsRunning: boolean;
 begin
   result := scene <> nil;
@@ -1543,21 +1555,12 @@ var
 begin
   result :=
     'Height;Left;Top;Width;WindowState;recentFiles;debugViews;'+
-    'actRunInterceptKeyboard.checked';
+    'actRunInterceptKeyboard.checked;dbgWgtStoredWidth';
   for dvt := low(dvt) to high(dvt) do begin
     if debugView[dvt] = nil then continue;
     n := debugView[dvt].name;
-    result += ';'+n+'.Position';
+    result += ';'+n+'.storedHeight;'+n+'.Position';
   end;
-  { Плохо работает при масштабировании на высоких разрешениях экрана
-  result :=
-    'Height;Left;Top;Width;WindowState;recentFiles;sbDebug.Width;debugViews;'+
-    'actRunInterceptKeyboard.checked';
-  for dvt := low(dvt) to high(dvt) do begin
-    if debugView[dvt] = nil then continue;
-    n := debugView[dvt].name;
-    result += ';'+n+'.Height;'+n+'.Position';
-  end;}
 end;
 
 procedure tMainForm.createWnd;

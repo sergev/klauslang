@@ -17,7 +17,7 @@ KlausLang — свободное программное обеспечение: 
 ознакомиться здесь: <https://www.gnu.org/licenses/>.
 }
 
-program klauside;
+program KlausIDE;
 
 {$mode objfpc}{$H+}
 

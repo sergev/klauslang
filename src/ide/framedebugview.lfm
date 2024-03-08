@@ -5,7 +5,6 @@ object DebugViewFrame: TDebugViewFrame
   Width = 352
   ClientHeight = 180
   ClientWidth = 352
-  LCLVersion = '2.2.4.0'
   TabOrder = 0
   DesignLeft = 774
   DesignTop = 300

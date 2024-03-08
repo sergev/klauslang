@@ -84,7 +84,9 @@ type
 
     function  getCaption: string;
     function  getPosition: integer;
+    function  getStoredHeight: integer;
     procedure setPosition(val: integer);
+    procedure setStoredHeight(val: integer);
     procedure setViewType(val: tDebugViewType);
     procedure destroyContent;
     procedure createContent;
@@ -101,12 +103,13 @@ type
     procedure enableDisable;
   published
     property position: integer read getPosition write setPosition;
+    property storedHeight: integer read getStoredHeight write setStoredHeight;
   end;
 
 implementation
 
 uses
-  Math, LCLIntf, KlausUtils, FormMain;
+  Math, LCLType, LCLIntf, Graphics, KlausUtils, FormMain;
 
 {$R *.lfm}
 
@@ -199,6 +202,16 @@ begin
   if mainForm.propsLoading then result := fPosition
   else if not (parent is tCustomFlowPanel) then result := -1
   else result := (parent as tCustomFlowPanel).GetControlIndex(self);
+end;
+
+function tDebugViewFrame.getStoredHeight: integer;
+begin
+  result := mulDiv(height, designTimePPI, screenInfo.pixelsPerInchX);
+end;
+
+procedure tDebugViewFrame.setStoredHeight(val: integer);
+begin
+  height := val;
 end;
 
 procedure tDebugViewFrame.setPosition(val: integer);
