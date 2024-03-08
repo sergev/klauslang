@@ -837,7 +837,6 @@ begin
   assert(assigned(fNowMatching), 'Syntax rule stack integrity violation');
   assert(rule = nowMatching.rule, 'Syntax rule stack integrity violation');
   fNowMatching.fRecognized := true;
-  clearErrInfo;
 end;
 
 procedure tKlausSyntax.addMatchedLexem;
