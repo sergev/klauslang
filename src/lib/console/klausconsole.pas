@@ -1513,7 +1513,6 @@ begin
         kctVertLine: begin w := 2; h := fCharSize.cy; end;
         else w := fCharSize.cx; h := fCharSize.cy;
       end;
-      fCaretVisible := true;
       LCLIntf.createCaret(handle, 0, w, h);
       LCLIntf.setCaretRespondToFocus(handle, false);
     end;

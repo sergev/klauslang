@@ -210,8 +210,11 @@ end;
 
 begin
   application := tKlausApplication.create(nil);
-  application.title := 'Клаус';
-  application.run;
-  application.free;
+  try
+    application.title := 'Клаус';
+    application.run;
+  finally
+    application.free;
+  end;
 end.
 
