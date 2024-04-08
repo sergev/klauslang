@@ -1,20 +1,30 @@
 object SceneForm: TSceneForm
-  Left = 404
+  Left = 480
   Height = 642
-  Top = 271
+  Top = 219
   Width = 1010
-  HorzScrollBar.Page = 1
   HorzScrollBar.Tracking = True
-  VertScrollBar.Page = 1
   VertScrollBar.Tracking = True
-  AutoScroll = True
   AutoSize = True
   Caption = 'Выполняется'
+  ClientHeight = 642
+  ClientWidth = 1010
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
   OnShow = FormShow
   Position = poScreenCenter
   LCLVersion = '3.2.0.0'
+  object ScrollBox: TScrollBox
+    Left = 0
+    Height = 642
+    Top = 0
+    Width = 1010
+    HorzScrollBar.Page = 1
+    VertScrollBar.Page = 1
+    Align = alClient
+    BorderStyle = bsNone
+    TabOrder = 0
+  end
   object actionList: TActionList
     Left = 475
     Top = 106

@@ -39,9 +39,13 @@ type
   tSceneActionState = set of tSceneActionStateFlag;
 
 type
+
+  { tSceneForm }
+
   tSceneForm = class(tForm)
     actCloseFinished: TAction;
     actionList: TActionList;
+    ScrollBox: TScrollBox;
     procedure actCloseFinishedExecute(Sender: TObject);
     procedure formClose(sender: tObject; var closeAction: tCloseAction);
     procedure formCloseQuery(sender: tObject; var canClose: boolean);
@@ -125,9 +129,8 @@ begin
   mainForm.scene := self;
   fSource := nil;
   fConsole := tKlausConsole.create(self);
-  fConsole.parent := self;
+  fConsole.parent := scrollBox;
   fConsole.borderStyle := bsSingle;
-  fConsole.borderSpacing.around := 4;
   with mainForm.consoleOptions do begin
     fConsole.font := font;
     if stayOnTop then self.formStyle := fsStayOnTop;
