@@ -61,6 +61,7 @@ const
   klausSysProcName_Add = 'добавить';
   klausSysProcName_Insert = 'вставить';
   klausSysProcName_Delete = 'удалить';
+  klausSysProcName_Clear = 'очистить';
   klausSysProcName_Overwrite = 'вписать';
   klausSysProcName_Find = 'найти';
   klausSysProcName_Replace = 'заменить';
@@ -443,6 +444,7 @@ begin
   tKlausSysProc_Add.create(self, zeroSrcPt);
   tKlausSysProc_Insert.create(self, zeroSrcPt);
   tKlausSysProc_Delete.create(self, zeroSrcPt);
+  tKlausSysProc_Clear.create(self, zeroSrcPt);
   tKlausSysProc_Char.create(self, zeroSrcPt);
   tKlausSysProc_Part.create(self, zeroSrcPt);
   tKlausSysProc_Next.create(self, zeroSrcPt);

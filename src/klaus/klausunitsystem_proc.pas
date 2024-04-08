@@ -186,6 +186,18 @@ type
   end;
 
 type
+  // процедура очистить(вв м: массив);
+  // процедура очистить(вв сл: словарь);
+  tKlausSysProc_Clear = class(tKlausSysProcDecl)
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      function  isCustomParamHandler: boolean; override;
+      procedure checkCallParamTypes(expr: array of tKlausExpression; at: tSrcPoint); override;
+      procedure getCustomParamModes(types: array of tKlausTypeDef; out modes: tKlausProcParamModes; const at: tSrcPoint); override;
+      procedure customRun(frame: tKlausStackFrame; values: array of tKlausVarValueAt; const at: tSrcPoint); override;
+  end;
+
+type
   // функция часть(вх стр: строка; вх индекс: целое): строка;
   // функция часть(вх стр: строка; вх индекс, размер: целое): строка;
   tKlausSysProc_Part = class(tKlausSysProcDecl)
@@ -1565,6 +1577,58 @@ begin
     // строка
     if l <> 3 then errWrongParamCount(l, 3, 3, at);
     (values[0].v as tKlausVarValueSimple).stringDelete(getSimpleInt(values[1]), getSimpleInt(values[2]), at);
+  end else
+    errTypeMismatch(values[0].at);
+end;
+
+{ tKlausSysProc_Clear }
+
+constructor tKlausSysProc_Clear.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_Clear, aPoint);
+end;
+
+function tKlausSysProc_Clear.isCustomParamHandler: boolean;
+begin
+  result := true;
+end;
+
+procedure tKlausSysProc_Clear.checkCallParamTypes(expr: array of tKlausExpression; at: tSrcPoint);
+var
+  cnt: integer;
+  dt: tKlausTypeDef;
+begin
+  cnt := length(expr);
+  if cnt <> 1 then errWrongParamCount(cnt, 1, 1, at);
+  if not expr[0].isVarPath then raise eKlausError.create(ercInvalidOutputParam, expr[0].point);
+  dt := expr[0].resultTypeDef;
+  if not (dt is tKlausTypeDefArray) and not (dt is tKlausTypeDefDict) then errTypeMismatch(expr[0].point);
+end;
+
+procedure tKlausSysProc_Clear.getCustomParamModes(
+  types: array of tKlausTypeDef; out modes: tKlausProcParamModes; const at: tSrcPoint);
+begin
+  if length(types) = 1 then modes := [kpmInOut]
+  else errWrongParamCount(length(types), 1, 1, at);
+end;
+
+procedure tKlausSysProc_Clear.customRun(
+  frame: tKlausStackFrame; values: array of tKlausVarValueAt; const at: tSrcPoint);
+var
+  l: integer;
+  arr: tKlausVarValueArray;
+  dict: tKlausVarValueDict;
+begin
+  l := length(values);
+  if l <> 1 then errWrongParamCount(l, 1, 1, at);
+  if values[0].v is tKlausVarValueArray then begin
+    // массив
+    arr := values[0].v as tKlausVarValueArray;
+    arr.clear;
+  end else if values[0].v is tKlausVarValueDict then begin
+    // словарь
+    dict := values[0].v as tKlausVarValueDict;
+    dict.clear;
   end else
     errTypeMismatch(values[0].at);
 end;
