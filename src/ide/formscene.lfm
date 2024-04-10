@@ -14,16 +14,34 @@ object SceneForm: TSceneForm
   OnShow = FormShow
   Position = poScreenCenter
   LCLVersion = '3.2.0.0'
-  object ScrollBox: TScrollBox
+  object PageControl: TPageControl
     Left = 0
     Height = 642
     Top = 0
     Width = 1010
-    HorzScrollBar.Page = 1
-    VertScrollBar.Page = 1
+    ActivePage = tsConsole
     Align = alClient
-    BorderStyle = bsNone
+    AutoSize = True
+    TabIndex = 0
     TabOrder = 0
+    object tsConsole: TTabSheet
+      AutoSize = True
+      Caption = 'Консоль'
+      ClientHeight = 611
+      ClientWidth = 1000
+      object ScrollBox: TScrollBox
+        Left = 0
+        Height = 611
+        Top = 0
+        Width = 1000
+        HorzScrollBar.Page = 1
+        VertScrollBar.Page = 1
+        Align = alClient
+        AutoSize = True
+        BorderStyle = bsNone
+        TabOrder = 0
+      end
+    end
   end
   object actionList: TActionList
     Left = 475

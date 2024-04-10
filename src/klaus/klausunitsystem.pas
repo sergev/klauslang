@@ -122,6 +122,8 @@ const
   klausSysProcName_FileDelete = 'файлУдалить';
   klausSysProcName_FileFindFirst = 'файлПервый';
   klausSysProcName_FileFindNext = 'файлСледующий';
+  klausSysProcName_GrWindowOpen = 'грОткрытьОкно';
+  klausSysProcName_GrWindowClose = 'грЗакрытьОкно';
 
 const
   klausConstNameNewline = 'НС';
@@ -508,6 +510,8 @@ begin
   tKlausSysProc_FileDelete.create(self, zeroSrcPt);
   tKlausSysProc_FileFindFirst.create(self, zeroSrcPt);
   tKlausSysProc_FileFindNext.create(self, zeroSrcPt);
+  tKlausSysProc_GrWindowOpen.create(self, zeroSrcPt);
+  tKlausSysProc_GrWindowClose.create(self, zeroSrcPt);
 end;
 
 procedure tKlausUnitSystem.setArgs(val: tStrings);

@@ -126,6 +126,7 @@ const
   ercUndefinedForward       = 76;
   ercDuplicateForward       = 77;
   ercWrongForwardSignature  = 78;
+  ercCanvasUnavailable      = 79;
 
 const
   // Классификация кодов eKlausError для трансляции в исключения языка
@@ -168,7 +169,7 @@ const
 
     //ksxRuntimeError
     [ercStackTooBig, ercInaccurateCleanup, ercInvalidKlausHandle, ercTooManyHandles,
-    ercUnexpectedObjectClass, ercCallsNotAllowed],
+    ercUnexpectedObjectClass, ercCallsNotAllowed, ercCanvasUnavailable],
 
     //ksxBadNumber
     [ercArgumentIsNaN, ercArgumentIsNotFinite],
@@ -286,6 +287,7 @@ resourcestring
   errUndefinedForward = 'Отсутствует реализация для предварительного определения.';
   errDuplicateForward = 'Повторное предварительное определение.';
   errWrongForwardSignature = 'Определение подпрограммы не соответствует предварительному определению.';
+  errCanvasUnavailable = 'Невозможно использовать окно графического вывода в этом режиме.';
 
 { Globals }
 
@@ -396,6 +398,7 @@ begin
     ercUndefinedForward: result := errUndefinedForward;
     ercDuplicateForward: result := errDuplicateForward;
     ercWrongForwardSignature: result := errWrongForwardSignature;
+    ercCanvasUnavailable: result := errCanvasUnavailable;
   end;
 end;
 

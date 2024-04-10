@@ -31,7 +31,7 @@ unit KlausSrc;
 interface
 
 uses
-  Classes, SysUtils, FGL, U8, KlausErr, KlausLex, KlausDef, KlausSyn;
+  Classes, SysUtils, FGL, Graphics, U8, KlausErr, KlausLex, KlausDef, KlausSyn;
 
 type
   tKlausMap = class;
@@ -104,6 +104,7 @@ type
   tKlausVariable = class;
   tKlausStackFrame = class;
   tKlausRuntime = class;
+  tKlausCanvas = class;
   eKlausLangException = class;
 
 type
@@ -1216,7 +1217,6 @@ type
 
       procedure storeFreeHandle(h: tKlausObject);
       function  restoreFreeHandle: tKlausObject;
-    protected
     public
       property count: sizeInt read fCount;
 
@@ -1226,6 +1226,7 @@ type
       procedure put(h: tKlausObject; obj: tObject; const at: tSrcPoint);
       function  allocate(obj: tObject; const at: tSrcPoint): tKlausObject;
       function  release(h: tKlausObject; const at: tSrcPoint): tObject;
+      procedure releaseAndFree(h: tKlausObject; const at: tSrcPoint);
       function  exists(h: tKlausObject): boolean;
   end;
 
@@ -1412,6 +1413,12 @@ type
   // Обработчик записи данных в стандартный поток
   tKlausWriteMethod = procedure(const s: string) of object;
 
+  // Обработчик создания окна для графического вывода
+  tKlausCreateCanvasMethod = function(const caption: string): tObject of object;
+
+  // Обработчик уничтожения окна для графического вывода
+  tKlausDestroyCanvasMethod = procedure(const win: tObject) of object;
+
   // Комплект процедур ввода-вывода
   tKlausInOutMethods = record
     setRaw: tKlausSetRawMethod;
@@ -1419,6 +1426,22 @@ type
     readChar: tKlausReadCharMethod;
     writeOut: tKlausWriteMethod;
     writeErr: tKlausWriteMethod;
+    createCanvas: tKlausCreateCanvasMethod;
+    destroyCanvas: tKlausDestroyCanvasMethod;
+  end;
+
+type
+  // Объект-связка с окном графического вывода
+  tKlausCanvas = class(tObject)
+    private
+      fRuntime: tKlausRuntime;
+      fWindow: tObject;
+    public
+      property runtime: tKlausRuntime read fRuntime;
+      property window: tObject read fWindow;
+
+      constructor create(aRuntime: tKlausRuntime; const cap: string; const at: tSrcPoint);
+      destructor  destroy; override;
   end;
 
 type
@@ -1456,6 +1479,8 @@ type
       function  inputAvailable: boolean;
       procedure run(const fileName: string; args: tStrings = nil);
       function  evaluate(fr: tKlausStackFrame; expr: string; allowCalls: boolean): string;
+      function  createCanvas(const cap: string; const at: tSrcPoint): tObject;
+      procedure destroyCanvas(const win: tObject);
   end;
 
 type
@@ -1543,6 +1568,8 @@ type
       fStdIO: tKlausInOutMethods;
       fOnAssignStdIO: tKlausAssignIOEvent;
       fOnStateChange: tNotifyEvent;
+      fTmpStr: string;
+      fTmpObj: tObject;
 
       procedure lock;
       procedure unlock;
@@ -1559,6 +1586,8 @@ type
       function  getRuntime: tKlausRuntime;
       procedure setRuntime(val: tKlausRuntime);
       procedure callOnStateChange;
+      procedure syncCreateCanvas;
+      procedure syncDestroyCanvas;
     protected
       property terminated: boolean read getTerminated write setTerminated;
 
@@ -1570,6 +1599,8 @@ type
       procedure doReadChar(out c: u8Char);
       procedure doWriteOut(const s: string);
       procedure doWriteErr(const s: string);
+      function  doCreateCanvas(const cap: string): tObject;
+      procedure doDestroyCanvas(const win: tObject);
     public
       property returnValue;
       property source: tKlausSource read fSource;
@@ -5649,6 +5680,7 @@ begin
   fObjects := tKlausObjects.create;
   fStack := tFPList.create;
   fMaxStackSize := klausDefaultMaxStackSize;
+  fillChar(fStdIO, sizeOf(fStdIO), 0);
 end;
 
 destructor tKlausRuntime.destroy;
@@ -5666,6 +5698,8 @@ begin
   fStdIO.readChar := io.readChar;
   fStdIO.writeOut := io.writeOut;
   fStdIO.writeErr := io.writeErr;
+  fStdIO.createCanvas := io.createCanvas;
+  fStdIO.destroyCanvas := io.destroyCanvas;
 end;
 
 procedure tKlausRuntime.run(const fileName: string; args: tStrings = nil);
@@ -5745,6 +5779,18 @@ begin
   except
     on e: exception do result := format(strKlausException, [e.className, e.message]);
   end;
+end;
+
+function tKlausRuntime.createCanvas(const cap: string; const at: tSrcPoint): tObject;
+begin
+  if not assigned(fStdIO.createCanvas) then raise eKlausError.create(ercCanvasUnavailable, at);
+  result := fStdIO.createCanvas(cap);
+end;
+
+procedure tKlausRuntime.destroyCanvas(const win: tObject);
+begin
+  if not assigned(fStdIO.destroyCanvas) then raise eKlausError.create(ercCanvasUnavailable, 0, 0);
+  fStdIO.destroyCanvas(win);
 end;
 
 function tKlausRuntime.getStackCount: integer;
@@ -6093,6 +6139,21 @@ begin
   end;
 end;
 
+{ tKlausCanvas }
+
+constructor tKlausCanvas.create(aRuntime: tKlausRuntime; const cap: string; const at: tSrcPoint);
+begin
+  inherited create;
+  fRuntime := aRuntime;
+  fWindow := fRuntime.createCanvas(cap, at);
+end;
+
+destructor tKlausCanvas.destroy;
+begin
+  if assigned(fWindow) then fRuntime.destroyCanvas(fWindow);
+  inherited destroy;
+end;
+
 { tKlausObjects }
 
 constructor tKlausObjects.create;
@@ -6143,6 +6204,24 @@ begin
   fItems[h-1] := nil;
   storeFreeHandle(h);
   dec(fCount);
+end;
+
+procedure tKlausObjects.releaseAndFree(h: tKlausObject; const at: tSrcPoint);
+var
+  o: tObject;
+begin
+  o := get(h, at);
+  try
+    freeAndNil(o);
+  except
+    on e: eKlausError do begin
+      e.line := at.line;
+      e.pos := at.pos;
+      raise;
+    end;
+    else raise;
+  end;
+  release(h, at);
 end;
 
 function tKlausObjects.exists(h: tKlausObject): boolean;
@@ -6821,6 +6900,8 @@ begin
     io.readChar := @doReadChar;
     io.writeOut := @doWriteOut;
     io.writeErr := @doWriteErr;
+    io.createCanvas := @doCreateCanvas;
+    io.destroyCanvas := @doDestroyCanvas;
     runtime.setInOutMethods(io);
     try
       setState(kdsRunning);
@@ -6979,6 +7060,18 @@ begin
   fOnStateChange(self);
 end;
 
+procedure tKlausDebugThread.syncCreateCanvas;
+begin
+  if not assigned(fStdIO.createCanvas) then raise eKlausError.create(ercCanvasUnavailable, 0, 0);
+  fTmpObj := fStdIO.createCanvas(fTmpStr);
+end;
+
+procedure tKlausDebugThread.syncDestroyCanvas;
+begin
+  if not assigned(fStdIO.destroyCanvas) then raise eKlausError.create(ercCanvasUnavailable, 0, 0);
+  fStdIO.destroyCanvas(fTmpObj);
+end;
+
 procedure tKlausDebugThread.doWriteOut(const s: string);
 begin
   if not assigned(fStdIO.writeOut) then raise eKlausIOError.create(strOutputNotOpen);
@@ -6989,6 +7082,19 @@ procedure tKlausDebugThread.doWriteErr(const s: string);
 begin
   if not assigned(fStdIO.writeErr) then raise eKlausIOError.create(strOutputNotOpen);
   fStdIO.writeErr(s);
+end;
+
+function tKlausDebugThread.doCreateCanvas(const cap: string): tObject;
+begin
+  fTmpStr := cap;
+  synchronize(@syncCreateCanvas);
+  result := fTmpObj;
+end;
+
+procedure tKlausDebugThread.doDestroyCanvas(const win: tObject);
+begin
+  fTmpObj := win;
+  synchronize(@syncDestroyCanvas);
 end;
 
 procedure tKlausDebugThread.inputNeeded;

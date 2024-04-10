@@ -26,7 +26,8 @@ interface
 
 uses
   Classes, SysUtils, Messages, LMessages, Forms, Controls, Graphics, Dialogs,
-  ActnList, U8, KlausGlobals, KlausConsole, KlausSrc, KlausLex, KlausSyn, KlausErr;
+  ActnList, ComCtrls, ExtCtrls, U8, KlausGlobals, KlausConsole, KlausSrc,
+  KlausLex, KlausSyn, KlausErr;
 
 type
   tSceneActionStateFlag = (
@@ -45,7 +46,9 @@ type
   tSceneForm = class(tForm)
     actCloseFinished: TAction;
     actionList: TActionList;
+    PageControl: TPageControl;
     ScrollBox: TScrollBox;
+    tsConsole: TTabSheet;
     procedure actCloseFinishedExecute(Sender: TObject);
     procedure formClose(sender: tObject; var closeAction: tCloseAction);
     procedure formCloseQuery(sender: tObject; var canClose: boolean);
@@ -80,6 +83,8 @@ type
     function  inStreamHasChar: boolean;
     procedure inStreamReadChar(out c: u8Char);
     procedure outStreamWrite(const s: string);
+    function  createGraphTab(const cap: string): tObject;
+    procedure destroyGraphTab(const win: tObject);
   public
     property source: tKlausSource read fSource;
     property fileName: string read fFileName;
@@ -140,6 +145,7 @@ begin
   fConsole.caretType := kctHorzLine;
   fConsole.onInput := @consoleInput;
   fConsole.tabStop := true;
+  activeControl := fConsole;
   mainForm.addControlStateClient(self);
   invalidateControlState;
 end;
@@ -331,6 +337,8 @@ begin
   if runOptions.stdOut = '' then io.writeOut := @fConsole.write
   else io.writeOut := @outStreamWrite;
   io.writeErr := @fConsole.write;
+  io.createCanvas := @createGraphTab;
+  io.destroyCanvas := @destroyGraphTab;
 end;
 
 procedure tSceneForm.setConsoleRawMode(raw: boolean);
@@ -375,6 +383,27 @@ procedure tSceneForm.outStreamWrite(const s: string);
 begin
   if fOutStream = nil then raise eKlausError.create(ercStreamNotOpen, 0, 0);
   if s <> '' then fOutStream.write(pChar(s)^, length(s));
+end;
+
+function tSceneForm.createGraphTab(const cap: string): tObject;
+var
+  ts: tTabSheet;
+  sb: tScrollBox;
+begin
+  ts := pageControl.addTabSheet;
+  ts.caption := cap;
+  ts.autoSize := true;
+  sb := tScrollBox.create(self);
+  sb.autoScroll := true;
+  sb.autoSize := true;
+  sb.parent := ts;
+  sb.align := alClient;
+  result := ts;
+end;
+
+procedure tSceneForm.destroyGraphTab(const win: tObject);
+begin
+  win.free;
 end;
 
 function tSceneForm.getActionState: tSceneActionState;

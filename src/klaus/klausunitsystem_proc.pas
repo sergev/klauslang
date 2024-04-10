@@ -902,6 +902,26 @@ type
       procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
   end;
 
+type
+  // функция грОткрытьОкно(вх заголовок: строка): объект;
+  tKlausSysProc_GrWindowOpen = class(tKlausSysProcDecl)
+    private
+      fCaption: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  // процедура грЗакрытьОкно(вв окно: объект);
+  tKlausSysProc_GrWindowClose = class(tKlausSysProcDecl)
+    private
+      fWindow: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
 implementation
 
 uses
@@ -925,14 +945,10 @@ end;
 procedure tKlausSysProc_Destroy.run(frame: tKlausStackFrame; const at: tSrcPoint);
 var
   v: tKlausObject;
-  o: tObject;
 begin
   v := getSimpleObj(frame, fObj, at);
-  if frame.owner.objects.exists(v) then begin
-    o := frame.owner.objects.get(v, at);
-    freeAndNil(o);
-    frame.owner.objects.release(v, at);
-  end;
+  if frame.owner.objects.exists(v) then
+    frame.owner.objects.releaseAndFree(v, at);
   setSimple(frame, fObj, klausZeroValue(kdtObject), at);
 end;
 
@@ -2712,12 +2728,10 @@ end;
 procedure tKlausSysProc_FileClose.run(frame: tKlausStackFrame; const at: tSrcPoint);
 var
   f: tKlausObject;
-  stream: tKlausFileStream;
 begin
   f := getSimpleObj(frame, fFile, at);
-  stream := getKlausObject(frame, f, tKlausFileStream, at) as tKlausFileStream;
-  freeAndNil(stream);
-  frame.owner.objects.release(f, at);
+  getKlausObject(frame, f, tKlausFileStream, at);
+  frame.owner.objects.releaseAndFree(f, at);
   setSimple(frame, fFile, klausZeroValue(kdtObject), at);
 end;
 
@@ -3202,6 +3216,51 @@ begin
   rslt := findNext(search.searchRec) = 0;
   if rslt then fillInFileInfo(search, frame.varByDecl(fInfo, at).value as tKlausVarValueStruct, at);
   returnSimple(frame, klausSimple(rslt));
+end;
+
+{ tKlausSysProc_GrWindowOpen }
+
+constructor tKlausSysProc_GrWindowOpen.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_GrWindowOpen, aPoint);
+  fCaption := tKlausProcParam.create(self, 'заголовок', aPoint, kpmInput, source.simpleTypes[kdtString]);
+  addParam(fCaption);
+  declareRetValue(kdtObject);
+end;
+
+procedure tKlausSysProc_GrWindowOpen.run(frame: tKlausStackFrame; const at: tSrcPoint);
+var
+  cap: tKlausString;
+  rslt: tKlausObject;
+begin
+  cap := getSimpleStr(frame, fCaption, at);
+  rslt := frame.owner.objects.allocate(tObject(klausInvalidPointer), at);
+  try
+    frame.owner.objects.put(rslt, tKlausCanvas.create(frame.owner, cap, at), at);
+    returnSimple(frame, klausSimpleObj(rslt));
+  except
+    frame.owner.objects.release(rslt, at);
+    raise;
+  end;
+end;
+
+{ tKlausSysProc_GrWindowClose }
+
+constructor tKlausSysProc_GrWindowClose.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_GrWindowClose, aPoint);
+  fWindow := tKlausProcParam.create(self, 'окно', aPoint, kpmInOut, source.simpleTypes[kdtObject]);
+  addParam(fWindow);
+end;
+
+procedure tKlausSysProc_GrWindowClose.run(frame: tKlausStackFrame; const at: tSrcPoint);
+var
+  w: tKlausObject;
+begin
+  w := getSimpleObj(frame, fWindow, at);
+  getKlausObject(frame, w, tKlausCanvas, at);
+  frame.owner.objects.releaseAndFree(w, at);
+  setSimple(frame, fWindow, klausZeroValue(kdtObject), at);
 end;
 
 end.
