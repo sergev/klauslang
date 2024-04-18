@@ -35,7 +35,9 @@ object SceneForm: TSceneForm
         Top = 0
         Width = 1000
         HorzScrollBar.Page = 1
+        HorzScrollBar.Tracking = True
         VertScrollBar.Page = 1
+        VertScrollBar.Tracking = True
         Align = alClient
         AutoSize = True
         BorderStyle = bsNone

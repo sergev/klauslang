@@ -124,6 +124,17 @@ const
   klausSysProcName_FileFindNext = 'файлСледующий';
   klausSysProcName_GrWindowOpen = 'грОткрытьОкно';
   klausSysProcName_GrWindowClose = 'грЗакрытьОкно';
+  klausSysProcName_GrWindowSize = 'грРазмерОкна';
+  klausSysProcName_GrBeginPaint = 'грНачать';
+  klausSysProcName_GrEndPaint = 'грЗакончить';
+  klausSysProcName_GrPen = 'грПеро';
+  klausSysProcName_GrBrush = 'грКисть';
+  klausSysProcName_GrCircle = 'грКруг';
+  klausSysProcName_GrEllipse = 'грЭллипс';
+  klausSysProcName_GrArc = 'грДуга';
+  klausSysProcName_GrChord = 'грСегмент';
+  klausSysProcName_GrLine = 'грОтрезок';
+  klausSysProcName_GrRectangle = 'грПрямоугольник';
 
 const
   klausConstNameNewline = 'НС';
@@ -159,6 +170,20 @@ const
   klausConstFileAttrCompressed = 'фаСжатый';
   klausConstFileAttrEncrypted = 'фаШифрованный';
   klausConstFileAttrVirtual = 'фаВиртуальный';
+  klausConstGrPenStyleClear = 'грспПусто';
+  klausConstGrPenStyleSolid = 'грспЛиния';
+  klausConstGrPenStyleDot = 'грспТочка';
+  klausConstGrPenStyleDash = 'грспТире';
+  klausConstGrPenStyleDashDot = 'грспТочкаТире';
+  klausConstGrPenStyleDashDotDot = 'грсп2ТочкиТире';
+  klausConstGrBrushStyleClear = 'грскПусто';
+  klausConstGrBrushStyleSolid = 'грскСплошная';
+  klausConstGrBrushStyleHorizontal = 'грскГорзШтрих';
+  klausConstGrBrushStyleVertical = 'грскВертШтрих';
+  klausConstGrBrushStyleFDiagonal = 'грскПДиагШтрих';
+  klausConstGrBrushStyleBDiagonal = 'грскЛДиагШтрих';
+  klausConstGrBrushStyleCross = 'грскКрест';
+  klausConstGrBrushStyleDiagCross = 'грскДиагКрест';
 
 const
   klausTypeNameFileInfo = 'ФайлИнфо';
@@ -412,6 +437,20 @@ begin
   tKlausConstDecl.create(self, klausConstFilePosFromEnd, zeroSrcPt, klausSimple(klausFilePosFromEnd));
   tKlausConstDecl.create(self, klausConstFilePosFromCurrent, zeroSrcPt, klausSimple(klausFilePosFromCurrent));
   tKlausConstDecl.create(self, klausConstFileAttrReadOnly, zeroSrcPt, klausSimple(tKlausInteger(faReadOnly)));
+  tKlausConstDecl.create(self, klausConstGrPenStyleClear, zeroSrcPt, klausSimple(tKlausInteger(0)));
+  tKlausConstDecl.create(self, klausConstGrPenStyleSolid, zeroSrcPt, klausSimple(tKlausInteger(1)));
+  tKlausConstDecl.create(self, klausConstGrPenStyleDot, zeroSrcPt, klausSimple(tKlausInteger(2)));
+  tKlausConstDecl.create(self, klausConstGrPenStyleDash, zeroSrcPt, klausSimple(tKlausInteger(3)));
+  tKlausConstDecl.create(self, klausConstGrPenStyleDashDot, zeroSrcPt, klausSimple(tKlausInteger(4)));
+  tKlausConstDecl.create(self, klausConstGrPenStyleDashDotDot, zeroSrcPt, klausSimple(tKlausInteger(5)));
+  tKlausConstDecl.create(self, klausConstGrBrushStyleClear, zeroSrcPt, klausSimple(tKlausInteger(0)));
+  tKlausConstDecl.create(self, klausConstGrBrushStyleSolid, zeroSrcPt, klausSimple(tKlausInteger(1)));
+  tKlausConstDecl.create(self, klausConstGrBrushStyleHorizontal, zeroSrcPt, klausSimple(tKlausInteger(2)));
+  tKlausConstDecl.create(self, klausConstGrBrushStyleVertical, zeroSrcPt, klausSimple(tKlausInteger(3)));
+  tKlausConstDecl.create(self, klausConstGrBrushStyleFDiagonal, zeroSrcPt, klausSimple(tKlausInteger(4)));
+  tKlausConstDecl.create(self, klausConstGrBrushStyleBDiagonal, zeroSrcPt, klausSimple(tKlausInteger(5)));
+  tKlausConstDecl.create(self, klausConstGrBrushStyleCross, zeroSrcPt, klausSimple(tKlausInteger(6)));
+  tKlausConstDecl.create(self, klausConstGrBrushStyleDiagCross, zeroSrcPt, klausSimple(tKlausInteger(7)));
   {$push}{$warnings off}
   tKlausConstDecl.create(self, klausConstFileAttrHidden, zeroSrcPt, klausSimple(tKlausInteger(faHidden)));
   tKlausConstDecl.create(self, klausConstFileAttrSystem, zeroSrcPt, klausSimple(tKlausInteger(faSysFile)));
@@ -512,6 +551,17 @@ begin
   tKlausSysProc_FileFindNext.create(self, zeroSrcPt);
   tKlausSysProc_GrWindowOpen.create(self, zeroSrcPt);
   tKlausSysProc_GrWindowClose.create(self, zeroSrcPt);
+  tKlausSysProc_GrWindowSize.create(self, zeroSrcPt);
+  tKlausSysProc_GrBeginPaint.create(self, zeroSrcPt);
+  tKlausSysProc_GrEndPaint.create(self, zeroSrcPt);
+  tKlausSysProc_GrPen.create(self, zeroSrcPt);
+  tKlausSysProc_GrBrush.create(self, zeroSrcPt);
+  tKlausSysProc_GrCircle.create(self, zeroSrcPt);
+  tKlausSysProc_GrEllipse.create(self, zeroSrcPt);
+  tKlausSysProc_GrArc.create(self, zeroSrcPt);
+  tKlausSysProc_GrChord.create(self, zeroSrcPt);
+  tKlausSysProc_GrLine.create(self, zeroSrcPt);
+  tKlausSysProc_GrRectangle.create(self, zeroSrcPt);
 end;
 
 procedure tKlausUnitSystem.setArgs(val: tStrings);

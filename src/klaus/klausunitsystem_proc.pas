@@ -922,10 +922,137 @@ type
       procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
   end;
 
+type
+  // процедура грРазмерОкна(вх окно: объект; вх горз, верт: целое);
+  tKlausSysProc_GrWindowSize = class(tKlausSysProcDecl)
+    private
+      fWindow: tKlausProcParam;
+      fHorz: tKlausProcParam;
+      fVert: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  // процедура грНачать(вх окно: объект);
+  tKlausSysProc_GrBeginPaint = class(tKlausSysProcDecl)
+    private
+      fWindow: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  // процедура грЗакончить(вх окно: объект);
+  tKlausSysProc_GrEndPaint = class(tKlausSysProcDecl)
+    private
+      fWindow: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  // процедура грПеро(вх окно: объект; цвет: целое);
+  // процедура грПеро(вх окно: объект; цвет, толщина: целое);
+  // процедура грПеро(вх окно: объект; цвет, толщина, стиль: целое);
+  tKlausSysProc_GrPen = class(tKlausSysProcDecl)
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      function  isCustomParamHandler: boolean; override;
+      procedure checkCallParamTypes(expr: array of tKlausExpression; at: tSrcPoint); override;
+      procedure getCustomParamModes(types: array of tKlausTypeDef; out modes: tKlausProcParamModes; const at: tSrcPoint); override;
+      procedure customRun(frame: tKlausStackFrame; values: array of tKlausVarValueAt; const at: tSrcPoint); override;
+  end;
+
+type
+  // процедура грКисть(вх окно: объект; цвет: целое);
+  // процедура грКисть(вх окно: объект; цвет, стиль: целое);
+  tKlausSysProc_GrBrush = class(tKlausSysProcDecl)
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      function  isCustomParamHandler: boolean; override;
+      procedure checkCallParamTypes(expr: array of tKlausExpression; at: tSrcPoint); override;
+      procedure getCustomParamModes(types: array of tKlausTypeDef; out modes: tKlausProcParamModes; const at: tSrcPoint); override;
+      procedure customRun(frame: tKlausStackFrame; values: array of tKlausVarValueAt; const at: tSrcPoint); override;
+  end;
+
+type
+  // процедура грКруг(вх окно: объект; вх г, в, радиус: целое);
+  tKlausSysProc_GrCircle = class(tKlausSysProcDecl)
+    private
+      fWindow: tKlausProcParam;
+      fX, fY, fR: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  // процедура грЭллипс(вх окно: объект; вх г1, в1, г2, в2: целое);
+  tKlausSysProc_GrEllipse = class(tKlausSysProcDecl)
+    private
+      fWindow: tKlausProcParam;
+      fX1, fY1, fX2, fY2: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  // процедура грДуга(вх окно: объект; вх г1, в1, г2, в2: целое; вх начало, размер: дробное);
+  tKlausSysProc_GrArc = class(tKlausSysProcDecl)
+    private
+      fWindow: tKlausProcParam;
+      fX1, fY1, fX2, fY2: tKlausProcParam;
+      fStart, fLength: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  // процедура грСегмент(вх окно: объект; вх г1, в1, г2, в2: целое; вх начало, размер: дробное);
+  tKlausSysProc_GrChord = class(tKlausSysProcDecl)
+    private
+      fWindow: tKlausProcParam;
+      fX1, fY1, fX2, fY2: tKlausProcParam;
+      fStart, fLength: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  // процедура грОтрезок(вх окно: объект; вх г1, в1, г2, в2: целое);
+  tKlausSysProc_GrLine = class(tKlausSysProcDecl)
+    private
+      fWindow: tKlausProcParam;
+      fX1, fY1, fX2, fY2: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  // процедура грПрямоугольник(вх окно: объект; вх г1, в1, г2, в2: целое);
+  // процедура грПрямоугольник(вх окно: объект; вх г1, в1, г2, в2, р: целое);
+  // процедура грПрямоугольник(вх окно: объект; вх г1, в1, г2, в2, рг, рв: целое);
+  tKlausSysProc_GrRectangle = class(tKlausSysProcDecl)
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      function  isCustomParamHandler: boolean; override;
+      procedure checkCallParamTypes(expr: array of tKlausExpression; at: tSrcPoint); override;
+      procedure getCustomParamModes(types: array of tKlausTypeDef; out modes: tKlausProcParamModes; const at: tSrcPoint); override;
+      procedure customRun(frame: tKlausStackFrame; values: array of tKlausVarValueAt; const at: tSrcPoint); override;
+  end;
+
 implementation
 
 uses
-  Math, LCLIntf, Graphics, GraphUtils, KlausUtils;
+  Math, LCLIntf, Graphics, GraphType, GraphUtils, KlausUtils;
 
 const
   klausTermProcStream: tHandle = 1;
@@ -3236,7 +3363,8 @@ begin
   cap := getSimpleStr(frame, fCaption, at);
   rslt := frame.owner.objects.allocate(tObject(klausInvalidPointer), at);
   try
-    frame.owner.objects.put(rslt, tKlausCanvas.create(frame.owner, cap, at), at);
+    if klausCanvasLinkClass = nil then raise eKlausError.create(ercCanvasUnavailable, at);
+    frame.owner.objects.put(rslt, klausCanvasLinkClass.create(frame.owner, cap), at);
     returnSimple(frame, klausSimpleObj(rslt));
   except
     frame.owner.objects.release(rslt, at);
@@ -3258,9 +3386,424 @@ var
   w: tKlausObject;
 begin
   w := getSimpleObj(frame, fWindow, at);
-  getKlausObject(frame, w, tKlausCanvas, at);
+  getKlausObject(frame, w, tKlausCanvasLink, at);
   frame.owner.objects.releaseAndFree(w, at);
   setSimple(frame, fWindow, klausZeroValue(kdtObject), at);
+end;
+
+{ tKlausSysProc_GrWindowSize }
+
+constructor tKlausSysProc_GrWindowSize.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_GrWindowSize, aPoint);
+  fWindow := tKlausProcParam.create(self, 'окно', aPoint, kpmInput, source.simpleTypes[kdtObject]);
+  addParam(fWindow);
+  fHorz := tKlausProcParam.create(self, 'горз', aPoint, kpmInput, source.simpleTypes[kdtInteger]);
+  addParam(fHorz);
+  fVert := tKlausProcParam.create(self, 'верт', aPoint, kpmInput, source.simpleTypes[kdtInteger]);
+  addParam(fVert);
+end;
+
+procedure tKlausSysProc_GrWindowSize.run(frame: tKlausStackFrame; const at: tSrcPoint);
+var
+  w: tKlausObject;
+  cnv: tKlausCanvasLink;
+  cx, cy: tKlausInteger;
+begin
+  w := getSimpleObj(frame, fWindow, at);
+  cnv := getKlausObject(frame, w, tKlausCanvasLink, at) as tKlausCanvasLink;
+  cx := getSimpleInt(frame, fHorz, at);
+  cy := getSimpleInt(frame, fVert, at);
+  cnv.setSize(cx, cy);
+end;
+
+{ tKlausSysProc_GrBeginPaint }
+
+constructor tKlausSysProc_GrBeginPaint.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_GrBeginPaint, aPoint);
+  fWindow := tKlausProcParam.create(self, 'окно', aPoint, kpmInput, source.simpleTypes[kdtObject]);
+  addParam(fWindow);
+end;
+
+procedure tKlausSysProc_GrBeginPaint.run(frame: tKlausStackFrame; const at: tSrcPoint);
+var
+  w: tKlausObject;
+  cnv: tKlausCanvasLink;
+begin
+  w := getSimpleObj(frame, fWindow, at);
+  cnv := getKlausObject(frame, w, tKlausCanvasLink, at) as tKlausCanvasLink;
+  cnv.beginPaint;
+end;
+
+{ tKlausSysProc_GrEndPaint }
+
+constructor tKlausSysProc_GrEndPaint.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_GrEndPaint, aPoint);
+  fWindow := tKlausProcParam.create(self, 'окно', aPoint, kpmInput, source.simpleTypes[kdtObject]);
+  addParam(fWindow);
+end;
+
+procedure tKlausSysProc_GrEndPaint.run(frame: tKlausStackFrame; const at: tSrcPoint);
+var
+  w: tKlausObject;
+  cnv: tKlausCanvasLink;
+begin
+  w := getSimpleObj(frame, fWindow, at);
+  cnv := getKlausObject(frame, w, tKlausCanvasLink, at) as tKlausCanvasLink;
+  cnv.endPaint;
+end;
+
+{ tKlausSysProc_GrPen }
+
+constructor tKlausSysProc_GrPen.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_GrPen, aPoint);
+end;
+
+function tKlausSysProc_GrPen.isCustomParamHandler: boolean;
+begin
+  result := true;
+end;
+
+procedure tKlausSysProc_GrPen.checkCallParamTypes(expr: array of tKlausExpression; at: tSrcPoint);
+var
+  cnt: integer;
+begin
+  cnt := length(expr);
+  if (cnt < 2) or (cnt > 4) then errWrongParamCount(cnt, 2, 4, at);
+  checkCanAssign(kdtObject, expr[0].resultTypeDef, expr[0].point);
+  checkCanAssign(kdtInteger, expr[1].resultTypeDef, expr[1].point);
+  if cnt > 2 then checkCanAssign(kdtInteger, expr[2].resultTypeDef, expr[2].point);
+  if cnt > 3 then checkCanAssign(kdtInteger, expr[3].resultTypeDef, expr[3].point);
+end;
+
+procedure tKlausSysProc_GrPen.getCustomParamModes(types: array of tKlausTypeDef; out modes: tKlausProcParamModes; const at: tSrcPoint);
+var
+  i: integer;
+begin
+  modes := nil;
+  setLength(modes, length(types));
+  for i := 0 to length(modes)-1 do modes[i] := kpmInput;
+end;
+
+procedure tKlausSysProc_GrPen.customRun(frame: tKlausStackFrame; values: array of tKlausVarValueAt; const at: tSrcPoint);
+const
+  penStyles: array[0..5] of tPenStyle = (
+    psClear, psSolid, psDot, psDash, psDashDot, psDashDotDot);
+var
+  cnt, ps: integer;
+  w: tKlausObject;
+  cnv: tKlausCanvasLink;
+  what: tKlausPenProps;
+  color: tColor;
+  style: tPenStyle;
+  width: tKlausInteger;
+begin
+  cnt := length(values);
+  if (cnt < 2) or (cnt > 4) then errWrongParamCount(cnt, 2, 4, at);
+  w := getSimpleObj(values[0]);
+  cnv := getKlausObject(frame, w, tKlausCanvasLink, at) as tKlausCanvasLink;
+  what := [kppColor];
+  color := getSimpleInt(values[1]) and $FFFFFF;
+  if cnt > 2 then begin
+    include(what, kppWidth);
+    width := getSimpleInt(values[2]);
+  end;
+  if cnt > 3 then begin
+    include(what, kppStyle);
+    ps := max(low(penStyles), min(high(penStyles), getSimpleInt(values[3])));
+    style := penStyles[ps];
+  end;
+  cnv.setPenProps(what, color, width, style);
+end;
+
+{ tKlausSysProc_GrBrush }
+
+constructor tKlausSysProc_GrBrush.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_GrBrush, aPoint);
+end;
+
+function tKlausSysProc_GrBrush.isCustomParamHandler: boolean;
+begin
+  result := true;
+end;
+
+procedure tKlausSysProc_GrBrush.checkCallParamTypes(expr: array of tKlausExpression; at: tSrcPoint);
+var
+  cnt: integer;
+begin
+  cnt := length(expr);
+  if (cnt < 2) or (cnt > 3) then errWrongParamCount(cnt, 2, 3, at);
+  checkCanAssign(kdtObject, expr[0].resultTypeDef, expr[0].point);
+  checkCanAssign(kdtInteger, expr[1].resultTypeDef, expr[1].point);
+  if cnt > 2 then checkCanAssign(kdtInteger, expr[2].resultTypeDef, expr[2].point);
+end;
+
+procedure tKlausSysProc_GrBrush.getCustomParamModes(types: array of tKlausTypeDef; out modes: tKlausProcParamModes; const at: tSrcPoint);
+var
+  i: integer;
+begin
+  modes := nil;
+  setLength(modes, length(types));
+  for i := 0 to length(modes)-1 do modes[i] := kpmInput;
+end;
+
+procedure tKlausSysProc_GrBrush.customRun(frame: tKlausStackFrame; values: array of tKlausVarValueAt; const at: tSrcPoint);
+const
+  brushStyles: array[0..1] of tBrushStyle = (bsClear, bsSolid);
+var
+  cnt, bs: integer;
+  w: tKlausObject;
+  cnv: tKlausCanvasLink;
+  what: tKlausBrushProps;
+  color: tColor;
+  style: tBrushStyle;
+begin
+  cnt := length(values);
+  if (cnt < 2) or (cnt > 3) then errWrongParamCount(cnt, 2, 3, at);
+  w := getSimpleObj(values[0]);
+  cnv := getKlausObject(frame, w, tKlausCanvasLink, at) as tKlausCanvasLink;
+  what := [kbpColor];
+  color := getSimpleInt(values[1]) and $FFFFFF;
+  if cnt > 2 then begin
+    include(what, kbpStyle);
+    bs := max(low(brushStyles), min(high(brushStyles), getSimpleInt(values[2])));
+    style := brushStyles[bs];
+  end;
+  cnv.setBrushProps(what, color, style);
+end;
+
+{ tKlausSysProc_GrCircle }
+
+constructor tKlausSysProc_GrCircle.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_GrCircle, aPoint);
+  fWindow := tKlausProcParam.create(self, 'окно', aPoint, kpmInput, source.simpleTypes[kdtObject]);
+  addParam(fWindow);
+  fX := tKlausProcParam.create(self, 'г', aPoint, kpmInput, source.simpleTypes[kdtInteger]);
+  addParam(fX);
+  fY := tKlausProcParam.create(self, 'в', aPoint, kpmInput, source.simpleTypes[kdtInteger]);
+  addParam(fY);
+  fR := tKlausProcParam.create(self, 'радиус', aPoint, kpmInput, source.simpleTypes[kdtInteger]);
+  addParam(fR);
+end;
+
+procedure tKlausSysProc_GrCircle.run(frame: tKlausStackFrame; const at: tSrcPoint);
+var
+  w: tKlausObject;
+  cnv: tKlausCanvasLink;
+  x, y, r: tKlausInteger;
+begin
+  w := getSimpleObj(frame, fWindow, at);
+  cnv := getKlausObject(frame, w, tKlausCanvasLink, at) as tKlausCanvasLink;
+  x := getSimpleInt(frame, fX, at);
+  y := getSimpleInt(frame, fY, at);
+  r := getSimpleInt(frame, fR, at);
+  cnv.ellipse(x-r, y-r, x+r, y+r);
+end;
+
+{ tKlausSysProc_GrEllipse }
+
+constructor tKlausSysProc_GrEllipse.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_GrEllipse, aPoint);
+  fWindow := tKlausProcParam.create(self, 'окно', aPoint, kpmInput, source.simpleTypes[kdtObject]);
+  addParam(fWindow);
+  fX1 := tKlausProcParam.create(self, 'г1', aPoint, kpmInput, source.simpleTypes[kdtInteger]);
+  addParam(fX1);
+  fY1 := tKlausProcParam.create(self, 'в1', aPoint, kpmInput, source.simpleTypes[kdtInteger]);
+  addParam(fY1);
+  fX2 := tKlausProcParam.create(self, 'г2', aPoint, kpmInput, source.simpleTypes[kdtInteger]);
+  addParam(fX2);
+  fY2 := tKlausProcParam.create(self, 'в2', aPoint, kpmInput, source.simpleTypes[kdtInteger]);
+  addParam(fY2);
+end;
+
+procedure tKlausSysProc_GrEllipse.run(frame: tKlausStackFrame; const at: tSrcPoint);
+var
+  w: tKlausObject;
+  cnv: tKlausCanvasLink;
+  x1, y1, x2, y2: tKlausInteger;
+begin
+  w := getSimpleObj(frame, fWindow, at);
+  cnv := getKlausObject(frame, w, tKlausCanvasLink, at) as tKlausCanvasLink;
+  x1 := getSimpleInt(frame, fX1, at);
+  y1 := getSimpleInt(frame, fY1, at);
+  x2 := getSimpleInt(frame, fX2, at);
+  y2 := getSimpleInt(frame, fY2, at);
+  cnv.ellipse(x1, y1, x2, y2);
+end;
+
+{ tKlausSysProc_GrArc }
+
+constructor tKlausSysProc_GrArc.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_GrArc, aPoint);
+  fWindow := tKlausProcParam.create(self, 'окно', aPoint, kpmInput, source.simpleTypes[kdtObject]);
+  addParam(fWindow);
+  fX1 := tKlausProcParam.create(self, 'г1', aPoint, kpmInput, source.simpleTypes[kdtInteger]);
+  addParam(fX1);
+  fY1 := tKlausProcParam.create(self, 'в1', aPoint, kpmInput, source.simpleTypes[kdtInteger]);
+  addParam(fY1);
+  fX2 := tKlausProcParam.create(self, 'г2', aPoint, kpmInput, source.simpleTypes[kdtInteger]);
+  addParam(fX2);
+  fY2 := tKlausProcParam.create(self, 'в2', aPoint, kpmInput, source.simpleTypes[kdtInteger]);
+  addParam(fY2);
+  fStart := tKlausProcParam.create(self, 'нач', aPoint, kpmInput, source.simpleTypes[kdtFloat]);
+  addParam(fStart);
+  fLength := tKlausProcParam.create(self, 'длн', aPoint, kpmInput, source.simpleTypes[kdtFloat]);
+  addParam(fLength);
+end;
+
+procedure tKlausSysProc_GrArc.run(frame: tKlausStackFrame; const at: tSrcPoint);
+var
+  w: tKlausObject;
+  cnv: tKlausCanvasLink;
+  x1, y1, x2, y2: tKlausInteger;
+  start, len: tKlausFloat;
+begin
+  w := getSimpleObj(frame, fWindow, at);
+  cnv := getKlausObject(frame, w, tKlausCanvasLink, at) as tKlausCanvasLink;
+  x1 := getSimpleInt(frame, fX1, at);
+  y1 := getSimpleInt(frame, fY1, at);
+  x2 := getSimpleInt(frame, fX2, at);
+  y2 := getSimpleInt(frame, fY2, at);
+  start := getSimpleFloat(frame, fStart, at);
+  len := getSimpleFloat(frame, fLength, at);
+  cnv.arc(x1, y1, x2, y2, round(start/PI*180*16), round(len/PI*180*16));
+end;
+
+{ tKlausSysProc_GrChord }
+
+constructor tKlausSysProc_GrChord.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_GrChord, aPoint);
+  fWindow := tKlausProcParam.create(self, 'окно', aPoint, kpmInput, source.simpleTypes[kdtObject]);
+  addParam(fWindow);
+  fX1 := tKlausProcParam.create(self, 'г1', aPoint, kpmInput, source.simpleTypes[kdtInteger]);
+  addParam(fX1);
+  fY1 := tKlausProcParam.create(self, 'в1', aPoint, kpmInput, source.simpleTypes[kdtInteger]);
+  addParam(fY1);
+  fX2 := tKlausProcParam.create(self, 'г2', aPoint, kpmInput, source.simpleTypes[kdtInteger]);
+  addParam(fX2);
+  fY2 := tKlausProcParam.create(self, 'в2', aPoint, kpmInput, source.simpleTypes[kdtInteger]);
+  addParam(fY2);
+  fStart := tKlausProcParam.create(self, 'нач', aPoint, kpmInput, source.simpleTypes[kdtFloat]);
+  addParam(fStart);
+  fLength := tKlausProcParam.create(self, 'длн', aPoint, kpmInput, source.simpleTypes[kdtFloat]);
+  addParam(fLength);
+end;
+
+procedure tKlausSysProc_GrChord.run(frame: tKlausStackFrame; const at: tSrcPoint);
+var
+  w: tKlausObject;
+  cnv: tKlausCanvasLink;
+  x1, y1, x2, y2: tKlausInteger;
+  start, len: tKlausFloat;
+begin
+  w := getSimpleObj(frame, fWindow, at);
+  cnv := getKlausObject(frame, w, tKlausCanvasLink, at) as tKlausCanvasLink;
+  x1 := getSimpleInt(frame, fX1, at);
+  y1 := getSimpleInt(frame, fY1, at);
+  x2 := getSimpleInt(frame, fX2, at);
+  y2 := getSimpleInt(frame, fY2, at);
+  start := getSimpleFloat(frame, fStart, at);
+  len := getSimpleFloat(frame, fLength, at);
+  cnv.chord(x1, y1, x2, y2, round(start/PI*180*16), round(len/PI*180*16));
+end;
+
+{ tKlausSysProc_GrLine }
+
+constructor tKlausSysProc_GrLine.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_GrLine, aPoint);
+  fWindow := tKlausProcParam.create(self, 'окно', aPoint, kpmInput, source.simpleTypes[kdtObject]);
+  addParam(fWindow);
+  fX1 := tKlausProcParam.create(self, 'г1', aPoint, kpmInput, source.simpleTypes[kdtInteger]);
+  addParam(fX1);
+  fY1 := tKlausProcParam.create(self, 'в1', aPoint, kpmInput, source.simpleTypes[kdtInteger]);
+  addParam(fY1);
+  fX2 := tKlausProcParam.create(self, 'г2', aPoint, kpmInput, source.simpleTypes[kdtInteger]);
+  addParam(fX2);
+  fY2 := tKlausProcParam.create(self, 'в2', aPoint, kpmInput, source.simpleTypes[kdtInteger]);
+  addParam(fY2);
+end;
+
+procedure tKlausSysProc_GrLine.run(frame: tKlausStackFrame; const at: tSrcPoint);
+var
+  w: tKlausObject;
+  cnv: tKlausCanvasLink;
+  x1, y1, x2, y2: tKlausInteger;
+begin
+  w := getSimpleObj(frame, fWindow, at);
+  cnv := getKlausObject(frame, w, tKlausCanvasLink, at) as tKlausCanvasLink;
+  x1 := getSimpleInt(frame, fX1, at);
+  y1 := getSimpleInt(frame, fY1, at);
+  x2 := getSimpleInt(frame, fX2, at);
+  y2 := getSimpleInt(frame, fY2, at);
+  cnv.line(x1, y1, x2, y2);
+end;
+
+{ tKlausSysProc_GrRectangle }
+
+constructor tKlausSysProc_GrRectangle.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_GrRectangle, aPoint);
+end;
+
+function tKlausSysProc_GrRectangle.isCustomParamHandler: boolean;
+begin
+  result := true;
+end;
+
+procedure tKlausSysProc_GrRectangle.checkCallParamTypes(expr: array of tKlausExpression; at: tSrcPoint);
+var
+  cnt: integer;
+begin
+  cnt := length(expr);
+  if (cnt < 5) or (cnt > 7) then errWrongParamCount(cnt, 5, 7, at);
+  checkCanAssign(kdtObject, expr[0].resultTypeDef, expr[0].point);
+  checkCanAssign(kdtInteger, expr[1].resultTypeDef, expr[1].point);
+  checkCanAssign(kdtInteger, expr[2].resultTypeDef, expr[2].point);
+  checkCanAssign(kdtInteger, expr[3].resultTypeDef, expr[3].point);
+  checkCanAssign(kdtInteger, expr[4].resultTypeDef, expr[4].point);
+  if cnt > 5 then checkCanAssign(kdtInteger, expr[5].resultTypeDef, expr[5].point);
+  if cnt > 6 then checkCanAssign(kdtInteger, expr[6].resultTypeDef, expr[6].point);
+end;
+
+procedure tKlausSysProc_GrRectangle.getCustomParamModes(types: array of tKlausTypeDef; out modes: tKlausProcParamModes; const at: tSrcPoint);
+var
+  i: integer;
+begin
+  modes := nil;
+  setLength(modes, length(types));
+  for i := 0 to length(modes)-1 do modes[i] := kpmInput;
+end;
+
+procedure tKlausSysProc_GrRectangle.customRun(frame: tKlausStackFrame; values: array of tKlausVarValueAt; const at: tSrcPoint);
+var
+  cnt: integer;
+  w: tKlausObject;
+  cnv: tKlausCanvasLink;
+  x1, y1, x2, y2, rx, ry: integer;
+begin
+  cnt := length(values);
+  if (cnt < 5) or (cnt > 7) then errWrongParamCount(cnt, 5, 7, at);
+  w := getSimpleObj(values[0]);
+  cnv := getKlausObject(frame, w, tKlausCanvasLink, at) as tKlausCanvasLink;
+  x1 := getSimpleInt(values[1]);
+  y1 := getSimpleInt(values[2]);
+  x2 := getSimpleInt(values[3]);
+  y2 := getSimpleInt(values[4]);
+  if cnt > 5 then begin
+    rx := getSimpleInt(values[5]);
+    if cnt > 6 then ry := getSimpleInt(values[6]) else ry := rx;
+    cnv.roundRect(x1, y1, x2, y2, rx, ry);
+  end else
+    cnv.rectangle(x1, y1, x2, y2);
 end;
 
 end.

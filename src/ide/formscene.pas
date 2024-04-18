@@ -26,8 +26,8 @@ interface
 
 uses
   Classes, SysUtils, Messages, LMessages, Forms, Controls, Graphics, Dialogs,
-  ActnList, ComCtrls, ExtCtrls, U8, KlausGlobals, KlausConsole, KlausSrc,
-  KlausLex, KlausSyn, KlausErr;
+  ActnList, ComCtrls, ExtCtrls, Buttons, StdCtrls, U8, KlausGlobals,
+  KlausConsole, KlausPaintBox, KlausSrc, KlausLex, KlausSyn, KlausErr;
 
 type
   tSceneActionStateFlag = (
@@ -40,9 +40,6 @@ type
   tSceneActionState = set of tSceneActionStateFlag;
 
 type
-
-  { tSceneForm }
-
   tSceneForm = class(tForm)
     actCloseFinished: TAction;
     actionList: TActionList;
@@ -83,7 +80,7 @@ type
     function  inStreamHasChar: boolean;
     procedure inStreamReadChar(out c: u8Char);
     procedure outStreamWrite(const s: string);
-    function  createGraphTab(const cap: string): tObject;
+    function  createGraphTab(const cap: string; link: tKlausCanvasLink): tObject;
     procedure destroyGraphTab(const win: tObject);
   public
     property source: tKlausSource read fSource;
@@ -129,6 +126,10 @@ resourcestring
 constructor tSceneForm.create(aOwner: tComponent);
 begin
   inherited create(aOwner);
+  if assigned(klausCanvasLinkClass) then begin
+    klausCanvasLinkClass.createWindowMethod := @createGraphTab;
+    klausCanvasLinkClass.destroyWindowMethod := @destroyGraphTab;
+  end;
   fRunOptions := tKlausRunOptions.create;
   assert(mainForm.scene = nil, 'Cannot open multiple execution scenes');
   mainForm.scene := self;
@@ -169,6 +170,10 @@ begin
   if fSource <> nil then freeAndNil(fSource);
   if mainForm.scene = self then mainForm.scene := nil;
   freeAndNil(fRunOptions);
+  if assigned(klausCanvasLinkClass) then begin
+    klausCanvasLinkClass.createWindowMethod := nil;
+    klausCanvasLinkClass.destroyWindowMethod := nil;
+  end;
   inherited destroy;
 end;
 
@@ -337,8 +342,6 @@ begin
   if runOptions.stdOut = '' then io.writeOut := @fConsole.write
   else io.writeOut := @outStreamWrite;
   io.writeErr := @fConsole.write;
-  io.createCanvas := @createGraphTab;
-  io.destroyCanvas := @destroyGraphTab;
 end;
 
 procedure tSceneForm.setConsoleRawMode(raw: boolean);
@@ -385,25 +388,38 @@ begin
   if s <> '' then fOutStream.write(pChar(s)^, length(s));
 end;
 
-function tSceneForm.createGraphTab(const cap: string): tObject;
+function tSceneForm.createGraphTab(const cap: string; link: tKlausCanvasLink): tObject;
 var
   ts: tTabSheet;
   sb: tScrollBox;
+  pb: tKlausPaintBox;
 begin
   ts := pageControl.addTabSheet;
   ts.caption := cap;
   ts.autoSize := true;
-  sb := tScrollBox.create(self);
-  sb.autoScroll := true;
+  pageControl.activePage := ts;
+  sb := tScrollBox.create(ts);
   sb.autoSize := true;
-  sb.parent := ts;
+  sb.autoScroll := true;
   sb.align := alClient;
-  result := ts;
+  sb.parent := ts;
+  pb := tKlausPaintBox.create(sb);
+  pb.parent := sb;
+  pb.tabStop := true;
+  activeControl := pb;
+  result := pb;
 end;
 
 procedure tSceneForm.destroyGraphTab(const win: tObject);
+var
+  w: tWinControl;
 begin
-  win.free;
+  w := win as tWinControl;
+  while not (w is tTabSheet) do begin
+    if not assigned(w) then exit;
+    w := w.parent;
+  end;
+  w.free;
 end;
 
 function tSceneForm.getActionState: tSceneActionState;
@@ -440,5 +456,7 @@ begin
   else result := fThread.stepMode;
 end;
 
+initialization
+  klausCanvasLinkClass := tKlausPaintBoxCanvasLink;
 end.
 

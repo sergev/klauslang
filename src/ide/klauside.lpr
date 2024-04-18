@@ -29,11 +29,11 @@ uses
   athreads,
   {$ENDIF}
   Classes, SysUtils, Interfaces, // this includes the LCL widgetset
-  Forms, KlausGlobals, FormMain, FrameEdit, FrameDebugView, formScene,
+  Forms, KlausGlobals, FormMain, FrameEdit, FrameDebugView, FormScene,
   KlausConsole, FrameDebugVariables, FrameDebugCallStack, DlgCmdLineArgs,
   KlausUnitSystem_Proc, FrameDebugBreakpoints, FrameDebugWatches,
   DlgSearchReplace, KlausUtils, KlausDef, FormSplash, KlausConKeys, DlgOptions,
-  DlgEvaluate, FrameEditorOptions, FrameConsoleOptions;
+  DlgEvaluate, FrameEditorOptions, FrameConsoleOptions, KlausPaintBox;
   { you can add units after this }
 
 {$R *.res}

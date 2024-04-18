@@ -1150,7 +1150,9 @@ end;
 
 procedure tCustomKlausConsole.KMInvalidateSize(var msg: tMessage);
 begin
-  adjustSize;
+  lock;
+  try adjustSize;
+  finally unlock; end;
 end;
 
 procedure tCustomKlausConsole.CNKeyDown(var msg: tLMKeyDown);

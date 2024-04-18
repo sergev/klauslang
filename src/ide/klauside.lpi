@@ -293,6 +293,11 @@
         <ResourceBaseClass Value="Frame"/>
         <UnitName Value="FrameConsoleOptions"/>
       </Unit>
+      <Unit>
+        <Filename Value="../lib/console/klauspaintbox.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="KlausPaintBox"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
