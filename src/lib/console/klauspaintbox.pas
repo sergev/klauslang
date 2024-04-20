@@ -23,6 +23,7 @@ type
     private
       fTmpStr: string;
       fTmpInt: array[0..9] of integer;
+      fTmpPoints: tKlausPointArray;
       fPaintBox: tKlausPaintBox;
     private
       procedure syncCreatePaintBox;
@@ -30,12 +31,19 @@ type
       procedure syncSetSize;
       procedure syncSetPenProps;
       procedure syncSetBrushProps;
+      procedure syncSetFontProps;
       procedure syncEllipse;
       procedure syncArc;
       procedure syncChord;
       procedure syncLine;
       procedure syncRectangle;
       procedure syncRoundRect;
+      procedure syncGetPoint;
+      procedure syncSetPoint;
+      procedure syncSector;
+      procedure syncPolyLine;
+      procedure syncPolygone;
+      procedure syncTextOut;
     protected
       procedure doInvalidate; override;
     public
@@ -44,12 +52,19 @@ type
       procedure setSize(w, h: integer); override;
       procedure setPenProps(what: tKlausPenProps; color: tColor; width: integer; style: tPenStyle); override;
       procedure setBrushProps(what: tKlausBrushProps; color: tColor; style: tBrushStyle); override;
+      procedure setFontProps(what: tKlausFontProps; const name: string; size: integer; style: tFontStyles; color: tColor); override;
+      function  getPoint(x, y: integer): tColor; override;
+      function  setPoint(x, y: integer; color: tColor): tColor; override;
       procedure ellipse(x1, y1, x2, y2: integer); override;
       procedure arc(x1, y1, x2, y2, start, finish: integer); override;
+      procedure sector(x1, y1, x2, y2, start, finish: integer); override;
       procedure chord(x1, y1, x2, y2, start, finish: integer); override;
       procedure line(x1, y1, x2, y2: integer); override;
+      procedure polyLine(points: tKlausPointArray); override;
       procedure rectangle(x1, y1, x2, y2: integer); override;
       procedure roundRect(x1, y1, x2, y2, rx, ry: integer); override;
+      procedure polygone(points: tKlausPointArray); override;
+      procedure textOut(x, y: integer; const s: string); override;
   end;
 
 type
@@ -91,6 +106,7 @@ end;
 procedure tKlausPaintBoxCanvasLink.syncCreatePaintBox;
 begin
   fPaintBox := createWindowMethod(fTmpStr, self) as tKlausPaintBox;
+  fPaintBox.content.canvas.font := defaultFont;
 end;
 
 procedure tKlausPaintBoxCanvasLink.syncDestroyPaintBox;
@@ -152,6 +168,35 @@ begin
   with fPaintBox.content.canvas do begin
     if kbpColor in what then brush.color := tColor(fTmpInt[1]);
     if kbpStyle in what then brush.style := tBrushStyle(fTmpInt[2]);
+  end;
+end;
+
+procedure tKlausPaintBoxCanvasLink.setFontProps(what: tKlausFontProps; const name: string; size: integer; style: tFontStyles; color: tColor);
+begin
+  fTmpInt[0] := integer(what);
+  fTmpStr := name;
+  fTmpInt[1] := size;
+  fTmpInt[2] := integer(style);
+  fTmpInt[3] := integer(color);
+  runtime.synchronize(@syncSetFontProps);
+end;
+
+procedure tKlausPaintBoxCanvasLink.syncSetFontProps;
+var
+  what: tKlausFontProps;
+begin
+  what := tKlausFontProps(fTmpInt[0]);
+  with fPaintBox.content.canvas do begin
+    if kfpName in what then begin
+      if fTmpStr <> '' then font.name := fTmpStr
+      else font.name := defaultFont.name;
+    end;
+    if kfpSize in what then begin
+      if fTmpInt[1] <> 0 then font.size := fTmpInt[1]
+      else font.size := defaultFont.size;
+    end;
+    if kfpStyle in what then font.style := tFontStyles(fTmpInt[2]);
+    if kfpColor in what then font.color := tColor(fTmpInt[3]);
   end;
 end;
 
@@ -231,6 +276,94 @@ end;
 procedure tKlausPaintBoxCanvasLink.syncRoundRect;
 begin
   fPaintBox.content.canvas.roundRect(fTmpInt[0], fTmpInt[1], fTmpInt[2], fTmpInt[3], fTmpInt[4], fTmpInt[5]);
+  invalidate;
+end;
+
+function tKlausPaintBoxCanvasLink.getPoint(x, y: integer): tColor;
+begin
+  fTmpInt[0] := x;
+  fTmpInt[1] := y;
+  runtime.synchronize(@syncGetPoint);
+  result := fTmpInt[2];
+end;
+
+procedure tKlausPaintBoxCanvasLink.syncGetPoint;
+begin
+  fTmpInt[2] := fPaintBox.content.canvas.pixels[fTmpInt[0], fTmpInt[1]];
+end;
+
+function tKlausPaintBoxCanvasLink.setPoint(x, y: integer; color: tColor): tColor;
+begin
+  fTmpInt[0] := x;
+  fTmpInt[1] := y;
+  fTmpInt[2] := color;
+  runtime.synchronize(@syncSetPoint);
+  result := fTmpInt[3];
+end;
+
+procedure tKlausPaintBoxCanvasLink.syncSetPoint;
+begin
+  with fPaintBox.content.canvas do begin
+    fTmpInt[3] := pixels[fTmpInt[0], fTmpInt[1]];
+    pixels[fTmpInt[0], fTmpInt[1]] := fTmpInt[2];
+  end;
+  invalidate;
+end;
+
+procedure tKlausPaintBoxCanvasLink.sector(x1, y1, x2, y2, start, finish: integer);
+begin
+  fTmpInt[0] := x1;
+  fTmpInt[1] := y1;
+  fTmpInt[2] := x2;
+  fTmpInt[3] := y2;
+  fTmpInt[4] := start;
+  fTmpInt[5] := finish;
+  runtime.synchronize(@syncSector);
+end;
+
+procedure tKlausPaintBoxCanvasLink.syncSector;
+begin
+  fPaintBox.content.canvas.radialPie(fTmpInt[0], fTmpInt[1], fTmpInt[2], fTmpInt[3], fTmpInt[4], fTmpInt[5]);
+  invalidate;
+end;
+
+procedure tKlausPaintBoxCanvasLink.polyLine(points: tKlausPointArray);
+begin
+  fTmpPoints := points;
+  runtime.synchronize(@syncPolyLine);
+  fTmpPoints := nil;
+end;
+
+procedure tKlausPaintBoxCanvasLink.syncPolyLine;
+begin
+  fPaintBox.content.canvas.polyLine(fTmpPoints);
+  invalidate;
+end;
+
+procedure tKlausPaintBoxCanvasLink.polygone(points: tKlausPointArray);
+begin
+  fTmpPoints := points;
+  runtime.synchronize(@syncPolygone);
+  fTmpPoints := nil;
+end;
+
+procedure tKlausPaintBoxCanvasLink.syncPolygone;
+begin
+  fPaintBox.content.canvas.polygon(fTmpPoints);
+  invalidate;
+end;
+
+procedure tKlausPaintBoxCanvasLink.textOut(x, y: integer; const s: string);
+begin
+  fTmpStr := s;
+  fTmpInt[0] := x;
+  fTmpInt[1] := y;
+  runtime.synchronize(@syncTextOut);
+end;
+
+procedure tKlausPaintBoxCanvasLink.syncTextOut;
+begin
+  fPaintBox.content.canvas.textOut(fTmpInt[0], fTmpInt[1], fTmpStr);
   invalidate;
 end;
 

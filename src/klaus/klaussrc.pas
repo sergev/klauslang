@@ -459,7 +459,7 @@ type
 
       constructor create(aOwner: tKlausSource; aElmtType: tKlausDataType);
       constructor create(context: tKlausRoutine; aPoint: tSrcPoint; b: tKlausSyntaxBrowser);
-      constructor create(context: tKlausRoutine; aPoint: tSrcPoint; aDims: integer; aElmtType: tKlausTypeDef);
+      constructor create(source: tKlausSource; aPoint: tSrcPoint; aDims: integer; aElmtType: tKlausTypeDef);
       function  canAssign(src: tKlausTypeDef; strict: boolean = false): boolean; override;
       function  valueClass: tKlausVarValueClass; override;
   end;
@@ -1442,6 +1442,13 @@ type
   tKlausBrushProps = set of tKlausBrushProp;
 
 type
+  tKlausFontProp = (kfpName, kfpSize, kfpStyle, kfpColor);
+  tKlausFontProps = set of tKlausFontProp;
+
+type
+  tKlausPointArray = array of tPoint;
+
+type
   // Объект-связка с окном графического вывода
   tKlausCanvasLinkClass = class of tKlausCanvasLink;
   tKlausCanvasLink = class(tObject)
@@ -1451,24 +1458,36 @@ type
     private
       fRuntime: tKlausRuntime;
       fNestCount: integer;
+      fDefaultFont: tFont;
+
+      procedure setDefaultFont(val: tFont);
     protected
       procedure doInvalidate; virtual; abstract;
     public
       property runtime: tKlausRuntime read fRuntime;
+      property defaultFont: tFont read fDefaultFont write setDefaultFont;
 
       constructor create(aRuntime: tKlausRuntime; const cap: string); virtual;
+      destructor  destroy; override;
       procedure invalidate;
       procedure setSize(w, h: integer); virtual; abstract;
       procedure beginPaint;
       procedure endPaint;
       procedure setPenProps(what: tKlausPenProps; color: tColor; width: integer; style: tPenStyle); virtual; abstract;
       procedure setBrushProps(what: tKlausBrushProps; color: tColor; style: tBrushStyle); virtual; abstract;
+      procedure setFontProps(what: tKlausFontProps; const name: string; size: integer; style: tFontStyles; color: tColor); virtual; abstract;
+      function  getPoint(x, y: integer): tColor; virtual; abstract;
+      function  setPoint(x, y: integer; color: tColor): tColor; virtual; abstract;
       procedure ellipse(x1, y1, x2, y2: integer); virtual; abstract;
       procedure arc(x1, y1, x2, y2, start, finish: integer); virtual; abstract;
+      procedure sector(x1, y1, x2, y2, start, finish: integer); virtual; abstract;
       procedure chord(x1, y1, x2, y2, start, finish: integer); virtual; abstract;
       procedure line(x1, y1, x2, y2: integer); virtual; abstract;
+      procedure polyLine(points: tKlausPointArray); virtual; abstract;
       procedure rectangle(x1, y1, x2, y2: integer); virtual; abstract;
       procedure roundRect(x1, y1, x2, y2, rx, ry: integer); virtual; abstract;
+      procedure polygone(points: tKlausPointArray); virtual; abstract;
+      procedure textOut(x, y: integer; const s: string); virtual; abstract;
   end;
 
 var
@@ -4584,14 +4603,14 @@ begin
   b.pause;
   dt := context.createDataType(b);
   if cnt <= 1 then fElmtType := dt
-  else fElmtType := tKlausTypeDefArray.create(context, aPoint, cnt-1, dt);
+  else fElmtType := tKlausTypeDefArray.create(context.source, aPoint, cnt-1, dt);
 end;
 
-constructor tKlausTypeDefArray.create(context: tKlausRoutine; aPoint: tSrcPoint; aDims: integer; aElmtType: tKlausTypeDef);
+constructor tKlausTypeDefArray.create(source: tKlausSource; aPoint: tSrcPoint; aDims: integer; aElmtType: tKlausTypeDef);
 begin
-  inherited create(context.source, aPoint);
+  inherited create(source, aPoint);
   if aDims <= 1 then fElmtType := aElmtType
-  else fElmtType := tKlausTypeDefArray.create(context, aPoint, aDims-1, aElmtType);
+  else fElmtType := tKlausTypeDefArray.create(source, aPoint, aDims-1, aElmtType);
 end;
 
 constructor tKlausTypeDefArray.create(aOwner: tKlausSource; aElmtType: tKlausDataType);
@@ -5004,7 +5023,7 @@ var
 begin
   if args <> nil then begin
     v := frame.varByDecl(args, args.point) as tKlausVariable;
-    v.acquireValue(frame.varByName(klausVarNameCmdLineParams, args.point).value, args.point);
+    v.acquireValue(frame.varByName(klausVarName_CmdLineParams, args.point).value, args.point);
   end;
   try
     inherited run(frame, at);
@@ -6160,11 +6179,23 @@ end;
 
 { tKlausCanvas }
 
+procedure tKlausCanvasLink.setDefaultFont(val: tFont);
+begin
+  fDefaultFont.assign(val);
+end;
+
 constructor tKlausCanvasLink.create(aRuntime: tKlausRuntime; const cap: string);
 begin
   inherited create;
   fRuntime := aRuntime;
   fNestCount := 0;
+  fDefaultFont := tFont.create;
+end;
+
+destructor tKlausCanvasLink.destroy;
+begin
+  freeAndNil(fDefaultFont);
+  inherited destroy;
 end;
 
 procedure tKlausCanvasLink.invalidate;

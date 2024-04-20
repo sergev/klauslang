@@ -55,5 +55,17 @@ object SceneForm: TSceneForm
       OnExecute = actCloseFinishedExecute
       ShortCut = 27
     end
+    object actPrevTab: TAction
+      Category = 'Окно'
+      Caption = 'Предыдущая закладка'
+      OnExecute = actPrevTabExecute
+      ShortCut = 24585
+    end
+    object actNextTab: TAction
+      Category = 'Окно'
+      Caption = 'Следующая закладка'
+      OnExecute = actNextTabExecute
+      ShortCut = 16393
+    end
   end
 end

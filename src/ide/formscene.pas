@@ -42,11 +42,15 @@ type
 type
   tSceneForm = class(tForm)
     actCloseFinished: TAction;
+    actNextTab: TAction;
+    actPrevTab: TAction;
     actionList: TActionList;
     PageControl: TPageControl;
     ScrollBox: TScrollBox;
     tsConsole: TTabSheet;
     procedure actCloseFinishedExecute(Sender: TObject);
+    procedure actNextTabExecute(Sender: TObject);
+    procedure actPrevTabExecute(Sender: TObject);
     procedure formClose(sender: tObject; var closeAction: tCloseAction);
     procedure formCloseQuery(sender: tObject; var canClose: boolean);
     procedure formShow(sender: tObject);
@@ -232,6 +236,16 @@ begin
   if finished then close;
 end;
 
+procedure tSceneForm.actNextTabExecute(Sender: TObject);
+begin
+  pageControl.selectNextPage(true);
+end;
+
+procedure tSceneForm.actPrevTabExecute(Sender: TObject);
+begin
+  pageControl.selectNextPage(false);
+end;
+
 procedure tSceneForm.formCloseQuery(sender: tObject; var canClose: boolean);
 begin
   if not running and not fConsole.inputMode then
@@ -394,6 +408,7 @@ var
   sb: tScrollBox;
   pb: tKlausPaintBox;
 begin
+  link.defaultFont := fConsole.font;
   ts := pageControl.addTabSheet;
   ts.caption := cap;
   ts.autoSize := true;
