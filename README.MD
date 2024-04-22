@@ -171,6 +171,6 @@
 И очень важно: эти немногие из многих возможностей должны быть отобраны не с точки зрения продуктивности для профессионального программиста, а с точки зрения **удобства для учителя**.
 
 ## Документация и примеры
-- [Справочное руководство](https://gitflic.ru/project/czaerlag/klauslang/blob?file=doc%2F%D0%AF%D0%B7%D1%8B%D0%BA%20%D0%9A%D0%BB%D0%B0%D1%83%D1%81.odt)
+- [Язык Клаус. Справочное руководство](https://gitflic.ru/project/czaerlag/klauslang/blob?file=doc%2F%D0%AF%D0%B7%D1%8B%D0%BA%20%D0%9A%D0%BB%D0%B0%D1%83%D1%81.odt)
 - [Примеры исходного кода](https://gitflic.ru/project/czaerlag/klauslang/file?file=samples)
 - [Ещё тестовые примеры](https://gitflic.ru/project/czaerlag/klauslang/file?file=test)
