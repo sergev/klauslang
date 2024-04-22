@@ -1,3 +1,4 @@
 *.lps
+*.odt#
 /compiled
 /build/
