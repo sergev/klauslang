@@ -838,6 +838,7 @@ type
     if dl <= 0 then delete(s, i, -dl)
     else insert(stringOfChar(' ', dl), s, i);
     move(pChar(v)^, s[i], length(v));
+    idx += dl;
   end;
 
 var

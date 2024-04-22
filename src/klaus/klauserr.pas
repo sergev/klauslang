@@ -127,6 +127,7 @@ const
   ercDuplicateForward       = 77;
   ercWrongForwardSignature  = 78;
   ercCanvasUnavailable      = 79;
+  ercInvalidFormatParamType = 80;
 
 const
   // Классификация кодов eKlausError для трансляции в исключения языка
@@ -148,7 +149,8 @@ const
     [ercInvalidTypecast, ercTypeMismatch, ercIndexMustBeInteger, ercCannotWriteComplexType,
     ercCannotReadComplexType, ercConditionMustBeBool, ercBinOperNotDefined, ercUnOperNotDefined,
     ercIllegalAsgnOperator, ercInvalidLoopCounter, ercInvalidForEachKey, ercInvalidForEachType,
-    ercForEachKeyTypeMismatch, ercCaseExprMustBeSimple, ercValueCannotBeRead],
+    ercForEachKeyTypeMismatch, ercCaseExprMustBeSimple, ercValueCannotBeRead,
+    ercInvalidFormatParamType],
 
     //ksxInvalidName
     [ercVarNameNotFound, ercStructMemberNotFound],
@@ -288,6 +290,7 @@ resourcestring
   errDuplicateForward = 'Повторное предварительное определение.';
   errWrongForwardSignature = 'Определение подпрограммы не соответствует предварительному определению.';
   errCanvasUnavailable = 'Невозможно использовать окно графического вывода в этом режиме.';
+  errInvalidFormatParamType = 'В качестве аргументов допустимы только значения или одномерные массивы простых типов.';
 
 { Globals }
 
@@ -399,6 +402,7 @@ begin
     ercDuplicateForward: result := errDuplicateForward;
     ercWrongForwardSignature: result := errWrongForwardSignature;
     ercCanvasUnavailable: result := errCanvasUnavailable;
+    ercInvalidFormatParamType: result := errInvalidFormatParamType;
   end;
 end;
 

@@ -44,6 +44,9 @@ type
       procedure syncPolyLine;
       procedure syncPolygone;
       procedure syncTextOut;
+      procedure syncTextSize;
+      procedure syncClipRect;
+      procedure syncSetClipping;
     protected
       procedure doInvalidate; override;
     public
@@ -64,7 +67,10 @@ type
       procedure rectangle(x1, y1, x2, y2: integer); override;
       procedure roundRect(x1, y1, x2, y2, rx, ry: integer); override;
       procedure polygone(points: tKlausPointArray); override;
-      procedure textOut(x, y: integer; const s: string); override;
+      function  textOut(x, y: integer; const s: string): tPoint; override;
+      function  textSize(const s: string): tPoint; override;
+      procedure clipRect(x1, y1, x2, y2: integer); override;
+      procedure setClipping(val: boolean); override;
   end;
 
 type
@@ -353,18 +359,70 @@ begin
   invalidate;
 end;
 
-procedure tKlausPaintBoxCanvasLink.textOut(x, y: integer; const s: string);
+function tKlausPaintBoxCanvasLink.textOut(x, y: integer; const s: string): tPoint;
 begin
   fTmpStr := s;
   fTmpInt[0] := x;
   fTmpInt[1] := y;
   runtime.synchronize(@syncTextOut);
+  result.x := fTmpInt[2];
+  result.y := fTmpInt[3];
 end;
 
 procedure tKlausPaintBoxCanvasLink.syncTextOut;
+var
+  sz: tSize;
 begin
+  sz := fPaintBox.content.canvas.textExtent(fTmpStr);
+  fTmpInt[2] := sz.cx;
+  fTmpInt[3] := sz.cy;
   fPaintBox.content.canvas.textOut(fTmpInt[0], fTmpInt[1], fTmpStr);
   invalidate;
+end;
+
+function tKlausPaintBoxCanvasLink.textSize(const s: string): tPoint;
+begin
+  fTmpStr := s;
+  runtime.synchronize(@syncTextSize);
+  result.x := fTmpInt[0];
+  result.y := fTmpInt[1];
+end;
+
+procedure tKlausPaintBoxCanvasLink.syncTextSize;
+var
+  sz: tSize;
+begin
+  sz := fPaintBox.content.canvas.textExtent(fTmpStr);
+  fTmpInt[0] := sz.cx;
+  fTmpInt[1] := sz.cy;
+end;
+
+procedure tKlausPaintBoxCanvasLink.clipRect(x1, y1, x2, y2: integer);
+begin
+  fTmpInt[0] := x1;
+  fTmpInt[1] := y1;
+  fTmpInt[2] := x2;
+  fTmpInt[3] := y2;
+  runtime.synchronize(@syncClipRect);
+end;
+
+procedure tKlausPaintBoxCanvasLink.syncClipRect;
+begin
+  with fPaintBox.content.canvas do begin
+    clipping := true;
+    clipRect := rect(fTmpInt[0], fTmpInt[1], fTmpInt[2], fTmpInt[3]);
+  end;
+end;
+
+procedure tKlausPaintBoxCanvasLink.setClipping(val: boolean);
+begin
+  fTmpInt[0] := integer(val);
+  runtime.synchronize(@syncSetClipping);
+end;
+
+procedure tKlausPaintBoxCanvasLink.syncSetClipping;
+begin
+  fPaintBox.content.canvas.clipping := fTmpInt[0] <> 0;
 end;
 
 procedure tKlausPaintBoxCanvasLink.chord(x1, y1, x2, y2, start, finish: integer);

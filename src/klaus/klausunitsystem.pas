@@ -130,6 +130,8 @@ const
   klausSysProcName_GrPen = 'грПеро';
   klausSysProcName_GrBrush = 'грКисть';
   klausSysProcName_GrFont = 'грШрифт';
+  klausSysProcName_GrClipRect = 'грОбрезка';
+  klausSysProcName_GrPoint = 'грТочка';
   klausSysProcName_GrCircle = 'грКруг';
   klausSysProcName_GrEllipse = 'грЭллипс';
   klausSysProcName_GrArc = 'грДуга';
@@ -139,7 +141,7 @@ const
   klausSysProcName_GrPolyLine = 'грЛоманая';
   klausSysProcName_GrRectangle = 'грПрямоугольник';
   klausSysProcName_GrPolygon = 'грМногоугольник';
-  klausSysProcName_GrPoint = 'грТочка';
+  klausSysProcName_GrTextSize = 'грРазмерТекста';
   klausSysProcName_GrText = 'грТекст';
 
 const
@@ -202,6 +204,9 @@ const
   klausTypeName_Point = 'Точка';
   klausTypeName_Point2 = 'Точки';
   klausTypeName_Point3 = 'Точек';
+  klausTypeName_Size = 'Размер';
+  klausTypeName_Size2 = 'Размеры';
+  klausTypeName_Size3 = 'Размеров';
   klausTypeName_PointArray = 'МассивТочек';
   klausTypeName_PointArray2 = 'МассивыТочек';
   klausTypeName_PointArray3 = 'МассивовТочек';
@@ -259,6 +264,7 @@ type
       procedure checkElmtType(dst, elmt: tKlausTypeDef; const at: tSrcPoint; strict: boolean = false);
       procedure checkElmtType(dst, elmt: tKlausVarValue; const at: tSrcPoint; strict: boolean = false);
       procedure declareRetValue(dt: tKlausSimpleType);
+      procedure declareRetValue(dt: tKlausTypeDef);
       procedure returnSimple(frame: tKlausStackFrame; rslt: tKlausSimpleValue);
       function  getSimple(val: tKlausVarValueAt): tKlausSimpleValue;
       function  getSimpleChar(val: tKlausVarValueAt): tKlausChar;
@@ -429,6 +435,8 @@ begin
   tKlausStructMember.create(str, 'г', zeroSrcPt, source.simpleTypes[kdtInteger]);
   tKlausStructMember.create(str, 'в', zeroSrcPt, source.simpleTypes[kdtInteger]);
   tKlausTypeDecl.create(self, [klausTypeName_Point, klausTypeName_Point2, klausTypeName_Point3], zeroSrcPt, str);
+  // Размер/Размеры/Размеров
+  tKlausTypeDecl.create(self, [klausTypeName_Size, klausTypeName_Size2, klausTypeName_Size3], zeroSrcPt, str);
   // МассивТочек/МассивыТочек/МассивовТочек
   arr := tKlausTypeDefArray.create(source, zeroSrcPt, 1, str);
   tKlausTypeDecl.create(self, [klausTypeName_PointArray, klausTypeName_PointArray2, klausTypeName_PointArray3], zeroSrcPt, arr);
@@ -600,7 +608,9 @@ begin
   tKlausSysProc_GrRectangle.create(self, zeroSrcPt);
   tKlausSysProc_GrPolygon.create(self, zeroSrcPt);
   tKlausSysProc_GrPoint.create(self, zeroSrcPt);
+  tKlausSysProc_GrTextSize.create(self, zeroSrcPt);
   tKlausSysProc_GrText.create(self, zeroSrcPt);
+  tKlausSysProc_GrClipRect.create(self, zeroSrcPt);
 end;
 
 procedure tKlausUnitSystem.setArgs(val: tStrings);
@@ -639,6 +649,12 @@ procedure tKlausSysProcDecl.declareRetValue(dt: tKlausSimpleType);
 begin
   assert(retValue = nil, 'Internal function return value already declared');
   setRetValue(tKlausProcParam.create(self, '', point, kpmOutput, source.simpleTypes[dt]));
+end;
+
+procedure tKlausSysProcDecl.declareRetValue(dt: tKlausTypeDef);
+begin
+  assert(retValue = nil, 'Internal function return value already declared');
+  setRetValue(tKlausProcParam.create(self, '', point, kpmOutput, dt));
 end;
 
 procedure tKlausSysProcDecl.returnSimple(frame: tKlausStackFrame; rslt: tKlausSimpleValue);

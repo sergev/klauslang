@@ -22,8 +22,7 @@ unit KlausSrc;
 //todo: Кроме точки в тексте, исключения должны знать модуль, из которого они прилетели
 //todo: Добавить в VarPath возможность ссылки на модуль (точнее, путь к области видимости)
 
-//todo: тип данных `данные` -- строка с произвольным содержимым
-//todo: типы данных `любое` и `тип`, операция `есть`, функции тип(Икс) и новый(Т)
+//todo: процедурные переменные
 
 {$mode ObjFPC}{$H+}
 {$i ../lib/klaus.inc}
@@ -1487,7 +1486,10 @@ type
       procedure rectangle(x1, y1, x2, y2: integer); virtual; abstract;
       procedure roundRect(x1, y1, x2, y2, rx, ry: integer); virtual; abstract;
       procedure polygone(points: tKlausPointArray); virtual; abstract;
-      procedure textOut(x, y: integer; const s: string); virtual; abstract;
+      function  textSize(const s: string): tPoint; virtual; abstract;
+      function  textOut(x, y: integer; const s: string): tPoint; virtual; abstract;
+      procedure clipRect(x1, y1, x2, y2: integer); virtual; abstract;
+      procedure setClipping(val: boolean); virtual; abstract;
   end;
 
 var

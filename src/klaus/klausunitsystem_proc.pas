@@ -1110,6 +1110,17 @@ type
   end;
 
 type
+  // процедура грРазмерТекста(вх окно: объект; вх текст: строка);
+  tKlausSysProc_GrTextSize = class(tKlausSysProcDecl)
+    private
+      fWindow: tKlausProcParam;
+      fText: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
   // процедура грТекст(вх окно: объект; вх г, в: целое; вх текст: строка);
   tKlausSysProc_GrText = class(tKlausSysProcDecl)
     private
@@ -1119,6 +1130,18 @@ type
     public
       constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
       procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  // процедура грОбрезка(вх окно: объект; вх г1, в1, г2, в2: целое);
+  // процедура грОбрезка(вх окно: объект; вх вкл: логическое);
+  tKlausSysProc_GrClipRect = class(tKlausSysProcDecl)
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      function  isCustomParamHandler: boolean; override;
+      procedure checkCallParamTypes(expr: array of tKlausExpression; at: tSrcPoint); override;
+      procedure getCustomParamModes(types: array of tKlausTypeDef; out modes: tKlausProcParamModes; const at: tSrcPoint); override;
+      procedure customRun(frame: tKlausStackFrame; values: array of tKlausVarValueAt; const at: tSrcPoint); override;
   end;
 
 implementation
@@ -1131,6 +1154,7 @@ const
 
 resourcestring
   strOneOrMore = '1 или более';
+  strNumOrNum = '%d или %d';
 
 { tKlausSysProc_Destroy }
 
@@ -1397,7 +1421,7 @@ var
 begin
   modes := nil;
   setLength(modes, length(types));
-  for i := 0 to length(modes)-1 do modes[i] := kpmOutput;
+  for i := 0 to length(modes)-1 do modes[i] := kpmInOut;
 end;
 
 procedure tKlausSysProc_ReadLn.customRun(
@@ -2180,8 +2204,11 @@ begin
   if length(expr) < 1 then raise eKlausError.createFmt(ercWrongNumberOfParams, at, [0, strOneOrMore]);
   checkCanAssign(kdtString, expr[0].resultTypeDef, expr[0].point);
   for i := 1 to length(expr)-1 do
-    if expr[i].resultType = kdtComplex then
-      raise eKlausError.create(ercCannotWriteComplexType, expr[i].point);
+    if expr[i].resultTypeDef is tKlausTypeDefArray then begin
+      if (expr[i].resultTypeDef as tKlausTypeDefArray).elmtType.dataType = kdtComplex then
+        raise eKlausError.create(ercInvalidFormatParamType, expr[i].point)
+    end else if expr[i].resultType = kdtComplex then
+      raise eKlausError.create(ercInvalidFormatParamType, expr[i].point);
 end;
 
 procedure tKlausSysProc_Format.getCustomParamModes(
@@ -2197,14 +2224,31 @@ end;
 procedure tKlausSysProc_Format.customRun(
   frame: tKlausStackFrame; values: array of tKlausVarValueAt; const at: tSrcPoint);
 var
-  i: integer;
+  i, j, idx, len: integer;
   rslt: tKlausString;
+  a: tKlausVarValueArray;
   v: array of tKlausSimpleValue = nil;
 begin
   if length(values) < 1 then raise eKlausError.createFmt(ercWrongNumberOfParams, at, [0, strOneOrMore]);
   rslt := getSimpleStr(values[0]);
-  setLength(v, length(values)-1);
-  for i := 1 to length(values)-1 do v[i-1] := getSimple(values[i]);
+  len := length(values)-1;
+  for i := 1 to length(values)-1 do
+    if values[i].v is tKlausVarValueArray then
+      inc(len, (values[i].v as tKlausVarValueArray).count-1);
+  setLength(v, len);
+  idx := 0;
+  for i := 1 to length(values)-1 do begin
+    if values[i].v is tKlausVarValueArray then begin
+      a := values[i].v as tKlausVarValueArray;
+      for j := 0 to a.count-1 do begin
+        v[idx] := (a.getElmt(j, values[i].at) as tKlausVarValueSimple).simple;
+        inc(idx);
+      end;
+    end else begin
+      v[idx] := getSimple(values[i]);
+      inc(idx);
+    end;
+  end;
   rslt := klstrFormat(rslt, v, at);
   returnSimple(frame, klausSimple(rslt));
 end;
@@ -4105,6 +4149,35 @@ begin
     returnSimple(frame, klausSimple(tKlausInteger(cnv.getPoint(x, y))));
 end;
 
+{ tKlausSysProc_GrTextSize }
+
+constructor tKlausSysProc_GrTextSize.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_GrTextSize, aPoint);
+  fWindow := tKlausProcParam.create(self, 'окно', aPoint, kpmInput, source.simpleTypes[kdtObject]);
+  addParam(fWindow);
+  fText := tKlausProcParam.create(self, 'текст', aPoint, kpmInput, source.simpleTypes[kdtString]);
+  addParam(fText);
+  declareRetValue(findTypeDef(klausTypeName_Size));
+end;
+
+procedure tKlausSysProc_GrTextSize.run(frame: tKlausStackFrame; const at: tSrcPoint);
+var
+  w: tKlausObject;
+  cnv: tKlausCanvasLink;
+  text: tKlausString;
+  p: tPoint;
+  v: tKlausVarValueStruct;
+begin
+  w := getSimpleObj(frame, fWindow, at);
+  cnv := getKlausObject(frame, w, tKlausCanvasLink, at) as tKlausCanvasLink;
+  text := getSimpleStr(frame, fText, at);
+  p := cnv.textSize(text);
+  v := frame.varByDecl(retValue, at).value as tKlausVarValueStruct;
+  (v.getMember('г', at) as tKlausVarValueSimple).setSimple(klausSimple(tKlausInteger(p.x)), at);
+  (v.getMember('в', at) as tKlausVarValueSimple).setSimple(klausSimple(tKlausInteger(p.y)), at);
+end;
+
 { tKlausSysProc_GrText }
 
 constructor tKlausSysProc_GrText.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
@@ -4118,6 +4191,7 @@ begin
   addParam(fY);
   fText := tKlausProcParam.create(self, 'текст', aPoint, kpmInput, source.simpleTypes[kdtString]);
   addParam(fText);
+  declareRetValue(findTypeDef(klausTypeName_Size));
 end;
 
 procedure tKlausSysProc_GrText.run(frame: tKlausStackFrame; const at: tSrcPoint);
@@ -4126,13 +4200,76 @@ var
   cnv: tKlausCanvasLink;
   x, y: tKlausInteger;
   text: tKlausString;
+  p: tPoint;
+  v: tKlausVarValueStruct;
 begin
   w := getSimpleObj(frame, fWindow, at);
   cnv := getKlausObject(frame, w, tKlausCanvasLink, at) as tKlausCanvasLink;
   x := getSimpleInt(frame, fX, at);
   y := getSimpleInt(frame, fY, at);
   text := getSimpleStr(frame, fText, at);
-  cnv.textOut(x, y, text);
+  p := cnv.textOut(x, y, text);
+  v := frame.varByDecl(retValue, at).value as tKlausVarValueStruct;
+  (v.getMember('г', at) as tKlausVarValueSimple).setSimple(klausSimple(tKlausInteger(p.x)), at);
+  (v.getMember('в', at) as tKlausVarValueSimple).setSimple(klausSimple(tKlausInteger(p.y)), at);
+end;
+
+{ tKlausSysProc_GrClipRect }
+
+constructor tKlausSysProc_GrClipRect.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_GrClipRect, aPoint);
+end;
+
+function tKlausSysProc_GrClipRect.isCustomParamHandler: boolean;
+begin
+  result := true;
+end;
+
+procedure tKlausSysProc_GrClipRect.checkCallParamTypes(expr: array of tKlausExpression; at: tSrcPoint);
+var
+  cnt: integer;
+begin
+  cnt := length(expr);
+  if (cnt <> 2) and (cnt <> 5) then raise eKlausError.createFmt(ercWrongNumberOfParams, at, [cnt, format(strNumOrNum, [2, 5])]);
+  checkCanAssign(kdtObject, expr[0].resultTypeDef, expr[0].point);
+  if cnt = 5 then begin
+    checkCanAssign(kdtInteger, expr[1].resultTypeDef, expr[1].point);
+    checkCanAssign(kdtInteger, expr[2].resultTypeDef, expr[2].point);
+    checkCanAssign(kdtInteger, expr[3].resultTypeDef, expr[3].point);
+    checkCanAssign(kdtInteger, expr[4].resultTypeDef, expr[4].point);
+  end else
+    checkCanAssign(kdtBoolean, expr[1].resultTypeDef, expr[1].point);
+end;
+
+procedure tKlausSysProc_GrClipRect.getCustomParamModes(types: array of tKlausTypeDef; out modes: tKlausProcParamModes; const at: tSrcPoint);
+var
+  i: integer;
+begin
+  modes := nil;
+  setLength(modes, length(types));
+  for i := 0 to length(modes)-1 do modes[i] := kpmInput;
+end;
+
+procedure tKlausSysProc_GrClipRect.customRun(frame: tKlausStackFrame; values: array of tKlausVarValueAt; const at: tSrcPoint);
+var
+  cnt: integer;
+  w: tKlausObject;
+  cnv: tKlausCanvasLink;
+  x1, y1, x2, y2: integer;
+begin
+  cnt := length(values);
+  if (cnt <> 2) and (cnt <> 5) then raise eKlausError.createFmt(ercWrongNumberOfParams, at, [cnt, format(strNumOrNum, [2, 5])]);
+  w := getSimpleObj(values[0]);
+  cnv := getKlausObject(frame, w, tKlausCanvasLink, at) as tKlausCanvasLink;
+  if cnt = 5 then begin
+    x1 := getSimpleInt(values[1]);
+    y1 := getSimpleInt(values[2]);
+    x2 := getSimpleInt(values[3]);
+    y2 := getSimpleInt(values[4]);
+    cnv.clipRect(x1, y1, x2, y2);
+  end else
+    cnv.setClipping(getSimpleBool(values[1]));
 end;
 
 end.

@@ -3357,15 +3357,17 @@ end;
 
 procedure tCustomKlausEdit.indentText(pt1, pt2: tPoint; var spaces: integer);
 
-  function leadingSpaces(const s: string): integer;
+  function leadingSpaces(const s: string; needed: integer): integer;
   var
     i: integer;
   begin
     result := 0;
     for i := 1 to length(s) do begin
-      if s[i] <> ' ' then break;
+      if s[i] <> ' ' then exit(result);
       inc(result);
+      if result >= needed then exit(result);
     end;
+    result := needed;
   end;
 
 var
@@ -3383,21 +3385,23 @@ begin
     try
       s := stringOfChar(' ', spaces);
       for i := pt1.y to pt2.y do
-        insertText(point(1, i), s);
+        if fLines[i] <> '' then insertText(point(1, i), s);
     finally
       endEdit;
     end;
   end else begin
     spaces := -spaces;
     for i := pt1.y to pt2.y do begin
-      cnt := leadingSpaces(fLines[i]);
+      cnt := leadingSpaces(fLines[i], spaces);
       if cnt < spaces then spaces := cnt;
     end;
     if spaces > 0 then begin
       beginEdit;
       try
-        for i := pt1.y to pt2.y do
-          deleteText(point(1, i), point(spaces+1, i));
+        for i := pt1.y to pt2.y do begin
+          cnt := min(length(fLines[i]), spaces);
+          deleteText(point(1, i), point(cnt+1, i));
+        end;
       finally
         endEdit;
       end
