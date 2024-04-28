@@ -16,14 +16,12 @@ type
   tKlausPaintBoxCanvasLink = class;
 
 type
-
-  { tKlausPaintBoxCanvasLink }
-
   tKlausPaintBoxCanvasLink = class(tKlausCanvasLink)
     private
       fTmpStr: string;
       fTmpInt: array[0..9] of integer;
       fTmpPoints: tKlausPointArray;
+      fTmpObj: tObject;
       fPaintBox: tKlausPaintBox;
     private
       procedure syncCreatePaintBox;
@@ -47,8 +45,10 @@ type
       procedure syncTextSize;
       procedure syncClipRect;
       procedure syncSetClipping;
+      procedure syncDraw;
     protected
       procedure doInvalidate; override;
+      function  getCanvas: tCanvas; override;
     public
       constructor create(aRuntime: tKlausRuntime; const cap: string); override;
       destructor  destroy; override;
@@ -71,6 +71,32 @@ type
       function  textSize(const s: string): tPoint; override;
       procedure clipRect(x1, y1, x2, y2: integer); override;
       procedure setClipping(val: boolean); override;
+      procedure draw(x, y: integer; picture: tKlausPictureLink); override;
+  end;
+
+type
+  tKlausPaintBoxPictureLink = class(tKlausPictureLink)
+    private
+      fPicture: tPicture;
+      fTmpStr: string;
+      fTmpInt: array[0..9] of integer;
+      fTmpObj: tObject;
+
+      procedure syncCreatePicture;
+      procedure syncDestroyPicture;
+      procedure syncLoadFromFile;
+      procedure syncSaveToFile;
+      procedure syncGetSize;
+      procedure syncCopyFrom;
+    protected
+      function getPicture: tPicture; override;
+    public
+      constructor create(aRuntime: tKlausRuntime); override;
+      destructor  destroy; override;
+      procedure loadFromFile(const fileName: string); override;
+      procedure saveToFile(const fileName: string); override;
+      function  getSize: tPoint; override;
+      procedure copyFrom(src: tObject; x1, y1, x2, y2: integer); override;
   end;
 
 type
@@ -123,6 +149,11 @@ end;
 procedure tKlausPaintBoxCanvasLink.doInvalidate;
 begin
   runtime.synchronize(@fPaintBox.invalidateAll);
+end;
+
+function tKlausPaintBoxCanvasLink.getCanvas: tCanvas;
+begin
+  result := fPaintBox.content.canvas;
 end;
 
 procedure tKlausPaintBoxCanvasLink.setSize(w, h: integer);
@@ -425,6 +456,23 @@ begin
   fPaintBox.content.canvas.clipping := fTmpInt[0] <> 0;
 end;
 
+procedure tKlausPaintBoxCanvasLink.draw(x, y: integer; picture: tKlausPictureLink);
+begin
+  fTmpInt[0] := x;
+  fTmpInt[1] := y;
+  fTmpObj := picture;
+  runtime.synchronize(@syncDraw);
+end;
+
+procedure tKlausPaintBoxCanvasLink.syncDraw;
+var
+  g: tGraphic;
+begin
+  g := (fTmpObj as tKlausPictureLink).picture.graphic;
+  fPaintBox.content.canvas.draw(fTmpInt[0], fTmpInt[1], g);
+  invalidate;
+end;
+
 procedure tKlausPaintBoxCanvasLink.chord(x1, y1, x2, y2, start, finish: integer);
 begin
   fTmpInt[0] := x1;
@@ -440,6 +488,99 @@ procedure tKlausPaintBoxCanvasLink.syncChord;
 begin
   fPaintBox.content.canvas.chord(fTmpInt[0], fTmpInt[1], fTmpInt[2], fTmpInt[3], fTmpInt[4], fTmpInt[5]);
   invalidate;
+end;
+
+{ tKlausPaintBoxPictureLink }
+
+constructor tKlausPaintBoxPictureLink.create(aRuntime: tKlausRuntime);
+begin
+  inherited create(aRuntime);
+  runtime.synchronize(@syncCreatePicture);
+end;
+
+destructor tKlausPaintBoxPictureLink.destroy;
+begin
+  runtime.synchronize(@syncDestroyPicture);
+  inherited destroy;
+end;
+
+procedure tKlausPaintBoxPictureLink.syncCreatePicture;
+begin
+  fPicture := tPicture.create;
+end;
+
+procedure tKlausPaintBoxPictureLink.syncDestroyPicture;
+begin
+  freeAndNil(fPicture);
+end;
+
+function tKlausPaintBoxPictureLink.getPicture: tPicture;
+begin
+  result := fPicture;
+end;
+
+procedure tKlausPaintBoxPictureLink.loadFromFile(const fileName: string);
+begin
+  fTmpStr := fileName;
+  runtime.synchronize(@syncLoadFromFile);
+end;
+
+procedure tKlausPaintBoxPictureLink.syncLoadFromFile;
+begin
+  fPicture.loadFromFile(fTmpStr);
+end;
+
+procedure tKlausPaintBoxPictureLink.saveToFile(const fileName: string);
+begin
+  fTmpStr := fileName;
+  runtime.synchronize(@syncSaveToFile);
+end;
+
+procedure tKlausPaintBoxPictureLink.syncSaveToFile;
+begin
+  fPicture.saveToFile(fTmpStr);
+end;
+
+function tKlausPaintBoxPictureLink.getSize: tPoint;
+begin
+  runtime.synchronize(@syncGetSize);
+  result.x := fTmpInt[0];
+  result.y := fTmpInt[1];
+end;
+
+procedure tKlausPaintBoxPictureLink.syncGetSize;
+begin
+  fTmpInt[0] := fPicture.width;
+  fTmpInt[1] := fPicture.height;
+end;
+
+procedure tKlausPaintBoxPictureLink.copyFrom(src: tObject; x1, y1, x2, y2: integer);
+begin
+  fTmpObj := src;
+  fTmpInt[0] := x1;
+  fTmpInt[1] := y1;
+  fTmpInt[2] := x2;
+  fTmpInt[3] := y2;
+  runtime.synchronize(@syncCopyFrom);
+end;
+
+procedure tKlausPaintBoxPictureLink.syncCopyFrom;
+var
+  cnv: tCanvas;
+  g: tGraphic;
+  r: tRect;
+begin
+  r := rect(fTmpInt[0], fTmpInt[1], fTmpInt[2], fTmpInt[3]);
+  fPicture := tPicture.create;
+  fPicture.bitmap := tBitmap.create;
+  fPicture.bitmap.setSize(r.width, r.height);
+  if fTmpObj is tKlausCanvasLink then begin
+    cnv := (fTmpObj as tKlausCanvasLink).canvas;
+    fPicture.bitmap.canvas.copyRect(rect(0, 0, r.width, r.height), cnv, r);
+  end else if fTmpObj is tKlausPictureLink then begin
+    g := (fTmpObj as tKlausPictureLink).picture.graphic;
+    if g <> nil then fPicture.bitmap.canvas.draw(-r.left, -r.top, g);
+  end;
 end;
 
 { tKlausPaintBox }

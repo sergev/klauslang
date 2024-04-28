@@ -473,5 +473,6 @@ end;
 
 initialization
   klausCanvasLinkClass := tKlausPaintBoxCanvasLink;
+  klausPictureLinkClass := tKlausPaintBoxPictureLink;
 end.
 

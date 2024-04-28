@@ -115,6 +115,9 @@ const
   klausSysProcName_FileTempName = 'файлВрмИмя';
   klausSysProcName_FileExpandName = 'файлПолныйПуть';
   klausSysProcName_FileProgName = 'файлВыполняемый';
+  klausSysProcName_FileExtractPath = 'файлПуть';
+  klausSysProcName_FileExtractName = 'файлИмя';
+  klausSysProcName_FileExtractExt = 'файлРасширение';
   klausSysProcName_FileHomeDir = 'файлДомКат';
   klausSysProcName_FileGetAttrs = 'файлАтрибуты';
   klausSysProcName_FileGetAge = 'файлВозраст';
@@ -143,6 +146,12 @@ const
   klausSysProcName_GrPolygon = 'грМногоугольник';
   klausSysProcName_GrTextSize = 'грРазмерТекста';
   klausSysProcName_GrText = 'грТекст';
+  klausSysProcName_ImgLoad = 'изоЗагрузить';
+  klausSysProcName_ImgCreate = 'изоСоздать';
+  klausSysProcName_ImgDestroy = 'изоУничтожить';
+  klausSysProcName_ImgSave = 'изоСохранить';
+  klausSysProcName_ImgDraw = 'изоВывести';
+  klausSysProcName_ImgSize = 'изоРазмер';
 
 const
   klausConstName_Newline = 'НС';
@@ -583,6 +592,9 @@ begin
   tKlausSysProc_FileTempName.create(self, zeroSrcPt);
   tKlausSysProc_FileExpandName.create(self, zeroSrcPt);
   tKlausSysProc_FileProgName.create(self, zeroSrcPt);
+  tKlausSysProc_FileExtractPath.create(self, zeroSrcPt);
+  tKlausSysProc_FileExtractName.create(self, zeroSrcPt);
+  tKlausSysProc_FileExtractExt.create(self, zeroSrcPt);
   tKlausSysProc_FileHomeDir.create(self, zeroSrcPt);
   tKlausSysProc_FileGetAttrs.create(self, zeroSrcPt);
   tKlausSysProc_FileGetAge.create(self, zeroSrcPt);
@@ -611,6 +623,12 @@ begin
   tKlausSysProc_GrTextSize.create(self, zeroSrcPt);
   tKlausSysProc_GrText.create(self, zeroSrcPt);
   tKlausSysProc_GrClipRect.create(self, zeroSrcPt);
+  tKlausSysProc_ImgLoad.create(self, zeroSrcPt);
+  tKlausSysProc_ImgCreate.create(self, zeroSrcPt);
+  tKlausSysProc_ImgDestroy.create(self, zeroSrcPt);
+  tKlausSysProc_ImgSave.create(self, zeroSrcPt);
+  tKlausSysProc_ImgDraw.create(self, zeroSrcPt);
+  tKlausSysProc_ImgSize.create(self, zeroSrcPt);
 end;
 
 procedure tKlausUnitSystem.setArgs(val: tStrings);

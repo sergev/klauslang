@@ -23,6 +23,7 @@ unit KlausSrc;
 //todo: Добавить в VarPath возможность ссылки на модуль (точнее, путь к области видимости)
 
 //todo: процедурные переменные
+//todo: вменяемые имена классов в ercUnexpectedObjectClass
 
 {$mode ObjFPC}{$H+}
 {$i ../lib/klaus.inc}
@@ -104,6 +105,7 @@ type
   tKlausStackFrame = class;
   tKlausRuntime = class;
   tKlausCanvasLink = class;
+  tKlausPictureLink = class;
   eKlausLangException = class;
 
 type
@@ -1461,9 +1463,11 @@ type
 
       procedure setDefaultFont(val: tFont);
     protected
+      function  getCanvas: tCanvas; virtual; abstract;
       procedure doInvalidate; virtual; abstract;
     public
       property runtime: tKlausRuntime read fRuntime;
+      property canvas: tCanvas read getCanvas;
       property defaultFont: tFont read fDefaultFont write setDefaultFont;
 
       constructor create(aRuntime: tKlausRuntime; const cap: string); virtual;
@@ -1490,10 +1494,31 @@ type
       function  textOut(x, y: integer; const s: string): tPoint; virtual; abstract;
       procedure clipRect(x1, y1, x2, y2: integer); virtual; abstract;
       procedure setClipping(val: boolean); virtual; abstract;
+      procedure draw(x, y: integer; picture: tKlausPictureLink); virtual; abstract;
+  end;
+
+type
+  // Объект-связка с изображением
+  tKlausPictureLinkClass = class of tKlausPictureLink;
+  tKlausPictureLink = class(tObject)
+    private
+      fRuntime: tKlausRuntime;
+    protected
+      function getPicture: tPicture; virtual; abstract;
+    public
+      property runtime: tKlausRuntime read fRuntime;
+      property picture: tPicture read getPicture;
+
+      constructor create(aRuntime: tKlausRuntime); virtual;
+      procedure loadFromFile(const fileName: string); virtual; abstract;
+      procedure saveToFile(const fileName: string); virtual; abstract;
+      function  getSize: tPoint; virtual; abstract;
+      procedure copyFrom(src: tObject; x1, y1, x2, y2: integer); virtual; abstract;
   end;
 
 var
   klausCanvasLinkClass: tKlausCanvasLinkClass = nil;
+  klausPictureLinkClass: tKlausPictureLinkClass = nil;
 
 type
   tSynchronizeMethod = procedure(method: tThreadMethod) of object;
@@ -6214,6 +6239,14 @@ procedure tKlausCanvasLink.endPaint;
 begin
   if fNestCount > 0 then dec(fNestCount);
   invalidate;
+end;
+
+{ tKlausPictureLink }
+
+constructor tKlausPictureLink.create(aRuntime: tKlausRuntime);
+begin
+  inherited create;
+  fRuntime := aRuntime;
 end;
 
 { tKlausObjects }

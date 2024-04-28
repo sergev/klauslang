@@ -808,7 +808,37 @@ type
   end;
 
 type
-  // функция файлПрограммы(): строка;
+  // функция файлПуть(вх путь: строка): строка;
+  tKlausSysProc_FileExtractPath = class(tKlausSysProcDecl)
+    private
+      fPath: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  // функция файлИмя(вх путь: строка): строка;
+  tKlausSysProc_FileExtractName = class(tKlausSysProcDecl)
+    private
+      fPath: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  // функция файлРасширение(вх путь: строка): строка;
+  tKlausSysProc_FileExtractExt = class(tKlausSysProcDecl)
+    private
+      fPath: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  // функция файлВыполняемый(): строка;
   tKlausSysProc_FileProgName = class(tKlausSysProcDecl)
     private
     public
@@ -1110,7 +1140,7 @@ type
   end;
 
 type
-  // процедура грРазмерТекста(вх окно: объект; вх текст: строка);
+  // функция грРазмерТекста(вх окно: объект; вх текст: строка): Размер;
   tKlausSysProc_GrTextSize = class(tKlausSysProcDecl)
     private
       fWindow: tKlausProcParam;
@@ -1144,6 +1174,70 @@ type
       procedure customRun(frame: tKlausStackFrame; values: array of tKlausVarValueAt; const at: tSrcPoint); override;
   end;
 
+type
+  // процедура изоЗагрузить(вх имяФайла: строка);
+  tKlausSysProc_ImgLoad = class(tKlausSysProcDecl)
+    private
+      fFileName: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  // функция изоСоздать(вх источник: объект; вх г1, в1, г2, в2: целое): объект;
+  tKlausSysProc_ImgCreate = class(tKlausSysProcDecl)
+    private
+      fSource: tKlausProcParam;
+      fX1, fY1, fX2, fY2: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  // процедура изоУничтожить(вв изо: объект);
+  tKlausSysProc_ImgDestroy = class(tKlausSysProcDecl)
+    private
+      fImg: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  // процедура изоСохранить(вв изо: объект);
+  tKlausSysProc_ImgSave = class(tKlausSysProcDecl)
+    private
+      fImg: tKlausProcParam;
+      fFileName: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  // процедура изоВывести(вх окно: объект; вх г, в: целое; вх изо: объект);
+  tKlausSysProc_ImgDraw = class(tKlausSysProcDecl)
+    private
+      fWindow: tKlausProcParam;
+      fImg: tKlausProcParam;
+      fX, fY: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  // функция изоРазмер(вх окно: объект; вх текст: строка): Размер;
+  tKlausSysProc_ImgSize = class(tKlausSysProcDecl)
+    private
+      fImg: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
 implementation
 
 uses
@@ -1155,6 +1249,7 @@ const
 resourcestring
   strOneOrMore = '1 или более';
   strNumOrNum = '%d или %d';
+  strStrOrStr = '%s или %s';
 
 { tKlausSysProc_Destroy }
 
@@ -3278,6 +3373,60 @@ begin
   returnSimple(frame, klausSimple(expandFileName(getSimpleStr(frame, fName, at))));
 end;
 
+{ tKlausSysProc_FileExtractPath }
+
+constructor tKlausSysProc_FileExtractPath.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_FileExtractPath, aPoint);
+  fPath := tKlausProcParam.create(self, 'путь', aPoint, kpmInput, source.simpleTypes[kdtString]);
+  addParam(fPath);
+  declareRetValue(kdtString);
+end;
+
+procedure tKlausSysProc_FileExtractPath.run(frame: tKlausStackFrame; const at: tSrcPoint);
+var
+  s: tKlausString;
+begin
+  s := extractFilePath(getSimpleStr(frame, fPath, at));
+  returnSimple(frame, klausSimple(s));
+end;
+
+{ tKlausSysProc_FileExtractName }
+
+constructor tKlausSysProc_FileExtractName.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_FileExtractName, aPoint);
+  fPath := tKlausProcParam.create(self, 'путь', aPoint, kpmInput, source.simpleTypes[kdtString]);
+  addParam(fPath);
+  declareRetValue(kdtString);
+end;
+
+procedure tKlausSysProc_FileExtractName.run(frame: tKlausStackFrame; const at: tSrcPoint);
+var
+  s: tKlausString;
+begin
+  s := getSimpleStr(frame, fPath, at);
+  returnSimple(frame, klausSimple(extractFileName(s)));
+end;
+
+{ tKlausSysProc_FileExtractExt }
+
+constructor tKlausSysProc_FileExtractExt.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_FileExtractExt, aPoint);
+  fPath := tKlausProcParam.create(self, 'путь', aPoint, kpmInput, source.simpleTypes[kdtString]);
+  addParam(fPath);
+  declareRetValue(kdtString);
+end;
+
+procedure tKlausSysProc_FileExtractExt.run(frame: tKlausStackFrame; const at: tSrcPoint);
+var
+  s: tKlausString;
+begin
+  s := getSimpleStr(frame, fPath, at);
+  returnSimple(frame, klausSimple(extractFileExt(s)));
+end;
+
 { tKlausSysProc_FileProgName }
 
 constructor tKlausSysProc_FileProgName.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
@@ -4270,6 +4419,194 @@ begin
     cnv.clipRect(x1, y1, x2, y2);
   end else
     cnv.setClipping(getSimpleBool(values[1]));
+end;
+
+{ tKlausSysProc_ImgLoad }
+
+constructor tKlausSysProc_ImgLoad.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_ImgLoad, aPoint);
+  fFileName := tKlausProcParam.create(self, 'имяФайла', aPoint, kpmInput, source.simpleTypes[kdtString]);
+  addParam(fFileName);
+  declareRetValue(kdtObject);
+end;
+
+procedure tKlausSysProc_ImgLoad.run(frame: tKlausStackFrame; const at: tSrcPoint);
+var
+  fileName: tKlausString;
+  lnk: tKlausPictureLink;
+  rslt: tKlausObject;
+begin
+  fileName := getSimpleStr(frame, fFileName, at);
+  rslt := frame.owner.objects.allocate(tObject(klausInvalidPointer), at);
+  try
+    if klausPictureLinkClass = nil then raise eKlausError.create(ercCanvasUnavailable, at);
+    lnk := klausPictureLinkClass.create(frame.owner);
+    try
+      lnk.loadFromFile(fileName);
+      frame.owner.objects.put(rslt, lnk, at);
+      returnSimple(frame, klausSimpleObj(rslt));
+    except
+      freeAndNil(lnk);
+      raise;
+    end;
+  except
+    frame.owner.objects.release(rslt, at);
+    raise;
+  end;
+end;
+
+{ tKlausSysProc_ImgCreate }
+
+constructor tKlausSysProc_ImgCreate.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_ImgCreate, aPoint);
+  fSource := tKlausProcParam.create(self, 'источник', aPoint, kpmInput, source.simpleTypes[kdtObject]);
+  addParam(fSource);
+  fX1 := tKlausProcParam.create(self, 'г1', aPoint, kpmInput, source.simpleTypes[kdtInteger]);
+  addParam(fX1);
+  fY1 := tKlausProcParam.create(self, 'в1', aPoint, kpmInput, source.simpleTypes[kdtInteger]);
+  addParam(fY1);
+  fX2 := tKlausProcParam.create(self, 'г2', aPoint, kpmInput, source.simpleTypes[kdtInteger]);
+  addParam(fX2);
+  fY2 := tKlausProcParam.create(self, 'в2', aPoint, kpmInput, source.simpleTypes[kdtInteger]);
+  addParam(fY2);
+  declareRetValue(kdtObject);
+end;
+
+procedure tKlausSysProc_ImgCreate.run(frame: tKlausStackFrame; const at: tSrcPoint);
+var
+  src: tKlausObject;
+  obj: tObject;
+  lnk: tKlausPictureLink;
+  x1, y1, x2, y2: integer;
+  rslt: tKlausObject;
+begin
+  src := getSimpleObj(frame, fSource, at);
+  if src <> 0 then begin
+    obj := frame.owner.objects.get(src, at);
+    if not (obj is tKlausCanvasLink) and not (obj is tKlausPictureLink) then
+      raise eKlausError.createFmt(ercUnexpectedObjectClass, at, [format(strStrOrStr, [tKlausCanvasLink.className, tKlausPictureLink.className]), obj.className]);
+  end else
+    obj := nil;
+  x1 := getSimpleInt(frame, fX1, at);
+  y1 := getSimpleInt(frame, fY1, at);
+  x2 := getSimpleInt(frame, fX2, at);
+  y2 := getSimpleInt(frame, fY2, at);
+  rslt := frame.owner.objects.allocate(tObject(klausInvalidPointer), at);
+  try
+    if klausPictureLinkClass = nil then raise eKlausError.create(ercCanvasUnavailable, at);
+    lnk := klausPictureLinkClass.create(frame.owner);
+    try
+      lnk.copyFrom(obj, x1, y1, x2, y2);
+      frame.owner.objects.put(rslt, lnk, at);
+      returnSimple(frame, klausSimpleObj(rslt));
+    except
+      freeAndNil(lnk);
+      raise;
+    end;
+  except
+    frame.owner.objects.release(rslt, at);
+    raise;
+  end;
+end;
+
+{ tKlausSysProc_ImgDestroy }
+
+constructor tKlausSysProc_ImgDestroy.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_ImgDestroy, aPoint);
+  fImg := tKlausProcParam.create(self, 'изо', aPoint, kpmInOut, source.simpleTypes[kdtObject]);
+  addParam(fImg);
+end;
+
+procedure tKlausSysProc_ImgDestroy.run(frame: tKlausStackFrame; const at: tSrcPoint);
+var
+  img: tKlausObject;
+begin
+  img := getSimpleObj(frame, fImg, at);
+  getKlausObject(frame, img, tKlausPictureLink, at);
+  frame.owner.objects.releaseAndFree(img, at);
+  setSimple(frame, fImg, klausZeroValue(kdtObject), at);
+end;
+
+{ tKlausSysProc_ImgSave }
+
+constructor tKlausSysProc_ImgSave.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_ImgSave, aPoint);
+  fImg := tKlausProcParam.create(self, 'изо', aPoint, kpmInOut, source.simpleTypes[kdtObject]);
+  addParam(fImg);
+  fFileName := tKlausProcParam.create(self, 'имяФайла', aPoint, kpmInOut, source.simpleTypes[kdtString]);
+  addParam(fFileName);
+end;
+
+procedure tKlausSysProc_ImgSave.run(frame: tKlausStackFrame; const at: tSrcPoint);
+var
+  img: tKlausObject;
+  lnk: tKlausPictureLink;
+  fileName: string;
+begin
+  img := getSimpleObj(frame, fImg, at);
+  lnk := getKlausObject(frame, img, tKlausPictureLink, at) as tKlausPictureLink;
+  fileName := getSimpleStr(frame, fFileName, at);
+  lnk.saveToFile(fileName);
+end;
+
+{ tKlausSysProc_ImgDraw }
+
+constructor tKlausSysProc_ImgDraw.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_ImgDraw, aPoint);
+  fWindow := tKlausProcParam.create(self, 'окно', aPoint, kpmInput, source.simpleTypes[kdtObject]);
+  addParam(fWindow);
+  fX := tKlausProcParam.create(self, 'г', aPoint, kpmInput, source.simpleTypes[kdtInteger]);
+  addParam(fX);
+  fY := tKlausProcParam.create(self, 'в', aPoint, kpmInput, source.simpleTypes[kdtInteger]);
+  addParam(fY);
+  fImg := tKlausProcParam.create(self, 'изо', aPoint, kpmInOut, source.simpleTypes[kdtObject]);
+  addParam(fImg);
+end;
+
+procedure tKlausSysProc_ImgDraw.run(frame: tKlausStackFrame; const at: tSrcPoint);
+var
+  w, img: tKlausObject;
+  cnv: tKlausCanvasLink;
+  pic: tKlausPictureLink;
+  x, y: tKlausInteger;
+begin
+  w := getSimpleObj(frame, fWindow, at);
+  cnv := getKlausObject(frame, w, tKlausCanvasLink, at) as tKlausCanvasLink;
+  img := getSimpleObj(frame, fImg, at);
+  pic := getKlausObject(frame, img, tKlausPictureLink, at) as tKlausPictureLink;
+  x := getSimpleInt(frame, fX, at);
+  y := getSimpleInt(frame, fY, at);
+  cnv.draw(x, y, pic);
+end;
+
+{ tKlausSysProc_ImgSize }
+
+constructor tKlausSysProc_ImgSize.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_ImgSize, aPoint);
+  fImg := tKlausProcParam.create(self, 'изо', aPoint, kpmInput, source.simpleTypes[kdtObject]);
+  addParam(fImg);
+  declareRetValue(findTypeDef(klausTypeName_Size));
+end;
+
+procedure tKlausSysProc_ImgSize.run(frame: tKlausStackFrame; const at: tSrcPoint);
+var
+  img: tKlausObject;
+  pic: tKlausPictureLink;
+  p: tPoint;
+  v: tKlausVarValueStruct;
+begin
+  img := getSimpleObj(frame, fImg, at);
+  pic := getKlausObject(frame, img, tKlausPictureLink, at) as tKlausPictureLink;
+  p := pic.getSize;
+  v := frame.varByDecl(retValue, at).value as tKlausVarValueStruct;
+  (v.getMember('г', at) as tKlausVarValueSimple).setSimple(klausSimple(tKlausInteger(p.x)), at);
+  (v.getMember('в', at) as tKlausVarValueSimple).setSimple(klausSimple(tKlausInteger(p.y)), at);
 end;
 
 end.
