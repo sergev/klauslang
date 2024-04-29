@@ -24,6 +24,7 @@ unit KlausSrc;
 
 //todo: процедурные переменные
 //todo: вменяемые имена классов в ercUnexpectedObjectClass
+//todo: with = для
 
 {$mode ObjFPC}{$H+}
 {$i ../lib/klaus.inc}
@@ -1428,13 +1429,6 @@ const
   klausDefaultCanvasHeight = 600;
 
 type
-  // Обработчик создания окна графического вывода
-  tKlausCanvasCreateWindowMethod = function(const cap: string; link: tKlausCanvasLink): tObject of object;
-
-  // Обработчик уничтожения окна графического вывода
-  tKlausCanvasDestroyWindowMethod = procedure(const win: tObject) of object;
-
-type
   tKlausPenProp = (kppColor, kppWidth, kppStyle);
   tKlausPenProps = set of tKlausPenProp;
 
@@ -1453,25 +1447,17 @@ type
   // Объект-связка с окном графического вывода
   tKlausCanvasLinkClass = class of tKlausCanvasLink;
   tKlausCanvasLink = class(tObject)
-    public
-      class var createWindowMethod: tKlausCanvasCreateWindowMethod;
-      class var destroyWindowMethod: tKlausCanvasDestroyWindowMethod;
     private
       fRuntime: tKlausRuntime;
       fNestCount: integer;
-      fDefaultFont: tFont;
-
-      procedure setDefaultFont(val: tFont);
     protected
       function  getCanvas: tCanvas; virtual; abstract;
       procedure doInvalidate; virtual; abstract;
     public
       property runtime: tKlausRuntime read fRuntime;
       property canvas: tCanvas read getCanvas;
-      property defaultFont: tFont read fDefaultFont write setDefaultFont;
 
       constructor create(aRuntime: tKlausRuntime; const cap: string); virtual;
-      destructor  destroy; override;
       procedure invalidate;
       procedure setSize(w, h: integer); virtual; abstract;
       procedure beginPaint;
@@ -6206,23 +6192,11 @@ end;
 
 { tKlausCanvas }
 
-procedure tKlausCanvasLink.setDefaultFont(val: tFont);
-begin
-  fDefaultFont.assign(val);
-end;
-
 constructor tKlausCanvasLink.create(aRuntime: tKlausRuntime; const cap: string);
 begin
   inherited create;
   fRuntime := aRuntime;
   fNestCount := 0;
-  fDefaultFont := tFont.create;
-end;
-
-destructor tKlausCanvasLink.destroy;
-begin
-  freeAndNil(fDefaultFont);
-  inherited destroy;
 end;
 
 procedure tKlausCanvasLink.invalidate;

@@ -130,10 +130,8 @@ resourcestring
 constructor tSceneForm.create(aOwner: tComponent);
 begin
   inherited create(aOwner);
-  if assigned(klausCanvasLinkClass) then begin
-    klausCanvasLinkClass.createWindowMethod := @createGraphTab;
-    klausCanvasLinkClass.destroyWindowMethod := @destroyGraphTab;
-  end;
+  tKlausPaintBoxCanvasLink.createWindowMethod := @createGraphTab;
+  tKlausPaintBoxCanvasLink.destroyWindowMethod := @destroyGraphTab;
   fRunOptions := tKlausRunOptions.create;
   assert(mainForm.scene = nil, 'Cannot open multiple execution scenes');
   mainForm.scene := self;
@@ -143,6 +141,8 @@ begin
   fConsole.borderStyle := bsSingle;
   with mainForm.consoleOptions do begin
     fConsole.font := font;
+    tKlausPaintBoxCanvasLink.defaultFontName := font.name;
+    tKlausPaintBoxCanvasLink.defaultFontSize := font.size;
     if stayOnTop then self.formStyle := fsStayOnTop;
     self.autoClose := autoClose;
   end;
@@ -174,10 +174,8 @@ begin
   if fSource <> nil then freeAndNil(fSource);
   if mainForm.scene = self then mainForm.scene := nil;
   freeAndNil(fRunOptions);
-  if assigned(klausCanvasLinkClass) then begin
-    klausCanvasLinkClass.createWindowMethod := nil;
-    klausCanvasLinkClass.destroyWindowMethod := nil;
-  end;
+  tKlausPaintBoxCanvasLink.createWindowMethod := nil;
+  tKlausPaintBoxCanvasLink.destroyWindowMethod := nil;
   inherited destroy;
 end;
 
@@ -408,7 +406,6 @@ var
   sb: tScrollBox;
   pb: tKlausPaintBox;
 begin
-  link.defaultFont := fConsole.font;
   ts := pageControl.addTabSheet;
   ts.caption := cap;
   ts.autoSize := true;

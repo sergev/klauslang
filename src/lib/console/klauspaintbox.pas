@@ -16,7 +16,19 @@ type
   tKlausPaintBoxCanvasLink = class;
 
 type
+  // Обработчик создания окна графического вывода
+  tKlausCanvasCreateWindowMethod = function(const cap: string; link: tKlausCanvasLink): tObject of object;
+
+  // Обработчик уничтожения окна графического вывода
+  tKlausCanvasDestroyWindowMethod = procedure(const win: tObject) of object;
+
+type
   tKlausPaintBoxCanvasLink = class(tKlausCanvasLink)
+    public
+      class var createWindowMethod: tKlausCanvasCreateWindowMethod;
+      class var destroyWindowMethod: tKlausCanvasDestroyWindowMethod;
+      class var defaultFontName: string;
+      class var defaultFontSize: integer;
     private
       fTmpStr: string;
       fTmpInt: array[0..9] of integer;
@@ -138,7 +150,10 @@ end;
 procedure tKlausPaintBoxCanvasLink.syncCreatePaintBox;
 begin
   fPaintBox := createWindowMethod(fTmpStr, self) as tKlausPaintBox;
-  fPaintBox.content.canvas.font := defaultFont;
+  with fPaintBox.content.canvas.font do begin
+    name := defaultFontName;
+    size := defaultFontSize;
+  end;
 end;
 
 procedure tKlausPaintBoxCanvasLink.syncDestroyPaintBox;
@@ -226,11 +241,11 @@ begin
   with fPaintBox.content.canvas do begin
     if kfpName in what then begin
       if fTmpStr <> '' then font.name := fTmpStr
-      else font.name := defaultFont.name;
+      else font.name := defaultFontName;
     end;
     if kfpSize in what then begin
       if fTmpInt[1] <> 0 then font.size := fTmpInt[1]
-      else font.size := defaultFont.size;
+      else font.size := defaultFontSize;
     end;
     if kfpStyle in what then font.style := tFontStyles(fTmpInt[2]);
     if kfpColor in what then font.color := tColor(fTmpInt[3]);
