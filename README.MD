@@ -25,6 +25,13 @@
 [![](https://gitflic.ru/project/czaerlag/klauslang/blob/raw?file=doc%2Fscr2.png){width=250px}](https://gitflic.ru/project/czaerlag/klauslang/blob/raw?file=doc%2Fscr2.png)
 [![](https://gitflic.ru/project/czaerlag/klauslang/blob/raw?file=doc%2Fscr3.png){width=250px}](https://gitflic.ru/project/czaerlag/klauslang/blob/raw?file=doc%2Fscr3.png)
 
+## Документация и примеры
+- [Язык Клаус. Справочное руководство](https://gitflic.ru/project/czaerlag/klauslang/blob?file=doc%2F%D0%AF%D0%B7%D1%8B%D0%BA%20%D0%9A%D0%BB%D0%B0%D1%83%D1%81.odt)
+- [Примеры исходного кода](https://gitflic.ru/project/czaerlag/klauslang/file?file=samples)
+- [Ещё тестовые примеры](https://gitflic.ru/project/czaerlag/klauslang/file?file=test)
+
+Мы следим за тем, чтобы Справочное руководство по языку всегда соответствовало действительности.
+
 ## Возможности
 - Строгая типизация;
 - Полная поддержка UTF-8 на уровне языка;
@@ -169,8 +176,3 @@
 Верно. Профессиональный язык программирования — это огромная экосистема: большая среда разработки с массой возможностей, богатая стандартная библиотека, сто тыщ дополнительных библиотек от разных авторов, и прочая, и прочая.<br>
 Мы считаем, что на начальном этапе обучения такое обилие возможностей не полезно, но очень вредно. Среда для маленького программиста должна быть настоящей, но маленькой. Возможностей должно быть ровно столько, сколько ученики смогут освоить в ближайшие год-два, не больше. Обилие возможностей порождает растерянность, а нам нужно понимание.<br>
 И очень важно: эти немногие из многих возможностей должны быть отобраны не с точки зрения продуктивности для профессионального программиста, а с точки зрения **удобства для учителя**.
-
-## Документация и примеры
-- [Язык Клаус. Справочное руководство](https://gitflic.ru/project/czaerlag/klauslang/blob?file=doc%2F%D0%AF%D0%B7%D1%8B%D0%BA%20%D0%9A%D0%BB%D0%B0%D1%83%D1%81.odt)
-- [Примеры исходного кода](https://gitflic.ru/project/czaerlag/klauslang/file?file=samples)
-- [Ещё тестовые примеры](https://gitflic.ru/project/czaerlag/klauslang/file?file=test)
