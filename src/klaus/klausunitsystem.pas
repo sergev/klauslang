@@ -126,8 +126,8 @@ const
   klausSysProcName_FileFindFirst = 'файлПервый';
   klausSysProcName_FileFindNext = 'файлСледующий';
   klausSysProcName_GrWindowOpen = 'грОткрытьОкно';
-  klausSysProcName_GrWindowClose = 'грЗакрытьОкно';
-  klausSysProcName_GrWindowSize = 'грРазмерОкна';
+  klausSysProcName_GrDestroy = 'грУничтожить';
+  klausSysProcName_GrSize = 'грРазмер';
   klausSysProcName_GrBeginPaint = 'грНачать';
   klausSysProcName_GrEndPaint = 'грЗакончить';
   klausSysProcName_GrPen = 'грПеро';
@@ -146,12 +146,10 @@ const
   klausSysProcName_GrPolygon = 'грМногоугольник';
   klausSysProcName_GrTextSize = 'грРазмерТекста';
   klausSysProcName_GrText = 'грТекст';
-  klausSysProcName_ImgLoad = 'изоЗагрузить';
-  klausSysProcName_ImgCreate = 'изоСоздать';
-  klausSysProcName_ImgDestroy = 'изоУничтожить';
-  klausSysProcName_ImgSave = 'изоСохранить';
-  klausSysProcName_ImgDraw = 'изоВывести';
-  klausSysProcName_ImgSize = 'изоРазмер';
+  klausSysProcName_GrImgLoad = 'грИзоЗагрузить';
+  klausSysProcName_GrImgCreate = 'грИзоСоздать';
+  klausSysProcName_GrImgSave = 'грИзоСохранить';
+  klausSysProcName_GrImgDraw = 'грИзоВывести';
 
 const
   klausConstName_Newline = 'НС';
@@ -325,6 +323,11 @@ resourcestring
   strInvalidChar = 'Неверный символ.';
   strInternalError = 'Внутренняя ошибка Клаус. Пожалуйста, сообщите разработчикам!';
 
+resourcestring
+  strKlausFileStream = 'Файл';
+  strKlausFileSearch = 'Поиск файлов';
+  strKlausCanvasLink = 'Холст';
+
 function klausStdError(frame: tKlausStackFrame; ksx: tKlausStdException; line, pos: integer): eKlausLangException;
 begin
   result := klausStdError(frame, ksx, '', [], line, pos);
@@ -360,6 +363,10 @@ begin
     releaseExceptionObject;
     l := (obj as eKlausError).line;
     p := (obj as eKlausError).pos;
+    if (l = 0) and (p = 0) then begin
+      l := at.line;
+      p := at.pos;
+    end;
     for ksx := low(ksx) to high(ksx) do
       if (obj as eKlausError).code in klausCodeToStdErr[ksx] then
         raise klausStdError(frame, ksx, (obj as exception).message, l, p) at get_caller_addr(get_frame);
@@ -603,8 +610,8 @@ begin
   tKlausSysProc_FileFindFirst.create(self, zeroSrcPt);
   tKlausSysProc_FileFindNext.create(self, zeroSrcPt);
   tKlausSysProc_GrWindowOpen.create(self, zeroSrcPt);
-  tKlausSysProc_GrWindowClose.create(self, zeroSrcPt);
-  tKlausSysProc_GrWindowSize.create(self, zeroSrcPt);
+  tKlausSysProc_GrDestroy.create(self, zeroSrcPt);
+  tKlausSysProc_GrSize.create(self, zeroSrcPt);
   tKlausSysProc_GrBeginPaint.create(self, zeroSrcPt);
   tKlausSysProc_GrEndPaint.create(self, zeroSrcPt);
   tKlausSysProc_GrPen.create(self, zeroSrcPt);
@@ -623,12 +630,10 @@ begin
   tKlausSysProc_GrTextSize.create(self, zeroSrcPt);
   tKlausSysProc_GrText.create(self, zeroSrcPt);
   tKlausSysProc_GrClipRect.create(self, zeroSrcPt);
-  tKlausSysProc_ImgLoad.create(self, zeroSrcPt);
-  tKlausSysProc_ImgCreate.create(self, zeroSrcPt);
-  tKlausSysProc_ImgDestroy.create(self, zeroSrcPt);
-  tKlausSysProc_ImgSave.create(self, zeroSrcPt);
-  tKlausSysProc_ImgDraw.create(self, zeroSrcPt);
-  tKlausSysProc_ImgSize.create(self, zeroSrcPt);
+  tKlausSysProc_GrImgLoad.create(self, zeroSrcPt);
+  tKlausSysProc_GrImgCreate.create(self, zeroSrcPt);
+  tKlausSysProc_GrImgSave.create(self, zeroSrcPt);
+  tKlausSysProc_GrImgDraw.create(self, zeroSrcPt);
 end;
 
 procedure tKlausUnitSystem.setArgs(val: tStrings);
@@ -1040,11 +1045,21 @@ begin
 end;
 
 function tKlausSysProcDecl.getKlausObject(frame: tKlausStackFrame; h: tKlausObject; cls: tClass; const at: tSrcPoint): tObject;
+var
+  cn, rn: string;
 begin
   result := frame.owner.objects.get(h, at);
-  if not (result is cls) then raise eKlausError.createFmt(ercUnexpectedObjectClass, at, [cls.className, result.className]);
+  if not (result is cls) then begin
+    cn := tKlausObjects.klausObjectName(cls);
+    rn := tKlausObjects.klausObjectName(result.classType);
+    raise eKlausError.createFmt(ercUnexpectedObjectClass, at, [cn, rn]);
+  end;
 end;
 
+initialization
+  tKlausObjects.registerKlausObject(tKlausFileStream, strKlausFileStream);
+  tKlausObjects.registerKlausObject(tKlausFileSearch, strKlausFileSearch);
+  tKlausObjects.registerKlausObject(tKlausCanvasLink, strKlausCanvasLink);
 end.
 
 

@@ -128,6 +128,7 @@ const
   ercWrongForwardSignature  = 78;
   ercCanvasUnavailable      = 79;
   ercInvalidFormatParamType = 80;
+  ercGraphicOperationNA     = 81;
 
 const
   // Классификация кодов eKlausError для трансляции в исключения языка
@@ -171,7 +172,7 @@ const
 
     //ksxRuntimeError
     [ercStackTooBig, ercInaccurateCleanup, ercInvalidKlausHandle, ercTooManyHandles,
-    ercUnexpectedObjectClass, ercCallsNotAllowed, ercCanvasUnavailable],
+    ercUnexpectedObjectClass, ercCallsNotAllowed, ercCanvasUnavailable, ercGraphicOperationNA],
 
     //ksxBadNumber
     [ercArgumentIsNaN, ercArgumentIsNotFinite],
@@ -291,6 +292,7 @@ resourcestring
   errWrongForwardSignature = 'Определение подпрограммы не соответствует предварительному определению.';
   errCanvasUnavailable = 'Невозможно использовать функции графической библиотеки в этом режиме.';
   errInvalidFormatParamType = 'В качестве аргументов допустимы только значения или одномерные массивы простых типов.';
+  errGraphicOperationNA = 'Операция невозможна для данного типа графического объекта: %s.';
 
 { Globals }
 
@@ -403,6 +405,7 @@ begin
     ercWrongForwardSignature: result := errWrongForwardSignature;
     ercCanvasUnavailable: result := errCanvasUnavailable;
     ercInvalidFormatParamType: result := errInvalidFormatParamType;
+    ercGraphicOperationNA: result := errGraphicOperationNA;
   end;
 end;
 

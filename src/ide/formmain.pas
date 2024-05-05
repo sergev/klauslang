@@ -1499,6 +1499,7 @@ var
 begin
   handled := false;
   ctl := activeControl;
+  if ctl = nil then exit;
   while ctl <> nil do begin
     if ctl is tDebugViewContent then begin
       frm := ctl as tDebugViewContent;

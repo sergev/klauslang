@@ -32,7 +32,7 @@ unit KlausSrc;
 interface
 
 uses
-  Classes, SysUtils, FGL, Graphics, U8, KlausErr, KlausLex, KlausDef, KlausSyn;
+  Types, Classes, SysUtils, FGL, Graphics, U8, KlausErr, KlausLex, KlausDef, KlausSyn;
 
 type
   tKlausMap = class;
@@ -106,7 +106,6 @@ type
   tKlausStackFrame = class;
   tKlausRuntime = class;
   tKlausCanvasLink = class;
-  tKlausPictureLink = class;
   eKlausLangException = class;
 
 type
@@ -1209,8 +1208,16 @@ type
   end;
 
 type
+  tPtrStrMap = specialize tFPGMap <pointer, string>;
+
+type
   // Хранилище экземпляров встроенных объектов Клаус
   tKlausObjects = class
+    private
+      class var fObjNames: tPtrStrMap;
+    public
+      class procedure registerKlausObject(cls: tClass; objectName: string);
+      class function  klausObjectName(cls: tClass): string;
     private
       fItems: tFPList;
       fCount: sizeInt;
@@ -1457,11 +1464,12 @@ type
       property runtime: tKlausRuntime read fRuntime;
       property canvas: tCanvas read getCanvas;
 
-      constructor create(aRuntime: tKlausRuntime; const cap: string); virtual;
+      constructor create(aRuntime: tKlausRuntime; const cap: string = ''); virtual;
       procedure invalidate;
-      procedure setSize(w, h: integer); virtual; abstract;
       procedure beginPaint;
       procedure endPaint;
+      function  getSize: tSize; virtual; abstract;
+      function  setSize(val: tSize): tSize; virtual; abstract;
       procedure setPenProps(what: tKlausPenProps; color: tColor; width: integer; style: tPenStyle); virtual; abstract;
       procedure setBrushProps(what: tKlausBrushProps; color: tColor; style: tBrushStyle); virtual; abstract;
       procedure setFontProps(what: tKlausFontProps; const name: string; size: integer; style: tFontStyles; color: tColor); virtual; abstract;
@@ -1480,31 +1488,15 @@ type
       function  textOut(x, y: integer; const s: string): tPoint; virtual; abstract;
       procedure clipRect(x1, y1, x2, y2: integer); virtual; abstract;
       procedure setClipping(val: boolean); virtual; abstract;
-      procedure draw(x, y: integer; picture: tKlausPictureLink); virtual; abstract;
-  end;
-
-type
-  // Объект-связка с изображением
-  tKlausPictureLinkClass = class of tKlausPictureLink;
-  tKlausPictureLink = class(tObject)
-    private
-      fRuntime: tKlausRuntime;
-    protected
-      function getPicture: tPicture; virtual; abstract;
-    public
-      property runtime: tKlausRuntime read fRuntime;
-      property picture: tPicture read getPicture;
-
-      constructor create(aRuntime: tKlausRuntime); virtual;
+      procedure draw(x, y: integer; picture: tKlausCanvasLink); virtual; abstract;
+      procedure copyFrom(source: tKlausCanvasLink; x1, y1, x2, y2: integer); virtual; abstract;
       procedure loadFromFile(const fileName: string); virtual; abstract;
       procedure saveToFile(const fileName: string); virtual; abstract;
-      function  getSize: tPoint; virtual; abstract;
-      procedure copyFrom(src: tObject; x1, y1, x2, y2: integer); virtual; abstract;
   end;
 
 var
   klausCanvasLinkClass: tKlausCanvasLinkClass = nil;
-  klausPictureLinkClass: tKlausPictureLinkClass = nil;
+  klausPictureLinkClass: tKlausCanvasLinkClass = nil;
 
 type
   tSynchronizeMethod = procedure(method: tThreadMethod) of object;
@@ -5110,7 +5102,7 @@ begin
   try
     body.run(frame);
   except
-    klausTranslateException(frame, point);
+    klausTranslateException(frame, at);
   end;
 end;
 
@@ -6190,9 +6182,9 @@ begin
   end;
 end;
 
-{ tKlausCanvas }
+{ tKlausCanvasLink }
 
-constructor tKlausCanvasLink.create(aRuntime: tKlausRuntime; const cap: string);
+constructor tKlausCanvasLink.create(aRuntime: tKlausRuntime; const cap: string = '');
 begin
   inherited create;
   fRuntime := aRuntime;
@@ -6215,14 +6207,6 @@ begin
   invalidate;
 end;
 
-{ tKlausPictureLink }
-
-constructor tKlausPictureLink.create(aRuntime: tKlausRuntime);
-begin
-  inherited create;
-  fRuntime := aRuntime;
-end;
-
 { tKlausObjects }
 
 constructor tKlausObjects.create;
@@ -6238,6 +6222,32 @@ destructor tKlausObjects.destroy;
 begin
   freeAndNil(fItems);
   inherited destroy;
+end;
+
+class procedure tKlausObjects.registerKlausObject(cls: tClass; objectName: string);
+begin
+  if not assigned(fObjNames) then begin
+    fObjNames := tPtrStrMap.create;
+    fObjNames.sorted := true;
+    fObjNames.duplicates := dupIgnore;
+  end;
+  fObjNames.add(cls, objectName);
+end;
+
+class function tKlausObjects.klausObjectName(cls: tClass): string;
+var
+  idx: integer;
+begin
+  if not assigned(cls) then exit(strEmptyValue);
+  if not assigned(fObjNames) then exit(cls.className);
+  result := cls.className;
+  idx := fObjNames.indexOf(cls);
+  while idx < 0 do begin
+    cls := cls.classParent;
+    if not assigned(cls) then exit(result);
+    idx := fObjNames.indexOf(cls);
+  end;
+  result := fObjNames.data[idx];
 end;
 
 procedure tKlausObjects.storeFreeHandle(h: tKlausObject);

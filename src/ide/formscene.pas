@@ -130,8 +130,8 @@ resourcestring
 constructor tSceneForm.create(aOwner: tComponent);
 begin
   inherited create(aOwner);
-  tKlausPaintBoxCanvasLink.createWindowMethod := @createGraphTab;
-  tKlausPaintBoxCanvasLink.destroyWindowMethod := @destroyGraphTab;
+  tKlausPaintBoxLink.createWindowMethod := @createGraphTab;
+  tKlausPaintBoxLink.destroyWindowMethod := @destroyGraphTab;
   fRunOptions := tKlausRunOptions.create;
   assert(mainForm.scene = nil, 'Cannot open multiple execution scenes');
   mainForm.scene := self;
@@ -141,8 +141,8 @@ begin
   fConsole.borderStyle := bsSingle;
   with mainForm.consoleOptions do begin
     fConsole.font := font;
-    tKlausPaintBoxCanvasLink.defaultFontName := font.name;
-    tKlausPaintBoxCanvasLink.defaultFontSize := font.size;
+    tKlausPaintBoxLink.defaultFontName := font.name;
+    tKlausPaintBoxLink.defaultFontSize := font.size;
     if stayOnTop then self.formStyle := fsStayOnTop;
     self.autoClose := autoClose;
   end;
@@ -174,8 +174,8 @@ begin
   if fSource <> nil then freeAndNil(fSource);
   if mainForm.scene = self then mainForm.scene := nil;
   freeAndNil(fRunOptions);
-  tKlausPaintBoxCanvasLink.createWindowMethod := nil;
-  tKlausPaintBoxCanvasLink.destroyWindowMethod := nil;
+  tKlausPaintBoxLink.createWindowMethod := nil;
+  tKlausPaintBoxLink.destroyWindowMethod := nil;
   inherited destroy;
 end;
 
@@ -469,7 +469,7 @@ begin
 end;
 
 initialization
-  klausCanvasLinkClass := tKlausPaintBoxCanvasLink;
-  klausPictureLinkClass := tKlausPaintBoxPictureLink;
+  klausCanvasLinkClass := tKlausPaintBoxLink;
+  klausPictureLinkClass := tKlausPictureLink;
 end.
 
