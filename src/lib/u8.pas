@@ -49,13 +49,13 @@ type
 
   function u8Chr(p: pChar): u8Char;
   function u8Chr(const s: string): u8Char;
-  function u8ChrBytes(p: pChar): longWord;
 
   function u8GetChar(var p: pChar): u8Char;
   function u8GetCharBytes(var p: pChar): longWord;
   function u8ReadChar(stream: tStream): u8Char;
   function u8ReadChar(var inp: text): u8Char; // iocheck
 
+  function u8CharBytes(p: pChar): longWord;
   function u8CharFromBytes(c: longWord): u8Char;
 
   function u8SkipChars(p: pChar; count: integer): pChar;
@@ -244,7 +244,7 @@ end;
 
 // Возвращает символ UTF8.
 // Предполагает, что передан указатель на начало корректного символа.
-function u8ChrBytes(p: pChar): longWord;
+function u8CharBytes(p: pChar): longWord;
 begin
   result := 0;
   move(p^, result, u8Size(p));

@@ -23,8 +23,7 @@ unit KlausSrc;
 //todo: Добавить в VarPath возможность ссылки на модуль (точнее, путь к области видимости)
 
 //todo: процедурные переменные
-//todo: вменяемые имена классов в ercUnexpectedObjectClass
-//todo: with = для
+//todo: несколько словоформ для всех видов определений
 
 {$mode ObjFPC}{$H+}
 {$i ../lib/klaus.inc}
@@ -1429,6 +1428,46 @@ type
     readChar: tKlausReadCharMethod;
     writeOut: tKlausWriteMethod;
     writeErr: tKlausWriteMethod;
+  end;
+
+type
+  tKlausEventType = (
+    ketKeyDown, ketKeyUp, ketChar,
+    ketMouseDown, ketMouseUp, ketMouseWheel,
+    ketMouseEnter, ketMouseLeave, ketMouseMove);
+  tKlausEventTypes = set of tKlausEventType;
+
+type
+  tKlausKeyState = ssShift..ssDouble;
+  tKlausKeyStates = set of tKlausKeyState;
+
+const
+  klausValidKeyStates = [ssShift..ssDouble];
+
+const
+  klausEventBufferSize = 512;
+
+type
+  tKlausEvent = record
+    what: tKlausEventType;
+    code: longInt;
+    shift: tKlausKeyStates;
+    point: packed record
+      x: smallInt;
+      y: smallInt;
+    end;
+  end;
+
+const
+  iidKlausEventQueue = '{DC37E306-E479-4D92-9F84-8FBAF341C0AB}';
+
+type
+  iKlausEventQueue = interface[iidKlausEventQueue]
+    procedure eventSubscribe(const what: tKlausEventTypes);
+    function  eventExists: boolean;
+    function  eventGet(out evt: tKlausEvent): boolean;
+    function  eventCount: integer;
+    function  eventPeek(index: integer = 0): tKlausEvent;
   end;
 
 const

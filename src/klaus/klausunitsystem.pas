@@ -125,7 +125,7 @@ const
   klausSysProcName_FileDelete = 'файлУдалить';
   klausSysProcName_FileFindFirst = 'файлПервый';
   klausSysProcName_FileFindNext = 'файлСледующий';
-  klausSysProcName_GrWindowOpen = 'грОткрытьОкно';
+  klausSysProcName_GrWindowOpen = 'грОкно';
   klausSysProcName_GrDestroy = 'грУничтожить';
   klausSysProcName_GrSize = 'грРазмер';
   klausSysProcName_GrBeginPaint = 'грНачать';
@@ -150,6 +150,11 @@ const
   klausSysProcName_GrImgCreate = 'грИзоСоздать';
   klausSysProcName_GrImgSave = 'грИзоСохранить';
   klausSysProcName_GrImgDraw = 'грИзоВывести';
+  klausSysProcName_EvtSubscribe = 'сбтЗаказать';
+  klausSysProcName_EvtExists = 'сбтЕсть';
+  klausSysProcName_EvtGet = 'сбтЗабрать';
+  klausSysProcName_EvtCount = 'сбтСколько';
+  klausSysProcName_EvtPeek = 'сбтСмотреть';
 
 const
   klausConstName_Newline = 'НС';
@@ -205,6 +210,22 @@ const
   klausConstName_GrFontItalic = 'грсшКурсив';
   klausConstName_GrFontUnderline = 'грсшПодчерк';
   klausConstName_GrFontStrikeOut = 'грсшЗачерк';
+  klausConstName_EvtKeyDown = 'сбтКлНаж';
+  klausConstName_EvtKeyUp = 'сбтКлОтп';
+  klausConstName_EvtKeyChar = 'сбтКлСмв';
+  klausConstName_EvtMouseDown = 'сбтМшНаж';
+  klausConstName_EvtMouseUp = 'сбтМшОтп';
+  klausConstName_EvtMouseWheel = 'сбтМшКлс';
+  klausConstName_EvtEnter = 'сбтМшВх';
+  klausConstName_EvtLeave = 'сбтМшВых';
+  klausConstName_EvtMove = 'сбтМшДвг';
+  klausConstName_KeyStateShift = 'сскШифт';
+  klausConstName_KeyStateCtrl = 'сскКтрл';
+  klausConstName_KeyStateAlt = 'сскАльт';
+  klausConstName_KeyStateLeft = 'сскЛКМ';
+  klausConstName_KeyStateRight = 'сскПКМ';
+  klausConstName_KeyStateMiddle = 'сскСКМ';
+  klausConstName_KeyStateDouble = 'сскДвКлик';
 
 const
   klausTypeName_FileInfo = 'ФайлИнфо';
@@ -217,6 +238,9 @@ const
   klausTypeName_PointArray = 'МассивТочек';
   klausTypeName_PointArray2 = 'МассивыТочек';
   klausTypeName_PointArray3 = 'МассивовТочек';
+  klausTypeName_Event = 'Событие';
+  klausTypeName_Event2 = 'События';
+  klausTypeName_Event3 = 'Событий';
 
 const
   klausVarName_CmdLineParams = '$cmdLineParams';
@@ -304,6 +328,41 @@ function  klausStdError(frame: tKlausStackFrame; ksx: tKlausStdException; line, 
 function  klausStdError(frame: tKlausStackFrame; ksx: tKlausStdException; msg: string; line, pos: integer): eKlausLangException;
 function  klausStdError(frame: tKlausStackFrame; ksx: tKlausStdexception; msg: string; const args: array of const; line, pos: integer): eKlausLangException;
 procedure klausTranslateException(frame: tKlausStackFrame; const at: tSrcPoint);
+
+const
+  klausConst_StdOut = 1;
+  klausConst_StdErr = 2;
+  klausConst_FontBold = 1;
+  klausConst_FontItalic = 2;
+  klausConst_FontUnderline = 4;
+  klausConst_FontStrikeOut = 8;
+  klausConst_psClear = 0;
+  klausConst_psSolid = 1;
+  klausConst_psDot = 2;
+  klausConst_psDash = 3;
+  klausConst_psDashDot = 4;
+  klausConst_psDashDotDot = 5;
+  klausConst_bsClear = 0;
+  klausConst_bsSolid = 1;
+  klausConst_EvtKeyDown = 1;
+  klausConst_EvtKeyUp = 2;
+  klausConst_EvtKeyChar = 4;
+  klausConst_EvtMouseDown = 8;
+  klausConst_EvtMouseUp = 16;
+  klausConst_EvtMouseWheel = 32;
+  klausConst_EvtMouseEnter = 64;
+  klausConst_EvtMouseLeave = 128;
+  klausConst_EvtMouseMove = 256;
+  klausConst_KeyStateShift = 1;
+  klausConst_KeyStateCtrl = 2;
+  klausConst_KeyStateAlt = 4;
+  klausConst_KeyStateLeft = 8;
+  klausConst_KeyStateRight = 16;
+  klausConst_KeyStateMiddle = 32;
+  klausConst_KeyStateDouble = 64;
+  klausConst_MouseBtnLeft = 8;
+  klausConst_MouseBtnRight = 16;
+  klausConst_MouseBtnMiddle = 32;
 
 implementation
 
@@ -456,6 +515,14 @@ begin
   // МассивТочек/МассивыТочек/МассивовТочек
   arr := tKlausTypeDefArray.create(source, zeroSrcPt, 1, str);
   tKlausTypeDecl.create(self, [klausTypeName_PointArray, klausTypeName_PointArray2, klausTypeName_PointArray3], zeroSrcPt, arr);
+  // Событие/События/Событий
+  str := tKlausTypeDefStruct.create(source, zeroSrcPt);
+  tKlausStructMember.create(str, 'что', zeroSrcPt, source.simpleTypes[kdtInteger]);
+  tKlausStructMember.create(str, 'код', zeroSrcPt, source.simpleTypes[kdtInteger]);
+  tKlausStructMember.create(str, 'инфо', zeroSrcPt, source.simpleTypes[kdtInteger]);
+  tKlausStructMember.create(str, 'г', zeroSrcPt, source.simpleTypes[kdtInteger]);
+  tKlausStructMember.create(str, 'в', zeroSrcPt, source.simpleTypes[kdtInteger]);
+  tKlausTypeDecl.create(self, [klausTypeName_Event, klausTypeName_Event2, klausTypeName_Event3], zeroSrcPt, str);
 end;
 
 procedure tKlausUnitSystem.createSystemVariables;
@@ -477,14 +544,14 @@ begin
   tKlausConstDecl.create(self, klausConstName_MinFloat, zeroSrcPt, klausSimple(tKlausFloat(klausMinFloat)));
   tKlausConstDecl.create(self, klausConstName_Pi, zeroSrcPt, klausSimple(tKlausFloat(Pi)));
   tKlausConstDecl.create(self, klausConstName_PiRus, zeroSrcPt, klausSimple(tKlausFloat(Pi)));
-  tKlausConstDecl.create(self, klausConstName_StdOut, zeroSrcPt, klausSimple(tKlausInteger(1)));
-  tKlausConstDecl.create(self, klausConstName_StdErr, zeroSrcPt, klausSimple(tKlausInteger(2)));
+  tKlausConstDecl.create(self, klausConstName_StdOut, zeroSrcPt, klausSimple(tKlausInteger(klausConst_StdOut)));
+  tKlausConstDecl.create(self, klausConstName_StdErr, zeroSrcPt, klausSimple(tKlausInteger(klausConst_StdErr)));
   tKlausConstDecl.create(self, klausConstName_TermCanon, zeroSrcPt, klausSimple(false));
   tKlausConstDecl.create(self, klausConstName_TermDirect, zeroSrcPt, klausSimple(true));
-  tKlausConstDecl.create(self, klausConstName_FontBold, zeroSrcPt, klausSimple(tKlausInteger(1)));
-  tKlausConstDecl.create(self, klausConstName_FontItalic, zeroSrcPt, klausSimple(tKlausInteger(2)));
-  tKlausConstDecl.create(self, klausConstName_FontUnderline, zeroSrcPt, klausSimple(tKlausInteger(4)));
-  tKlausConstDecl.create(self, klausConstName_FontStrikeOut, zeroSrcPt, klausSimple(tKlausInteger(8)));
+  tKlausConstDecl.create(self, klausConstName_FontBold, zeroSrcPt, klausSimple(tKlausInteger(klausConst_FontBold)));
+  tKlausConstDecl.create(self, klausConstName_FontItalic, zeroSrcPt, klausSimple(tKlausInteger(klausConst_FontItalic)));
+  tKlausConstDecl.create(self, klausConstName_FontUnderline, zeroSrcPt, klausSimple(tKlausInteger(klausConst_FontUnderline)));
+  tKlausConstDecl.create(self, klausConstName_FontStrikeOut, zeroSrcPt, klausSimple(tKlausInteger(klausConst_FontStrikeOut)));
   tKlausConstDecl.create(self, klausConstName_FileTypeText, zeroSrcPt, klausSimple(tKlausInteger(klausFileTypeText)));
   tKlausConstDecl.create(self, klausConstName_FileTypeBinary, zeroSrcPt, klausSimple(tKlausInteger(klausFileTypeBinary)));
   tKlausConstDecl.create(self, klausConstName_FileOpenRead, zeroSrcPt, klausSimple(tKlausInteger(klausFileOpenRead)));
@@ -496,18 +563,34 @@ begin
   tKlausConstDecl.create(self, klausConstName_FilePosFromEnd, zeroSrcPt, klausSimple(tKlausInteger(klausFilePosFromEnd)));
   tKlausConstDecl.create(self, klausConstName_FilePosFromCurrent, zeroSrcPt, klausSimple(tKlausInteger(klausFilePosFromCurrent)));
   tKlausConstDecl.create(self, klausConstName_FileAttrReadOnly, zeroSrcPt, klausSimple(tKlausInteger(faReadOnly)));
-  tKlausConstDecl.create(self, klausConstName_GrPenStyleClear, zeroSrcPt, klausSimple(tKlausInteger(0)));
-  tKlausConstDecl.create(self, klausConstName_GrPenStyleSolid, zeroSrcPt, klausSimple(tKlausInteger(1)));
-  tKlausConstDecl.create(self, klausConstName_GrPenStyleDot, zeroSrcPt, klausSimple(tKlausInteger(2)));
-  tKlausConstDecl.create(self, klausConstName_GrPenStyleDash, zeroSrcPt, klausSimple(tKlausInteger(3)));
-  tKlausConstDecl.create(self, klausConstName_GrPenStyleDashDot, zeroSrcPt, klausSimple(tKlausInteger(4)));
-  tKlausConstDecl.create(self, klausConstName_GrPenStyleDashDotDot, zeroSrcPt, klausSimple(tKlausInteger(5)));
-  tKlausConstDecl.create(self, klausConstName_GrBrushStyleClear, zeroSrcPt, klausSimple(tKlausInteger(0)));
-  tKlausConstDecl.create(self, klausConstName_GrBrushStyleSolid, zeroSrcPt, klausSimple(tKlausInteger(1)));
-  tKlausConstDecl.create(self, klausConstName_GrFontBold, zeroSrcPt, klausSimple(tKlausInteger(1)));
-  tKlausConstDecl.create(self, klausConstName_GrFontItalic, zeroSrcPt, klausSimple(tKlausInteger(2)));
-  tKlausConstDecl.create(self, klausConstName_GrFontUnderline, zeroSrcPt, klausSimple(tKlausInteger(4)));
-  tKlausConstDecl.create(self, klausConstName_GrFontStrikeOut, zeroSrcPt, klausSimple(tKlausInteger(8)));
+  tKlausConstDecl.create(self, klausConstName_GrPenStyleClear, zeroSrcPt, klausSimple(tKlausInteger(klausConst_psClear)));
+  tKlausConstDecl.create(self, klausConstName_GrPenStyleSolid, zeroSrcPt, klausSimple(tKlausInteger(klausConst_psSolid)));
+  tKlausConstDecl.create(self, klausConstName_GrPenStyleDot, zeroSrcPt, klausSimple(tKlausInteger(klausConst_psDot)));
+  tKlausConstDecl.create(self, klausConstName_GrPenStyleDash, zeroSrcPt, klausSimple(tKlausInteger(klausConst_psDash)));
+  tKlausConstDecl.create(self, klausConstName_GrPenStyleDashDot, zeroSrcPt, klausSimple(tKlausInteger(klausConst_psDashDot)));
+  tKlausConstDecl.create(self, klausConstName_GrPenStyleDashDotDot, zeroSrcPt, klausSimple(tKlausInteger(klausConst_psDashDotDot)));
+  tKlausConstDecl.create(self, klausConstName_GrBrushStyleClear, zeroSrcPt, klausSimple(tKlausInteger(klausConst_bsClear)));
+  tKlausConstDecl.create(self, klausConstName_GrBrushStyleSolid, zeroSrcPt, klausSimple(tKlausInteger(klausConst_bsSolid)));
+  tKlausConstDecl.create(self, klausConstName_GrFontBold, zeroSrcPt, klausSimple(tKlausInteger(klausConst_FontBold)));
+  tKlausConstDecl.create(self, klausConstName_GrFontItalic, zeroSrcPt, klausSimple(tKlausInteger(klausConst_FontItalic)));
+  tKlausConstDecl.create(self, klausConstName_GrFontUnderline, zeroSrcPt, klausSimple(tKlausInteger(klausConst_FontUnderline)));
+  tKlausConstDecl.create(self, klausConstName_GrFontStrikeOut, zeroSrcPt, klausSimple(tKlausInteger(klausConst_FontStrikeOut)));
+  tKlausConstDecl.create(self, klausConstName_EvtKeyDown, zeroSrcPt, klausSimple(tKlausInteger(klausConst_EvtKeyDown)));
+  tKlausConstDecl.create(self, klausConstName_EvtKeyUp, zeroSrcPt, klausSimple(tKlausInteger(klausConst_EvtKeyUp)));
+  tKlausConstDecl.create(self, klausConstName_EvtKeyChar, zeroSrcPt, klausSimple(tKlausInteger(klausConst_EvtKeyChar)));
+  tKlausConstDecl.create(self, klausConstName_EvtMouseDown, zeroSrcPt, klausSimple(tKlausInteger(klausConst_EvtMouseDown)));
+  tKlausConstDecl.create(self, klausConstName_EvtMouseUp, zeroSrcPt, klausSimple(tKlausInteger(klausConst_EvtMouseUp)));
+  tKlausConstDecl.create(self, klausConstName_EvtMouseWheel, zeroSrcPt, klausSimple(tKlausInteger(klausConst_EvtMouseWheel)));
+  tKlausConstDecl.create(self, klausConstName_EvtEnter, zeroSrcPt, klausSimple(tKlausInteger(klausConst_EvtMouseEnter)));
+  tKlausConstDecl.create(self, klausConstName_EvtLeave, zeroSrcPt, klausSimple(tKlausInteger(klausConst_EvtMouseLeave)));
+  tKlausConstDecl.create(self, klausConstName_EvtMove, zeroSrcPt, klausSimple(tKlausInteger(klausConst_EvtMouseMove)));
+  tKlausConstDecl.create(self, klausConstName_KeyStateShift, zeroSrcPt, klausSimple(tKlausInteger(klausConst_KeyStateShift)));
+  tKlausConstDecl.create(self, klausConstName_KeyStateCtrl, zeroSrcPt, klausSimple(tKlausInteger(klausConst_KeyStateCtrl)));
+  tKlausConstDecl.create(self, klausConstName_KeyStateAlt, zeroSrcPt, klausSimple(tKlausInteger(klausConst_KeyStateAlt)));
+  tKlausConstDecl.create(self, klausConstName_KeyStateLeft, zeroSrcPt, klausSimple(tKlausInteger(klausConst_KeyStateLeft)));
+  tKlausConstDecl.create(self, klausConstName_KeyStateRight, zeroSrcPt, klausSimple(tKlausInteger(klausConst_KeyStateRight)));
+  tKlausConstDecl.create(self, klausConstName_KeyStateMiddle, zeroSrcPt, klausSimple(tKlausInteger(klausConst_KeyStateMiddle)));
+  tKlausConstDecl.create(self, klausConstName_KeyStateDouble, zeroSrcPt, klausSimple(tKlausInteger(klausConst_KeyStateDouble)));
   {$push}{$warnings off}
   tKlausConstDecl.create(self, klausConstName_FileAttrHidden, zeroSrcPt, klausSimple(tKlausInteger(faHidden)));
   tKlausConstDecl.create(self, klausConstName_FileAttrSystem, zeroSrcPt, klausSimple(tKlausInteger(faSysFile)));
@@ -634,6 +717,11 @@ begin
   tKlausSysProc_GrImgCreate.create(self, zeroSrcPt);
   tKlausSysProc_GrImgSave.create(self, zeroSrcPt);
   tKlausSysProc_GrImgDraw.create(self, zeroSrcPt);
+  tKlausSysProc_EvtSubscribe.create(self, zeroSrcPt);
+  tKlausSysProc_EvtExists.create(self, zeroSrcPt);
+  tKlausSysProc_EvtGet.create(self, zeroSrcPt);
+  tKlausSysProc_EvtCount.create(self, zeroSrcPt);
+  tKlausSysProc_EvtPeek.create(self, zeroSrcPt);
 end;
 
 procedure tKlausUnitSystem.setArgs(val: tStrings);

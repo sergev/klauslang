@@ -14,6 +14,8 @@ const
 type
   tKlausPaintBox = class;
   tKlausCustomCanvasLink = class;
+  tKlausPaintBoxLink = class;
+  tKlausPictureLink = class;
 
 type
   // Обработчик создания окна графического вывода
@@ -81,12 +83,68 @@ type
   end;
 
 type
-  tKlausPaintBoxLink = class(tKlausCustomCanvasLink)
+  tKlausEventBuffer = array[0..klausEventBufferSize-1] of tKlausEvent;
+
+type
+  tKlausEventQueue = class(tObject)
+    private
+      fBuffer: tKlausEventBuffer;
+      fHead, fTail: integer;
+
+      procedure purge;
+    protected
+      function  getCount: integer;
+    public
+      property count: integer read getCount;
+
+      constructor create;
+      function put(const evt: tKlausEvent): boolean;
+      function update(const evt: tKlausEvent): boolean;
+      function get(out evt: tKlausEvent): boolean;
+      function peek(idx: integer = 0): tKlausEvent;
+  end;
+
+type
+  tKlausPaintBoxEventQueue = class(tObject, iKlausEventQueue)
+    private
+      fLatch: tRTLCriticalSection;
+      fLink: tKlausPaintBoxLink;
+      fWhat: tKlausEventTypes;
+      fQueue: tKlausEventQueue;
+
+      procedure paintBoxKeyDown(sender: tObject; var key: word; shift: tShiftState);
+      procedure paintBoxKeyUp(sender: tObject; var key: word; shift: tShiftState);
+      procedure paintBoxKeyPress(sender: tObject; var key: tUTF8Char);
+      procedure paintBoxMouseEnter(sender: tObject);
+      procedure paintBoxMouseLeave(sender: tObject);
+      procedure paintBoxMouseMove(sender: tObject; shift: tShiftState; x, y: integer);
+      procedure paintBoxMouseDown(sender: tObject; button: tMouseButton; shift: tShiftState; x, y: integer);
+      procedure paintBoxMouseUp(sender: tObject; button: tMouseButton; shift: tShiftState; x, y: integer);
+      procedure paintBoxMouseWheel(sender: tObject; shift: tShiftState; delta: integer; pos: tPoint; var handled: boolean);
+    protected
+      function _AddRef: Longint; {$IFNDEF WINDOWS}cdecl{$ELSE}stdcall{$ENDIF};
+      function _Release: Longint; {$IFNDEF WINDOWS}cdecl{$ELSE}stdcall{$ENDIF};
+      function QueryInterface({$IFDEF FPC_HAS_CONSTREF}constref{$ELSE}const{$ENDIF} IID: TGUID; out Obj): HResult; virtual; {$IFNDEF WINDOWS}cdecl{$ELSE}stdcall{$ENDIF};
+    public
+      constructor create(aLink: tKlausPaintBoxLink);
+      destructor  destroy; override;
+      procedure lock;
+      procedure unlock;
+      procedure eventSubscribe(const what: tKlausEventTypes);
+      function  eventExists: boolean;
+      function  eventGet(out evt: tKlausEvent): boolean;
+      function  eventCount: integer;
+      function  eventPeek(index: integer = 0): tKlausEvent;
+  end;
+
+type
+  tKlausPaintBoxLink = class(tKlausCustomCanvasLink, iKlausEventQueue)
     public
       class var createWindowMethod: tKlausCanvasCreateWindowMethod;
       class var destroyWindowMethod: tKlausCanvasDestroyWindowMethod;
     private
       fPaintBox: tKlausPaintBox;
+      fEventQueue: tKlausPaintBoxEventQueue;
 
       procedure syncCreatePaintBox;
       procedure syncDestroyPaintBox;
@@ -96,6 +154,8 @@ type
       procedure doInvalidate; override;
       function  getCanvas: tCanvas; override;
     public
+      property eventQueue: tKlausPaintBoxEventQueue read fEventQueue implements iKlausEventQueue;
+
       constructor create(aRuntime: tKlausRuntime; const cap: string = ''); override;
       destructor  destroy; override;
       function  getSize: tSize; override;
@@ -150,8 +210,13 @@ type
 
 implementation
 
+uses
+  KlausUnitSystem;
+
 resourcestring
   strGraphicWindow = 'графическое окно';
+  strKlausPaintBoxLink = 'Графическое окно';
+  strKlausPictureLink = 'Изображение';
 
 { tKlausCustomCanvasLink }
 
@@ -544,6 +609,7 @@ end;
 constructor tKlausPaintBoxLink.create(aRuntime: tKlausRuntime; const cap: string);
 begin
   inherited create(aRuntime, cap);
+  fEventQueue := tKlausPaintBoxEventQueue.create(self);
   if not assigned(createWindowMethod) then raise eKlausError.create(ercCanvasUnavailable, 0, 0);
   fTmpStr := cap;
   runtime.synchronize(@syncCreatePaintBox);
@@ -552,6 +618,7 @@ end;
 destructor tKlausPaintBoxLink.destroy;
 begin
   runtime.synchronize(@syncDestroyPaintBox);
+  freeAndNil(fEventQueue);
   inherited destroy;
 end;
 
@@ -562,6 +629,15 @@ begin
     name := defaultFontName;
     size := defaultFontSize;
   end;
+  fPaintBox.onKeyDown := @fEventQueue.paintBoxKeyDown;
+  fPaintBox.onKeyUp := @fEventQueue.paintBoxKeyUp;
+  fPaintBox.onUTF8KeyPress := @fEventQueue.paintBoxKeyPress;
+  fPaintBox.onMouseEnter := @fEventQueue.paintBoxMouseEnter;
+  fPaintBox.onMouseLeave := @fEventQueue.paintBoxMouseLeave;
+  fPaintBox.onMouseMove := @fEventQueue.paintBoxMouseMove;
+  fPaintBox.onMouseDown := @fEventQueue.paintBoxMouseDown;
+  fPaintBox.onMouseUp := @fEventQueue.paintBoxMouseUp;
+  fPaintBox.onMouseWheel := @fEventQueue.paintBoxMouseWheel;
 end;
 
 procedure tKlausPaintBoxLink.syncDestroyPaintBox;
@@ -793,5 +869,364 @@ begin
   canvas.draw(r.left, r.top, fContent);
 end;
 
+{ tKlausEventQueue }
+
+constructor tKlausEventQueue.create;
+begin
+  inherited;
+  fHead := 0;
+  fTail := 0;
+end;
+
+function tKlausEventQueue.getCount: integer;
+begin
+  result := fTail-fHead;
+end;
+
+procedure tKlausEventQueue.purge;
+begin
+  if fHead > 0 then begin
+    if fTail > fHead then
+      move(fBuffer[fHead], fBuffer[0], (fTail-fHead)*sizeOf(tKlausEvent));
+    fTail := fTail - fHead;
+    fHead := 0;
+  end;
+end;
+
+function tKlausEventQueue.put(const evt: tKlausEvent): boolean;
+begin
+  if fTail > high(fBuffer) then begin
+    purge;
+    if fTail > high(fBuffer) then exit(false);
+  end;
+  fBuffer[fTail] := evt;
+  fTail += 1;
+  result := true;
+end;
+
+function tKlausEventQueue.update(const evt: tKlausEvent): boolean;
+var
+  t: integer;
+begin
+  t := fTail-1;
+  if t >= fHead then with fBuffer[t] do begin
+    if (what = evt.what) and (code = evt.code) and (shift = evt.shift) then begin
+      point := evt.point;
+      result := true;
+    end else
+      result := put(evt);
+  end else
+    result := put(evt);
+end;
+
+function tKlausEventQueue.get(out evt: tKlausEvent): boolean;
+begin
+  result := fHead < fTail;
+  if result then begin
+    evt := fBuffer[fHead];
+    fHead += 1;
+    if fHead >= fTail then begin
+      fHead := 0;
+      fTail := 0;
+    end;
+  end;
+end;
+
+function tKlausEventQueue.peek(idx: integer): tKlausEvent;
+begin
+  if (idx < 0) or (idx >= count) then raise eKlausError.createFmt(ercInvalidListIndex, 0, 0, [idx]);
+  result := fBuffer[fHead + idx];
+end;
+
+{ tKlausPaintBoxEventQueue }
+
+constructor tKlausPaintBoxEventQueue.create(aLink: tKlausPaintBoxLink);
+begin
+  inherited create;
+  fLink := aLink;
+  initCriticalSection(fLatch);
+  fWhat := [];
+  fQueue := nil;
+end;
+
+destructor tKlausPaintBoxEventQueue.destroy;
+begin
+  freeAndNil(fQueue);
+  doneCriticalSection(fLatch);
+  inherited destroy;
+end;
+
+function tKlausPaintBoxEventQueue._AddRef: Longint;{$IFNDEF WINDOWS}cdecl{$ELSE}stdcall{$ENDIF};
+begin
+  result := -1;
+end;
+
+
+function tKlausPaintBoxEventQueue._Release: Longint;{$IFNDEF WINDOWS}cdecl{$ELSE}stdcall{$ENDIF};
+begin
+  result := -1;
+end;
+
+
+function tKlausPaintBoxEventQueue.QueryInterface({$IFDEF FPC_HAS_CONSTREF}constref{$ELSE}const{$ENDIF} IID: TGUID; out Obj): HResult; {$IFNDEF WINDOWS}cdecl{$ELSE}stdcall{$ENDIF};
+begin
+  if getInterface(IID, obj) then result := 0
+  else result := hResult($80004002);
+end;
+
+procedure tKlausPaintBoxEventQueue.paintBoxKeyDown(sender: tObject; var key: word; shift: tShiftState);
+var
+  evt: tKlausEvent;
+begin
+  lock;
+  try
+    if not assigned(fQueue) then exit;
+    if ketKeyDown in fWhat then begin
+      evt.what := ketKeyDown;
+      evt.code := key;
+      evt.shift := shift * klausValidKeyStates;
+      evt.point.x := 0;
+      evt.point.y := 0;
+      fQueue.put(evt);
+    end;
+  finally
+    unlock;
+  end;
+end;
+
+procedure tKlausPaintBoxEventQueue.paintBoxKeyUp(sender: tObject; var key: word; shift: tShiftState);
+var
+  evt: tKlausEvent;
+begin
+  lock;
+  try
+    if not assigned(fQueue) then exit;
+    if ketKeyUp in fWhat then begin
+      evt.what := ketKeyUp;
+      evt.code := key;
+      evt.shift := shift * klausValidKeyStates;
+      evt.point.x := 0;
+      evt.point.y := 0;
+      fQueue.put(evt);
+    end;
+  finally
+    unlock;
+  end;
+end;
+
+procedure tKlausPaintBoxEventQueue.paintBoxKeyPress(sender: tObject; var key: tUTF8Char);
+var
+  evt: tKlausEvent;
+begin
+  lock;
+  try
+    if not assigned(fQueue) then exit;
+    if ketChar in fWhat then begin
+      evt.what := ketChar;
+      evt.code := u8ToUni(key);
+      evt.shift := [];
+      evt.point.x := 0;
+      evt.point.y := 0;
+      fQueue.put(evt);
+    end;
+  finally
+    unlock;
+  end;
+end;
+
+procedure tKlausPaintBoxEventQueue.paintBoxMouseEnter(sender: tObject);
+var
+  evt: tKlausEvent;
+begin
+  lock;
+  try
+    if not assigned(fQueue) then exit;
+    if ketMouseEnter in fWhat then begin
+      evt.what := ketMouseEnter;
+      evt.code := 0;
+      evt.shift := [];
+      evt.point.x := 0;
+      evt.point.y := 0;
+      fQueue.put(evt);
+    end;
+  finally
+    unlock;
+  end;
+end;
+
+procedure tKlausPaintBoxEventQueue.paintBoxMouseLeave(sender: tObject);
+var
+  evt: tKlausEvent;
+begin
+  lock;
+  try
+    if not assigned(fQueue) then exit;
+    if ketMouseLeave in fWhat then begin
+      evt.what := ketMouseLeave;
+      evt.code := 0;
+      evt.shift := [];
+      evt.point.x := 0;
+      evt.point.y := 0;
+      fQueue.put(evt);
+    end;
+  finally
+    unlock;
+  end;
+end;
+
+procedure tKlausPaintBoxEventQueue.paintBoxMouseMove(sender: tObject; shift: tShiftState; x, y: integer);
+var
+  evt: tKlausEvent;
+begin
+  lock;
+  try
+    if not assigned(fQueue) then exit;
+    if ketMouseMove in fWhat then begin
+      evt.what := ketMouseMove;
+      evt.code := 0;
+      evt.shift := shift * klausValidKeyStates;
+      evt.point.x := x;
+      evt.point.y := y;
+      fQueue.update(evt);
+    end;
+  finally
+    unlock;
+  end;
+end;
+
+const
+  mouseButtonFlag: array[tMouseButton] of integer = (
+    klausConst_MouseBtnLeft, klausConst_MouseBtnRight, klausConst_MouseBtnMiddle, 0, 0);
+
+procedure tKlausPaintBoxEventQueue.paintBoxMouseDown(sender: tObject; button: tMouseButton; shift: tShiftState; x, y: integer);
+var
+  evt: tKlausEvent;
+begin
+  lock;
+  try
+    if not assigned(fQueue) then exit;
+    if ketMouseDown in fWhat then begin
+      evt.what := ketMouseDown;
+      evt.code := mouseButtonFlag[button];
+      evt.shift := shift * klausValidKeyStates;
+      evt.point.x := x;
+      evt.point.y := y;
+      fQueue.put(evt);
+    end;
+  finally
+    unlock;
+  end;
+end;
+
+procedure tKlausPaintBoxEventQueue.paintBoxMouseUp(sender: tObject; button: tMouseButton; shift: tShiftState; x, y: integer);
+var
+  evt: tKlausEvent;
+begin
+  lock;
+  try
+    if not assigned(fQueue) then exit;
+    if ketMouseUp in fWhat then begin
+      evt.what := ketMouseUp;
+      evt.code := mouseButtonFlag[button];
+      evt.shift := shift * klausValidKeyStates;
+      evt.point.x := x;
+      evt.point.y := y;
+      fQueue.put(evt);
+    end;
+  finally
+    unlock;
+  end;
+end;
+
+procedure tKlausPaintBoxEventQueue.paintBoxMouseWheel(sender: tObject; shift: tShiftState; delta: integer; pos: tPoint; var handled: boolean);
+var
+  evt: tKlausEvent;
+begin
+  lock;
+  try
+    if not assigned(fQueue) then exit;
+    if ketMouseWheel in fWhat then begin
+      evt.what := ketMouseWheel;
+      evt.code := delta;
+      evt.shift := shift * klausValidKeyStates;
+      evt.point.x := pos.x;
+      evt.point.y := pos.y;
+      fQueue.put(evt);
+    end;
+    handled := true;
+  finally
+    unlock;
+  end;
+end;
+
+procedure tKlausPaintBoxEventQueue.lock;
+begin
+  enterCriticalSection(fLatch);
+end;
+
+procedure tKlausPaintBoxEventQueue.unlock;
+begin
+  leaveCriticalSection(fLatch);
+end;
+
+procedure tKlausPaintBoxEventQueue.eventSubscribe(const what: tKlausEventTypes);
+begin
+  lock;
+  try
+    fWhat := what;
+    if fWhat = [] then freeAndNil(fQueue)
+    else if fQueue = nil then fQueue := tKlausEventQueue.create;
+  finally
+    unlock;
+  end;
+end;
+
+function tKlausPaintBoxEventQueue.eventExists: boolean;
+begin
+  lock;
+  try
+    if fQueue = nil then result := false
+    else result := fQueue.count > 0;
+  finally
+    unlock;
+  end;
+end;
+
+function tKlausPaintBoxEventQueue.eventGet(out evt: tKlausEvent): boolean;
+begin
+  lock;
+  try
+    if fQueue = nil then result := false
+    else result := fQueue.get(evt);
+  finally
+    unlock;
+  end;
+end;
+
+function tKlausPaintBoxEventQueue.eventCount: integer;
+begin
+  lock;
+  try
+    if fQueue = nil then result := 0
+    else result := fQueue.count;
+  finally
+    unlock;
+  end;
+end;
+
+function tKlausPaintBoxEventQueue.eventPeek(index: integer = 0): tKlausEvent;
+begin
+  lock;
+  try
+    if fQueue = nil then raise eKlausError.createFmt(ercInvalidListIndex, 0, 0, [index]);
+    result := fQueue.peek(index);
+  finally
+    unlock;
+  end;
+end;
+
+initialization
+  tKlausObjects.registerKlausObject(tKlausPaintBoxLink, strKlausPaintBoxLink);
+  tKlausObjects.registerKlausObject(tKlausPictureLink, strKlausPictureLink);
 end.
 

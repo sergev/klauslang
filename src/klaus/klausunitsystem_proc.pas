@@ -485,7 +485,7 @@ type
   // процедура терминал(вх поток: целое; вх сквозной: логическое);
   tKlausSysProc_Terminal = class(tKlausSysProcDecl)
     private
-      fHandle: tKlausProcParam; // 1 = stdout, 2 = stderr
+      fHandle: tKlausProcParam;
       fRaw: tKlausProcParam;
     public
       constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
@@ -1218,6 +1218,65 @@ type
       procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
   end;
 
+type
+  // процедура сбтЗаказать(вх где: объект; что: целое);
+  tKlausSysProc_EvtSubscribe = class(tKlausSysProcDecl)
+    private
+      fWhere: tKlausProcParam;
+      fWhat: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  // процедура сбтЕсть(вх где: объект): логическое;
+  tKlausSysProc_EvtExists = class(tKlausSysProcDecl)
+    private
+      fWhere: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  // Базовый класс для сбтЗабрать() и сбтСмотреть()
+  tKlausSysProc_EvtRet = class(tKlausSysProcDecl)
+    protected
+      procedure returnEvent(frame: tKlausStackFrame; at: tSrcPoint; evt: tKlausEvent);
+  end;
+
+type
+  // процедура сбтЗабрать(вх где: объект): Событие;
+  tKlausSysProc_EvtGet = class(tKlausSysProc_EvtRet)
+    private
+      fWhere: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  // процедура сбтСколько(вх где: объект): целое;
+  tKlausSysProc_EvtCount = class(tKlausSysProcDecl)
+    private
+      fWhere: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  // процедура сбтСмотреть(вх где: объект): Событие;
+  tKlausSysProc_EvtPeek = class(tKlausSysProc_EvtRet)
+    private
+      fWhere: tKlausProcParam;
+      fIndex: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
 implementation
 
 uses
@@ -1229,6 +1288,7 @@ const
 resourcestring
   strOneOrMore = '1 или более';
   strNumOrNum = '%d или %d';
+  strEventQueue = 'источник событий';
 
 { tKlausSysProc_Destroy }
 
@@ -2645,10 +2705,8 @@ end;
 
 procedure tKlausSysTermProc.writeStdStream(frame: tKlausStackFrame; const s: string);
 begin
-  case klausTermProcStream of
-    1: frame.owner.writeStdOut(s);
-    2: frame.owner.writeStdErr(s);
-  end;
+  if klausTermProcStream = klausConst_StdErr then frame.owner.writeStdErr(s)
+  else frame.owner.writeStdOut(s);
 end;
 
 { tKlausSysProc_SetScreenSize }
@@ -2877,7 +2935,11 @@ end;
 
 procedure tKlausSysProc_FontStyle.run(frame: tKlausStackFrame; const at: tSrcPoint);
 const
-  bit: array[tFontStyle] of byte = (1, 2, 4, 8);
+  bit: array[tFontStyle] of byte = (
+    klausConst_FontBold,
+    klausConst_FontItalic,
+    klausConst_FontUnderline,
+    klausConst_FontStrikeOut);
   attr: array[tFontStyle] of array[boolean] of integer = (
     (22, 1), //fsBold
     (23, 3), //fsItalic
@@ -3768,7 +3830,7 @@ end;
 
 procedure tKlausSysProc_GrPen.customRun(frame: tKlausStackFrame; values: array of tKlausVarValueAt; const at: tSrcPoint);
 const
-  penStyles: array[0..5] of tPenStyle = (
+  penStyles: array[klausConst_psClear..klausConst_psDashDotDot] of tPenStyle = (
     psClear, psSolid, psDot, psDash, psDashDot, psDashDotDot);
 var
   cnt, ps: integer;
@@ -3831,7 +3893,7 @@ end;
 
 procedure tKlausSysProc_GrBrush.customRun(frame: tKlausStackFrame; values: array of tKlausVarValueAt; const at: tSrcPoint);
 const
-  brushStyles: array[0..1] of tBrushStyle = (bsClear, bsSolid);
+  brushStyles: array[klausConst_bsClear..klausConst_bsSolid] of tBrushStyle = (bsClear, bsSolid);
 var
   cnt, bs: integer;
   h: tKlausObject;
@@ -3908,10 +3970,10 @@ begin
   if cnt > 2 then begin
     include(what, kfpStyle);
     fs := getSimpleInt(values[2]);
-    if (fs and 1) <> 0 then include(style, fsBold);
-    if (fs and 2) <> 0 then include(style, fsItalic);
-    if (fs and 4) <> 0 then include(style, fsUnderline);
-    if (fs and 8) <> 0 then include(style, fsStrikeOut);
+    if (fs and klausConst_FontBold) <> 0 then include(style, fsBold);
+    if (fs and klausConst_FontItalic) <> 0 then include(style, fsItalic);
+    if (fs and klausConst_FontUnderline) <> 0 then include(style, fsUnderline);
+    if (fs and klausConst_FontStrikeOut) <> 0 then include(style, fsStrikeOut);
   end;
   if cnt > 3 then begin
     include(what, kfpSize);
@@ -4572,6 +4634,197 @@ begin
   x := getSimpleInt(frame, fX, at);
   y := getSimpleInt(frame, fY, at);
   cnv.draw(x, y, pic);
+end;
+
+{ tKlausSysProc_EvtSubscribe }
+
+const
+  klausEventWhatCode: array[tKlausEventType] of tKlausInteger = (
+    klausConst_EvtKeyDown,
+    klausConst_EvtKeyUp,
+    klausConst_EvtKeyChar,
+    klausConst_EvtMouseDown,
+    klausConst_EvtMouseUp,
+    klausConst_EvtMouseWheel,
+    klausConst_EvtMouseEnter,
+    klausConst_EvtMouseLeave,
+    klausConst_EvtMouseMove);
+
+const
+  klausKeyStateCode: array[tKlausKeyState] of tKlausInteger = (
+    klausConst_KeyStateShift,
+    klausConst_KeyStateAlt,
+    klausConst_KeyStateCtrl,
+    klausConst_KeyStateLeft,
+    klausConst_KeyStateRight,
+    klausConst_KeyStateMiddle,
+    klausConst_KeyStateDouble);
+
+constructor tKlausSysProc_EvtSubscribe.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_EvtSubscribe, aPoint);
+  fWhere := tKlausProcParam.create(self, 'окно', aPoint, kpmInput, source.simpleTypes[kdtObject]);
+  addParam(fWhere);
+  fWhat := tKlausProcParam.create(self, 'что', aPoint, kpmInput, source.simpleTypes[kdtInteger]);
+  addParam(fWhat);
+end;
+
+procedure tKlausSysProc_EvtSubscribe.run(frame: tKlausStackFrame; const at: tSrcPoint);
+var
+  h: tKlausObject;
+  obj: tObject;
+  cn: string;
+  intf: iKlausEventQueue;
+  what: tKlausInteger;
+  evt: tKlausEventType;
+  subscr: tKlausEventTypes = [];
+begin
+  h := getSimpleObj(frame, fWhere, at);
+  obj := getKlausObject(frame, h, tObject, at);
+  if not obj.getInterface(iidKlausEventQueue, intf) then begin
+    cn := tKlausObjects.klausObjectName(obj.classType);
+    raise eKlausError.createFmt(ercUnexpectedObjectClass, at, [strEventQueue, cn]);
+  end;
+  what := getSimpleInt(frame, fWhat, at);
+  for evt := low(klausEventWhatCode) to high(klausEventWhatCode) do
+    if (what and klausEventWhatCode[evt]) <> 0 then include(subscr, evt);
+  intf.eventSubscribe(subscr);
+end;
+
+{ tKlausSysProc_EvtExists }
+
+constructor tKlausSysProc_EvtExists.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_EvtExists, aPoint);
+  fWhere := tKlausProcParam.create(self, 'окно', aPoint, kpmInput, source.simpleTypes[kdtObject]);
+  addParam(fWhere);
+  declareRetValue(kdtBoolean);
+end;
+
+procedure tKlausSysProc_EvtExists.run(frame: tKlausStackFrame; const at: tSrcPoint);
+var
+  h: tKlausObject;
+  obj: tObject;
+  cn: string;
+  intf: iKlausEventQueue;
+begin
+  h := getSimpleObj(frame, fWhere, at);
+  obj := getKlausObject(frame, h, tObject, at);
+  if not obj.getInterface(iidKlausEventQueue, intf) then begin
+    cn := tKlausObjects.klausObjectName(obj.classType);
+    raise eKlausError.createFmt(ercUnexpectedObjectClass, at, [strEventQueue, cn]);
+  end;
+  returnSimple(frame, klausSimple(intf.eventExists));
+end;
+
+{ tKlausSysProc_EvtRet }
+
+procedure tKlausSysProc_EvtRet.returnEvent(frame: tKlausStackFrame; at: tSrcPoint; evt: tKlausEvent);
+var
+  v: tKlausVarValueStruct;
+  mv: tKlausVarValueSimple;
+  k: tKlausKeyState;
+  ks: tKlausInteger = 0;
+begin
+  v := frame.varByDecl(retValue, at).value as tKlausVarValueStruct;
+  mv := v.getMember('что', at) as tKlausVarValueSimple;
+  mv.setSimple(klausSimple(klausEventWhatCode[evt.what]), at);
+  mv := v.getMember('код', at) as tKlausVarValueSimple;
+  mv.setSimple(klausSimple(tKlausInteger(evt.code)), at);
+  for k := low(k) to high(k) do
+    if k in evt.shift then ks := ks or klausKeyStateCode[k];
+  mv := v.getMember('инфо', at) as tKlausVarValueSimple;
+  mv.setSimple(klausSimple(tKlausInteger(ks)), at);
+  mv := v.getMember('г', at) as tKlausVarValueSimple;
+  mv.setSimple(klausSimple(tKlausInteger(evt.point.x)), at);
+  mv := v.getMember('в', at) as tKlausVarValueSimple;
+  mv.setSimple(klausSimple(tKlausInteger(evt.point.y)), at);
+end;
+
+{ tKlausSysProc_EvtGet }
+
+constructor tKlausSysProc_EvtGet.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_EvtGet, aPoint);
+  fWhere := tKlausProcParam.create(self, 'окно', aPoint, kpmInput, source.simpleTypes[kdtObject]);
+  addParam(fWhere);
+  declareRetValue(findTypeDef(klausTypeName_Event));
+end;
+
+procedure tKlausSysProc_EvtGet.run(frame: tKlausStackFrame; const at: tSrcPoint);
+var
+  h: tKlausObject;
+  obj: tObject;
+  cn: string;
+  intf: iKlausEventQueue;
+  evt: tKlausEvent;
+begin
+  h := getSimpleObj(frame, fWhere, at);
+  obj := getKlausObject(frame, h, tObject, at);
+  if not obj.getInterface(iidKlausEventQueue, intf) then begin
+    cn := tKlausObjects.klausObjectName(obj.classType);
+    raise eKlausError.createFmt(ercUnexpectedObjectClass, at, [strEventQueue, cn]);
+  end;
+  if not intf.eventGet(evt) then raise eKlausError.create(ercEventQueueEmpty, at);
+  returnEvent(frame, at, evt);
+end;
+
+{ tKlausSysProc_EvtCount }
+
+constructor tKlausSysProc_EvtCount.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_EvtCount, aPoint);
+  fWhere := tKlausProcParam.create(self, 'окно', aPoint, kpmInput, source.simpleTypes[kdtObject]);
+  addParam(fWhere);
+  declareRetValue(kdtInteger);
+end;
+
+procedure tKlausSysProc_EvtCount.run(frame: tKlausStackFrame; const at: tSrcPoint);
+var
+  h: tKlausObject;
+  obj: tObject;
+  cn: string;
+  intf: iKlausEventQueue;
+begin
+  h := getSimpleObj(frame, fWhere, at);
+  obj := getKlausObject(frame, h, tObject, at);
+  if not obj.getInterface(iidKlausEventQueue, intf) then begin
+    cn := tKlausObjects.klausObjectName(obj.classType);
+    raise eKlausError.createFmt(ercUnexpectedObjectClass, at, [strEventQueue, cn]);
+  end;
+  returnSimple(frame, klausSimple(tKlausInteger(intf.eventCount)));
+end;
+
+{ tKlausSysProc_EvtPeek }
+
+constructor tKlausSysProc_EvtPeek.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausSysProcName_EvtPeek, aPoint);
+  fWhere := tKlausProcParam.create(self, 'окно', aPoint, kpmInput, source.simpleTypes[kdtObject]);
+  addParam(fWhere);
+  fIndex := tKlausProcParam.create(self, 'идкс', aPoint, kpmInput, source.simpleTypes[kdtInteger]);
+  addParam(fIndex);
+  declareRetValue(findTypeDef(klausTypeName_Event));
+end;
+
+procedure tKlausSysProc_EvtPeek.run(frame: tKlausStackFrame; const at: tSrcPoint);
+var
+  h: tKlausObject;
+  obj: tObject;
+  cn: string;
+  intf: iKlausEventQueue;
+  idx: tKlausInteger;
+  evt: tKlausEvent;
+begin
+  h := getSimpleObj(frame, fWhere, at);
+  obj := getKlausObject(frame, h, tObject, at);
+  if not obj.getInterface(iidKlausEventQueue, intf) then begin
+    cn := tKlausObjects.klausObjectName(obj.classType);
+    raise eKlausError.createFmt(ercUnexpectedObjectClass, at, [strEventQueue, cn]);
+  end;
+  idx := getSimpleInt(frame, fIndex, at);
+  evt := intf.eventPeek(idx);
+  returnEvent(frame, at, evt);
 end;
 
 end.

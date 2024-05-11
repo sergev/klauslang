@@ -27,7 +27,7 @@ interface
 uses
   Classes, SysUtils, Messages, LMessages, Forms, Controls, Graphics, Dialogs, StdCtrls,
   ExtCtrls, Menus, ActnList, ComCtrls, IniPropStorage, LazUTF8, KlausEdit,
-  KlausGlobals, FrameEdit, FrameDebugView, KlausSrc, KlausErr, KlausLex, FormScene;
+  KlausGlobals, FrameEdit, FrameDebugView, KlausSrc, KlausErr, KlausLex, FormScene, Types;
 
 const
   configName = 'klaus-ide.ini';

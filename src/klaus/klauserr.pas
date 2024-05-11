@@ -129,6 +129,8 @@ const
   ercCanvasUnavailable      = 79;
   ercInvalidFormatParamType = 80;
   ercGraphicOperationNA     = 81;
+  ercInvalidListIndex       = 82;
+  ercEventQueueEmpty        = 83;
 
 const
   // Классификация кодов eKlausError для трансляции в исключения языка
@@ -141,7 +143,7 @@ const
     ercInvalidFormatArgType],
 
     //ksxIndexError
-    [ercInvalidArrayIndex, ercInvalidDictIndex],
+    [ercInvalidArrayIndex, ercInvalidDictIndex, ercInvalidListIndex],
 
     //ksxKeyError
     [ercInvalidDictKey],
@@ -172,7 +174,8 @@ const
 
     //ksxRuntimeError
     [ercStackTooBig, ercInaccurateCleanup, ercInvalidKlausHandle, ercTooManyHandles,
-    ercUnexpectedObjectClass, ercCallsNotAllowed, ercCanvasUnavailable, ercGraphicOperationNA],
+    ercUnexpectedObjectClass, ercCallsNotAllowed, ercCanvasUnavailable, ercGraphicOperationNA,
+    ercEventQueueEmpty],
 
     //ksxBadNumber
     [ercArgumentIsNaN, ercArgumentIsNotFinite],
@@ -293,6 +296,8 @@ resourcestring
   errCanvasUnavailable = 'Невозможно использовать функции графической библиотеки в этом режиме.';
   errInvalidFormatParamType = 'В качестве аргументов допустимы только значения или одномерные массивы простых типов.';
   errGraphicOperationNA = 'Операция невозможна для данного типа графического объекта: %s.';
+  errInvalidListIndex = 'Неверный индекс элемента в списке: %d.';
+  errEventQueueEmpty = 'Очередь событий пуста.';
 
 { Globals }
 
@@ -406,6 +411,8 @@ begin
     ercCanvasUnavailable: result := errCanvasUnavailable;
     ercInvalidFormatParamType: result := errInvalidFormatParamType;
     ercGraphicOperationNA: result := errGraphicOperationNA;
+    ercInvalidListIndex: result := errInvalidListIndex;
+    ercEventQueueEmpty: result := errEventQueueEmpty;
   end;
 end;
 
