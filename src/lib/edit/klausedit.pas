@@ -2941,14 +2941,14 @@ procedure tCustomKlausEdit.updateHighlight(line: integer; clex: tKlausLexem; aut
       end;
       if fLines.fItems[line].hl.nlex <> klxEOF then begin
         pos2 := fLines.fItems[line].hl.npos;
-        chars2 := u8CharCount(pChar(s), pos2)-1;
+        chars2 := u8CharCount(pChar(s), pos2-1);
         st := tKlausEditStyleIndex(fLines.fItems[line].hl.nlex);
-        fLines.setFormatting(st, line, chars2, maxInt);
+        fLines.setFormatting(st, line, chars2+1, maxInt);
       end else begin
-        pos2 := length(s);
+        pos2 := length(s)+1;
         chars2 := fLines.charCount[line];
       end;
-      tmp := copy(s, pos1+1, pos2-pos1);
+      tmp := copy(s, pos1+1, pos2-pos1-1);
       (fLexParser.stream as tStringReadStream).data := tmp;
       repeat
         fLexParser.getNextLexem(li);

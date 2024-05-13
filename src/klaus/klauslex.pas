@@ -777,7 +777,7 @@ end;
 // В случае конца потока пишет klutEOF
 procedure tKlausLexParser.getNextLexem(out li: tKlausLexInfo);
 var
-  c: u8Char;
+  c, nc: u8Char;
 begin
   if stream = nil then begin
     setLexInfo(LF, klxEOF, li);
@@ -790,10 +790,10 @@ begin
   end;
   if not EOF then begin
     if c = '/' then begin
-      if tryNextChar = '/' then processSingleLineComment(c, li)
+      nc := tryNextChar;
+      if nc = '/' then processSingleLineComment(c, li)
+      else if nc = '*' then processMultiLineComment(c, li)
       else processSymbol(c, li);
-    end else if c = '{' then begin
-      processMultiLineComment(c, li);
     end else if c = '''' then begin
       processChar(c, li);
     end else if isCharCode(c) then begin
@@ -817,22 +817,28 @@ end;
 
 function tKlausLexParser.wideLexBegins(const s: string; idx: integer; out lex: tKlausLexem; out index: integer): boolean;
 var
+  prev: char = #0;
   i, l, savePos: Integer;
-  inStr, open: Boolean;
+  inStr, open, skipNext: Boolean;
 begin
   inStr := false;
   open := false;
   l := length(s);
   savePos := 0;
-  for i := idx to l do
+  skipNext := false;
+  for i := idx to l do begin
     case s[i] of
-      '{': if not inStr then begin
+      '*': if not inStr and (prev = '/') then begin
         open := true;
-        savePos := i;
+        savePos := i-1;
+        skipNext := true;
       end;
-      '}': open := false;
+      '/': if prev = '*' then open := false;
       '''': if not open then inStr := not inStr;
     end;
+    if skipNext then prev := #0 else prev := s[i];
+    skipNext := false;
+  end;
   if open then begin
     result := true;
     lex := klxMLComment;
@@ -843,17 +849,20 @@ end;
 
 function tKlausLexParser.wideLexEnds(const s: string; idx: integer; lex: tKlausLexem; out index: integer): boolean;
 var
+  prev: char = #0;
   i, l: integer;
 begin
   result := false;
   if lex <> klxMLComment then exit;
   l := length(s);
-  for i := idx to l do
-    if s[i] = '}' then begin
+  for i := idx to l do begin
+    if (s[i] = '/') and (prev = '*') then begin
       result := true;
       index := i;
       exit;
     end;
+    prev := s[i];
+  end;
 end;
 
 // Возвращает true для пробельных символов (включая символы перевода строки)
@@ -1013,8 +1022,12 @@ end;
 
 // Дочитывает из потока многострочный комментарий
 procedure tKlausLexParser.processMultiLineComment(c: u8Char; out li: tKlausLexInfo);
+var
+  prev: u8Char = #0;
 begin
   setLexInfo(c, klxMLComment, li);
+  c := nextChar;
+  li.text += c;
   repeat
     c := nextChar;
     if EOF then begin
@@ -1022,7 +1035,9 @@ begin
       exit;
     end;
     li.text += c;
-  until c = '}';
+    if (prev = '*') and (c = '/') then break;
+    prev := c;
+  until false;
 end;
 
 // Дочитывает из потока знак языка
