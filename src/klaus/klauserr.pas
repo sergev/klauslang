@@ -131,6 +131,8 @@ const
   ercGraphicOperationNA     = 81;
   ercInvalidListIndex       = 82;
   ercEventQueueEmpty        = 83;
+  ercUntypedCompoundLiteral = 84;
+  ercDuplicateMemberLiteral = 85;
 
 const
   // Классификация кодов eKlausError для трансляции в исключения языка
@@ -167,7 +169,8 @@ const
     ercMustReturnValue, ercWrongNumberOfParams, ercInvalidOutputParam, ercExceptionRequired,
     ercExceptBlockOnly, ercMixedExceptBlock, ercExceptAnyMustBeLast, ercExceptAlreadyHandled,
     ercDuplicateCaseLabel, ercIllegalExpression, ercAccuracyNotApplicable, ercNegativeAccuracy,
-    ercConstOutputParam, ercUndefinedForward, ercDuplicateForward, ercWrongForwardSignature],
+    ercConstOutputParam, ercUndefinedForward, ercDuplicateForward, ercWrongForwardSignature,
+    ercUntypedCompoundLiteral, ercDuplicateMemberLiteral],
 
     //ksxInvalidChar
     [ercInvalidCharAtIndex, ercInvalidStringIndex],
@@ -298,6 +301,8 @@ resourcestring
   errGraphicOperationNA = 'Операция невозможна для данного типа графического объекта: %s.';
   errInvalidListIndex = 'Неверный индекс элемента в списке: %d.';
   errEventQueueEmpty = 'Очередь событий пуста.';
+  errUntypedCompoundLiteral = 'Не определён тип данных для составного значения.';
+  errDuplicateMemberLiteral = 'Повторное присваивание значения полю структуры: "%s".';
 
 { Globals }
 
@@ -413,6 +418,8 @@ begin
     ercGraphicOperationNA: result := errGraphicOperationNA;
     ercInvalidListIndex: result := errInvalidListIndex;
     ercEventQueueEmpty: result := errEventQueueEmpty;
+    ercUntypedCompoundLiteral: result := errUntypedCompoundLiteral;
+    ercDuplicateMemberLiteral: result := errDuplicateMemberLiteral;
   end;
 end;
 

@@ -200,7 +200,7 @@ const
     def:   '(":=" | "+=" | "-=" | "*=" | "/=" | "\=" | "%=" | "^="  | "&=" | "|=" | "~=")'),
 
     (name: 'expression';
-    def:   '<operand> [* <binary_operation> <operand>]'),
+    def:   '(<compound_literal> | <operand> [* <binary_operation> <operand>])'),
 
     (name: 'unary_operation';
     def:   '("-" | "!")'),
@@ -218,6 +218,18 @@ const
 
     (name: 'exists';
     def:   '(`есть` "(" <var_path> ")" | `нету` "(" <var_path> ")")'),
+
+    (name: 'compound_literal';
+    def:   '(<struct_literal> | <dict_literal> | <array_literal>)'),
+
+    (name: 'struct_literal';
+    def:   '"{" #id >>"=" <expression> [* "," #id "=" <expression>] "}"'),
+
+    (name: 'dict_literal';
+    def:   '"{" <expression> ":" <expression> [* "," <expression> ":" <expression>] "}"'),
+
+    (name: 'array_literal';
+    def:   '"[" <expression> [* "," <expression>] "]"'),
 
     (name: 'compound';
     def:   '`начало` <statements> [`исключение` <except_block>] [`напоследок` <statements>] `окончание`'),
