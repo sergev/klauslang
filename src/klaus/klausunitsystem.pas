@@ -605,9 +605,9 @@ begin
   tKlausConstDecl.create(self, klausConstName_FileAttrVirtual, zeroSrcPt, klausSimple(tKlausInteger(faVirtual)));
   {$pop}
   // имя исполняемого файла
-  tKlausVarDecl.create(self, klausVarName_ExecFilename, zeroSrcPt, dtString, klausZeroValue(kdtString));
+  tKlausVarDecl.create(self, klausVarName_ExecFilename, zeroSrcPt, dtString, nil);
   // аргументы командной строки
-  tKlausVarDecl.create(self, klausVarName_CmdLineParams, zeroSrcPt, dtStrArray, klausZeroValue(kdtString));
+  tKlausVarDecl.create(self, klausVarName_CmdLineParams, zeroSrcPt, dtStrArray, nil);
 end;
 
 procedure tKlausUnitSystem.createSystemRoutines;

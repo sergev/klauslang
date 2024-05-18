@@ -562,11 +562,11 @@ type
   // Определение константы
   tKlausConstDecl = class(tKlausValueDecl)
     private
-      fValue: tKlausVarValueSimple;
+      fValue: tKlausVarValue;
     protected
       function getDataType: tKlausTypeDef; override;
     public
-      property value: tKlausVarValueSimple read fValue;
+      property value: tKlausVarValue read fValue;
 
       constructor create(aOwner: tKlausRoutine; aName: string; aPoint: tSrcPoint; const val: tKlausSimpleValue);
       constructor create(aOwner: tKlausRoutine; aName: string; aPoint: tSrcPoint; b: tKlausSyntaxBrowser);
@@ -578,17 +578,18 @@ type
   tKlausVarDecl = class(tKlausValueDecl)
     private
       fDataType: tKlausTypeDef;
-      fInitial: tKlausSimpleValue;
+      fInitial: tKlausVarValue;
 
       function getHidden: boolean;
     protected
       function getDataType: tKlausTypeDef; override;
     public
-      property initial: tKlausSimpleValue read fInitial;
+      property initial: tKlausVarValue read fInitial;
       property hidden: boolean read getHidden;
 
-      constructor create(aOwner: tKlausRoutine; aName: string; aPoint: tSrcPoint; aDataType: tKlausTypeDef; aInitial: tKlausSimpleValue);
-      procedure initialize(v: tKlausVarValue);
+      constructor create(aOwner: tKlausRoutine; aName: string; aPoint: tSrcPoint; aDataType: tKlausTypeDef; aInitial: tKlausVarValue);
+      destructor  destroy; override;
+      procedure initialize(v: tKlausVariable);
   end;
 
 type
@@ -1441,7 +1442,7 @@ type
       fMap: tKlausMap;
 
       function  getCount: integer;
-      procedure checkKeyType(const key: tKlausSimpleValue; const at: tSrcPoint);
+      procedure checkKeyType(var key: tKlausSimpleValue; const at: tSrcPoint);
       procedure checkValueType(val: tKlausVarValue; const at: tSrcPoint);
     public
       property count: integer read getCount;
@@ -1449,14 +1450,14 @@ type
       constructor create(dt: tKlausTypeDef); override;
       destructor  destroy; override;
       procedure clear; override;
-      function  has(const key: tKlausSimpleValue; const at: tSrcPoint): boolean;
-      function  findKey(const key: tKlausSimpleValue; out idx: integer): boolean;
+      function  has(key: tKlausSimpleValue; const at: tSrcPoint): boolean;
+      function  findKey(key: tKlausSimpleValue; out idx: integer): boolean;
       function  getKeyAt(idx: integer; const at: tSrcPoint): tKlausSimpleValue;
-      function  getElmt(const key: tKlausSimpleValue; const at: tSrcPoint; mode: tKlausVarPathMode = vpmEvaluate): tKlausVarValue;
+      function  getElmt(key: tKlausSimpleValue; const at: tSrcPoint; mode: tKlausVarPathMode = vpmEvaluate): tKlausVarValue;
       function  getElmtAt(idx: integer; const at: tSrcPoint): tKlausVarValue;
-      procedure setElmt(const key: tKlausSimpleValue; val: tKlausVarValue; const at: tSrcPoint);
+      procedure setElmt(key: tKlausSimpleValue; val: tKlausVarValue; const at: tSrcPoint);
       procedure delete(idx: integer; const at: tSrcPoint);
-      procedure delete(const key: tKlausSimpleValue; const at: tSrcPoint);
+      procedure delete(key: tKlausSimpleValue; const at: tSrcPoint);
       procedure assign(src: tKlausVarValue; const at: tSrcPoint); override;
       function  displayValue: string; override;
   end;
@@ -2244,9 +2245,9 @@ var
 begin
   if decl is tKlausConstDecl then begin
     if mode = vpmAsgnTarget then raise eKlausError.create(ercConstAsgnTarget, point.line, point.pos);
-    exit((decl as tKlausConstDecl).value);
-  end;
-  result := frame.varByDecl(decl as tKlausVarDecl, point).value;
+    result := (decl as tKlausConstDecl).value;
+  end else
+    result := frame.varByDecl(decl as tKlausVarDecl, point).value;
   repeat
     if idx > 0 then begin
       if not (result is tKlausVarValueStruct) then
@@ -2620,8 +2621,8 @@ begin
       if not runTime then sv := elmt[i].acquireVarValue
       else sv := elmt[i].acquireVarValue(frame, allowCalls);
       if sv <> nil then begin
-        e.assign(sv, p);
-        releaseAndNil(sv);
+        try e.assign(sv, p);
+        finally releaseAndNil(sv); end;
       end else begin
         if not (e is tKlausVarValueSimple) then raise eKlausError.create(ercTypeMismatch, p);
         if not runTime then ssv := elmt[i].evaluate
@@ -2720,8 +2721,8 @@ begin
       if not runTime then sv := elmt[i].value.acquireVarValue
       else sv := elmt[i].value.acquireVarValue(frame, allowCalls);
       if sv <> nil then begin
-        dv.assign(sv, p);
-        releaseAndNil(sv);
+        try dv.assign(sv, p);
+        finally releaseAndNil(sv); end;
       end else begin
         if not (dv is tKlausVarValueSimple) then raise eKlausError.create(ercTypeMismatch, p);
         if not runTime then ssv := elmt[i].value.evaluate
@@ -2825,8 +2826,8 @@ begin
       if not runTime then sv := m.expr.acquireVarValue
       else sv := m.expr.acquireVarValue(frame, allowCalls);
       if sv <> nil then begin
-        vm.assign(sv, m.expr.point);
-        releaseAndNil(sv);
+        try vm.assign(sv, m.expr.point);
+        finally releaseAndNil(sv); end;
       end else begin
         if not (vm is tKlausVarValueSimple) then raise eKlausError.create(ercTypeMismatch, m.expr.point);
         if not runTime then ssv := m.expr.evaluate
@@ -3056,13 +3057,13 @@ end;
 
 function tKlausExpression.acquireVarValue: tKlausVarValue;
 begin
-  if (right <> nil) or (left.uop <> kuoInvalid) then result := nil
+  if right <> nil then result := nil
   else result := left.acquireVarValue
 end;
 
 function tKlausExpression.acquireVarValue(frame: tKlausStackFrame; allowCalls: boolean): tKlausVarValue;
 begin
-  if (right <> nil) or (left.uop <> kuoInvalid) then result := nil
+  if right <> nil then result := nil
   else result := left.acquireVarValue(frame, allowCalls)
 end;
 
@@ -3733,7 +3734,7 @@ end;
 
 constructor tKlausExceptObjDecl.create(aOwner: tKlausRoutine; aName: string; const aPoint: tSrcPoint; aExceptDecl: tKlausExceptDecl);
 begin
-  inherited create(aOwner, aName, aPoint, aExceptDecl.data, klausZeroValue(kdtString));
+  inherited create(aOwner, aName, aPoint, aExceptDecl.data, nil);
 end;
 
 { tKlausStmtWhen }
@@ -4448,7 +4449,7 @@ constructor tKlausProcParam.create(aOwner: tKlausRoutine; aName: string; aPoint:
 begin
   fMode := aMode;
   if aName = '' then aName := klausResultParamName;
-  inherited create(aOwner, aName, aPoint, aDataType, aDataType.zeroValue);
+  inherited create(aOwner, aName, aPoint, aDataType, nil);
 end;
 
 { tKlausProcDecl }
@@ -4571,7 +4572,7 @@ begin
       if u8Lower(name) <> u8Lower(p.name) then exit;
       if mode <> p.mode then exit;
       if dataType <> p.dataType then exit;
-      if klausCompare(initial, p.initial, point) <> 0 then exit;
+      //if klausCompare(initial, p.initial, point) <> 0 then exit;
     end;
   end;
   result := true;
@@ -4680,22 +4681,28 @@ begin
   result := fDataType;
 end;
 
-constructor tKlausVarDecl.create(aOwner: tKlausRoutine; aName: string; aPoint: tSrcPoint; aDataType: tKlausTypeDef; aInitial: tKlausSimpleValue);
+constructor tKlausVarDecl.create(aOwner: tKlausRoutine; aName: string; aPoint: tSrcPoint; aDataType: tKlausTypeDef; aInitial: tKlausVarValue);
 begin
   inherited create(aOwner, aName, aPoint);
   fDataType := aDataType;
-  if fDataType.dataType = kdtComplex then
-    fInitial := fDataType.zeroValue
-  else begin
-    if not fDataType.canAssign(aInitial) then raise eKlausError.create(ercTypeMismatch, point.line, point.pos);
+  if aInitial <> nil then begin
+    if not fDataType.canAssign(aInitial.dataType) then raise eKlausError.create(ercTypeMismatch, point);
     fInitial := aInitial;
-  end;
+    fInitial.acquire;
+  end else
+    fInitial := nil;
 end;
 
-procedure tKlausVarDecl.initialize(v: tKlausVarValue);
+destructor tKlausVarDecl.destroy;
 begin
-  if v is tKlausVarValueSimple then
-    (v as tKlausVarValueSimple).setSimple(self.initial, self.point);
+  releaseAndNil(fInitial);
+  inherited destroy;
+end;
+
+procedure tKlausVarDecl.initialize(v: tKlausVariable);
+begin
+  if fInitial <> nil then
+    v.acquireValue(fInitial, point);
 end;
 
 { tKlausConstDecl }
@@ -4704,26 +4711,47 @@ constructor tKlausConstDecl.create(aOwner: tKlausRoutine; aName: string; aPoint:
 begin
   inherited create(aOwner, aName, aPoint);
   fValue := tKlausVarValueSimple.create(source.simpleTypes[val.dataType]);
-  fValue.setSimple(val, aPoint);
+  (fValue as tKlausVarValueSimple).setSimple(val, aPoint);
 end;
 
 constructor tKlausConstDecl.create(aOwner: tKlausRoutine; aName: string; aPoint: tSrcPoint; b: tKlausSyntaxBrowser);
 var
   p: tSrcPoint;
+  dt: tKlausTypeDef;
   sv: tKlausSimpleValue;
+  expr: tKlausExpression;
+  v: tKlausVarValue;
 begin
   inherited create(aOwner, aName, aPoint);
   p := srcPoint(b.lex);
-  sv := owner.createConstExpression(b);
-  fValue := tKlausVarValueSimple.create(source.simpleTypes[sv.dataType]);
-  fValue.setSimple(sv, p);
-  {$ifdef enableLogging}
-  logln('expression', 'константа %s = %s'#10, [name, klausTypecast(value.simple, kdtString, point).sValue]);
-  {$endif}
+  b.next;
+  if b.check(klsColon, false) then begin
+    dt := owner.createDataType(b);
+    b.next;
+    b.check(klsEq);
+    b.next;
+    expr := owner.createExpression(owner.body, b, dt);
+    v := expr.acquireVarValue;
+    if v <> nil then begin
+      fValue := dt.valueClass.create(dt);
+      try fValue.assign(v, expr.point);
+      finally releaseAndNil(v); end;
+    end else begin
+      sv := expr.evaluate;
+      fValue := tKlausVarValueSimple.create(dt);
+      (fValue as tKlausVarValueSimple).setSimple(sv, p);
+    end;
+  end else begin
+    b.check(klsEq);
+    sv := owner.createConstExpression(b);
+    fValue := tKlausVarValueSimple.create(source.simpleTypes[sv.dataType]);
+    (fValue as tKlausVarValueSimple).setSimple(sv, p);
+  end;
 end;
 
 destructor tKlausConstDecl.destroy;
 begin
+  releaseAndNil(fValue);
   inherited destroy;
 end;
 
@@ -4806,7 +4834,6 @@ end;
 function tKlausTypeDef.literalClass: tKlausOpndCompoundClass;
 begin
   result := nil;
-  assert(false, 'Compound literals not applicable for ' + className);
 end;
 
 { tKlausSource }
@@ -6082,7 +6109,8 @@ function tKlausRoutine.createExpression(aStmt: tKlausStatement; b: tKlausSyntaxB
         if b.check('compound_literal', false) then begin
           if expectedType = nil then raise eKlausError.create(ercUntypedCompoundLiteral, srcPoint(b.lex));
           result := tKlausExpression.create(aStmt, kuoInvalid, srcPoint(b.lex));
-          result.left := expectedType.literalClass.create(aStmt, expectedType, srcPoint(b.lex), b);
+          if expectedType.literalClass = nil then raise eKlausError.create(ercTypeMismatch, srcPoint(b.lex))
+          else result.left := expectedType.literalClass.create(aStmt, expectedType, srcPoint(b.lex), b);
           exit;
         end;
         b.check('operand');
@@ -6127,8 +6155,6 @@ begin
     p := srcPoint(b.lex);
     id := b.get(klxID).text;
     if find(id, knsLocal) <> nil then raise eKlausError.createFmt(ercDuplicateName, b.lex.line, b.lex.pos, [id]);
-    b.next;
-    b.check(klsEq);
     tKlausConstDecl.create(self, id, p, b);
     b.next;
     b.check(klsSemicolon);
@@ -6143,8 +6169,10 @@ var
   idx: integer;
   nms: array of tKlausLexInfo = nil;
   dt: tKlausTypeDef;
-  v: tKlausSimpleValue;
+  v: tKlausVarValue;
+  sv: tKlausSimpleValue;
   li: tKlausLexInfo;
+  expr: tKlausExpression;
 begin
   b.next;
   b.check(kkwdVar);
@@ -6168,20 +6196,27 @@ begin
     b.check(klsColon);
     dt := createDataType(b);
     b.next;
-    if not b.check(klsEq, false) then
-      v := dt.zeroValue
-    else begin
-      b.next;
-      b.pause;
-      li := b.lex;
-      v := createConstExpression(b);
-      if not dt.canAssign(v) then raise eKlausError.create(ercTypeMismatch, li.line, li.pos);
-      b.next;
-    end;
-    for i := 0 to idx do begin
-      if find(nms[i].text, knsLocal) <> nil then
-        raise eKlausError.createFmt(ercDuplicateName, nms[i].line, nms[i].pos, [nms[i].text]);
-      tKlausVarDecl.create(self, nms[i].text, srcPoint(nms[i]), dt, v);
+    v := nil;
+    try
+      if b.check(klsEq, false) then begin
+        b.next;
+        li := b.lex;
+        expr := createExpression(body, b, dt);
+        v := expr.acquireVarValue;
+        if v = nil then begin
+          sv := expr.evaluate;
+          v := tKlausVarValueSimple.create(dt);
+          (v as tKlausVarValueSimple).setSimple(sv, srcPoint(li));
+        end;
+        b.next;
+      end;
+      for i := 0 to idx do begin
+        if find(nms[i].text, knsLocal) <> nil then
+          raise eKlausError.createFmt(ercDuplicateName, nms[i].line, nms[i].pos, [nms[i].text]);
+        tKlausVarDecl.create(self, nms[i].text, srcPoint(nms[i]), dt, v);
+      end;
+    finally
+      releaseAndNil(v);
     end;
     b.check(klsSemicolon);
     b.next;
@@ -6682,7 +6717,7 @@ procedure tKlausStackFrame.call(
       result := tKlausVarValueSimple.create(owner.source.simpleTypes[ssv.dataType]);
       (result as tKlausVarValueSimple).setSimple(ssv, at);
     end;
-    deferRelease(result);
+    deferRelease(result); ///!!! finally
   end;
 
 var
@@ -7159,12 +7194,14 @@ begin
   result := fMap.count;
 end;
 
-procedure tKlausVarValueDict.checkKeyType(const key: tKlausSimpleValue; const at: tSrcPoint);
+procedure tKlausVarValueDict.checkKeyType(var key: tKlausSimpleValue; const at: tSrcPoint);
 var
   kt: tKlausSimpleType;
 begin
   kt := (self.dataType as tKlausTypeDefDict).keyType;
-  if kt <> key.dataType then raise eKlausError.create(ercTypeMismatch, at.line, at.pos);
+  if kt = key.dataType then exit
+  else if klausCanAssign(key.dataType, kt) then key := klausTypeCast(key, kt, at)
+  else raise eKlausError.create(ercTypeMismatch, at.line, at.pos);
 end;
 
 procedure tKlausVarValueDict.checkValueType(val: tKlausVarValue; const at: tSrcPoint);
@@ -7175,18 +7212,18 @@ begin
   if not vt.canAssign(val.dataType) then raise eKlausError.create(ercTypeMismatch, at.line, at.pos);
 end;
 
-function tKlausVarValueDict.has(const key: tKlausSimpleValue; const at: tSrcPoint): boolean;
+function tKlausVarValueDict.has(key: tKlausSimpleValue; const at: tSrcPoint): boolean;
 begin
   checkKeyType(key, at);
   result := fMap.indexOf(key) >= 0;
 end;
 
-function tKlausVarValueDict.findKey(const key: tKlausSimpleValue; out idx: integer): boolean;
+function tKlausVarValueDict.findKey(key: tKlausSimpleValue; out idx: integer): boolean;
 begin
   result := fMap.find(key, idx);
 end;
 
-function tKlausVarValueDict.getElmt(const key: tKlausSimpleValue; const at: tSrcPoint; mode: tKlausVarPathMode): tKlausVarValue;
+function tKlausVarValueDict.getElmt(key: tKlausSimpleValue; const at: tSrcPoint; mode: tKlausVarPathMode): tKlausVarValue;
 var
   idx: integer;
   vt: tKlausTypeDef;
@@ -7215,7 +7252,7 @@ begin
   result := tKlausVarValue(fMap.data[idx]);
 end;
 
-procedure tKlausVarValueDict.setElmt(const key: tKlausSimpleValue; val: tKlausVarValue; const at: tSrcPoint);
+procedure tKlausVarValueDict.setElmt(key: tKlausSimpleValue; val: tKlausVarValue; const at: tSrcPoint);
 var
   idx: integer;
   v: tKlausVarValue;
@@ -7238,7 +7275,7 @@ begin
   fMap.delete(idx);
 end;
 
-procedure tKlausVarValueDict.delete(const key: tKlausSimpleValue; const at: tSrcPoint);
+procedure tKlausVarValueDict.delete(key: tKlausSimpleValue; const at: tSrcPoint);
 var
   idx: integer;
 begin
@@ -7374,7 +7411,7 @@ begin
   fDecl := aDecl;
   fOwner.addVariable(self);
   fValue := decl.dataType.valueClass.create(decl.dataType);
-  decl.initialize(fValue);
+  decl.initialize(self);
 end;
 
 destructor tKlausVariable.destroy;
@@ -7384,21 +7421,24 @@ begin
   inherited destroy;
 end;
 
-procedure tKlausVariable.assignValue(val: tKlausVarValue; const at: tSrcPoint; release: boolean);
+procedure tKlausVariable.assignValue(val: tKlausVarValue; const at: tSrcPoint; release: boolean = false);
 begin
-  value.assign(val, at);
-  if release then val.release;
+  try value.assign(val, at);
+  finally if release then val.release; end;
 end;
 
-procedure tKlausVariable.acquireValue(val: tKlausVarValue; const at: tSrcPoint; release: boolean);
+procedure tKlausVariable.acquireValue(val: tKlausVarValue; const at: tSrcPoint; release: boolean = false);
 begin
-  if not fOutputBuffer and not (value is tKlausVarValueSimple)
-  and decl.dataType.canAssign(val.dataType, true) then begin
-    releaseAndNil(fValue);
-    fValue := val.acquire;
-  end else
-    fValue.assign(val, at);
-  if release then val.release;
+  try
+    if not fOutputBuffer and not (value is tKlausVarValueSimple)
+    and decl.dataType.canAssign(val.dataType, true) then begin
+      releaseAndNil(fValue);
+      fValue := val.acquire;
+    end else
+      fValue.assign(val, at);
+  finally
+    if release then val.release;
+  end;
 end;
 
 procedure tKlausVariable.acquireOutputBuffer(val: tKlausVarValue; const at: tSrcPoint);

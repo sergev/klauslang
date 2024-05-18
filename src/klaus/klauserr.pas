@@ -256,8 +256,8 @@ resourcestring
   errInvalidDictKey = 'Ключ словаря не существует: %s.';
   errSubroutineRequired = '"%s" не является именем процедуры или функции.';
   errMustReturnValue = 'Не указано возвращаемое значение.';
-  errWrongNumberOfParams = 'Указано неверное количество параметров: %d (требуется %s).';
-  errInvalidOutputParam = 'В качестве выходных параметров могут быть указаны только переменные.';
+  errWrongNumberOfParams = 'Передано неверное количество параметров: %d (требуется %s).';
+  errInvalidOutputParam = 'В качестве выходных параметров могут быть переданы только переменные.';
   errCannotWriteComplexType = 'Невозможно вывести значение составного типа.';
   errCannotReadComplexType = 'Невозможно прочесть значение составного типа.';
   errStackTooBig = 'Слишком большой уровень вложенности вызовов.';

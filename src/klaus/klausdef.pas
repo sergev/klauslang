@@ -473,6 +473,9 @@ function klausBinOpPriorityCompare(op1, op2: tKlausBinaryOperation): integer;
 // Возвращает "нулевое" (т.е., начальное) значение указанного типа
 function klausZeroValue(dt: tKlausSimpleType): tKlausSimpleValue;
 
+// Возвращает true, если переданное значение является "нулевым" (т.е., начальным)
+function klausIsZeroValue(v: tKlausSimpleValue): boolean;
+
 // Возвращает значение переданного литерала
 function klausLiteralValue(const li: tKlausLexInfo): tKlausSimpleValue;
 
@@ -546,6 +549,22 @@ begin
     kdtMoment: result.mValue := 0;
     kdtBoolean: result.bValue := false;
     kdtObject: result.oValue := 0;
+  else
+    assert(false, 'Invalid data type');
+  end;
+end;
+
+// Возвращает true, если переданное значение является "нулевым" (т.е., начальным)
+function klausIsZeroValue(v: tKlausSimpleValue): boolean;
+begin
+  case v.dataType of
+    kdtString: result := v.sValue = '';
+    kdtChar: result := v.cValue = 0;
+    kdtInteger: result := v.iValue = 0;
+    kdtFloat: result := v.fValue = 0;
+    kdtMoment: result := v.mValue = 0;
+    kdtBoolean: result := v.bValue = false;
+    kdtObject: result := v.oValue = 0;
   else
     assert(false, 'Invalid data type');
   end;

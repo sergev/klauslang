@@ -574,6 +574,7 @@ begin
     actEditCut.enabled := (scene = nil) and selExists;
     actEditCopy.enabled := selExists;
     actEditPaste.enabled := (scene = nil) and editFocused and clipboard.hasFormat(CF_TEXT);
+    actEditDeleteLine.enabled := (scene = nil) and editFocused;
     actRunCheckSyntax.enabled := scene = nil;
   end else begin
     actFileClose.enabled := false;
