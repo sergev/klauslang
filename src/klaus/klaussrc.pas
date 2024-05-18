@@ -22,9 +22,6 @@ unit KlausSrc;
 //todo: Кроме точки в тексте, исключения должны знать модуль, из которого они прилетели
 //todo: Добавить в VarPath возможность ссылки на модуль (точнее, путь к области видимости)
 
-//todo: Составные литералы: начальные значения переменных, константы
-//todo: Режим read only для значений типизированных констант
-
 //todo: процедурные переменные
 //todo: несколько словоформ для всех видов определений
 
@@ -6693,6 +6690,7 @@ end;
 
 procedure tKlausStackFrame.deferRelease(val: tKlausVarValue);
 begin
+  if val = nil then exit;
   if fReleased = nil then fReleased := tFPList.create;
   fReleased.add(val);
 end;
@@ -6711,13 +6709,16 @@ procedure tKlausStackFrame.call(
       if not expr.isVarPath then raise eKlausError.create(ercInvalidOutputParam, expr.point);
       if expr.isConstPath then raise eKlausError.create(ercConstOutputParam, expr.point);
     end;
-    result := expr.acquireVarValue(self, true);
-    if result = nil then begin
-      ssv := expr.evaluate(self, true);
-      result := tKlausVarValueSimple.create(owner.source.simpleTypes[ssv.dataType]);
-      (result as tKlausVarValueSimple).setSimple(ssv, at);
+    try
+      result := expr.acquireVarValue(self, true);
+      if result = nil then begin
+        ssv := expr.evaluate(self, true);
+        result := tKlausVarValueSimple.create(owner.source.simpleTypes[ssv.dataType]);
+        (result as tKlausVarValueSimple).setSimple(ssv, at);
+      end;
+    finally
+      deferRelease(result);
     end;
-    deferRelease(result); ///!!! finally
   end;
 
 var
@@ -6761,8 +6762,8 @@ begin
         else begin
           assert(params[i].isVarPath, 'Invalid output buffer');
           v := params[i].acquireVarValue(self, true);
-          pvar.acquireOutputBuffer(v, params[i].point);
-          v.release;
+          try pvar.acquireOutputBuffer(v, params[i].point);
+          finally v.release; end;
           if m = kpmOutput then v.clear;
         end;
       end;

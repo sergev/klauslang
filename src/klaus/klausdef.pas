@@ -566,6 +566,7 @@ begin
     kdtBoolean: result := v.bValue = false;
     kdtObject: result := v.oValue = 0;
   else
+    result := false;
     assert(false, 'Invalid data type');
   end;
 end;
