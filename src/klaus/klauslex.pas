@@ -1259,10 +1259,18 @@ end;
 
 var
   i: integer;
+  //k, kwd: tKlausKeyword;
 initialization
   for i := high(klausKeywords) downto low(klausKeywords) do
     klausKwd[klausKeywords[i].k] := klausKeywords[i].s;
   for i := high(klausSymbols) downto low(klausSymbols) do
     klausSym[klausSymbols[i].k] := klausSymbols[i].s;
+  {kwd := kkwdInvalid;
+  for i := low(klausKeywords) to high(klausKeywords) do begin
+    k := klausKeywords[i].k;
+    if k <> kwd then writeln else write(' ');
+    write(klausKeywords[i].s);
+    kwd := k;
+  end;}
 end.
 
