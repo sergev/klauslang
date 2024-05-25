@@ -23,7 +23,8 @@ unit KlausSrc;
 //todo: Добавить в VarPath возможность ссылки на модуль (точнее, путь к области видимости)
 
 //todo: процедурные переменные
-//todo: несколько словоформ для всех видов определений
+//todo: не и или либо
+//todo: диапазоны в инструкции выбора
 
 {$mode ObjFPC}{$H+}
 {$i ../lib/klaus.inc}
@@ -324,6 +325,7 @@ type
       function  getDecls(idx: integer): tKlausDecl;
       function  getParamCount: integer;
       function  getParams(idx: integer): tKlausProcParam;
+      procedure createIDs(b: tKlausSyntaxBrowser; out ids: tStringArray; out p: tSrcPoint);
       procedure createRoutine(b: tKlausSyntaxBrowser);
       procedure createDeclarations(b: tKlausSyntaxBrowser);
       function  createStatement(aOwner: tKlausStmtCtlStruct; b: tKlausSyntaxBrowser): tKlausStatement;
@@ -565,8 +567,8 @@ type
     public
       property value: tKlausVarValue read fValue;
 
-      constructor create(aOwner: tKlausRoutine; aName: string; aPoint: tSrcPoint; const val: tKlausSimpleValue);
-      constructor create(aOwner: tKlausRoutine; aName: string; aPoint: tSrcPoint; b: tKlausSyntaxBrowser);
+      constructor create(aOwner: tKlausRoutine; aNames: array of string; aPoint: tSrcPoint; const val: tKlausSimpleValue);
+      constructor create(aOwner: tKlausRoutine; aNames: array of string; aPoint: tSrcPoint; b: tKlausSyntaxBrowser);
       destructor  destroy; override;
   end;
 
@@ -584,7 +586,7 @@ type
       property initial: tKlausVarValue read fInitial;
       property hidden: boolean read getHidden;
 
-      constructor create(aOwner: tKlausRoutine; aName: string; aPoint: tSrcPoint; aDataType: tKlausTypeDef; aInitial: tKlausVarValue);
+      constructor create(aOwner: tKlausRoutine; aNames: array of string; aPoint: tSrcPoint; aDataType: tKlausTypeDef; aInitial: tKlausVarValue);
       destructor  destroy; override;
       procedure initialize(v: tKlausVariable);
   end;
@@ -4678,9 +4680,9 @@ begin
   result := fDataType;
 end;
 
-constructor tKlausVarDecl.create(aOwner: tKlausRoutine; aName: string; aPoint: tSrcPoint; aDataType: tKlausTypeDef; aInitial: tKlausVarValue);
+constructor tKlausVarDecl.create(aOwner: tKlausRoutine; aNames: array of string; aPoint: tSrcPoint; aDataType: tKlausTypeDef; aInitial: tKlausVarValue);
 begin
-  inherited create(aOwner, aName, aPoint);
+  inherited create(aOwner, aNames, aPoint);
   fDataType := aDataType;
   if aInitial <> nil then begin
     if not fDataType.canAssign(aInitial.dataType) then raise eKlausError.create(ercTypeMismatch, point);
@@ -4704,14 +4706,14 @@ end;
 
 { tKlausConstDecl }
 
-constructor tKlausConstDecl.create(aOwner: tKlausRoutine; aName: string; aPoint: tSrcPoint; const val: tKlausSimpleValue);
+constructor tKlausConstDecl.create(aOwner: tKlausRoutine; aNames: array of string; aPoint: tSrcPoint; const val: tKlausSimpleValue);
 begin
-  inherited create(aOwner, aName, aPoint);
+  inherited create(aOwner, aNames, aPoint);
   fValue := tKlausVarValueSimple.create(source.simpleTypes[val.dataType]);
   (fValue as tKlausVarValueSimple).setSimple(val, aPoint);
 end;
 
-constructor tKlausConstDecl.create(aOwner: tKlausRoutine; aName: string; aPoint: tSrcPoint; b: tKlausSyntaxBrowser);
+constructor tKlausConstDecl.create(aOwner: tKlausRoutine; aNames: array of string; aPoint: tSrcPoint; b: tKlausSyntaxBrowser);
 var
   p: tSrcPoint;
   dt: tKlausTypeDef;
@@ -4719,7 +4721,7 @@ var
   expr: tKlausExpression;
   v: tKlausVarValue;
 begin
-  inherited create(aOwner, aName, aPoint);
+  inherited create(aOwner, aNames, aPoint);
   p := srcPoint(b.lex);
   b.next;
   if b.check(klsColon, false) then begin
@@ -5772,6 +5774,29 @@ begin
   result := tKlausProcParam(fParams[idx]);
 end;
 
+procedure tKlausRoutine.createIDs(b: tKlausSyntaxBrowser; out ids: tStringArray; out p: tSrcPoint);
+var
+  i: integer;
+begin
+  i := 0;
+  ids := nil;
+  setLength(ids, 1);
+  b.next;
+  p := srcPoint(b.lex);
+  ids[i] := b.get(klxID).text;
+  if find(ids[i], knsLocal) <> nil then raise eKlausError.createFmt(ercDuplicateName, srcPoint(b.lex), [ids[i]]);
+  b.next;
+  while b.check(klsFDiv, false) do begin
+    inc(i);
+    setLength(ids, i+1);
+    b.next;
+    ids[i] := b.get(klxID).text;
+    if find(ids[i], knsLocal) <> nil then raise eKlausError.createFmt(ercDuplicateName, srcPoint(b.lex), [ids[i]]);
+    b.next;
+  end;
+  b.pause;
+end;
+
 procedure tKlausRoutine.createRoutine(b: tKlausSyntaxBrowser);
 var
   i: integer;
@@ -5875,8 +5900,7 @@ end;
 
 procedure tKlausRoutine.createTypeDeclarations(b: tKlausSyntaxBrowser);
 var
-  i: integer;
-  ids: array of string = nil;
+  ids: tStringArray;
   p: tSrcPoint;
 begin
   b.next;
@@ -5884,21 +5908,8 @@ begin
   b.next;
   b.check('type_decl', true);
   repeat
-    i := 0;
-    setLength(ids, 1);
+    createIDs(b, ids, p);
     b.next;
-    p := srcPoint(b.lex);
-    ids[i] := b.get(klxID).text;
-    if find(ids[i], knsLocal) <> nil then raise eKlausError.createFmt(ercDuplicateName, b.lex.line, b.lex.pos, [ids[i]]);
-    b.next;
-    while b.check(klsFDiv, false) do begin
-      inc(i);
-      setLength(ids, i+1);
-      b.next;
-      ids[i] := b.get(klxID).text;
-      if find(ids[i], knsLocal) <> nil then raise eKlausError.createFmt(ercDuplicateName, b.lex.line, b.lex.pos, [ids[i]]);
-      b.next;
-    end;
     b.check(klsEq);
     tKlausTypeDecl.create(self, ids, p, b);
     b.next;
@@ -6140,7 +6151,7 @@ end;
 
 procedure tKlausRoutine.createConstDeclarations(b: tKlausSyntaxBrowser);
 var
-  id: string;
+  ids: tStringArray;
   p: tSrcPoint;
 begin
   b.next;
@@ -6148,11 +6159,8 @@ begin
   b.next;
   b.check('const_decl', true);
   repeat
-    b.next;
-    p := srcPoint(b.lex);
-    id := b.get(klxID).text;
-    if find(id, knsLocal) <> nil then raise eKlausError.createFmt(ercDuplicateName, b.lex.line, b.lex.pos, [id]);
-    tKlausConstDecl.create(self, id, p, b);
+    createIDs(b, ids, p);
+    tKlausConstDecl.create(self, ids, p, b);
     b.next;
     b.check(klsSemicolon);
     b.next;
@@ -6164,7 +6172,10 @@ procedure tKlausRoutine.createVarDeclarations(b: tKlausSyntaxBrowser);
 var
   i: integer;
   idx: integer;
-  nms: array of tKlausLexInfo = nil;
+  nms: array of record
+    n: tStringArray;
+    p: tSrcPoint;
+  end = nil;
   dt: tKlausTypeDef;
   v: tKlausVarValue;
   sv: tKlausSimpleValue;
@@ -6177,17 +6188,13 @@ begin
   b.check('var_decl', true);
   repeat
     idx := 0;
-    b.next;
-    b.check(klxID);
     setLength(nms, idx+1);
-    nms[idx] := b.lex;
+    createIDs(b, nms[idx].n, nms[idx].p);
     b.next;
     while b.check(klsComma, false) do begin
       idx += 1;
-      b.next;
-      b.check(klxID);
       setLength(nms, idx+1);
-      nms[idx] := b.lex;
+      createIDs(b, nms[idx].n, nms[idx].p);
       b.next;
     end;
     b.check(klsColon);
@@ -6207,11 +6214,8 @@ begin
         end;
         b.next;
       end;
-      for i := 0 to idx do begin
-        if find(nms[i].text, knsLocal) <> nil then
-          raise eKlausError.createFmt(ercDuplicateName, nms[i].line, nms[i].pos, [nms[i].text]);
-        tKlausVarDecl.create(self, nms[i].text, srcPoint(nms[i]), dt, v);
-      end;
+      for i := 0 to idx do
+        tKlausVarDecl.create(self, nms[i].n, nms[i].p, dt, v);
     finally
       releaseAndNil(v);
     end;

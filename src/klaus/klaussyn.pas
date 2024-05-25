@@ -149,13 +149,13 @@ const
     def:   '`переменная` (* <var_decl>)'),
 
     (name: 'var_decl';
-    def:   '#id [* "," #id] ":" <type_def> ["=" <expression>] ";"'),
+    def:   '#id [* "/" #id] [* "," #id [* "/" #id]] ":" <type_def> ["=" <expression>] ";"'),
 
     (name: 'const_declarations';
     def:   '`константа` (* <const_decl>)'),
 
     (name: 'const_decl';
-    def:   '#id [":" <type_def>] "=" <expression> ";"'),
+    def:   '#id [* "/" #id] [":" <type_def>] "=" <expression> ";"'),
 
     (name: 'exception_declarations';
     def:   '`исключение` (* <exception_decl>)'),
