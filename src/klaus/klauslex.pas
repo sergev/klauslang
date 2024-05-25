@@ -162,7 +162,11 @@ type
     kkwdNotExists,
     kkwdEmpty,
     kkwdAccuracy,
-    kkwdForward
+    kkwdForward,
+    kkwdNot,
+    kkwdAnd,
+    kkwdOr,
+    kkwdXor
   );
 
 type
@@ -466,7 +470,11 @@ const
     (s: 'нету'; k: kkwdNotExists),
     (s: 'пусто'; k: kkwdEmpty),
     (s: 'точность'; k: kkwdAccuracy),
-    (s: 'дальше'; k: kkwdForward)
+    (s: 'дальше'; k: kkwdForward),
+    (s: 'не'; k: kkwdNot),
+    (s: 'и'; k: kkwdAnd),
+    (s: 'или'; k: kkwdOr),
+    (s: 'либо'; k: kkwdXor)
   );
 
 const

@@ -5996,8 +5996,10 @@ function tKlausRoutine.createExpression(aStmt: tKlausStatement; b: tKlausSyntaxB
   function createOperand: tKlausOperand;
   const
     uopSym = [low(tKlausUnOpSymbols)..high(tKlausUnOpSymbols)];
+    uopKwd = [low(tKlausUnOpKeywords)..high(tKlausUnOpKeywords)];
   var
     p: tSrcPoint;
+    kwd: tKlausKeyword;
     uop: tKlausUnaryOperation = kuoInvalid;
   begin
     result := nil;
@@ -6005,7 +6007,9 @@ function tKlausRoutine.createExpression(aStmt: tKlausStatement; b: tKlausSyntaxB
     p := srcPoint(b.lex);
     if b.check('unary_operation', false) then begin
       b.next;
-      uop := klausSymToUnOp[b.check(uopSym)];
+      kwd := b.check(uopKwd, false);
+      if kwd <> kkwdInvalid then uop := klausKwdToUnOp[kwd]
+      else uop := klausSymToUnOp[b.check(uopSym)];
       b.next;
     end;
     if b.check('literal', false) then result := tKlausOpndLiteral.create(aStmt, uop, p, b)
@@ -6105,8 +6109,10 @@ function tKlausRoutine.createExpression(aStmt: tKlausStatement; b: tKlausSyntaxB
 
   const
     bopSym = [low(tKlausBinOpSymbols)..high(tKlausBinOpSymbols)];
+    bopKwd = [kkwdAnd, kkwdOr, kkwdXor];
   var
     r: integer;
+    kwd: tKlausKeyword;
     op: tKlausBinaryOperation;
   begin
     stack := tFPList.create;
@@ -6126,7 +6132,9 @@ function tKlausRoutine.createExpression(aStmt: tKlausStatement; b: tKlausSyntaxB
         b.next;
         if not b.check('binary_operation', false) then break;
         b.next;
-        op := klausSymToBinOp[b.check(bopSym)];
+        kwd := b.check(bopKwd, false);
+        if kwd <> kkwdInvalid then op := klausKwdToBinOp[kwd]
+        else op := klausSymToBinOp[b.check(bopSym)];
         repeat
           r := cmp(op);
           if r < 0 then enqueue(pop)

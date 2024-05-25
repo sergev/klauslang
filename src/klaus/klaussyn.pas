@@ -208,11 +208,11 @@ const
     def:   '(<compound_literal> | <operand> [* <binary_operation> <operand>])'),
 
     (name: 'unary_operation';
-    def:   '("-" | "!")'),
+    def:   '("-" | "!" | `не`)'),
 
     (name: 'binary_operation';
-    def:   '("+" | "++" | "-" | "*" | "/" | "\" | "%" | "^" | "=" | "<>" | '+
-           '">" | "<" | ">=" | "<=" | "&&" | "||" | "~~" | "&" | "|" | "~")'),
+    def:   '("+" | "++" | "-" | "*" | "/" | "\" | "%" | "^" | "=" | "<>" | ">" | "<" |'+
+           '">=" | "<=" | "&&" | "||" | "~~" | "&" | "|" | "~" | `и` | `или` | `либо`)'),
 
     (name: 'operand';
     def:   '[<unary_operation>] (<literal> | <typecast> | <call> | <var_path> | <exists> | '+

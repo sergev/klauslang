@@ -102,8 +102,11 @@ type
   tKlausUnaryOperation = (kuoInvalid, kuoMinus, kuoNot);
   tKlausValidUnaryOperation = succ(kuoInvalid)..high(tKlausUnaryOperation);
   tKlausUnOpSymbols = klsMinus..klsNot;
+  tKlausUnOpKeywords = kkwdNot..kkwdNot;
 
 const
+  // Ключевые слова унарных операций
+  klausKwdToUnOp: array[tKlausUnOpKeywords] of tKlausValidUnaryOperation = (kuoNot);
   // Символы унарных операций
   klausSymToUnOp: array[tKlausUnOpSymbols] of tKlausValidUnaryOperation = (kuoMinus, kuoNot);
 
@@ -127,8 +130,12 @@ type
     kboLT, kboGT, kboLE, kboGE, kboAnd, kboOr, kboXor, kboBitAnd, kboBitOr, kboBitXor, kboMinus);
   tKlausValidBinaryOperation = succ(kboInvalid)..high(tKlausBinaryOperation);
   tKlausBinOpSymbols = klsPlus..klsMinus;
+  tKlausBinOpKeywords = kkwdAnd..kkwdXor;
 
 const
+  // Ключевые слова бинарных операций
+  klausKwdToBinOp: array[tKlausBinOpKeywords] of tKlausValidBinaryOperation = (
+    kboAnd, kboOr, kboXor);
   // Символы бинарных операций
   klausSymToBinOp: array[tKlausBinOpSymbols] of tKlausValidBinaryOperation = (
     kboPlus, kboConcat, kboMulti, kboFDiv, kboIDiv, kboMod, kboPwr, kboEq, kboNEq,
