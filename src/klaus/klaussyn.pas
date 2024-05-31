@@ -173,7 +173,7 @@ const
     def:   '`функция` #id "(" [<param> [* ";" <param>]] ")" ":" <type_id> ";" (`дальше` | <routine>) ";"'),
 
     (name: 'param';
-    def:   '[`вх` | `вых` | `вв`] #id [* "," #id] ":" <type_id>'),
+    def:   '[`вх` | `вых` | `вв`] #id [* "/" #id] [* "," #id [* "/" #id]] ":" <type_id>'),
 
     (name: 'statements';
     def:   '<statement> ";" [* <statement> ";"]'),

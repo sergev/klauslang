@@ -1068,7 +1068,7 @@ end;
 
 function tKlausBinOpIDiv.getOp: tKlausBinaryOperation;
 begin
-  result := kboFDiv;
+  result := kboIDiv;
 end;
 
 function tKlausBinOpIDiv.defined(dtl, dtr: tKlausDataType): boolean;

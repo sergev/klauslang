@@ -46,6 +46,7 @@ type
   tKlausProgram = class;
   tKlausTypeDef = class;
   tKlausTypeDefSimple = class;
+  tKlausTypeDefComplex = class;
   tKlausTypeDefArray = class;
   tKlausTypeDefDict = class;
   tKlausStructMember = class;
@@ -457,8 +458,12 @@ type
   end;
 
 type
+  // Базовый класс описания составного типа данных
+  tKlausTypeDefComplex = class(tKlausTypeDef);
+
+type
   // Описание составного типа данных -- массива
-  tKlausTypeDefArray = class(tKlausTypeDef)
+  tKlausTypeDefArray = class(tKlausTypeDefComplex)
     private
       fElmtType: tKlausTypeDef;
     public
@@ -474,7 +479,7 @@ type
 
 type
   // Описание составного типа данных -- словаря
-  tKlausTypeDefDict = class(tKlausTypeDef)
+  tKlausTypeDefDict = class(tKlausTypeDefComplex)
     private
       fKeyType: tKlausSimpleType;
       fValueType: tKlausTypeDef;
@@ -510,7 +515,7 @@ type
 
 type
   // Описание составного типа данных -- структуры
-  tKlausTypeDefStruct = class(tKlausTypeDef)
+  tKlausTypeDefStruct = class(tKlausTypeDefComplex)
     private
       fDestroying: boolean;
       fMembers: tStringList;
@@ -620,6 +625,7 @@ type
       property mode: tKlausProcParamMode read fMode;
 
       constructor create(aOwner: tKlausRoutine; aName: string; aPoint: tSrcPoint; aMode: tKlausProcParamMode; aDataType: tKlausTypeDef);
+      constructor create(aOwner: tKlausRoutine; aNames: array of string; aPoint: tSrcPoint; aMode: tKlausProcParamMode; aDataType: tKlausTypeDef);
   end;
 
 type
@@ -832,6 +838,7 @@ type
   tKlausOpndCompound = class(tKlausOperand)
     private
       fTypeDef: tKlausTypeDef;
+      fIsNull: boolean;
     protected
       function getResultType: tKlausDataType; override;
       function doEvaluate: tKlausSimpleValue; override;
@@ -839,6 +846,7 @@ type
       function doAcquireVarValue(runTime: boolean; frame: tKlausStackFrame; allowCalls: boolean): tKlausVarValue; virtual; abstract;
     public
       property typeDef: tKlausTypeDef read fTypeDef;
+      property isNull: boolean read fIsNull write fIsNull;
 
       constructor create(aStmt: tKlausStatement; aTypeDef: tKlausTypeDef; aPoint: tSrcPoint; b: tKlausSyntaxBrowser); virtual;
       function  resultTypeDef: tKlausTypeDef; override;
@@ -2539,7 +2547,7 @@ begin
   inherited create(aStmt, kuoInvalid, aPoint);
   if aTypeDef.dataType <> kdtComplex then raise eKlausError.create(ercTypeMismatch, aPoint);
   fTypeDef := aTypeDef;
-  parseLiteral(b);
+  if b <> nil then parseLiteral(b);
 end;
 
 function tKlausOpndCompound.getResultType: tKlausDataType;
@@ -2611,6 +2619,7 @@ var
   p: tSrcPoint;
 begin
   rslt := tKlausVarValueArray.create(typeDef);
+  if isNull then exit(rslt);
   try
     rslt.count := count;
     for i := 0 to count-1 do begin
@@ -2710,6 +2719,7 @@ var
   p: tSrcPoint;
 begin
   rslt := tKlausVarValueDict.create(typeDef);
+  if isNull then exit(rslt);
   try
     for i := 0 to count-1 do begin
       p := elmt[i].key.point;
@@ -2817,6 +2827,7 @@ var
   ssv: tKlausSimpleValue;
 begin
   rslt := tKlausVarValueStruct.create(typeDef);
+  if isNull then exit(rslt);
   try
     for i := 0 to count-1 do begin
       m := members[i];
@@ -4445,9 +4456,14 @@ end;
 
 constructor tKlausProcParam.create(aOwner: tKlausRoutine; aName: string; aPoint: tSrcPoint; aMode: tKlausProcParamMode; aDataType: tKlausTypeDef);
 begin
-  fMode := aMode;
   if aName = '' then aName := klausResultParamName;
-  inherited create(aOwner, aName, aPoint, aDataType, nil);
+  create(aOwner, [aName], aPoint, aMode, aDataType);
+end;
+
+constructor tKlausProcParam.create(aOwner: tKlausRoutine; aNames: array of string; aPoint: tSrcPoint; aMode: tKlausProcParamMode; aDataType: tKlausTypeDef);
+begin
+  fMode := aMode;
+  inherited create(aOwner, aNames, aPoint, aDataType, nil);
 end;
 
 { tKlausProcDecl }
@@ -4464,7 +4480,10 @@ var
   i, idx: integer;
   dt: tKlausTypeDef;
   mode: tKlausProcParamMode;
-  nms: array of tKlausLexInfo = nil;
+  nms: array of record
+    n: tStringArray;
+    p: tSrcPoint;
+  end = nil;
 begin
   create(aOwner, aName, srcPoint(b.lex));
   b.next;
@@ -4480,29 +4499,23 @@ begin
           kkwdOutput: mode := kpmOutput;
           kkwdInOut: mode := kpmInOut;
         end;
-        b.next;
-      end;
-      b.check(klxID);
+      end else
+        b.pause;
       setLength(nms, idx+1);
-      nms[idx] := b.lex;
+      createIDs(b, nms[idx].n, nms[idx].p);
       b.next;
       while b.check(klsComma, false) do begin
         idx += 1;
-        b.next;
-        b.check(klxID);
         setLength(nms, idx+1);
-        nms[idx] := b.lex;
+        createIDs(b, nms[idx].n, nms[idx].p);
         b.next;
       end;
       b.check(klsColon);
       b.next;
       b.check('type_id');
       dt := owner.createDataTypeID(b, true);
-      for i := 0 to idx do begin
-        if find(u8Lower(nms[i].text), knsLocal) <> nil then
-          raise eKlausError.createFmt(ercDuplicateName, nms[i].line, nms[i].pos, [nms[i].text]);
-        addParam(tKlausProcParam.create(self, nms[i].text, srcPoint(nms[i]), mode, dt));
-      end;
+      for i := 0 to idx do
+        addParam(tKlausProcParam.create(self, nms[i].n, nms[i].p, mode, dt));
       b.next;
       if not b.check(klsSemicolon, false) then break;
       b.next;
@@ -4554,7 +4567,7 @@ end;
 
 function tKlausProcDecl.matchHeader(pd: tKlausProcDecl): boolean;
 var
-  i: integer;
+  i, j: integer;
   p: tKlausProcParam;
 begin
   result := false;
@@ -4567,7 +4580,9 @@ begin
   for i := 0 to paramCount-1 do begin
     p := pd.params[i];
     with params[i] do begin
-      if u8Lower(name) <> u8Lower(p.name) then exit;
+      if nameCount <> p.nameCount then exit;
+      for j := 0 to nameCount-1 do
+        if u8Lower(names[j]) <> u8Lower(p.names[j]) then exit;
       if mode <> p.mode then exit;
       if dataType <> p.dataType then exit;
       //if klausCompare(initial, p.initial, point) <> 0 then exit;
@@ -4735,6 +4750,7 @@ begin
       try fValue.assign(v, expr.point);
       finally releaseAndNil(v); end;
     end else begin
+      if not (dt is tKlausTypeDefSimple) then raise eKlausError.create(ercTypeMismatch, expr.point);
       sv := expr.evaluate;
       fValue := tKlausVarValueSimple.create(dt);
       (fValue as tKlausVarValueSimple).setSimple(sv, p);
@@ -5265,6 +5281,7 @@ var
 begin
   inherited create;
   assert(length(aNames) > 0, 'A named declaration must have at least one name.');
+  assert(aNames[0] <> '', 'Name cannot be empty.');
   fName := aNames[0];
   setLength(fAltNames, length(aNames)-1);
   for i := 1 to length(aNames)-1 do fAltNames[i-1] := aNames[i];
@@ -5775,7 +5792,8 @@ end;
 
 procedure tKlausRoutine.createIDs(b: tKlausSyntaxBrowser; out ids: tStringArray; out p: tSrcPoint);
 var
-  i: integer;
+  s: string;
+  i, j: integer;
 begin
   i := 0;
   ids := nil;
@@ -5790,7 +5808,10 @@ begin
     setLength(ids, i+1);
     b.next;
     ids[i] := b.get(klxID).text;
-    if find(ids[i], knsLocal) <> nil then raise eKlausError.createFmt(ercDuplicateName, srcPoint(b.lex), [ids[i]]);
+    s := u8Lower(ids[i]);
+    if find(s, knsLocal) <> nil then raise eKlausError.createFmt(ercDuplicateName, srcPoint(b.lex), [ids[i]]);
+    for j := 0 to i-1 do
+      if u8Lower(ids[j]) = s then raise eKlausError.createFmt(ercDuplicateName, srcPoint(b.lex), [ids[i]]);
     b.next;
   end;
   b.pause;
@@ -6121,12 +6142,24 @@ function tKlausRoutine.createExpression(aStmt: tKlausStatement; b: tKlausSyntaxB
         b.next;
         if b.check('compound_literal', false) then begin
           if expectedType = nil then raise eKlausError.create(ercUntypedCompoundLiteral, srcPoint(b.lex));
+          if expectedType.literalClass = nil then raise eKlausError.create(ercTypeMismatch, srcPoint(b.lex));
           result := tKlausExpression.create(aStmt, kuoInvalid, srcPoint(b.lex));
-          if expectedType.literalClass = nil then raise eKlausError.create(ercTypeMismatch, srcPoint(b.lex))
-          else result.left := expectedType.literalClass.create(aStmt, expectedType, srcPoint(b.lex), b);
+          result.left := expectedType.literalClass.create(aStmt, expectedType, srcPoint(b.lex), b);
           exit;
         end;
         b.check('operand');
+        b.next;
+        if (expectedType is tKlausTypeDefComplex) and b.check('literal', false)
+        and (b.lex.lexem = klxKeyword) and (b.lex.keyword = kkwdEmpty) then begin
+          b.next;
+          b.check(kkwdEmpty);
+          if expectedType.literalClass = nil then raise eKlausError.create(ercTypeMismatch, srcPoint(b.lex));
+          result := tKlausExpression.create(aStmt, kuoInvalid, srcPoint(b.lex));
+          result.left := expectedType.literalClass.create(aStmt, expectedType, srcPoint(b.lex), nil);
+          (result.left as tKlausOpndCompound).isNull := true;
+          exit;
+        end else
+          b.pause;
         enqueue(createOperand());
         b.next;
         if not b.check('binary_operation', false) then break;
@@ -6215,6 +6248,7 @@ begin
         expr := createExpression(body, b, dt);
         v := expr.acquireVarValue;
         if v = nil then begin
+          if not (dt is tKlausTypeDefSimple) then raise eKlausError.create(ercTypeMismatch, expr.point);
           sv := expr.evaluate;
           v := tKlausVarValueSimple.create(dt);
           (v as tKlausVarValueSimple).setSimple(sv, srcPoint(li));

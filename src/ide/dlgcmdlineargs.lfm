@@ -10,7 +10,7 @@ object CmdLineArgsDlg: TCmdLineArgsDlg
   OnClose = FormClose
   Position = poScreenCenter
   SessionProperties = 'cbArgs.Items;cbStdIn.Items;cbStdOut.Items'
-  LCLVersion = '2.2.4.0'
+  LCLVersion = '3.2.0.0'
   object lblCaption: TLabel
     Left = 24
     Height = 17
@@ -18,7 +18,7 @@ object CmdLineArgsDlg: TCmdLineArgsDlg
     Width = 608
     Anchors = [akTop, akLeft, akRight]
     AutoSize = False
-    Caption = 'Аргументы'
+    Caption = 'Аргументы командной строки'
     ParentColor = False
   end
   object cbArgs: TComboBox
