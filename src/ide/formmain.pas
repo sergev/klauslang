@@ -1087,8 +1087,7 @@ end;
 
 procedure tMainForm.actRunStopExecute(Sender: TObject);
 begin
-  if scene <> nil then
-    sendMessage(scene.handle, LM_CloseQuery, 0, 0);
+  if scene <> nil then scene.close;
 end;
 
 procedure tMainForm.actToggleBookmarkExecute(Sender: TObject);

@@ -186,10 +186,10 @@ const
     'больше или равно',      //kboGE
     'логическое И',          //kboAnd
     'логическое ИЛИ',        //kboOr
-    'логическое Искл. ИЛИ',  //kboXor
+    'логическое ЛИБО',       //kboXor
     'побитовое И',           //kboBitAnd
     'побитовое ИЛИ',         //kboBitOr
-    'побитовое Искл. ИЛИ',   //kboBitXor
+    'побитовое ЛИБО',        //kboBitXor
     'вычитание'              //kboMinus
   );
 
@@ -710,8 +710,8 @@ function klausTypecast(const v: tKlausSimpleValue; dt: tKlausSimpleType; const a
 const
   bv: array[boolean] of string = (klausFalse, klausTrue);
 begin
-  if not klausCanTypecast(v, dt) then raise eKlausError.create(ercInvalidTypecast, at);
   if v.dataType = dt then exit(v);
+  if not klausCanTypecast(v, dt) then raise eKlausError.create(ercInvalidTypecast, at);
   result.dataType := dt;
   case dt of
     kdtChar: result.cValue := tKlausChar(v.iValue);
@@ -843,7 +843,7 @@ end;
 
 function tKlausUnOpMinus.defined(dt: tKlausDataType): boolean;
 begin
-  result := dt in [kdtInteger, kdtFloat];
+  result := dt in [kdtInteger, kdtFloat, kdtMoment];
 end;
 
 function tKlausUnOpMinus.resultType(dt: tKlausDataType; const at: tSrcPoint): tKlausDataType;
@@ -858,6 +858,7 @@ begin
   case result.dataType of
     kdtInteger: result.iValue := -v.iValue;
     kdtFloat: result.fValue := -v.fValue;
+    kdtMoment: result.mValue := -v.mValue;
   end;
 end;
 
@@ -943,13 +944,15 @@ end;
 
 function tKlausBinOpPlus.defined(dtl, dtr: tKlausDataType): boolean;
 begin
-  result := (dtl in [kdtInteger, kdtFloat, kdtMoment]) and (dtr in [kdtInteger, kdtFloat]);
+  result := (dtl in [kdtInteger, kdtFloat, kdtMoment]) and (dtr in [kdtInteger, kdtFloat, kdtMoment]);
 end;
 
 function tKlausBinOpPlus.resultType(dtl, dtr: tKlausDataType; const at: tSrcPoint): tKlausDataType;
 begin
   checkDefined(dtl, dtr, at);
-  if dtl = kdtInteger then result := dtr else result := dtl;
+  if (dtl = kdtMoment) or (dtr = kdtMoment) then result := kdtMoment
+  else if (dtl = kdtInteger) and (dtr = kdtInteger) then result := kdtInteger
+  else result := kdtFloat;
 end;
 
 function tKlausBinOpPlus.evaluate(const vl, vr: tKlausSimpleValue; const at: tSrcPoint): tKlausSimpleValue;
@@ -958,7 +961,7 @@ begin
   case result.dataType of
     kdtInteger: result.iValue := vl.iValue + vr.iValue;
     kdtFloat: result.fValue := klausTypecast(vl, kdtFloat, at).fValue + klausTypecast(vr, kdtFloat, at).fValue;
-    kdtMoment: result.mValue := vl.mValue + klausTypecast(vr, kdtFloat, at).fValue;
+    kdtMoment: result.mValue := klausTypecast(vl, kdtMoment, at).mValue + klausTypecast(vr, kdtMoment, at).mValue;
   end;
 end;
 
@@ -971,13 +974,17 @@ end;
 
 function tKlausBinOpMinus.defined(dtl, dtr: tKlausDataType): boolean;
 begin
-  result := (dtl in [kdtInteger, kdtFloat, kdtMoment]) and (dtr in [kdtInteger, kdtFloat]);
+  result :=
+    ((dtl = kdtMoment) and (dtr = kdtMoment))
+    or ((dtl in [kdtInteger, kdtFloat, kdtMoment]) and (dtr in [kdtInteger, kdtFloat]));
 end;
 
 function tKlausBinOpMinus.resultType(dtl, dtr: tKlausDataType; const at: tSrcPoint): tKlausDataType;
 begin
   checkDefined(dtl, dtr, at);
-  if dtl = kdtInteger then result := dtr else result := dtl;
+  if (dtl = kdtMoment) or (dtr = kdtMoment) then result := kdtMoment
+  else if (dtl = kdtInteger) and (dtr = kdtInteger) then result := kdtInteger
+  else result := kdtFloat;
 end;
 
 function tKlausBinOpMinus.evaluate(const vl, vr: tKlausSimpleValue; const at: tSrcPoint): tKlausSimpleValue;
@@ -986,7 +993,7 @@ begin
   case result.dataType of
     kdtInteger: result.iValue := vl.iValue - vr.iValue;
     kdtFloat: result.fValue := klausTypecast(vl, kdtFloat, at).fValue - klausTypecast(vr, kdtFloat, at).fValue;
-    kdtMoment: result.mValue := vl.mValue - klausTypecast(vr, kdtFloat, at).fValue;
+    kdtMoment: result.mValue := klausTypecast(vl, kdtMoment, at).mValue - klausTypecast(vr, kdtMoment, at).mValue;
   end;
 end;
 

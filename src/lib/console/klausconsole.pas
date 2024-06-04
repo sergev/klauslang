@@ -29,11 +29,6 @@ uses
   Forms, CustomTimer, U8, GraphUtils, KlausConKeys;
 
 const
-  KM_InvalidateSize = $7FFA;
-  KM_SetRedrawTimer = $7FFB;
-  KM_UpdateCaretPos = $7FFC;
-
-const
   klsConDefaultScreenWidth  = 80;
   klsConDefaultScreenHeight = 25;
   klsConDefaultFontColor    = cl16Silver;
@@ -45,6 +40,7 @@ const
   klsConDefaultTabWidth     = 8;
   klsConMaxInputLength      = 2048;
   klsConMaxInputBuffer      = 16384;
+  klsConRefreshRate         = 3;
 
 const
   ctlCharBell      = #$07;
@@ -150,6 +146,10 @@ type
       fCaretEnabled: boolean;
       fCaretVisible: boolean;
       fCaretInvalid: boolean;
+      fContentInvalid: boolean;
+      fRectInvalid: tRect;
+      fSizeInvalid: boolean;
+      fRedrawTimer: tCustomTimer;
       fTextAttr: tKlsConCellAttr;
       fTabWidth: integer;
       fEscSequence: string;
@@ -159,10 +159,6 @@ type
       fInputBufPos: sizeInt;
       fInputValue: string;
       fInputStart: tPoint;
-      fRedrawTimer: tCustomTimer;
-      fRedrawPosted: boolean;
-      fAllInvalid: boolean;
-      fRectInvalid: tRect;
       fPreviewShortcuts: boolean;
       fOnInput: tKlausConsoleInputEvent;
 
@@ -192,25 +188,20 @@ type
       procedure hideCaret;
       procedure showCaret;
       procedure invalidateCaretPos;
-      procedure doUpdateCaretPos;
+      procedure updateCaretPos;
       function  processCtlChar(var p: pChar; out s: string; out cnt: integer; out ctl: char): boolean;
       procedure processEscSequence(var p: pChar);
       procedure applyEscSequence(const s: string);
       procedure displayInputValue;
       procedure bufferFeed(sender: tObject; lines: integer);
-      procedure setRedrawTimer;
-      procedure killRedrawTimer;
+      procedure redrawTimerTimer(sender: tObject);
     protected
       procedure WMEraseBkgnd(var msg: tMessage); message WM_EraseBkgnd;
       procedure CMFontChanged(var msg: tMessage); message CM_FontChanged;
       procedure WMSetFocus(var msg: tMessage); message WM_SetFocus;
       procedure WMKillFocus(var msg: tMessage); message WM_KillFocus;
-      procedure KMInvalidateSize(var msg: tMessage); message KM_InvalidateSize;
-      procedure KMSetRedrawTimer(var msg: tMessage); message KM_SetRedrawTimer;
-      procedure KMUpdateCaretPos(var msg: tMessage); message KM_UpdateCaretPos;
       procedure CNKeyDown(var msg: tLMKeyDown); message CN_KeyDown;
       procedure CNSysKeyDown(var msg: tLMKeyDown); message CN_SysKeyDown;
-      procedure redrawTimerTimer(sender: tObject);
       procedure createWnd; override;
       procedure destroyWnd; override;
       procedure updateTextMetrics;
@@ -500,17 +491,19 @@ begin
   fTabWidth := klsConDefaultTabWidth;
   fInputValue := '';
   fRedrawTimer := tCustomTimer.create(nil);
-  fRedrawTimer.interval := 1;
-  fRedrawTimer.enabled := false;
+  fRedrawTimer.interval := klsConRefreshRate;
+  fRedrawTimer.enabled := true;
   fRedrawTimer.onTimer := @redrawTimerTimer;
-  fRedrawPosted := false;
-  fAllInvalid := false;
+  fSizeInvalid := false;
+  fCaretInvalid := false;
+  fContentInvalid := false;
   fRectInvalid := rect(0, 0, 0, 0);
 end;
 
 destructor tCustomKlausConsole.destroy;
 begin
   freeAndNil(fBuffer);
+  freeAndNil(fRedrawTimer);
   doneCriticalSection(fLatch);
   inherited destroy;
 end;
@@ -568,9 +561,8 @@ procedure tCustomKlausConsole.invalidateAll;
 begin
   lock;
   try
-    if not handleAllocated then exit;
-    fAllInvalid := true;
-    setRedrawTimer;
+    fContentInvalid := true;
+    fRectInvalid := rect(0, 0, 0, 0);
   finally
     unlock;
   end;
@@ -582,59 +574,44 @@ var
 begin
   lock;
   try
-    if not handleAllocated then exit;
-    r := clientRect;
-    r.top := r.top + y1*fCharSize.cy;
-    r.bottom := r.bottom + (y2+1)*fCharSize.cy;
-    if isRectEmpty(fRectInvalid) then
-      fRectInvalid := r
-    else with fRectInvalid do begin
-      if r.top < top then top := r.top;
-      if r.bottom > bottom then bottom := r.bottom;
-    end;
-    setRedrawTimer;
-  finally
-    unlock;
-  end;
-end;
-
-procedure tCustomKlausConsole.setRedrawTimer;
-begin
-  lock;
-  try
-    if not handleAllocated then exit;
-    if not fRedrawTimer.enabled then begin
-      {$if defined(windows) or defined(darwin)}
-      if not fRedrawPosted then begin
-        fRedrawPosted := true;
-        postMessage(handle, KM_SetRedrawTimer, 0, 0);
+    if fContentInvalid and isRectEmpty(fRectInvalid) then exit;
+    fContentInvalid := true;
+    if handleAllocated then begin
+      r := clientRect;
+      r.top := r.top + y1*fCharSize.cy;
+      r.bottom := r.bottom + (y2+1)*fCharSize.cy;
+      if isRectEmpty(fRectInvalid) then
+        fRectInvalid := r
+      else with fRectInvalid do begin
+        if r.top < top then top := r.top;
+        if r.bottom > bottom then bottom := r.bottom;
       end;
-      {$else}
-      sendMessage(handle, KM_SetRedrawTimer, 0, 0);
-      {$endif}
-    end;
+    end else
+      fRectInvalid := rect(0, 0, 0, 0);
   finally
     unlock;
   end;
-end;
-
-procedure tCustomKlausConsole.killRedrawTimer;
-begin
-  lock;
-  try fRedrawTimer.enabled := false;
-  finally unlock; end;
 end;
 
 procedure tCustomKlausConsole.redrawTimerTimer(sender: tObject);
 begin
   lock;
   try
-    killRedrawTimer;
-    if fAllInvalid then invalidate
-    else if not IsRectEmpty(fRectInvalid) then invalidateRect(handle, @fRectInvalid, false)
-    else doUpdateCaretPos;
-    fAllInvalid := false;
-    fRectInvalid := rect(0, 0, 0, 0);
+    if not handleAllocated then exit;
+    if fSizeInvalid then begin
+      adjustSize;
+      fSizeInvalid := false;
+    end;
+    if fContentInvalid then begin
+      if IsRectEmpty(fRectInvalid) then invalidate
+      else invalidateRect(handle, @fRectInvalid, false);
+      fCaretInvalid := true;
+      fContentInvalid := false;
+      fRectInvalid := rect(0, 0, 0, 0);
+    end else if fCaretInvalid then begin
+      updateCaretPos;
+      fCaretInvalid := false;
+    end;
   finally
     unlock;
   end;
@@ -982,7 +959,7 @@ begin
     endInput(true);
     fBuffer.setSize(w, h, longWord(fTextAttr));
     invalidatePreferredSize;
-    if handleAllocated then postMessage(handle, KM_InvalidateSize, 0, 0);
+    fSizeInvalid := true;
   finally
     unlock;
   end;
@@ -1148,13 +1125,6 @@ begin
   end;
 end;
 
-procedure tCustomKlausConsole.KMInvalidateSize(var msg: tMessage);
-begin
-  lock;
-  try adjustSize;
-  finally unlock; end;
-end;
-
 procedure tCustomKlausConsole.CNKeyDown(var msg: tLMKeyDown);
 begin
   if not previewShortcuts then inherited
@@ -1184,7 +1154,6 @@ procedure tCustomKlausConsole.destroyWnd;
 begin
   lock;
   try
-    killRedrawTimer;
     destroyCaret;
     inherited;
     updateTextMetrics;
@@ -1235,7 +1204,7 @@ begin
       with canvas.brush do begin color := self.color; style := bsSolid; end;
       canvas.fillRect(lr);
     end;
-    doUpdateCaretPos;
+    updateCaretPos;
   finally
     unlock;
   end;
@@ -1409,55 +1378,22 @@ begin
   end;
 end;
 
-procedure tCustomKlausConsole.KMSetRedrawTimer(var msg: tMessage);
-begin
-  lock;
-  try
-    hideCaret;
-    fRedrawPosted := false;
-    fRedrawTimer.enabled := true;
-  finally
-    unlock;
-  end;
-end;
-
-procedure tCustomKlausConsole.KMUpdateCaretPos(var msg: tMessage);
-begin
-  lock;
-  try
-    if fCaretInvalid then doUpdateCaretPos;
-  finally
-    unlock;
-  end;
-end;
-
 procedure tCustomKlausConsole.invalidateCaretPos;
 begin
   lock;
-  try
-    if not handleAllocated then exit;
-    if not fCaretInvalid then begin
-      fCaretInvalid := true;
-      {$if defined(windows) or defined(darwin)}
-      postMessage(handle, KM_UpdateCaretPos, 0, 0);
-      {$else}
-      sendMessage(handle, KM_UpdateCaretPos, 0, 0);
-      {$endif}
-    end;
-  finally
-    unlock;
-  end;
+  try fCaretInvalid := true;
+  finally unlock; end;
 end;
 
-procedure tCustomKlausConsole.doUpdateCaretPos;
+procedure tCustomKlausConsole.updateCaretPos;
 var
   old: tPoint;
 begin
   lock;
   try
+    hideCaret;
     fCaretInvalid := false;
     if not handleAllocated then exit;
-    hideCaret;
     if focused then begin
       old := fCaretOrigin;
       fCaretOrigin := point(fCaretPos.x*fCharSize.cx, fCaretPos.y*fCharSize.cy);
@@ -1492,11 +1428,10 @@ begin
   lock;
   try
     if not handleAllocated then exit;
-    if fCaretEnabled and not fRedrawTimer.enabled then
-      if not fCaretVisible then begin
-        LCLIntf.showCaret(handle);
-        fCaretVisible := true;
-      end;
+    if fCaretEnabled and not fCaretVisible then begin
+      LCLIntf.showCaret(handle);
+      fCaretVisible := true;
+    end;
   finally
     unlock;
   end;

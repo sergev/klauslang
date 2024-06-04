@@ -414,12 +414,12 @@ var
   l, p: integer;
   ksx: tKlausStdException;
 begin
-  if exceptObject = nil then exit;
-  obj := tObject(acquireExceptionObject);
-  if obj is eKlausLangException then
+  obj := exceptObject;
+  if obj = nil then exit;
+  if obj is eKlausLangException then begin
+    acquireExceptionObject;
     raise obj at get_caller_addr(get_frame)
-  else if obj is eKlausError then begin
-    releaseExceptionObject;
+  end else if obj is eKlausError then begin
     l := (obj as eKlausError).line;
     p := (obj as eKlausError).pos;
     if (l = 0) and (p = 0) then begin
@@ -430,33 +430,29 @@ begin
       if (obj as eKlausError).code in klausCodeToStdErr[ksx] then
         raise klausStdError(frame, ksx, (obj as exception).message, l, p) at get_caller_addr(get_frame);
     raise klausStdError(frame, ksxInternalError, (obj as exception).message, l, p) at get_caller_addr(get_frame);
-  end else if obj is eControlC then begin
-    releaseExceptionObject;
+  end else if obj is eControlC then
     raise eKlausHalt.create(-1) at get_caller_addr(get_frame)
-  end else if (obj is eExternal)
+  else if (obj is eExternal)
   or (obj is EHeapMemoryError)
-  or (obj is eOSError) then begin
-    releaseExceptionObject;
+  or (obj is eOSError) then
     raise klausStdError(frame, ksxRuntimeError, (obj as exception).message, at.line, at.pos) at get_caller_addr(get_frame)
-  end else if obj is eAssertionFailed then begin
-    releaseExceptionObject;
+  else if obj is eAssertionFailed then
     raise klausStdError(frame, ksxInternalError, (obj as exception).message, at.line, at.pos) at get_caller_addr(get_frame)
-  end else if obj is eConvertError then begin
-    releaseExceptionObject;
+  else if obj is eConvertError then
     raise klausStdError(frame, ksxConvertError, (obj as exception).message, at.line, at.pos) at get_caller_addr(get_frame)
-  end else if (obj is eDirectoryNotFoundException)
+  else if (obj is eDirectoryNotFoundException)
   or (obj is eFileNotFoundException)
   or (obj is ePathNotFoundException)
   or (obj is ePathTooLongException)
   or (obj is eInOutError)
-  or (obj is eStreamError) then begin
-    releaseExceptionObject;
+  or (obj is eStreamError) then
     raise klausStdError(frame, ksxInOutError, (obj as exception).message, at.line, at.pos) at get_caller_addr(get_frame)
-  end else if obj is eFormatError then begin
-    releaseExceptionObject;
+  else if obj is eFormatError then
     raise klausStdError(frame, ksxConvertError, (obj as exception).message, at.line, at.pos) at get_caller_addr(get_frame)
-  end else
+  else begin
+    acquireExceptionObject;
     raise obj at get_caller_addr(get_frame);
+  end;
 end;
 
 { tKlausUnitSystem }

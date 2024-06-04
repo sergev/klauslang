@@ -6428,8 +6428,8 @@ begin
     push(frame);
     try
       try
-        source.systemUnit.run(frame, source.systemUnit.point);
-        if fObjects.count > 0 then raise eKlausError.create(ercInaccurateCleanup, 0, 0);
+        try source.systemUnit.run(frame, source.systemUnit.point);
+        finally if fObjects.count > 0 then raise eKlausError.create(ercInaccurateCleanup, 0, 0); end;
       except
         on e: eKlausHalt do fExitCode := e.code;
         else begin fExitCode := -1; raise; end;
