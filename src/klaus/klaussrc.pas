@@ -24,6 +24,7 @@ unit KlausSrc;
 
 //todo: процедурные переменные
 //todo: диапазоны в инструкции выбора
+//todo: with = взять
 
 {$mode ObjFPC}{$H+}
 {$i ../lib/klaus.inc}
