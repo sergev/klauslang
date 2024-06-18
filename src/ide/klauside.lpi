@@ -350,6 +350,7 @@
       </Item>
       <Item>
         <Name Value="eKlausError"/>
+        <Enabled Value="False"/>
       </Item>
       <Item>
         <Name Value="eKlausDebugTerminated"/>

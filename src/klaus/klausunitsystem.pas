@@ -772,7 +772,7 @@ end;
 
 function tKlausSysProcDecl.findTypeDef(const typeName: string): tKlausTypeDef;
 begin
-  result := (find(typeName, knsGlobal) as tKlausTypeDecl).dataType;
+  result := (findDecl(typeName, knsGlobal) as tKlausTypeDecl).dataType;
 end;
 
 procedure tKlausSysProcDecl.errWrongParamCount(given, min, max: integer; const at: tSrcPoint);

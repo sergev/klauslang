@@ -166,7 +166,8 @@ type
     kkwdNot,
     kkwdAnd,
     kkwdOr,
-    kkwdXor
+    kkwdXor,
+    kkwdWith
   );
 
 type
@@ -474,7 +475,9 @@ const
     (s: 'не'; k: kkwdNot),
     (s: 'и'; k: kkwdAnd),
     (s: 'или'; k: kkwdOr),
-    (s: 'либо'; k: kkwdXor)
+    (s: 'либо'; k: kkwdXor),
+    (s: 'насчёт'; k: kkwdWith),
+    (s: 'насчет'; k: kkwdWith)
   );
 
 const

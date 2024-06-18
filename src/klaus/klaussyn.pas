@@ -237,7 +237,7 @@ const
     def:   '"[" <expression> [* "," <expression>] "]"'),
 
     (name: 'compound';
-    def:   '`начало` <statements> [`исключение` <except_block>] [`напоследок` <statements>] `окончание`'),
+    def:   '[`насчёт` <var_path> [* "," <var_path>]] `начало` <statements> [`исключение` <except_block>] [`напоследок` <statements>] `окончание`'),
 
     (name: 'except_block';
     def:   '(<statements> | <except_else> | <except_handler> [* <except_handler>] [<except_else>])'),

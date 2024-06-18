@@ -133,6 +133,7 @@ const
   ercEventQueueEmpty        = 83;
   ercUntypedCompoundLiteral = 84;
   ercDuplicateMemberLiteral = 85;
+  ercWithStructOnly         = 86;
 
 const
   // Классификация кодов eKlausError для трансляции в исключения языка
@@ -170,7 +171,7 @@ const
     ercExceptBlockOnly, ercMixedExceptBlock, ercExceptAnyMustBeLast, ercExceptAlreadyHandled,
     ercDuplicateCaseLabel, ercIllegalExpression, ercAccuracyNotApplicable, ercNegativeAccuracy,
     ercConstOutputParam, ercUndefinedForward, ercDuplicateForward, ercWrongForwardSignature,
-    ercUntypedCompoundLiteral, ercDuplicateMemberLiteral],
+    ercUntypedCompoundLiteral, ercDuplicateMemberLiteral, ercWithStructOnly],
 
     //ksxInvalidChar
     [ercInvalidCharAtIndex, ercInvalidStringIndex],
@@ -303,6 +304,7 @@ resourcestring
   errEventQueueEmpty = 'Очередь событий пуста.';
   errUntypedCompoundLiteral = 'Не определён тип данных для составного значения.';
   errDuplicateMemberLiteral = 'Повторное присваивание значения полю структуры: "%s".';
+  errWithStructOnly = 'Недопустимый тип данных. Требуется структура.';
 
 { Globals }
 
@@ -420,6 +422,7 @@ begin
     ercEventQueueEmpty: result := errEventQueueEmpty;
     ercUntypedCompoundLiteral: result := errUntypedCompoundLiteral;
     ercDuplicateMemberLiteral: result := errDuplicateMemberLiteral;
+    ercWithStructOnly: result := errWithStructOnly;
   end;
 end;
 

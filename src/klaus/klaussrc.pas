@@ -24,7 +24,7 @@ unit KlausSrc;
 
 //todo: процедурные переменные
 //todo: диапазоны в инструкции выбора
-//todo: with = взять
+//todo: обращение к элементам составных констант в разделе определений
 
 {$mode ObjFPC}{$H+}
 {$i ../lib/klaus.inc}
@@ -350,7 +350,7 @@ type
       procedure addDecl(item: tKlausDecl);
       procedure removeDecl(item: tKlausDecl);
       function  getRetValueType: tKlausTypeDef; virtual;
-      function  findDecl(aName: string; scope: tKlausNameScope; before: integer): tKlausDecl; virtual;
+      function  doFindDecl(aName: string; scope: tKlausNameScope; before: integer): tKlausDecl; virtual;
       procedure addParam(p: tKlausProcParam);
       procedure setRetValue(v: tKlausProcParam);
     public
@@ -368,7 +368,7 @@ type
       constructor create(aOwner: tKlausRoutine; aName: string; aPoint: tSrcPoint);
       destructor  destroy; override;
       procedure beforeDestruction; override;
-      function  find(aName: string; scope: tKlausNameScope): tKlausDecl;
+      function  findDecl(aName: string; scope: tKlausNameScope): tKlausDecl;
       procedure checkCallParamTypes(expr: array of tKlausExpression; at: tSrcPoint); virtual;
       procedure run(frame: tKlausStackFrame; const at: tSrcPoint); virtual;
     end;
@@ -669,8 +669,11 @@ type
   // с возможными обращениями к элементам массивов/словарей по индексу/ключу
   tKlausVarPath = class(tObject)
     private
+      fContext: tKlausStatement;
+      fParent: tKlausVarPath;
       fDecl: tKlausValueDecl;
       fSteps: tKlausVarPathSteps;
+      fTypeDef: tKlausTypeDef;
 
       function getIsConstant: boolean;
       function getStepCount: integer;
@@ -678,6 +681,8 @@ type
       function getPoint: tSrcPoint;
       function getSteps(idx: integer): tKlausVarPathStep;
     public
+      property context: tKlausStatement read fContext;
+      property parent: tKlausVarPath read fParent;
       property decl: tKlausValueDecl read fDecl;
       property stepCount: integer read getStepCount;
       property steps[idx: integer]: tKlausVarPathStep read getSteps;
@@ -685,7 +690,7 @@ type
       property isVariable: boolean read getIsVariable;
       property isConstant: boolean read getIsConstant;
 
-      constructor create(context: tKlausStatement; b: tKlausSyntaxBrowser);
+      constructor create(aContext: tKlausStatement; b: tKlausSyntaxBrowser);
       destructor  destroy; override;
       function resultTypeDef: tKlausTypeDef;
       function evaluate: tKlausVarValue;
@@ -996,6 +1001,7 @@ type
 
       constructor create(aOwner: tKlausStmtCtlStruct; aPoint: tSrcPoint);
       destructor  destroy; override;
+      function  findName(aName: string; scope: tKlausNameScope): tObject; virtual;
       procedure run(frame: tKlausStackFrame); virtual; abstract;
   end;
 
@@ -1177,6 +1183,7 @@ type
 
       constructor create(aOwner: tKlausStmtCtlStruct; aPoint: tSrcPoint; b: tKlausSyntaxBrowser);
       destructor  destroy; override;
+      function  findName(aName: string; scope: tKlausNameScope): tObject; override;
       function  willHandle(obj: eKlausLangException): boolean;
       procedure run(frame: tKlausStackFrame); override;
   end;
@@ -1193,6 +1200,7 @@ type
   // Составная инструкция "начало-обработать-напоследок-окончание"
   tKlausStmtCompound = class(tKlausStmtBlock)
     private
+      fWith: array of tKlausVarPath;
       fExceptBlock: tKlausExceptBlock;
       fFinallyBlock: tKlausFinallyBlock;
 
@@ -1209,6 +1217,7 @@ type
       constructor create(aOwner: tKlausStmtCtlStruct; aPoint: tSrcPoint; b: tKlausSyntaxBrowser);
       destructor  destroy; override;
       procedure createCompound(b: tKlausSyntaxBrowser);
+      function  findName(aName: string; scope: tKlausNameScope): tObject; override;
       procedure run(frame: tKlausStackFrame); override;
   end;
 
@@ -2134,14 +2143,15 @@ end;
 
 { tKlausVarPath }
 
-constructor tKlausVarPath.create(context: tKlausStatement; b: tKlausSyntaxBrowser);
+constructor tKlausVarPath.create(aContext: tKlausStatement; b: tKlausSyntaxBrowser);
 var
   idx: integer = 0;
   li: tKlausLexInfo;
-  d: tKlausDecl;
+  d: tObject;
   expr: tKlausExpression;
 begin
   inherited create;
+  fContext := aContext;
   repeat
     b.next;
     b.check('var_ref');
@@ -2151,10 +2161,15 @@ begin
     fSteps[idx].point := srcPoint(b.lex);
     fSteps[idx].name := li.text;
     if idx = 0 then begin
-      d := context.routine.find(fSteps[idx].name, knsGlobal);
-      if not (d is tKlausValueDecl) then
-        raise eKlausError.createFmt(ercValueDeclRequired, li.line, li.pos, [li.text]);
-      fDecl := d as tKlausValueDecl;
+      d := context.findName(fSteps[idx].name, knsGlobal);
+      if d is tKlausVarPath then begin
+        fParent := d as tKlausVarPath;
+        fDecl := fParent.decl;
+      end else begin
+        if not (d is tKlausValueDecl) then
+          raise eKlausError.createFmt(ercValueDeclRequired, li.line, li.pos, [li.text]);
+        fDecl := d as tKlausValueDecl;
+      end;
     end;
     b.next;
     while b.check(klsBktOpen, false) do begin
@@ -2196,7 +2211,7 @@ end;
 
 function tKlausVarPath.getIsVariable: boolean;
 begin
-  result := (decl is tKlausVarDecl) and (stepCount = 1) and (length(steps[0].indices) = 0);
+  result := (decl is tKlausVarDecl) and (parent = nil) and (stepCount = 1) and (length(steps[0].indices) = 0);
 end;
 
 function tKlausVarPath.getSteps(idx: integer): tKlausVarPathStep;
@@ -2217,9 +2232,11 @@ var
   kt: tKlausSimpleType;
   m: tKlausStructMember;
 begin
-  result := decl.dataType;
+  if fTypeDef <> nil then exit(fTypeDef);
+  if parent = nil then result := decl.dataType
+  else result := parent.resultTypeDef;
   repeat
-    if idx > 0 then begin
+    if (parent <> nil) or (idx > 0) then begin
       if not (result is tKlausTypeDefStruct) then
         raise eKlausError.create(ercIllegalFieldQualifier, steps[idx].point);
       m := (result as tKlausTypeDefStruct).member[steps[idx].name];
@@ -2241,6 +2258,7 @@ begin
     end;
     idx += 1;
   until idx >= stepCount;
+  fTypeDef := result;
 end;
 
 function tKlausVarPath.evaluate(frame: tKlausStackFrame; mode: tKlausVarPathMode; allowCalls: boolean): tKlausVarValue;
@@ -2250,15 +2268,17 @@ var
   kt: tKlausSimpleType;
   sv: tKlausSimpleValue;
 begin
-  if decl is tKlausConstDecl then begin
+  if parent <> nil then
+    result := parent.evaluate(frame, mode, allowCalls)
+  else if decl is tKlausConstDecl then begin
     if mode = vpmAsgnTarget then raise eKlausError.create(ercConstAsgnTarget, point.line, point.pos);
     result := (decl as tKlausConstDecl).value;
   end else
     result := frame.varByDecl(decl as tKlausVarDecl, point).value;
   repeat
-    if idx > 0 then begin
+    if (parent <> nil) or (idx > 0) then begin
       if not (result is tKlausVarValueStruct) then
-        raise eKlausError.create(ercIllegalFieldQualifier, steps[idx].point.line, steps[idx].point.pos);
+        raise eKlausError.create(ercIllegalFieldQualifier, steps[idx].point);
       result := (result as tKlausVarValueStruct).getMember(steps[idx].name, steps[idx].point);
     end;
     for i := 0 to length(steps[idx].indices)-1 do begin
@@ -2284,7 +2304,7 @@ end;
 
 function tKlausVarPath.evaluate: tKlausVarValue;
 begin
-  if not (decl is tKlausConstDecl)
+  if not (decl is tKlausConstDecl) or (parent <> nil)
   or (stepCount > 1) or (length(steps[0].indices) > 0) then
     raise eKlausError.create(ercNotConstantValue, point.line, point.pos);
   result := (decl as tKlausConstDecl).value;
@@ -2296,7 +2316,7 @@ constructor tKlausCall.create(context: tKlausStatement; b: tKlausSyntaxBrowser);
 var
   idx: integer = -1;
   li: tKlausLexInfo;
-  d: tKlausDecl;
+  d: tObject;
   dt: tKlausTypeDef;
   expr: tKlausExpression;
 begin
@@ -2304,7 +2324,7 @@ begin
   b.next;
   li := b.get(klxID);
   fPoint := srcPoint(li);
-  d := context.routine.find(li.text, knsGlobal);
+  d := context.findName(li.text, knsGlobal);
   if not (d is tKlausProcDecl) then
     raise eKlausError.createFmt(ercSubroutineRequired, li.line, li.pos, [li.text]);
   fCallee := d as tKlausProcDecl;
@@ -3252,7 +3272,7 @@ constructor tKlausStmtRaise.create(aOwner: tKlausStmtCtlStruct; aPoint: tSrcPoin
 var
   idx: integer = -1;
   li: tKlausLexInfo;
-  d: tKlausDecl;
+  d: tObject;
   expr: tKlausExpression;
 begin
   inherited create(aOwner, aPoint);
@@ -3261,7 +3281,7 @@ begin
   b.next;
   li := b.get(klxID);
   fPoint := srcPoint(li);
-  d := routine.find(li.text, knsGlobal);
+  d := findName(li.text, knsGlobal);
   if not (d is tKlausExceptDecl) then
     raise eKlausError.createFmt(ercExceptionRequired, li.line, li.pos, [li.text]);
   fDecl := d as tKlausExceptDecl;
@@ -3457,6 +3477,12 @@ begin
   inherited destroy;
 end;
 
+function tKlausStatement.findName(aName: string; scope: tKlausNameScope): tObject;
+begin
+  if owner = nil then result := routine.findDecl(aName, scope)
+  else result := owner.findName(aName, scope);
+end;
+
 function tKlausStatement.getRoutine: tKlausRoutine;
 var
   r: tKlausStmtRoutineBody;
@@ -3547,9 +3573,12 @@ begin
 end;
 
 destructor tKlausStmtCompound.destroy;
+var
+  i: integer;
 begin
   freeAndNil(fExceptBlock);
   freeAndNil(fFinallyBlock);
+  for i := 0 to length(fWith)-1 do freeAndNil(fWith[i]);
   inherited destroy;
 end;
 
@@ -3558,8 +3587,26 @@ const
   exceptRules: array of string = ('except_handler', 'except_else', 'statements');
 var
   idx: integer;
+  vp: tKlausVarPath;
 begin
   b.next;
+  if b.check(kkwdWith, false) then begin
+    repeat
+      b.next;
+      b.check('var_path');
+      vp := tKlausVarPath.create(self, b);
+      try
+        if not (vp.resultTypeDef is tKlausTypeDefStruct) then raise eKlausError.create(ercWithStructOnly, vp.point);
+      except
+        freeAndNil(vp);
+        raise;
+      end;
+      idx := length(fWith);
+      setLength(fWith, idx+1);
+      fWith[idx] := vp;
+      b.next;
+    until not b.check(klsComma, false);
+  end;
   b.check(kkwdBegin);
   fPoint := srcPoint(b.lex);
   b.next;
@@ -3586,6 +3633,18 @@ begin
     b.next;
   end;
   b.check(kkwdEnd);
+end;
+
+function tKlausStmtCompound.findName(aName: string; scope: tKlausNameScope): tObject;
+var
+  i: integer;
+  m: tKlausStructMember;
+begin
+  for i := length(fWith)-1 downto 0 do begin
+    m := (fWith[i].resultTypeDef as tKlausTypeDefStruct).member[aName];
+    if m <> nil then exit(fWith[i]);
+  end;
+  result := inherited;
 end;
 
 procedure tKlausStmtCompound.run(frame: tKlausStackFrame);
@@ -3752,7 +3811,7 @@ end;
 constructor tKlausStmtWhen.create(aOwner: tKlausStmtCtlStruct; aPoint: tSrcPoint; b: tKlausSyntaxBrowser);
 var
   idx: integer;
-  xd: tKlausDecl;
+  xd: tObject;
   id1, id2: tKlausLexInfo;
 begin
   inherited create(aOwner, aPoint);
@@ -3768,9 +3827,9 @@ begin
     if b.check(klsColon, false) then begin
       b.next;
       id2 := b.get(klxID);
-      xd := routine.find(id2.text, knsGlobal);
+      xd := findName(id2.text, knsGlobal);
       if not (xd is tKlausExceptDecl) then raise eKlausError.createFmt(ercExceptionRequired, id2.line, id2.pos, [id2.text]);
-      if routine.find(id1.text, knsLocal) <> nil then raise eKlausError.createFmt(ercDuplicateName, id1.line, id1.pos, [id1.text]);
+      if routine.findDecl(id1.text, knsLocal) <> nil then raise eKlausError.createFmt(ercDuplicateName, id1.line, id1.pos, [id1.text]);
       setLength(fExcepts, 1);
       fExcepts[0] := xd as tKlausExceptDecl;
       fObjDecl := tKlausExceptObjDecl.create(routine, id1.text, srcPoint(id1), xd as tKlausExceptDecl);
@@ -3779,7 +3838,7 @@ begin
       b.pause;
       fObjDecl := nil;
       repeat
-        xd := routine.find(id1.text, knsGlobal);
+        xd := findName(id1.text, knsGlobal);
         if not (xd is tKlausExceptDecl) then raise eKlausError.createFmt(ercExceptionRequired, id1.line, id1.pos, [id1.text]);
         idx := length(fExcepts);
         setLength(fExcepts, idx+1);
@@ -3803,6 +3862,13 @@ destructor tKlausStmtWhen.destroy;
 begin
   freeAndNil(fStmt);
   inherited destroy;
+end;
+
+function tKlausStmtWhen.findName(aName: string; scope: tKlausNameScope): tObject;
+begin
+  if fObjDecl = nil then result := inherited
+  else if fObjDecl.hasName(aName) then result := fObjDecl
+  else result := inherited;
 end;
 
 function tKlausStmtWhen.willHandle(obj: eKlausLangException): boolean;
@@ -3854,15 +3920,15 @@ end;
 
 { tKlausStmtRoutineBody }
 
-function tKlausStmtRoutineBody.getRoutine: tKlausRoutine;
-begin
-  result := fRoutine;
-end;
-
 constructor tKlausStmtRoutineBody.create(aRoutine: tKlausRoutine; aPoint: tSrcPoint);
 begin
   inherited create(nil, aPoint);
   fRoutine := aRoutine;
+end;
+
+function tKlausStmtRoutineBody.getRoutine: tKlausRoutine;
+begin
+  result := fRoutine;
 end;
 
 { tKlausStmtIf }
@@ -3919,17 +3985,18 @@ end;
 
 constructor tKlausStmtFor.create(aOwner: tKlausStmtCtlStruct; aPoint: tSrcPoint; b: tKlausSyntaxBrowser);
 var
-  decl: tKlausDecl;
+  decl: tObject;
 begin
   inherited create(aOwner, aPoint);
   b.next;
   b.check(kkwdFor);
   b.next;
   b.check(klxID);
-  decl := routine.find(b.lex.text, knsGlobal);
+  decl := findName(b.lex.text, knsGlobal);
   if not (decl is tKlausVarDecl) then raise eKlausError.create(ercInvalidLoopCounter, b.lex.line, b.lex.pos);
-  if ((decl as tKlausVarDecl).dataType.dataType <> kdtInteger)
-  or (decl.owner <> self.routine) then raise eKlausError.create(ercInvalidLoopCounter, b.lex.line, b.lex.pos);
+  with decl as tKlausVarDecl do
+    if (dataType.dataType <> kdtInteger) or (owner <> self.routine) then
+      raise eKlausError.create(ercInvalidLoopCounter, b.lex.line, b.lex.pos);
   fCounter := decl as tKlausVarDecl;
   b.next;
   b.check(kkwdFrom);
@@ -4012,7 +4079,7 @@ end;
 
 constructor tKlausStmtForEach.create(aOwner: tKlausStmtCtlStruct; aPoint: tSrcPoint; b: tKlausSyntaxBrowser);
 var
-  decl: tKlausDecl;
+  decl: tObject;
   path: tKlausVarPath;
   kdt: tKlausSimpleType;
   pdt: tKlausTypeDef;
@@ -4026,14 +4093,15 @@ begin
   b.next;
   b.check(klxID);
   p1 := srcPoint(b.lex);
-  decl := routine.find(b.lex.text, knsGlobal);
+  decl := findName(b.lex.text, knsGlobal);
   b.next;
   b.check(kkwdOf);
   b.next;
   b.check('var_path');
   p2 := srcPoint(b.lex);
   path := tKlausVarPath.create(self, b);
-  if not (decl is tKlausVarDecl) or (decl.owner <> self.routine) then raise eKlausError.create(ercInvalidForEachKey, p1.line, p1.pos);
+  if not (decl is tKlausVarDecl) then raise eKlausError.create(ercInvalidForEachKey, p1);
+  if ((decl as tKlausVarDecl).owner <> self.routine) then raise eKlausError.create(ercInvalidForEachKey, p1);
   pdt := path.resultTypeDef;
   if pdt is tKlausTypeDefArray then kdt := kdtInteger
   else if pdt is tKlausTypeDefDict then kdt := (pdt as tKlausTypeDefDict).keyType
@@ -5634,7 +5702,7 @@ begin
     b.next;
   end;
   if arg.lexem = klxID then begin
-    if find(arg.text, knsLocal) <> nil then
+    if findDecl(arg.text, knsLocal) <> nil then
       raise eKlausError.createFmt(ercDuplicateName, arg.line, arg.pos, [arg.text]);
     dt := source.arrayTypes[kdtString];
     fArgs := tKlausProcParam.create(self, arg.text, p, kpmInput, dt);
@@ -5731,18 +5799,19 @@ begin
   end;
 end;
 
-function tKlausRoutine.find(aName: string; scope: tKlausNameScope): tKlausDecl;
+function tKlausRoutine.findDecl(aName: string; scope: tKlausNameScope): tKlausDecl;
 begin
-  result := findDecl(aName, scope, maxInt);
+  result := doFindDecl(aName, scope, maxInt);
 end;
 
-function tKlausRoutine.findDecl(aName: string; scope: tKlausNameScope; before: integer): tKlausDecl;
+function tKlausRoutine.doFindDecl(aName: string; scope: tKlausNameScope; before: integer): tKlausDecl;
 var
   pos: integer;
   p: tKlausDecl;
 begin
   aName := u8Lower(aName);
   result := decl[aName];
+  if result is tKlausExceptObjDecl then result := nil;
   if result <> nil then if result.position >= before then result := nil;
   if (result = nil) and self.hasName(aName) then result := self;
   if (result = nil) and (scope = knsGlobal) then begin
@@ -5751,7 +5820,7 @@ begin
       if p.upperScope <> p.owner then pos := maxInt
       else if p is tKlausProcDecl then pos := (p as tKlausProcDecl).implPos
       else pos := p.position;
-      result := p.upperScope.findDecl(aName, knsGlobal, pos);
+      result := p.upperScope.doFindDecl(aName, knsGlobal, pos);
       if result <> nil then exit(result);
       p := p.upperScope;
     end;
@@ -5802,7 +5871,7 @@ begin
   b.next;
   p := srcPoint(b.lex);
   ids[i] := b.get(klxID).text;
-  if find(ids[i], knsLocal) <> nil then raise eKlausError.createFmt(ercDuplicateName, srcPoint(b.lex), [ids[i]]);
+  if findDecl(ids[i], knsLocal) <> nil then raise eKlausError.createFmt(ercDuplicateName, srcPoint(b.lex), [ids[i]]);
   b.next;
   while b.check(klsFDiv, false) do begin
     inc(i);
@@ -5810,7 +5879,7 @@ begin
     b.next;
     ids[i] := b.get(klxID).text;
     s := u8Lower(ids[i]);
-    if find(s, knsLocal) <> nil then raise eKlausError.createFmt(ercDuplicateName, srcPoint(b.lex), [ids[i]]);
+    if findDecl(s, knsLocal) <> nil then raise eKlausError.createFmt(ercDuplicateName, srcPoint(b.lex), [ids[i]]);
     for j := 0 to i-1 do
       if u8Lower(ids[j]) = s then raise eKlausError.createFmt(ercDuplicateName, srcPoint(b.lex), [ids[i]]);
     b.next;
@@ -5977,7 +6046,7 @@ begin
   b.next;
   li := b.get(klxID, require);
   if li.lexem = klxID then begin
-    r := find(li.text, knsGlobal);
+    r := findDecl(li.text, knsGlobal);
     if not (r is tKlausTypeDecl) then raise eKlausError.create(ercTypeNameRequired, li.line, li.pos);
     result := tKlausTypeDecl(r).dataType;
   end else begin
@@ -6280,7 +6349,7 @@ begin
     b.next;
     p := srcPoint(b.lex);
     id := b.get(klxID).text;
-    if find(id, knsLocal) <> nil then raise eKlausError.createFmt(ercDuplicateName, b.lex.line, b.lex.pos, [id]);
+    if findDecl(id, knsLocal) <> nil then raise eKlausError.createFmt(ercDuplicateName, b.lex.line, b.lex.pos, [id]);
     tKlausExceptDecl.create(self, id, p, b);
     b.next;
     b.check(klsSemicolon);
@@ -6298,7 +6367,7 @@ begin
   b.check(kkwdProcedure);
   b.next;
   id := b.get(klxID).text;
-  d := find(id, knsLocal);
+  d := findDecl(id, knsLocal);
   if d <> nil then begin
     if d is tKlausProcDecl then with d as tKlausProcDecl do begin
       if fwd then resolveForwardDeclaration(false, b)
@@ -6320,7 +6389,7 @@ begin
   b.check(kkwdFunction);
   b.next;
   id := b.get(klxID).text;
-  d := find(id, knsLocal);
+  d := findDecl(id, knsLocal);
   if d <> nil then begin
     if d is tKlausProcDecl then with d as tKlausProcDecl do begin
       if fwd then resolveForwardDeclaration(true, b)
@@ -6419,6 +6488,10 @@ begin
 end;
 
 procedure tKlausRuntime.run(const fileName: string; args: tStrings = nil);
+
+  procedure checkCleanup; inline;
+  begin if fObjects.count > 0 then raise eKlausError.create(ercInaccurateCleanup, 0, 0); end;
+
 var
   frame: tKlausStackFrame;
 begin
@@ -6429,8 +6502,14 @@ begin
     push(frame);
     try
       try
-        try source.systemUnit.run(frame, source.systemUnit.point);
-        finally if fObjects.count > 0 then raise eKlausError.create(ercInaccurateCleanup, 0, 0); end;
+        try
+          source.systemUnit.run(frame, source.systemUnit.point);
+          checkCleanup;
+        except
+          on eKlausReturn do checkCleanup;
+          on eKlausHalt do checkCleanup;
+          else raise;
+        end;
       except
         on e: eKlausHalt do fExitCode := e.code;
         else begin fExitCode := -1; raise; end;
@@ -6679,7 +6758,7 @@ var
   dv, sv: tKlausVarValue;
   ssv: tKlausSimpleValue;
 begin
-  if not (dest.decl is tKlausVarDecl) then raise eKlausError.create(ercConstAsgnTarget, dest.point.line, dest.point.pos);
+  if not (dest.decl is tKlausVarDecl) then raise eKlausError.create(ercConstAsgnTarget, dest.point);
   dvar := self.varByDecl(dest.decl as tKlausVarDecl, dest.point);
   sv := source.acquireVarValue(self, true);
   if sv <> nil then deferRelease(sv);
@@ -6687,19 +6766,19 @@ begin
     if sv = nil then
       ssv := source.evaluate(self, true)
     else begin
-      if not (sv is tKlausVarValueSimple) then raise eKlausError.create(ercIllegalAsgnOperator, source.point.line, source.point.pos);
+      if not (sv is tKlausVarValueSimple) then raise eKlausError.create(ercIllegalAsgnOperator, source.point);
       ssv := (sv as tKlausVarValueSimple).simple;
     end;
     dvar.ownValueNeeded;
     dv := dest.evaluate(self, vpmAsgnTarget, true);
-    if not (dv is tKlausVarValueSimple) then raise eKlausError.create(ercTypeMismatch, source.point.line, source.point.pos);
+    if not (dv is tKlausVarValueSimple) then raise eKlausError.create(ercTypeMismatch, source.point);
     ssv := klausBinOp[op].evaluate((dv as tKlausVarValueSimple).simple, ssv, source.point);
     (dv as tKlausVarValueSimple).setSimple(ssv, source.point);
   end else if dest.isVariable then begin
     if sv <> nil then
       dvar.acquireValue(sv, source.point)
     else begin
-      if not (dvar.value is tKlausVarValueSimple) then raise eKlausError.create(ercTypeMismatch, source.point.line, source.point.pos);
+      if not (dvar.value is tKlausVarValueSimple) then raise eKlausError.create(ercTypeMismatch, source.point);
       ssv := source.evaluate(self, true);
       dvar.ownValueNeeded;
       (dvar.value as tKlausVarValueSimple).setSimple(ssv, source.point);
@@ -6712,7 +6791,7 @@ begin
     ssv := source.evaluate(self, true);
     dvar.ownValueNeeded;
     dv := dest.evaluate(self, vpmAsgnTarget, true);
-    if not (dv is tKlausVarValueSimple) then raise eKlausError.create(ercTypeMismatch, source.point.line, source.point.pos);
+    if not (dv is tKlausVarValueSimple) then raise eKlausError.create(ercTypeMismatch, source.point);
     (dv as tKlausVarValueSimple).setSimple(ssv, source.point);
   end;
 end;
@@ -6728,7 +6807,7 @@ begin
     dest.acquireValue(sv, source.point)
   end else begin
     ssv := source.evaluate(self, true);
-    if not (dest.value is tKlausVarValueSimple) then raise eKlausError.create(ercTypeMismatch, source.point.line, source.point.pos);
+    if not (dest.value is tKlausVarValueSimple) then raise eKlausError.create(ercTypeMismatch, source.point);
     dest.ownValueNeeded;
     (dest.value as tKlausVarValueSimple).setSimple(ssv, source.point);
   end;
