@@ -1,4 +1,4 @@
-Последнюю версию можно скачать здесь: [https://czaerlag.ru/klauslang/klaus-v1.8.0.zip](https://czaerlag.ru/klauslang/klaus-v1.8.0.zip).<br>
+Последнюю версию можно скачать здесь: [https://czaerlag.ru/klauslang/klaus-v1.8.1.zip](https://czaerlag.ru/klauslang/klaus-v1.8.1.zip).<br>
 (или в разделе "Релизы", но это требует регистрации).
 
 Инсталляция не требуется. Достаточно распаковать архив и запустить исполняемый файл:

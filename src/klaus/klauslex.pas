@@ -475,9 +475,7 @@ const
     (s: 'не'; k: kkwdNot),
     (s: 'и'; k: kkwdAnd),
     (s: 'или'; k: kkwdOr),
-    (s: 'либо'; k: kkwdXor),
-    (s: 'насчёт'; k: kkwdWith),
-    (s: 'насчет'; k: kkwdWith)
+    (s: 'либо'; k: kkwdXor)
   );
 
 const

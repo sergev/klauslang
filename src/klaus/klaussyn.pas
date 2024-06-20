@@ -181,7 +181,7 @@ const
     (name: 'statement';
     def:   '(`ничего` | `прервать` | `продолжить` | `завершить` [<expression>] | '+
            '`ошибка` [<exception>] | `бросить` | `вернуть` [<expression>] | '+
-           '<compound> | <control_structure> | <call> | <assignment>)'),
+           '<control_structure> | <compound> | <call> | <assignment>)'),
 
     (name: 'exception';
     def:   '#id ["(" <expression> [* "," <expression>] ")"] [`сообщение` <expression>]'),
@@ -237,7 +237,7 @@ const
     def:   '"[" <expression> [* "," <expression>] "]"'),
 
     (name: 'compound';
-    def:   '[`насчёт` <var_path> [* "," <var_path>]] `начало` <statements> [`исключение` <except_block>] [`напоследок` <statements>] `окончание`'),
+    def:   '[`для` <var_path> [* "," <var_path>]] `начало` <statements> [`исключение` <except_block>] [`напоследок` <statements>] `окончание`'),
 
     (name: 'except_block';
     def:   '(<statements> | <except_else> | <except_handler> [* <except_handler>] [<except_else>])'),
@@ -258,7 +258,7 @@ const
     def:   '`если` <expression> `то` <statement> [`иначе` <statement>]'),
 
     (name: 'for';
-    def:   '`для` >>#id `от` <expression> `до` <expression> [`обратный`] `цикл` <statement>'),
+    def:   '`для` #id >>`от` <expression> `до` <expression> [`обратный`] `цикл` <statement>'),
 
     (name: 'for_each';
     def:   '`для` >>`каждого` #id `из` <var_path> [`от` <expression>] [`обратный`] `цикл` <statement>'),

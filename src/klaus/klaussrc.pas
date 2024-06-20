@@ -3590,7 +3590,7 @@ var
   vp: tKlausVarPath;
 begin
   b.next;
-  if b.check(kkwdWith, false) then begin
+  if b.check(kkwdFor, false) then begin
     repeat
       b.next;
       b.check('var_path');
