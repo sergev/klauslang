@@ -43,7 +43,6 @@ type
   tExecPointInfo = record
     enabled: boolean;
     point: tSrcPoint;
-    fileName: string;
   end;
 
   tWatchInfo = record
@@ -396,7 +395,7 @@ type
     procedure createScene(fr: tEditFrame; stepMode: boolean);
     procedure updateDebugInfo;
     procedure showExecPoint;
-    procedure showErrorInfo(const fileName, msg: string; line, pos: integer; focus: boolean = true);
+    procedure showErrorInfo(const msg: string; pt: tSrcPoint; focus: boolean = true);
     procedure run(mode: tRunMode);
     procedure invalidateBreakpointList;
     procedure updateBreakpointList;
@@ -650,13 +649,11 @@ begin
   if scene = nil then sas := [] else sas := scene.actionState;
   if not (sasHasExecPoint in sas) then begin
     fExecPoint.enabled := false;
-    fExecPoint.point := srcPoint(0, 0, 0);
-    fExecPoint.fileName := '';
+    fExecPoint.point := srcPoint('', 0, 0);
   end else begin
     fExecPoint.enabled := true;
     fExecPoint.point := scene.thread.execPoint;
-    fExecPoint.fileName := scene.thread.fileName;
-    fr := openEditFrame(fExecPoint.fileName, false);
+    fr := openEditFrame(fExecPoint.point.fileName, false);
     if fr <> nil then begin
       fr.edit.selStart := srcToEdit(fExecPoint.point);
       fr.edit.makeCharVisible(fr.edit.selStart);
@@ -664,12 +661,12 @@ begin
   end;
 end;
 
-procedure tMainForm.showErrorInfo(const fileName, msg: string; line, pos: integer; focus: boolean = true);
+procedure tMainForm.showErrorInfo(const msg: string; pt: tSrcPoint; focus: boolean = true);
 var
   fr: tEditFrame;
 begin
-  fr := openEditFrame(fileName, focus);
-  if fr <> nil then fr.showErrorInfo(msg, line, pos, focus);
+  fr := openEditFrame(pt.fileName, focus);
+  if fr <> nil then fr.showErrorInfo(msg, pt.line, pt.pos, focus);
 end;
 
 procedure tMainForm.actFileNewExecute(sender: TObject);

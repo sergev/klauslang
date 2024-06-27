@@ -328,10 +328,11 @@ begin
   showErrorInfo('', 0, 0);
   try
     p := tKlausLexParser.create(tStringReadStream.create(edit.text));
+    p.fileName := fileName;
     try result := tKlausSource.create(p);
     finally freeAndNil(p); end;
   except
-    on e: eKlausError do showErrorInfo(e.message, e.line, e.pos);
+    on e: eKlausError do mainForm.showErrorInfo(e.message, e.point);
     else raise;
   end;
 end;

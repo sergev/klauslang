@@ -122,7 +122,7 @@ resourcestring
   strFinishedOK = 'Завершено успешно: %s';
   strFinishedErr = 'Завершено с ошибкой %d: %s';
   strRuntimeError = 'Исключение %s';
-  strAtLinePos = 'Строка %d, символ %d.';
+  strAtLinePos = 'В файле "%s" (строка %d, символ %d).';
   strConfirmAbort = 'Прервать выполнение программы?';
 
 { tSceneForm }
@@ -204,23 +204,18 @@ end;
 procedure tSceneForm.displayException(e: tObject);
 var
   s: string;
-  l: integer = 0;
-  p: integer = 0;
+  pt: tSrcPoint;
 begin
   s := e.className;
   if e is eKlausLangException then s := (e as eKlausLangException).message
   else if e is exception then s += ': ' + (e as exception).message;
   fConsole.write(format(strRuntimeError, [s])+#10);
-  if (e is eKlausError) then begin
-    l := (e as eKlausError).line;
-    p := (e as eKlausError).pos;
-  end else if (e is eKlausLangException) then begin
-    l := (e as eKlausLangException).line;
-    p := (e as eKlausLangException).pos;
-  end;
-  if (p > 0) then begin
-    fConsole.write(format(strAtLinePos, [l, p])+#10);
-    mainForm.showErrorInfo(fileName, s, l, p, false);
+  if (e is eKlausError) then pt := (e as eKlausError).point
+  else if (e is eKlausLangException) then pt := (e as eKlausLangException).point
+  else pt := zeroSrcPt;
+  if not srcPointEmpty(pt) then begin
+    fConsole.write(format(strAtLinePos, [pt.fileName, pt.line, pt.pos])+#10);
+    mainForm.showErrorInfo(s, pt, false);
   end;
 end;
 
@@ -388,7 +383,7 @@ end;
 
 procedure tSceneForm.inStreamReadChar(out c: u8Char);
 begin
-  if fInStream = nil then raise eKlausError.create(ercStreamNotOpen, 0, 0);
+  if fInStream = nil then raise eKlausError.create(ercStreamNotOpen, zeroSrcPt);
   with fInStream do
     if position = size then c := #26
     else c := u8ReadChar(fInStream);
@@ -396,7 +391,7 @@ end;
 
 procedure tSceneForm.outStreamWrite(const s: string);
 begin
-  if fOutStream = nil then raise eKlausError.create(ercStreamNotOpen, 0, 0);
+  if fOutStream = nil then raise eKlausError.create(ercStreamNotOpen, zeroSrcPt);
   if s <> '' then fOutStream.write(pChar(s)^, length(s));
 end;
 

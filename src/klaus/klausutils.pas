@@ -767,7 +767,8 @@ type
   begin
     result := '';
     if fmt.arg < 0 then inc(arg) else arg := fmt.arg;
-    if (arg < 0) or (arg >= length(args)) then raise eKlausError.createFmt(ercInvalidFormatArgIdx, at, [arg]);
+    if (arg < 0) or (arg >= length(args)) then
+      raise eKlausError.createFmt(ercInvalidFormatArgIdx, at, [arg]);
     case fmt.ft of
       ftI: begin
         if args[arg].dataType <> kdtInteger then raise eKlausError.createFmt(ercInvalidFormatArgType, at, [arg]);

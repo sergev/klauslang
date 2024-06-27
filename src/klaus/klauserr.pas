@@ -36,15 +36,15 @@ type
 type
   // Позиция в исходном тексте
   tSrcPoint = record
-    line: integer;   // строка, начиная с 1
-    pos: integer;    // символ в строке, начиная с 1
-    absPos: integer; // байт в потоке, начиная с 0
+    fileName: string; // имя исходного файла
+    line: integer;    // строка, начиная с 1
+    pos: integer;     // символ в строке, начиная с 1
   end;
 
 const
   // Константа для тех случаев, когда точка в исходном тексте
   // не определена, а вызов требует. Применять с осторожностью!
-  zeroSrcPt: tSrcPoint = (line: 0; pos: 0; absPos: 0);
+  zeroSrcPt: tSrcPoint = (fileName: ''; line: 0; pos: 0);
 
 const
   // Коды ошибок eKlausError
@@ -193,32 +193,32 @@ type
   eKlausError = class(Exception)
     private
       fCode: integer;
-      fLine, fPos: integer;
+      fPoint: tSrcPoint;
     protected
       function getErrorMessage: string; virtual;
     public
       property code: integer read fCode write fCode;
-      property line: integer read fLine write fLine;
-      property pos: integer read fPos write fPos;
+      property point: tSrcPoint read fPoint write fPoint;
 
-      constructor create(aCode: integer; aLine, aPos: integer);
-      constructor createFmt(aCode: integer; aLine, aPos: integer; const args: array of const);
       constructor create(aCode: integer; p: tSrcPoint);
       constructor createFmt(aCode: integer; p: tSrcPoint; const args: array of const);
       function toString: string; override;
   end;
 
 // Создаёт структуру с информацией о позиции элемента в исходном тексте
-function srcPoint(l, p, abs: integer): tSrcPoint;
+function srcPoint(const fn: string; l, p: integer): tSrcPoint;
 function srcPoint(li: tKlausLexInfo): tSrcPoint;
 
 // Преобразует src в точку для tKlausEdit
 function srcToEdit(src: tSrcPoint): tPoint;
 
+// Возвращает TRUE, если точка пустая
+function srcPointEmpty(pt: tSrcPoint): boolean;
+
 implementation
 
 resourcestring
-  errAtLinePos = 'Ошибка %s в строке %d, символ %d: %s';
+  errAtLinePos = 'Ошибка %s в файле "%s" (строка %d, символ %d): %s';
   errQuoteNotClosed = 'Ожидаются закрывающие кавычки, а обнаружен конец строки.';
   errCommentNotClosed = 'Ожидается окончание комментария, а обнаружен конец файла.';
   errStreamError = 'Ошибка чтения исходного файла.';
@@ -233,9 +233,9 @@ resourcestring
   errTextAfterEnd = 'Недопустимый текст после окончания исходного кода.';
   errUnexpectedSyntax = 'Внутренняя ошибка. Неожиданный синтаксис.';
   errDuplicateName = 'Повторное определение имени: "%s"';
-  errVarNameNotFound = 'Переменная не существует в текущем фрейме: "%s"';
+  errVarNameNotFound = 'Переменная не существует в текущем фрейме: "%s".';
   errTypeNameRequired = 'Требуется имя типа данных.';
-  errTypeMismatch = 'Несоответствие типов данных';
+  errTypeMismatch = 'Несоответствие типов данных.';
   errMomentNotClosed = 'Ожидается закрывающий обратный апостроф, а обнаружен конец строки.';
   errInvalidMoment = 'Неверный литерал момента времени.';
   errLoopCtlOutsideLoop = 'Инструкция может использоваться только внутри тела цикла.';
@@ -309,19 +309,19 @@ resourcestring
 { Globals }
 
 // Создаёт структуру с информацией о позиции элемента в исходном тексте
-function srcPoint(l, p, abs: integer): tSrcPoint;
+function srcPoint(const fn: string; l, p: integer): tSrcPoint;
 begin
+  result.fileName := fn;
   result.line := l;
   result.pos := p;
-  result.absPos := abs;
 end;
 
 // Создаёт структуру с информацией о позиции элемента в исходном тексте
 function srcPoint(li: tKlausLexInfo): tSrcPoint;
 begin
+  result.fileName := li.fileName;
   result.line := li.line;
   result.pos := li.pos;
-  result.absPos := li.absPos;
 end;
 
 // Преобразует src в точку для tKlausEdit
@@ -329,6 +329,11 @@ function srcToEdit(src: tSrcPoint): tPoint;
 begin
   result.x := src.pos;
   result.y := src.line-1;
+end;
+
+function srcPointEmpty(pt: tSrcPoint): boolean;
+begin
+  result := (pt.line = 0) and (pt.pos = 0);
 end;
 
 { eKlausError }
@@ -426,35 +431,23 @@ begin
   end;
 end;
 
-constructor eKlausError.create(aCode: integer; aLine, aPos: integer);
-begin
-  fCode := aCode;
-  fLine := aLine;
-  fPos := aPos;
-  inherited create(getErrorMessage);
-end;
-
-constructor eKlausError.createFmt(aCode: integer; aLine, aPos: integer; const args: array of const);
-begin
-  fCode := aCode;
-  fLine := aLine;
-  fPos := aPos;
-  inherited createFmt(getErrorMessage, args);
-end;
-
 constructor eKlausError.create(aCode: integer; p: tSrcPoint);
 begin
-  create(aCode, p.line, p.pos);
+  fCode := aCode;
+  fPoint := p;
+  inherited create(getErrorMessage);
 end;
 
 constructor eKlausError.createFmt(aCode: integer; p: tSrcPoint; const args: array of const);
 begin
-  createFmt(aCode, p.line, p.pos, args);
+  fCode := aCode;
+  fPoint := p;
+  inherited createFmt(getErrorMessage, args);
 end;
 
 function eKlausError.toString: string;
 begin
-  Result := format(errAtLinePos, [className, line, pos, message]);
+  result := format(errAtLinePos, [className, point.fileName, point.line, point.pos, message]);
 end;
 
 end.

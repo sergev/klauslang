@@ -595,7 +595,7 @@ begin
         result.dataType := kdtObject;
         result.oValue := 0;
       end;
-      else raise eKlausError.create(ercInvalidLiteralValue, li.line, li.pos);
+      else raise eKlausError.create(ercInvalidLiteralValue, srcPoint(li));
     end;
   end else if li.lexem in klausSimpleTypeLexemes then begin
     result.dataType := klausSimpleTypeLiterals[li.lexem];
@@ -609,7 +609,7 @@ begin
       assert(false, 'Invalid data type');
     end;
   end else
-    raise eKlausError.create(ercInvalidLiteralValue, li.line, li.pos);
+    raise eKlausError.create(ercInvalidLiteralValue, srcPoint(li));
 end;
 
 // Возвращает tKlausSimpleValue, заполненный переданными данными
@@ -789,7 +789,7 @@ function klausCompare(v1, v2: tKlausSimpleValue; accuracy: tKlausFloat; const at
 begin
   result := 0;
   if not klausCanCompare(v1.dataType, v2.dataType) then
-    raise eKlausError.createFmt(ercBinOperNotDefined, at.line, at.pos, ['сравнение', klausDataTypeCaption[v1.dataType], klausDataTypeCaption[v2.dataType]]);
+    raise eKlausError.createFmt(ercBinOperNotDefined, at, ['сравнение', klausDataTypeCaption[v1.dataType], klausDataTypeCaption[v2.dataType]]);
   case v1.dataType of
     kdtChar: result := klausCmp(v1.cValue, v2.cValue);
     kdtString: result := klausCmp(v1.sValue, v2.sValue);
@@ -899,7 +899,7 @@ end;
 procedure tKlausUnaryOperator.checkDefined(dt: tKlausDataType; const at: tSrcPoint);
 begin
   if not defined(dt) then
-    raise eKlausError.createFmt(ercUnOperNotDefined, at.line, at.pos, [name, klausDataTypeCaption[dt]]);
+    raise eKlausError.createFmt(ercUnOperNotDefined, at, [name, klausDataTypeCaption[dt]]);
 end;
 
 function tKlausUnaryOperator.defined(dt: tKlausDataType): boolean;
@@ -922,7 +922,7 @@ end;
 procedure tKlausBinaryOperator.checkDefined(dtl, dtr: tKlausDataType; const at: tSrcPoint);
 begin
   if not defined(dtl, dtr) then
-    raise eKlausError.createFmt(ercBinOperNotDefined, at.line, at.pos, [name, klausDataTypeCaption[dtl], klausDataTypeCaption[dtr]]);
+    raise eKlausError.createFmt(ercBinOperNotDefined, at, [name, klausDataTypeCaption[dtl], klausDataTypeCaption[dtr]]);
 end;
 
 function tKlausBinaryOperator.defined(dtl, dtr: tKlausDataType): boolean;

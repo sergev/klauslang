@@ -231,6 +231,7 @@ type
   // Лексема
   pKlausLexInfo = ^tKlausLexInfo;
   tKlausLexInfo = record
+    fileName: string;       // имя исходного файла
     lexem: tKlausLexem;     // тип лексической единицы
     keyword: tKlausKeyword; // тип ключевого слова для klutKeyword
     symbol: tKlausSymbol;   // тип знака для klutSymbol
@@ -245,38 +246,6 @@ type
     absPos: integer;        // позиция в байтах относительно начала потока (нач. с 0)
   end;
 
-const
-  // Лексема "конец файла"
-  klliEOF: tKlausLexInfo = (
-    lexem: klxEOF;
-    keyword: kkwdInvalid;
-    symbol: klsInvalid;
-    text: '';
-    cValue: 0;
-    sValue: '';
-    iValue: 0;
-    fValue: 0;
-    mValue: 0;
-    line: 0;
-    pos: 0;
-    absPos: 0);
-
-const
-  // Лексема "недопустимый символ"
-  klliError: tKlausLexInfo = (
-    lexem: klxInvalid;
-    keyword: kkwdInvalid;
-    symbol: klsInvalid;
-    text: '';
-    cValue: 0;
-    sValue: '';
-    iValue: 0;
-    fValue: 0;
-    mValue: 0;
-    line: 0;
-    pos: 0;
-    absPos: 0);
-
 type
   tStringReadStream = class(tCustomMemoryStream)
     private
@@ -288,13 +257,14 @@ type
       property data: string read fData write setData;
       property onReset: tNotifyEvent read fOnReset write fOnReset;
 
-      constructor create(const s: string);
+      constructor create(const aData: string);
   end;
 
 type
   // Базовый класс лексического парсера с полной поддержкой UTF8
   tCustomLexParser = class(tObject)
     private
+      fFileName: string;
       fStream: tStream;
       fBOF: boolean;
       fEOF: boolean;
@@ -321,12 +291,13 @@ type
       procedure feedBack;
       function  tryNextChar: u8Char;
     public
+      property fileName: string read fFileName write fFileName;
       property stream: tStream read fStream write setStream;
       property ownsStream: boolean read fOwnsStream write fOwnsStream;
       property raiseErrors: boolean read fRaiseErrors write fRaiseErrors;
 
       constructor create(const aStream: tStream);
-      constructor create(const s: string);
+      constructor create(s: string);
       destructor  destroy; override;
       procedure reset;
       function  copyText(absPosStart, absPosEnd: integer): string;
@@ -609,10 +580,10 @@ end;
 
 { tStringReadStream }
 
-constructor tStringReadStream.create(const s: string);
+constructor tStringReadStream.create(const aData: string);
 begin
   inherited create;
-  setData(s);
+  setData(aData);
 end;
 
 procedure tStringReadStream.setData(value: string);
@@ -635,7 +606,7 @@ begin
 end;
 
 // Создание, инициализация
-constructor tCustomLexParser.create(const s: string);
+constructor tCustomLexParser.create(s: string);
 var
   str: tStringReadStream;
 begin
@@ -672,6 +643,8 @@ begin
   if (fStream <> aStream) then begin
     if fOwnsStream and assigned(fStream) then freeAndNil(fStream);
     fStream := aStream;
+    if (fStream is tFileStream) then
+      fFileName := (fStream as tFileStream).fileName;
     reset;
   end;
 end;
@@ -691,7 +664,7 @@ begin
   try
     result := u8ReadChar(fStream);
   except
-    on eStreamError do raise eKlausError.create(ercStreamError, fLine, fPos);
+    on eStreamError do raise eKlausError.create(ercStreamError, srcPoint(fileName, fLine, fPos));
     else raise;
   end;
   if result = '' then begin
@@ -774,13 +747,13 @@ end;
 procedure tCustomLexParser.error(code, l, p: integer);
 begin
   if not raiseErrors then exit;
-  raise eKlausError.create(code, l, p) at get_caller_addr(get_frame);
+  raise eKlausError.create(code, srcPoint(fileName, l, p)) at get_caller_addr(get_frame);
 end;
 
 procedure tCustomLexParser.error(code, l, p: integer; const args: array of const);
 begin
   if not raiseErrors then exit;
-  raise eKlausError.createFmt(code, l, p, args) at get_caller_addr(get_frame);
+  raise eKlausError.createFmt(code, srcPoint(fileName, l, p), args) at get_caller_addr(get_frame);
 end;
 
 { tKlausLexParser }
@@ -996,6 +969,7 @@ procedure tKlausLexParser.setLexInfo(s: string; aLexem: tKlausLexem; out li: tKl
 begin
   assert(aLexem <> klxSymbol);
   with li do begin
+    fileName := self.fileName;
     lexem := aLexem;
     keyword := kkwdInvalid;
     symbol := klsInvalid;
@@ -1010,6 +984,7 @@ end;
 procedure tKlausLexParser.setLexInfo(s: string; aSymbol: tKlausValidSymbol; out li: tKlausLexInfo);
 begin
   with li do begin
+    fileName := self.fileName;
     lexem := klxSymbol;
     keyword := kkwdInvalid;
     symbol := aSymbol;

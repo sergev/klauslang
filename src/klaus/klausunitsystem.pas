@@ -324,9 +324,9 @@ type
       function  getKlausObject(frame: tKlausStackFrame; h: tKlausObject; cls: tClass; const at: tSrcPoint): tObject;
   end;
 
-function  klausStdError(frame: tKlausStackFrame; ksx: tKlausStdException; line, pos: integer): eKlausLangException;
-function  klausStdError(frame: tKlausStackFrame; ksx: tKlausStdException; msg: string; line, pos: integer): eKlausLangException;
-function  klausStdError(frame: tKlausStackFrame; ksx: tKlausStdexception; msg: string; const args: array of const; line, pos: integer): eKlausLangException;
+function  klausStdError(frame: tKlausStackFrame; ksx: tKlausStdException; pt: tSrcPoint): eKlausLangException;
+function  klausStdError(frame: tKlausStackFrame; ksx: tKlausStdException; msg: string; pt: tSrcPoint): eKlausLangException;
+function  klausStdError(frame: tKlausStackFrame; ksx: tKlausStdexception; msg: string; const args: array of const; pt: tSrcPoint): eKlausLangException;
 procedure klausTranslateException(frame: tKlausStackFrame; const at: tSrcPoint);
 
 const
@@ -387,17 +387,17 @@ resourcestring
   strKlausFileSearch = 'Поиск файлов';
   strKlausCanvasLink = 'Холст';
 
-function klausStdError(frame: tKlausStackFrame; ksx: tKlausStdException; line, pos: integer): eKlausLangException;
+function klausStdError(frame: tKlausStackFrame; ksx: tKlausStdException; pt: tSrcPoint): eKlausLangException;
 begin
-  result := klausStdError(frame, ksx, '', [], line, pos);
+  result := klausStdError(frame, ksx, '', [], pt);
 end;
 
-function klausStdError(frame: tKlausStackFrame; ksx: tKlausStdException; msg: string; line, pos: integer): eKlausLangException;
+function klausStdError(frame: tKlausStackFrame; ksx: tKlausStdException; msg: string; pt: tSrcPoint): eKlausLangException;
 begin
-  result := klausStdError(frame, ksx, msg, [], line, pos);
+  result := klausStdError(frame, ksx, msg, [], pt);
 end;
 
-function klausStdError(frame: tKlausStackFrame; ksx: tKlausStdException; msg: string; const args: array of const; line, pos: integer): eKlausLangException;
+function klausStdError(frame: tKlausStackFrame; ksx: tKlausStdException; msg: string; const args: array of const; pt: tSrcPoint): eKlausLangException;
 var
   d: tKlausExceptDecl;
 begin
@@ -405,13 +405,13 @@ begin
   if msg = '' then msg := d.message;
   if msg = '' then msg := d.name;
   msg := format(msg, args);
-  result := eKlausLangException.create(msg, d, nil, line, pos);
+  result := eKlausLangException.create(msg, d, nil, pt);
 end;
 
 procedure klausTranslateException(frame: tKlausStackFrame; const at: tSrcPoint);
 var
   obj: tObject;
-  l, p: integer;
+  pt: tSrcPoint;
   ksx: tKlausStdException;
 begin
   obj := exceptObject;
@@ -420,35 +420,31 @@ begin
     acquireExceptionObject;
     raise obj at get_caller_addr(get_frame)
   end else if obj is eKlausError then begin
-    l := (obj as eKlausError).line;
-    p := (obj as eKlausError).pos;
-    if (l = 0) and (p = 0) then begin
-      l := at.line;
-      p := at.pos;
-    end;
+    pt := (obj as eKlausError).point;
+    if srcPointEmpty(pt) then pt := at;
     for ksx := low(ksx) to high(ksx) do
       if (obj as eKlausError).code in klausCodeToStdErr[ksx] then
-        raise klausStdError(frame, ksx, (obj as exception).message, l, p) at get_caller_addr(get_frame);
-    raise klausStdError(frame, ksxInternalError, (obj as exception).message, l, p) at get_caller_addr(get_frame);
+        raise klausStdError(frame, ksx, (obj as exception).message, pt) at get_caller_addr(get_frame);
+    raise klausStdError(frame, ksxInternalError, (obj as exception).message, pt) at get_caller_addr(get_frame);
   end else if obj is eControlC then
     raise eKlausHalt.create(-1) at get_caller_addr(get_frame)
   else if (obj is eExternal)
   or (obj is EHeapMemoryError)
   or (obj is eOSError) then
-    raise klausStdError(frame, ksxRuntimeError, (obj as exception).message, at.line, at.pos) at get_caller_addr(get_frame)
+    raise klausStdError(frame, ksxRuntimeError, (obj as exception).message, at) at get_caller_addr(get_frame)
   else if obj is eAssertionFailed then
-    raise klausStdError(frame, ksxInternalError, (obj as exception).message, at.line, at.pos) at get_caller_addr(get_frame)
+    raise klausStdError(frame, ksxInternalError, (obj as exception).message, at) at get_caller_addr(get_frame)
   else if obj is eConvertError then
-    raise klausStdError(frame, ksxConvertError, (obj as exception).message, at.line, at.pos) at get_caller_addr(get_frame)
+    raise klausStdError(frame, ksxConvertError, (obj as exception).message, at) at get_caller_addr(get_frame)
   else if (obj is eDirectoryNotFoundException)
   or (obj is eFileNotFoundException)
   or (obj is ePathNotFoundException)
   or (obj is ePathTooLongException)
   or (obj is eInOutError)
   or (obj is eStreamError) then
-    raise klausStdError(frame, ksxInOutError, (obj as exception).message, at.line, at.pos) at get_caller_addr(get_frame)
+    raise klausStdError(frame, ksxInOutError, (obj as exception).message, at) at get_caller_addr(get_frame)
   else if obj is eFormatError then
-    raise klausStdError(frame, ksxConvertError, (obj as exception).message, at.line, at.pos) at get_caller_addr(get_frame)
+    raise klausStdError(frame, ksxConvertError, (obj as exception).message, at) at get_caller_addr(get_frame)
   else begin
     acquireExceptionObject;
     raise obj at get_caller_addr(get_frame);
@@ -782,20 +778,20 @@ begin
   if min = max then s := intToStr(min)
   else if max < 0 then s := format(strAtLeast, [min])
   else s := format(strFromTo, [min, max]);
-  raise eKlausError.createFmt(ercWrongNumberOfParams, at.line, at.pos, [given, s])
+  raise eKlausError.createFmt(ercWrongNumberOfParams, at, [given, s])
   at get_caller_addr(get_frame);
 end;
 
 procedure tKlausSysProcDecl.errTypeMismatch(const at: tSrcPoint);
 begin
-  raise eKlausError.create(ercTypeMismatch, at.line, at.pos)
+  raise eKlausError.create(ercTypeMismatch, at)
   at get_caller_addr(get_frame);
 end;
 
 procedure tKlausSysProcDecl.checkCanAssign(dst: tKlausSimpleType; src: tKlausTypeDef; const at: tSrcPoint; strict: boolean = false);
 begin
   if not source.simpleTypes[dst].canAssign(src, strict) then
-    raise eKlausError.create(ercTypeMismatch, at.line, at.pos)
+    raise eKlausError.create(ercTypeMismatch, at)
     at get_caller_addr(get_frame);
 end;
 
@@ -809,7 +805,7 @@ end;
 procedure tKlausSysProcDecl.checkCanAssign(dst, src: tKlausTypeDef; const at: tSrcPoint; strict: boolean = false);
 begin
   if not dst.canAssign(src, strict) then
-    raise eKlausError.create(ercTypeMismatch, at.line, at.pos)
+    raise eKlausError.create(ercTypeMismatch, at)
     at get_caller_addr(get_frame);
 end;
 
@@ -826,15 +822,15 @@ var
 begin
   if dst is tKlausTypeDefArray then begin
     if not source.simpleTypes[kdtInteger].canAssign(key, strict) then
-      raise eKlausError.create(ercTypeMismatch, at.line, at.pos)
+      raise eKlausError.create(ercTypeMismatch, at)
       at get_caller_addr(get_frame);
   end else if dst is tKlausTypeDefDict then begin
     kt := (dst as tKlausTypeDefDict).keyType;
     if not source.simpleTypes[kt].canAssign(key, strict) then
-      raise eKlausError.create(ercTypeMismatch, at.line, at.pos)
+      raise eKlausError.create(ercTypeMismatch, at)
       at get_caller_addr(get_frame);
   end else
-    raise eKlausError.create(ercTypeMismatch, at.line, at.pos)
+    raise eKlausError.create(ercTypeMismatch, at)
     at get_caller_addr(get_frame);
 end;
 
@@ -844,15 +840,15 @@ var
 begin
   if dst is tKlausVarValueArray then begin
     if not source.simpleTypes[kdtInteger].canAssign(key.dataType, strict) then
-      raise eKlausError.create(ercTypeMismatch, at.line, at.pos)
+      raise eKlausError.create(ercTypeMismatch, at)
       at get_caller_addr(get_frame);
   end else if dst is tKlausVarValueDict then begin
     kt := (dst.dataType as tKlausTypeDefDict).keyType;
     if not source.simpleTypes[kt].canAssign(key.dataType, strict) then
-      raise eKlausError.create(ercTypeMismatch, at.line, at.pos)
+      raise eKlausError.create(ercTypeMismatch, at)
       at get_caller_addr(get_frame);
   end else
-    raise eKlausError.create(ercTypeMismatch, at.line, at.pos)
+    raise eKlausError.create(ercTypeMismatch, at)
     at get_caller_addr(get_frame);
 end;
 
@@ -865,10 +861,10 @@ begin
   else if dst is tKlausTypeDefDict then
     et := (dst as tKlausTypeDefDict).valueType
   else
-    raise eKlausError.create(ercTypeMismatch, at.line, at.pos)
+    raise eKlausError.create(ercTypeMismatch, at)
     at get_caller_addr(get_frame);
   if not et.canAssign(elmt, strict) then
-    raise eKlausError.create(ercTypeMismatch, at.line, at.pos)
+    raise eKlausError.create(ercTypeMismatch, at)
     at get_caller_addr(get_frame);
 end;
 
@@ -881,10 +877,10 @@ begin
   else if dst is tKlausVarValueDict then
     et := (dst.dataType as tKlausTypeDefDict).valueType
   else
-    raise eKlausError.create(ercTypeMismatch, at.line, at.pos)
+    raise eKlausError.create(ercTypeMismatch, at)
     at get_caller_addr(get_frame);
   if not et.canAssign(elmt.dataType, strict) then
-    raise eKlausError.create(ercTypeMismatch, at.line, at.pos)
+    raise eKlausError.create(ercTypeMismatch, at)
     at get_caller_addr(get_frame);
 end;
 

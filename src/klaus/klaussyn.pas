@@ -91,13 +91,18 @@ type
   end;
 
 const
-  // Имя корневого синтакцического правила
-  klausSynRuleRoot = 'klaus_syntax_root';
+  // Имя корневого синтакцического правила для исходного файла
+  klausSourceSyntaxRoot = 'klaus_source_root';
+  // Имя корневого синтакцического правила для вычисления выражения
+  klausExpressionSyntaxRoot = 'klaus_expression_root';
 
   // Синтаксические правила
   klausSynRules: array of tKlausSynRuleRec = (
-    (name: klausSynRuleRoot;
-    def: '(<program> | <expression>)'), // def: '(<program> | <unit>)'),
+    (name: klausSourceSyntaxRoot;
+    def: '<program>'), // def: '(<program> | <unit>)'),
+
+    (name: klausExpressionSyntaxRoot;
+    def: '<expression>'), // def: '(<program> | <unit>)'),
 
     (name: 'program';
     def:   '`программа` #id [<program_params>] ";" <routine> "."'), // uses'),
@@ -525,6 +530,7 @@ type
   // Синтаксический анализатор Клаус
   tKlausSyntax = class(tObject)
     private
+      fRootName: string;
       fRules: tKlausSynRules;
       fParser: tKlausLexParser;
       fLexInfo: array of tKlausLexInfo;
@@ -535,16 +541,14 @@ type
       fErrInfo: tStringList;
 
       function  getCurLexInfo: pKlausLexInfo;
-      function  getCurLine: integer;
-      function  getCurPos: integer;
+      function  getCurPoint: tSrcPoint;
       function  getLexCount: integer;
       function  getLexInfo(idx: integer): tKlausLexInfo;
       function  getRule(aName: string): tKlausSynRule;
     protected
       property curLexIndex: integer read fLexIdx;
       property curLexInfo: pKlausLexInfo read getCurLexInfo;
-      property curLine: integer read getCurLine;
-      property curPos: integer read getCurPos;
+      property curPoint: tSrcPoint read getCurPoint;
       property nowMatching: tKlausSrcNodeRule read fNowMatching;
 
       function  nextLexInfo: tKlausLexInfo;
@@ -558,12 +562,13 @@ type
       procedure clearErrInfo;
       function  formatErrInfo: string;
     public
+      property rootName: string read fRootName;
       property rules: tKlausSynRules read fRules;
       property lexCount: integer read getLexCount;
       property lexInfo[idx: integer]: tKlausLexInfo read getLexInfo;
       property tree: tKlausSrcNodeRule read fTree;
 
-      constructor create;
+      constructor create(const aRootName: string);
       destructor  destroy; override;
       procedure setParser(p: tKlausLexParser);
       procedure build;
@@ -718,9 +723,10 @@ end;
 
 { tKlausSyntax }
 
-constructor tKlausSyntax.create;
+constructor tKlausSyntax.create(const aRootName: string);
 begin
   inherited create;
+  fRootName := aRootName;
   fRules := tKlausSynRules.create(false);
   fRules.sorted := true;
   fRules.duplicates := dupError;
@@ -733,7 +739,7 @@ begin
   fErrInfo := tStringList.create;
   fErrInfo.sorted := true;
   fErrInfo.duplicates := dupIgnore;
-  getRule(klausSynRuleRoot);
+  getRule(fRootName);
 end;
 
 destructor tKlausSyntax.destroy;
@@ -754,20 +760,12 @@ begin
   else result := @fLexInfo[fLexIdx];
 end;
 
-function tKlausSyntax.getCurLine: integer;
+function tKlausSyntax.getCurPoint: tSrcPoint;
 var
   li: pKlausLexInfo;
 begin
   li := getCurLexInfo;
-  if assigned(li) then result := li^.line else result := 1;
-end;
-
-function tKlausSyntax.getCurPos: integer;
-var
-  li: pKlausLexInfo;
-begin
-  li := getCurLexInfo;
-  if assigned(li) then result := li^.pos else result := 1;
+  if assigned(li) then result := srcPoint(li^) else result := zeroSrcPt;
 end;
 
 function tKlausSyntax.getLexCount: integer;
@@ -924,9 +922,9 @@ var
 begin
   if assigned(fTree) then freeAndNil(fTree);
   fNowMatching := nil;
-  getRule(klausSynRuleRoot).match(true);
+  getRule(fRootName).match(true);
   li := nextLexInfo;
-  if li.lexem <> klxEOF then raise eKlausError.create(ercTextAfterEnd, li.line, li.pos);
+  if li.lexem <> klxEOF then raise eKlausError.create(ercTextAfterEnd, srcPoint(li));
 end;
 
 { tKlausSynGroup }
@@ -998,7 +996,7 @@ begin
   until not (fMultiple and found);
   if not fOptional and not result and require then begin
     fSyntax.lastLexInfo;
-    raise eKlausError.create(ercSyntaxError, fSyntax.curLine, fSyntax.curPos);
+    raise eKlausError.create(ercSyntaxError, fSyntax.curPoint);
   end;
 end;
 
@@ -1021,7 +1019,7 @@ begin
   if result then
     fSyntax.addMatchedLexem
   else begin
-    if require then raise eKlausError.create(ercSyntaxError, li.line, li.pos)
+    if require then raise eKlausError.create(ercSyntaxError, srcPoint(li))
     else fSyntax.prevLexInfo;
   end;
   logln('syntax', ' >> %s ("%s")'#10, [result, li.text]);
@@ -1051,7 +1049,7 @@ begin
   if result then
     fSyntax.addMatchedLexem
   else begin
-    if require then raise eKlausError.create(ercSyntaxError, li.line, li.pos)
+    if require then raise eKlausError.create(ercSyntaxError, srcPoint(li))
     else fSyntax.prevLexInfo;
   end;
   logln('syntax', ' >> %s ("%s")'#10, [result, li.text]);
@@ -1081,7 +1079,7 @@ begin
   if result then
     fSyntax.addMatchedLexem
   else begin
-    if require then raise eKlausError.create(ercSyntaxError, li.line, li.pos)
+    if require then raise eKlausError.create(ercSyntaxError, srcPoint(li))
     else fSyntax.prevLexInfo;
   end;
   logln('syntax', ' >> %s ("%s")'#10, [result, li.text]);
@@ -1425,7 +1423,7 @@ begin
   setLexInfo('', klslKlausSym, li);
   repeat
     c := nextChar;
-    if EOF then raise eKlausError.create(ercQuoteNotClosed, line, pos);
+    if EOF then raise eKlausError.create(ercQuoteNotClosed, srcPoint(fileName, line, pos));
     if c = '"' then begin
       c := nextChar;
       if c = '"' then li.value += c

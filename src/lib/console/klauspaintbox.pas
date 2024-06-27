@@ -552,12 +552,12 @@ end;
 
 procedure tKlausCustomCanvasLink.copyFrom(source: tKlausCanvasLink; x1, y1, x2, y2: integer);
 begin
-  raise eKlausError.createFmt(ercGraphicOperationNA, 0, 0, [strGraphicWindow]);
+  raise eKlausError.createFmt(ercGraphicOperationNA, zeroSrcPt, [strGraphicWindow]);
 end;
 
 procedure tKlausCustomCanvasLink.loadFromFile(const fileName: string);
 begin
-  raise eKlausError.createFmt(ercGraphicOperationNA, 0, 0, [strGraphicWindow]);
+  raise eKlausError.createFmt(ercGraphicOperationNA, zeroSrcPt, [strGraphicWindow]);
 end;
 
 procedure tKlausCustomCanvasLink.saveToFile(const fileName: string);
@@ -610,7 +610,7 @@ constructor tKlausPaintBoxLink.create(aRuntime: tKlausRuntime; const cap: string
 begin
   inherited create(aRuntime, cap);
   fEventQueue := tKlausPaintBoxEventQueue.create(self);
-  if not assigned(createWindowMethod) then raise eKlausError.create(ercCanvasUnavailable, 0, 0);
+  if not assigned(createWindowMethod) then raise eKlausError.create(ercCanvasUnavailable, zeroSrcPt);
   fTmpStr := cap;
   runtime.synchronize(@syncCreatePaintBox);
 end;
@@ -763,7 +763,7 @@ end;
 procedure tKlausPictureLink.canvasRequired;
 begin
   if assigned(picture.graphic) and not (picture.graphic is tBitmap) then
-    raise eKlausError.createFmt(ercGraphicOperationNA, 0, 0, [picture.graphic.mimeType])
+    raise eKlausError.createFmt(ercGraphicOperationNA, zeroSrcPt, [picture.graphic.mimeType])
     at get_caller_addr(get_frame);
 end;
 
@@ -934,7 +934,7 @@ end;
 
 function tKlausEventQueue.peek(idx: integer): tKlausEvent;
 begin
-  if (idx < 0) or (idx >= count) then raise eKlausError.createFmt(ercInvalidListIndex, 0, 0, [idx]);
+  if (idx < 0) or (idx >= count) then raise eKlausError.createFmt(ercInvalidListIndex, zeroSrcPt, [idx]);
   result := fBuffer[fHead + idx];
 end;
 
@@ -1218,7 +1218,7 @@ function tKlausPaintBoxEventQueue.eventPeek(index: integer = 0): tKlausEvent;
 begin
   lock;
   try
-    if fQueue = nil then raise eKlausError.createFmt(ercInvalidListIndex, 0, 0, [index]);
+    if fQueue = nil then raise eKlausError.createFmt(ercInvalidListIndex, zeroSrcPt, [index]);
     result := fQueue.peek(index);
   finally
     unlock;
