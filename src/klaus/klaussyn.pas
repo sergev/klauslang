@@ -251,9 +251,6 @@ const
     (name: 'control_structure';
     def:   '(<if> | <for> | <for_each> | <while> | <repeat> | <case>)'),
 
-    //(name: 'with';
-    //def:   '`внутри` <var_path> ":" <statement>'),
-
     (name: 'if';
     def:   '`если` <expression> `то` <statement> [`иначе` <statement>]'),
 

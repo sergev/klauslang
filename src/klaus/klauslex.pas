@@ -166,8 +166,7 @@ type
     kkwdNot,
     kkwdAnd,
     kkwdOr,
-    kkwdXor,
-    kkwdWith
+    kkwdXor
   );
 
 type
