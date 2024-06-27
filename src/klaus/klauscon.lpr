@@ -51,7 +51,7 @@ resourcestring
   strVersion = 'Версия %s';
   strRuntimeError = 'Исключение %s';
   strKlausException = '%s: %s';
-  strAtLinePos = 'Строка %d, символ %d.';
+  strAtLinePos = 'В файле "%s" (строка %d, символ %d).';
   strDeveloper = 'Разработчик %s';
   strUsage = 'Использование: %s <имя-файла> [параметры]'#10+
     '    имя-файла -- имя исходного файла Клаус, содержащего выполняемую программу'#10+
@@ -136,21 +136,16 @@ end;
 procedure tKlausApplication.displayException(e: tObject);
 var
   s: string;
-  l: integer = 0;
-  p: integer = 0;
+  pt: tSrcPoint;
 begin
   s := e.className;
   if e is eKlausLangException then s := (e as eKlausLangException).message
   else if e is exception then s += ': ' + (e as exception).message;
   writeln(stderr, format(strRuntimeError, [s]));
-  if (e is eKlausError) then begin
-    l := (e as eKlausError).line;
-    p := (e as eKlausError).pos;
-  end else if (e is eKlausLangException) then begin
-    l := (e as eKlausLangException).line;
-    p := (e as eKlausLangException).pos;
-  end;
-  if (p > 0) then writeln(stderr, format(strAtLinePos, [l, p]));
+  if (e is eKlausError) then pt := (e as eKlausError).point
+  else if (e is eKlausLangException) then pt := (e as eKlausLangException).point
+  else pt := zeroSrcPt;
+  if not srcPointEmpty(pt) then writeln(stderr, format(strAtLinePos, [pt.fileName, pt.line, pt.pos]));
 end;
 
 procedure tKlausApplication.writeHelp;
@@ -185,7 +180,7 @@ begin
   try
     if paramCount < 1 then begin
       writeHelp;
-      raise eKlausError.create(ercMissingProgramFilename, 0, 0);
+      raise eKlausError.create(ercMissingProgramFilename, zeroSrcPt);
     end;
     try
       if paramCount >= 2 then begin

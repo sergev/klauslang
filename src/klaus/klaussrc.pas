@@ -4945,7 +4945,6 @@ var
   t: tKlausSimpleType;
   n: tKlausSrcNodeRule;
   syn: tKlausSyntax;
-  e: eKlausError;
 begin
   fDestroying := false;
   inherited create;
