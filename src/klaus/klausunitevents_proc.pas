@@ -24,7 +24,7 @@ unit KlausUnitEvents_Proc;
 interface
 
 uses
-  Types, Classes, SysUtils, U8, KlausErr, KlausLex, KlausDef, KlausSyn, KlausSrc,
+  Classes, SysUtils, KlausErr, KlausLex, KlausDef, KlausSyn, KlausSrc,
   KlausUnitSystem, KlausUnitEvents;
 
 type
@@ -89,7 +89,7 @@ type
 implementation
 
 uses
-  Math, LCLIntf, Graphics, GraphType, GraphUtils, KlausUtils;
+  LCLIntf, Graphics, GraphType, GraphUtils, KlausUtils;
 
 resourcestring
   strEventQueue = 'источник событий';

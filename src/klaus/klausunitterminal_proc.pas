@@ -24,7 +24,7 @@ unit KlausUnitTerminal_Proc;
 interface
 
 uses
-  Types, Classes, SysUtils, U8, KlausErr, KlausLex, KlausDef, KlausSyn, KlausSrc,
+  Classes, SysUtils, U8, KlausErr, KlausLex, KlausDef, KlausSyn, KlausSrc,
   KlausUnitSystem, KlausUnitTerminal;
 
 type
@@ -224,7 +224,7 @@ type
 implementation
 
 uses
-  Math, LCLIntf, Graphics, GraphType, GraphUtils, KlausUtils;
+  LCLIntf, Graphics, GraphType, GraphUtils, KlausUtils;
 
 const
   klausTermProcStream: tHandle = 1;

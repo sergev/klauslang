@@ -24,7 +24,7 @@ unit KlausUnitGraphics_Proc;
 interface
 
 uses
-  Types, Classes, SysUtils, U8, KlausErr, KlausLex, KlausDef, KlausSyn, KlausSrc,
+  Types, Classes, SysUtils, KlausErr, KlausLex, KlausDef, KlausSyn, KlausSrc,
   KlausUnitSystem, KlausUnitGraphics;
 
 type

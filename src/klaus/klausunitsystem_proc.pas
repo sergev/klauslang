@@ -24,7 +24,7 @@ unit KlausUnitSystem_Proc;
 interface
 
 uses
-  Types, Classes, SysUtils, U8, KlausErr, KlausLex, KlausDef, KlausSyn, KlausSrc, KlausUnitSystem;
+  Classes, SysUtils, U8, KlausErr, KlausLex, KlausDef, KlausSyn, KlausSrc, KlausUnitSystem;
 
 type
   // процедура уничтожить(вв о: объект);
