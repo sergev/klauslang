@@ -28,13 +28,14 @@ uses
   {$IFDEF HASAMIGA}
   athreads,
   {$ENDIF}
-  Classes, SysUtils, Interfaces, // this includes the LCL widgetset
-  Forms, KlausGlobals, FormMain, FrameEdit, FrameDebugView, FormScene,
-  KlausConsole, FrameDebugVariables, FrameDebugCallStack, DlgCmdLineArgs,
-  KlausUnitSystem_Proc, FrameDebugBreakpoints, FrameDebugWatches,
+  Classes, SysUtils, Interfaces, Forms, KlausGlobals, FormMain, FrameEdit,
+  FrameDebugView, FormScene, KlausConsole, FrameDebugVariables,
+  FrameDebugCallStack, DlgCmdLineArgs, FrameDebugBreakpoints, FrameDebugWatches,
   DlgSearchReplace, KlausUtils, KlausDef, FormSplash, KlausConKeys, DlgOptions,
-  DlgEvaluate, FrameEditorOptions, FrameConsoleOptions, KlausPaintBox;
-  { you can add units after this }
+  DlgEvaluate, FrameEditorOptions, FrameConsoleOptions, KlausPaintBox,
+  KlausUnitSystem, KlausUnitSystem_Proc, KlausUnitTerminal,
+  KlausUnitTerminal_Proc, KlausUnitFiles, KlausUnitFiles_Proc,
+  KlausUnitGraphics, KlausUnitGraphics_Proc, KlausUnitEvents, KlausUnitEvents_Proc;
 
 {$R *.res}
 

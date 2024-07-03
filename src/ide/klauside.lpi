@@ -298,6 +298,46 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="KlausPaintBox"/>
       </Unit>
+      <Unit>
+        <Filename Value="../klaus/klausunittermio.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="KlausUnitTermIO"/>
+      </Unit>
+      <Unit>
+        <Filename Value="../klaus/klausunittermio_proc.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="KlausUnitTermIO_Proc"/>
+      </Unit>
+      <Unit>
+        <Filename Value="klausunitfiles.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="KlausUnitFiles"/>
+      </Unit>
+      <Unit>
+        <Filename Value="klausunitfiles_proc.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="KlausUnitFiles_Proc"/>
+      </Unit>
+      <Unit>
+        <Filename Value="../klaus/klausunitgraphics.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="KlausUnitGraphics"/>
+      </Unit>
+      <Unit>
+        <Filename Value="../klaus/klausunitgraphics_proc.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="KlausUnitGraphics_Proc"/>
+      </Unit>
+      <Unit>
+        <Filename Value="../klaus/klausunitevents.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="KlausUnitEvents"/>
+      </Unit>
+      <Unit>
+        <Filename Value="../klaus/klausunitevents_proc.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="KlausUnitEvents_Proc"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

@@ -215,7 +215,7 @@ begin
   else pt := zeroSrcPt;
   if not srcPointEmpty(pt) then begin
     fConsole.write(format(strAtLinePos, [pt.fileName, pt.line, pt.pos])+#10);
-    mainForm.showErrorInfo(s, pt, false);
+    if pt.fileName <> '' then mainForm.showErrorInfo(s, pt, false);
   end;
 end;
 

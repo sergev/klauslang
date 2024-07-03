@@ -134,6 +134,8 @@ const
   ercUntypedCompoundLiteral = 84;
   ercDuplicateMemberLiteral = 85;
   ercWithStructOnly         = 86;
+  ercUnimplemented          = 87;
+  ercUnitNotFound           = 88;
 
 const
   // Классификация кодов eKlausError для трансляции в исключения языка
@@ -171,7 +173,7 @@ const
     ercExceptBlockOnly, ercMixedExceptBlock, ercExceptAnyMustBeLast, ercExceptAlreadyHandled,
     ercDuplicateCaseLabel, ercIllegalExpression, ercAccuracyNotApplicable, ercNegativeAccuracy,
     ercConstOutputParam, ercUndefinedForward, ercDuplicateForward, ercWrongForwardSignature,
-    ercUntypedCompoundLiteral, ercDuplicateMemberLiteral, ercWithStructOnly],
+    ercUntypedCompoundLiteral, ercDuplicateMemberLiteral, ercWithStructOnly, ercUnitNotFound],
 
     //ksxInvalidChar
     [ercInvalidCharAtIndex, ercInvalidStringIndex],
@@ -185,7 +187,7 @@ const
     [ercArgumentIsNaN, ercArgumentIsNotFinite],
 
     //ksxInternalError
-    [ercUnexpectedSyntax]
+    [ercUnexpectedSyntax, ercUnimplemented]
   );
 
 type
@@ -305,6 +307,8 @@ resourcestring
   errUntypedCompoundLiteral = 'Не определён тип данных для составного значения.';
   errDuplicateMemberLiteral = 'Повторное присваивание значения полю структуры: "%s".';
   errWithStructOnly = 'Недопустимый тип данных. Требуется структура.';
+  errUnimplemented = 'Эта возможность пока не реализована.';
+  errUnitNotFound = 'Модуль "%s" не найден.';
 
 { Globals }
 
@@ -428,6 +432,8 @@ begin
     ercUntypedCompoundLiteral: result := errUntypedCompoundLiteral;
     ercDuplicateMemberLiteral: result := errDuplicateMemberLiteral;
     ercWithStructOnly: result := errWithStructOnly;
+    ercUnimplemented: result := errUnimplemented;
+    ercUnitNotFound: result := errUnitNotFound;
   end;
 end;
 

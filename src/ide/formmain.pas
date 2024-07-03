@@ -665,8 +665,11 @@ procedure tMainForm.showErrorInfo(const msg: string; pt: tSrcPoint; focus: boole
 var
   fr: tEditFrame;
 begin
-  fr := openEditFrame(pt.fileName, focus);
-  if fr <> nil then fr.showErrorInfo(msg, pt.line, pt.pos, focus);
+  if pt.fileName <> '' then begin
+    fr := openEditFrame(pt.fileName, focus);
+    if fr <> nil then fr.showErrorInfo(msg, pt.line, pt.pos, focus);
+  end else
+    messageDlg(msg, mtError, [mbOK], 0);
 end;
 
 procedure tMainForm.actFileNewExecute(sender: TObject);
