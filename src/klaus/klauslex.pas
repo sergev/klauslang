@@ -166,7 +166,9 @@ type
     kkwdNot,
     kkwdAnd,
     kkwdOr,
-    kkwdXor
+    kkwdXor,
+    kkwdCycle,
+    kkwdTimes
   );
 
 type
@@ -445,7 +447,10 @@ const
     (s: 'не'; k: kkwdNot),
     (s: 'и'; k: kkwdAnd),
     (s: 'или'; k: kkwdOr),
-    (s: 'либо'; k: kkwdXor)
+    (s: 'либо'; k: kkwdXor),
+    (s: 'повторить'; k: kkwdCycle),
+    (s: 'раз'; k: kkwdTimes),
+    (s: 'раза'; k: kkwdTimes)
   );
 
 const

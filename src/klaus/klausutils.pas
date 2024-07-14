@@ -582,7 +582,6 @@ begin
   if (idx < 0) or (idx >= l) then raise eKlausError.createFmt(ercInvalidStringIndex, at, [idx]);
   if not u8Start(pChar(s)+idx) then raise eKlausError.createFmt(ercInvalidCharAtIndex, at, [idx]);
   result := klausStrToChar(pChar(s)+idx);
-  if result = 0 then raise eKlausError.createFmt(ercInvalidCharAtIndex, at, [idx]);
 end;
 
 function klstrPart(const s: tKlausString; idx, count: tKlausInteger; const at: tSrcPoint): tKlausString;

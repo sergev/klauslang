@@ -29,7 +29,8 @@ uses
   Windows,
   {$ENDIF}
   Classes, SysUtils, CustApp, FileInfo, KlausUtils, KlausLex, KlausDef, KlausErr, KlausSrc,
-  KlausUnitSystem, KlausUnitSystem_Proc;
+  KlausUnitSystem, KlausUnitSystem_Proc, KlausUnitTerminal, KlausUnitTerminal_Proc,
+  KlausUnitFiles, KlausUnitFiles_Proc;
 
 type
   tKlausApplication = class(tCustomApplication)

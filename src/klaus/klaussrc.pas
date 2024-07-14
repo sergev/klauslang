@@ -22,7 +22,6 @@ unit KlausSrc;
 //todo: Добавить в VarPath возможность ссылки на модуль (точнее, путь к области видимости)
 //todo: Запретить инструкцию ВЕРНУТЬ в секциях подготовки и завершения модулей
 
-//todo: Обращение к символу в строке по индексу
 //todo: процедурные переменные
 //todo: диапазоны в инструкции выбора
 //todo: обращение к элементам составных констант в разделе определений
@@ -707,8 +706,9 @@ type
       fDecl: tKlausValueDecl;
       fSteps: tKlausVarPathSteps;
       fTypeDef: tKlausTypeDef;
+      fReadOnly: boolean;
 
-      function getIsConstant: boolean;
+      function getReadOnly: boolean;
       function getStepCount: integer;
       function getIsVariable: boolean;
       function getPoint: tSrcPoint;
@@ -721,7 +721,7 @@ type
       property steps[idx: integer]: tKlausVarPathStep read getSteps;
       property point: tSrcPoint read getPoint;
       property isVariable: boolean read getIsVariable;
-      property isConstant: boolean read getIsConstant;
+      property readOnly: boolean read getReadOnly;
 
       constructor create(aContext: tKlausStatement; b: tKlausSyntaxBrowser);
       destructor  destroy; override;
@@ -812,7 +812,7 @@ type
       destructor  destroy; override;
       function  resultTypeDef: tKlausTypeDef; override;
       function  isVarPath: boolean;
-      function  isConstPath: boolean;
+      function  isReadOnly: boolean;
       function  isCall: boolean;
       function  isCompound: boolean;
       function  acquireVarValue: tKlausVarValue; override;
@@ -1285,6 +1285,21 @@ type
 type
   // Базовый класс инструкции цикла
   tKlausStmtLoop = class(tKlausStmtCtlStruct);
+
+type
+  // Инструкция цикла с неявным счётчиком
+  tKlausStmtCycle = class(tKlausStmtLoop)
+    private
+      fExpr: tKlausExpression;
+      fBody: tKlausStatement;
+    public
+      property expr: tKlausExpression read fExpr;
+      property body: tKlausStatement read fBody;
+
+      constructor create(aOwner: tKlausStmtCtlStruct; aPoint: tSrcPoint; b: tKlausSyntaxBrowser);
+      destructor  destroy; override;
+      procedure run(frame: tKlausStackFrame); override;
+  end;
 
 type
   // Инструкция цикла со счётчиком
@@ -1910,8 +1925,7 @@ threadvar
 implementation
 
 uses
-  Math, KlausUtils, KlausUnitSystem, KlausUnitTerminal, KlausUnitFiles, KlausUnitGraphics,
-  KlausUnitEvents
+  Math, KlausUtils, KlausUnitSystem
   {$ifdef enableLogging}, KlausLog{$endif};
 
 const
@@ -2183,6 +2197,7 @@ var
   expr: tKlausExpression;
 begin
   inherited create;
+  fReadOnly := false;
   fContext := aContext;
   repeat
     b.next;
@@ -2202,6 +2217,7 @@ begin
           raise eKlausError.createFmt(ercValueDeclRequired, srcPoint(li), [li.text]);
         fDecl := d as tKlausValueDecl;
       end;
+      fReadOnly := fDecl is tKlausConstDecl;
     end;
     b.next;
     while b.check(klsBktOpen, false) do begin
@@ -2236,9 +2252,10 @@ begin
   result := length(fSteps);
 end;
 
-function tKlausVarPath.getIsConstant: boolean;
+function tKlausVarPath.getReadOnly: boolean;
 begin
-  result := decl is tKlausConstDecl;
+  resultTypeDef;
+  result := fReadOnly;
 end;
 
 function tKlausVarPath.getIsVariable: boolean;
@@ -2276,7 +2293,12 @@ begin
       result := m.dataType;
     end;
     for i := 0 to length(steps[idx].indices)-1 do begin
-      if result is tKlausTypeDefArray then begin
+      if result.dataType = kdtString then begin
+        if steps[idx].indices[i].resultType <> kdtInteger then
+          raise eKlausError.create(ercIndexMustBeInteger, steps[idx].point);
+        result := decl.source.simpleTypes[kdtChar];
+        fReadOnly := true;
+      end else if result is tKlausTypeDefArray then begin
         if steps[idx].indices[i].resultType <> kdtInteger then
           raise eKlausError.create(ercIndexMustBeInteger, steps[idx].point);
         result := (result as tKlausTypeDefArray).elmtType;
@@ -2297,13 +2319,15 @@ function tKlausVarPath.evaluate(frame: tKlausStackFrame; mode: tKlausVarPathMode
 var
   i: integer;
   idx: integer = 0;
+  c: tKlausChar;
+  s: tKlausString;
   kt: tKlausSimpleType;
   sv: tKlausSimpleValue;
 begin
   if parent <> nil then
     result := parent.evaluate(frame, mode, allowCalls)
   else if decl is tKlausConstDecl then begin
-    if mode = vpmAsgnTarget then raise eKlausError.create(ercConstAsgnTarget, point);
+    if mode = vpmAsgnTarget then raise eKlausError.create(ercIllegalAsgnTarget, point);
     result := (decl as tKlausConstDecl).value;
   end else
     result := frame.varByDecl(decl as tKlausVarDecl, point).value;
@@ -2314,7 +2338,21 @@ begin
       result := (result as tKlausVarValueStruct).getMember(steps[idx].name, steps[idx].point);
     end;
     for i := 0 to length(steps[idx].indices)-1 do begin
-      if result is tKlausVarValueArray then begin
+      if result.dataType.dataType = kdtString then begin
+        if mode = vpmAsgnTarget then raise eKlausError.create(ercIllegalAsgnTarget, steps[idx].point);
+        sv := steps[idx].indices[i].evaluate(frame, allowCalls);
+        if sv.dataType <> kdtInteger then
+          raise eKlausError.create(ercIndexMustBeInteger, steps[idx].point);
+        s := (result as tKlausVarValueSimple).simple.sValue;
+        if mode = vpmCheckExist then begin
+          if (sv.iValue < 0) or (sv.iValue >= length(s)) then exit(nil);
+          if not u8Start(pChar(s) + sv.iValue) then exit(nil);
+        end;
+        c := klstrChar(s, sv.iValue, steps[idx].point);
+        result := tKlausVarValueSimple.create(decl.source.simpleTypes[kdtChar]);
+        try (result as tKlausVarValueSimple).setSimple(klausSimple(c), steps[idx].point);
+        finally frame.deferRelease(result); end;
+      end else if result is tKlausVarValueArray then begin
         sv := steps[idx].indices[i].evaluate(frame, allowCalls);
         if sv.dataType <> kdtInteger then
           raise eKlausError.create(ercIndexMustBeInteger, steps[idx].point);
@@ -3101,10 +3139,10 @@ begin
   result := (left is tKlausOpndVarPath) and (left.uop = kuoInvalid) and (right = nil);
 end;
 
-function tKlausExpression.isConstPath: boolean;
+function tKlausExpression.isReadOnly: boolean;
 begin
-  result := (left is tKlausOpndVarPath) and (left.uop = kuoInvalid) and (right = nil);
-  if result then result := (left as tKlausOpndVarPath).path.isConstant;
+  if not isVarPath then result := true
+  else result := (left as tKlausOpndVarPath).path.readOnly;
 end;
 
 function  tKlausExpression.isCall: boolean;
@@ -3246,7 +3284,7 @@ begin
   b.next;
   b.check('var_path');
   fDest := tKlausVarPath.create(self, b);
-  if fDest.isConstant then raise eKlausError.create(ercConstAsgnTarget, fDest.point);
+  if fDest.readOnly then raise eKlausError.create(ercIllegalAsgnTarget, fDest.point);
   dt := fDest.resultTypeDef;
   b.next;
   b.check('assign_symbol');
@@ -4049,6 +4087,60 @@ begin
   end;
 end;
 
+{ tKlausStmtCycle }
+
+constructor tKlausStmtCycle.create(aOwner: tKlausStmtCtlStruct; aPoint: tSrcPoint; b: tKlausSyntaxBrowser);
+begin
+  inherited create(aOwner, aPoint);
+  b.next;
+  b.check(kkwdCycle);
+  b.next;
+  b.check('expression');
+  fExpr := routine.createExpression(self, b);
+  if fExpr.resultType <> kdtInteger then raise eKlausError.create(ercTypeMismatch, fExpr.point);
+  b.next;
+  b.check(kkwdTimes);
+  b.next;
+  b.check('statement');
+  fBody := routine.createStatement(self, b);
+end;
+
+destructor tKlausStmtCycle.destroy;
+begin
+  freeAndNil(fExpr);
+  freeAndNil(fBody);
+  inherited destroy;
+end;
+
+procedure tKlausStmtCycle.run(frame: tKlausStackFrame);
+var
+  i: tKlausInteger;
+  sv: tKlausSimpleValue;
+begin
+  klausDebuggerStep(frame, expr.point);
+  try
+    try
+      sv := expr.evaluate(frame, true);
+      if sv.dataType <> kdtInteger then raise eKlausError.create(ercTypeMismatch, expr.point);
+      try
+        for i := 1 to sv.iValue do try
+          body.run(frame);
+        except
+          on eKlausContinue do;
+          else raise;
+        end;
+      except
+        on eKlausBreak do;
+        else raise;
+      end;
+    except
+      klausTranslateException(frame, point);
+    end;
+  finally
+    frame.releaseDeferred;
+  end;
+end;
+
 { tKlausStmtFor }
 
 constructor tKlausStmtFor.create(aOwner: tKlausStmtCtlStruct; aPoint: tSrcPoint; b: tKlausSyntaxBrowser);
@@ -4187,7 +4279,6 @@ begin
   fDict := path;
   b.next;
   if b.check(kkwdFrom, false) then begin
-    if pdt is tKlausTypeDefSimple then raise eKlauserror.create(ercIllegalExpression, srcPoint(b.lex));
     b.next;
     b.check('expression');
     fStart := routine.createExpression(self, b);
@@ -4308,25 +4399,47 @@ begin
         if kv.dataType.dataType <> kdtInteger then raise eKlausError.createFmt(ercForEachKeyTypeMismatch, key.point, [klausDataTypeCaption[kdtInteger]]);
         s := (dv as tKlausVarValueSimple).simple.sValue;
         if s <> '' then try
-          p := pChar(s);
-          if reverse then begin
-            p += length(s);
-            while p > pChar(s) do try
-              p := u8SkipCharsLeft(p, pChar(s), 1);
-              kv.setSimple(klausSimple(p-pChar(s)), key.point);
-              body.run(frame);
-            except
-              on eKlausContinue do;
-              else raise;
-            end
+          if start = nil then begin
+            if reverse then begin
+              p := u8SkipCharsLeft(s, length(s)+1, 1);
+              strt := p-pChar(s);
+            end else
+              strt := 0;
           end else begin
-            while p^ <> #0 do try
-              kv.setSimple(klausSimple(p-pChar(s)), key.point);
-              body.run(frame);
-              p := u8SkipChars(p, 1);
-            except
-              on eKlausContinue do;
-              else raise;
+            sv := start.evaluate(frame, true);
+            if sv.dataType <> kdtInteger then raise eKlausError.create(ercTypeMismatch, start.point);
+            strt := sv.iValue;
+          end;
+          if reverse then begin
+            if strt > length(s) then
+              raise eKlausError.createFmt(ercInvalidStringIndex, start.point, [strt]);
+            if strt >= 0 then begin
+              p := pChar(s) + strt;
+              if not u8Start(p) then raise eKlausError.createFmt(ercInvalidCharAtIndex, start.point, [strt]);
+              while p >= pChar(s) do try
+                kv.setSimple(klausSimple(p-pChar(s)), key.point);
+                body.run(frame);
+                if p = pChar(s) then break;
+                p := u8SkipCharsLeft(p, pChar(s), 1);
+              except
+                on eKlausContinue do;
+                else raise;
+              end;
+            end;
+          end else begin
+            if strt < 0 then
+              raise eKlausError.createFmt(ercInvalidStringIndex, start.point, [strt]);
+            if strt < length(s) then begin
+              p := pChar(s) + strt;
+              if not u8Start(p) then raise eKlausError.createFmt(ercInvalidCharAtIndex, start.point, [strt]);
+              while p^ <> #0 do try
+                kv.setSimple(klausSimple(p-pChar(s)), key.point);
+                body.run(frame);
+                p := u8SkipChars(p, 1);
+              except
+                on eKlausContinue do;
+                else raise;
+              end;
             end;
           end;
         except
@@ -5975,10 +6088,7 @@ begin
   if length(expr) <> paramCount then raise eKlausError.createFmt(ercWrongNumberOfParams, at, [length(expr), intToStr(paramCount)]);
   for i := 0 to length(expr)-1 do begin
     outp := params[i].mode <> kpmInput;
-    if outp then begin
-      if not expr[i].isVarPath then raise eKlausError.create(ercInvalidOutputParam, expr[i].point);
-      if (expr[i].left as tKlausOpndVarPath).path.isConstant then raise eKlausError.create(ercConstOutputParam, expr[i].point);
-    end;
+    if outp then if expr[i].isReadOnly then raise eKlausError.create(ercInvalidOutputParam, expr[i].point);
     if not params[i].dataType.canAssign(expr[i].resultTypeDef, outp) then raise eKlausError.create(ercTypeMismatch, expr[i].point);
   end;
 end;
@@ -6636,7 +6746,7 @@ end;
 
 function tKlausRoutine.createStmtControlStructure(aOwner: tKlausStmtCtlStruct; b: tKlausSyntaxBrowser): tKlausStmtCtlStruct;
 const
-  stmtRule: array of String = ('if', 'for', 'for_each', 'while', 'repeat', 'case');
+  stmtRule: array of String = ('if', 'for', 'for_each', 'while', 'repeat', 'case', 'cycle');
 begin
   b.next;
   case b.check(stmtRule, false) of
@@ -6646,6 +6756,7 @@ begin
     3: result := tKlausStmtWhile.create(aOwner, srcPoint(b.lex), b);
     4: result := tKlausStmtRepeat.create(aOwner, srcPoint(b.lex), b);
     5: result := tKlausStmtCase.create(aOwner, srcPoint(b.lex), b);
+    6: result := tKlausStmtCycle.create(aOwner, srcPoint(b.lex), b);
   else
     raise eKlausError.create(ercUnexpectedSyntax, srcPoint(b.lex));
   end;
@@ -6970,7 +7081,7 @@ var
   dv, sv: tKlausVarValue;
   ssv: tKlausSimpleValue;
 begin
-  if not (dest.decl is tKlausVarDecl) then raise eKlausError.create(ercConstAsgnTarget, dest.point);
+  if not (dest.decl is tKlausVarDecl) then raise eKlausError.create(ercIllegalAsgnTarget, dest.point);
   dvar := self.varByDecl(dest.decl as tKlausVarDecl, dest.point);
   sv := source.acquireVarValue(self, true);
   if sv <> nil then deferRelease(sv);
@@ -7051,11 +7162,13 @@ procedure tKlausStackFrame.call(
 
   function customEvaluate(expr: tKlausExpression; mode: tKlausProcParamMode): tKlausVarValue;
   var
+    vp: tKlausVarPath;
     ssv: tKlausSimpleValue;
   begin
     if (mode <> kpmInput) then begin
-      if not expr.isVarPath then raise eKlausError.create(ercInvalidOutputParam, expr.point);
-      if expr.isConstPath then raise eKlausError.create(ercConstOutputParam, expr.point);
+      if expr.isReadOnly then raise eKlausError.create(ercInvalidOutputParam, expr.point);
+      vp := (expr.left as tKlausOpndVarPath).path;
+      self.varByDecl(vp.decl as tKlausVarDecl, expr.point).ownValueNeeded;
     end;
     result := expr.acquireVarValue(self, true);
     try

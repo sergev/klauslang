@@ -80,7 +80,7 @@ const
   ercStructMemberNotFound   = 30;
   ercCannotReturnValue      = 31;
   ercInvalidArrayIndex      = 32;
-  ercConstAsgnTarget        = 33;
+  ercIllegalAsgnTarget      = 33;
   ercIllegalAsgnOperator    = 34;
   ercInvalidDictIndex       = 35;
   ercInvalidDictKey         = 36;
@@ -168,7 +168,7 @@ const
     ercInvalidInteger, ercInvalidFloat, ercInvalidHexadecimal, ercInvalidCharCode, ercSyntaxError,
     ercTextAfterEnd, ercDuplicateName, ercTypeNameRequired, ercMomentNotClosed, ercInvalidMoment,
     ercLoopCtlOutsideLoop, ercNotConstantValue, ercValueDeclRequired, ercIllegalIndexQualifier,
-    ercIllegalFieldQualifier, ercCannotReturnValue, ercConstAsgnTarget, ercSubroutineRequired,
+    ercIllegalFieldQualifier, ercCannotReturnValue, ercIllegalAsgnTarget, ercSubroutineRequired,
     ercMustReturnValue, ercWrongNumberOfParams, ercInvalidOutputParam, ercExceptionRequired,
     ercExceptBlockOnly, ercMixedExceptBlock, ercExceptAnyMustBeLast, ercExceptAlreadyHandled,
     ercDuplicateCaseLabel, ercIllegalExpression, ercAccuracyNotApplicable, ercNegativeAccuracy,
@@ -247,13 +247,13 @@ resourcestring
   errUnOperNotDefined = 'Операция "%s" не определена для операнда "%s".';
   errNotConstantValue = 'Невозможно вычислить значение на этапе компиляции.';
   errValueDeclRequired = 'Требуется имя переменной или константы.';
-  errIllegalIndexQualifier = 'Обращение по индексу допустимо только для массивов и словарей.';
-  errIndexMustBeInteger = 'Индекс массива должен быть целым числом.';
+  errIllegalIndexQualifier = 'Обращение по индексу допустимо только для строк, массивов и словарей.';
+  errIndexMustBeInteger = 'Индекс должен быть целым числом.';
   errIllegalFieldQualifier = 'Обращение к полям допустимо только для структурных типов.';
   errStructMemberNotFound = 'Структура не содержит поля "%s".';
   errCannotReturnValue = 'Процедура не может возвращать значение.';
   errInvalidArrayIndex = 'Индекс массива вне допустимых пределов: %d.';
-  errConstAsgnTarget = 'Невозможно присвоить значение константе.';
+  errIllegalAsgnTarget = 'Недопустимое присваивание.';
   errIllegalAsgnOperator = 'Недопустимый оператор присваивания.';
   errInvalidDictIndex = 'Индекс элемента словаря вне допустимых пределов: %d.';
   errInvalidDictKey = 'Ключ словаря не существует: %s.';
@@ -295,7 +295,7 @@ resourcestring
   errAccuracyNotApplicable = 'Указание точности сравнения допустимо только для дробных чисел и моментов.';
   errNegativeAccuracy = 'Точность сравнения не может быть отрицательным числом.';
   errCallsNotAllowed = 'Вызовы функций не разрешены.';
-  errConstOutputParam = 'Нельзя использовать константу в качестве выходного параметра.';
+  errConstOutputParam = 'Недопустимый выходной параметр.';
   errUndefinedForward = 'Отсутствует реализация для предварительного определения.';
   errDuplicateForward = 'Повторное предварительное определение.';
   errWrongForwardSignature = 'Определение подпрограммы не соответствует предварительному определению.';
@@ -378,7 +378,7 @@ begin
     ercStructMemberNotFound: result := errStructMemberNotFound;
     ercCannotReturnValue: result := errCannotReturnValue;
     ercInvalidArrayIndex: result := errInvalidArrayIndex;
-    ercConstAsgnTarget: result := errConstAsgnTarget;
+    ercIllegalAsgnTarget: result := errIllegalAsgnTarget;
     ercIllegalAsgnOperator: result := errIllegalAsgnOperator;
     ercInvalidDictIndex: result := errInvalidDictIndex;
     ercInvalidDictKey: result := errInvalidDictKey;

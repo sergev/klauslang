@@ -258,7 +258,7 @@ const
     def:   '`когда` >>`любое` `тогда` <statement> ";"'),
 
     (name: 'control_structure';
-    def:   '(<if> | <for> | <for_each> | <while> | <repeat> | <case>)'),
+    def:   '(<if> | <for> | <for_each> | <while> | <cycle> | <repeat> | <case>)'),
 
     (name: 'if';
     def:   '`если` <expression> `то` <statement> [`иначе` <statement>]'),
@@ -271,6 +271,9 @@ const
 
     (name: 'while';
     def:   '`пока` <expression> `цикл` <statement>'),
+
+    (name: 'cycle';
+    def:   '`повторить` <expression> `раз` <statement>'),
 
     (name: 'repeat';
     def:   '`цикл` <statement> `пока` <expression>'),
