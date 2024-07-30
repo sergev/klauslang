@@ -24,7 +24,7 @@ unit KlausUtils;
 interface
 
 uses
-  Classes, Graphics, FpJson, IpHTML, Markdown,
+  Classes, Graphics, FpJson, {$ifdef klauside}IpHTML, Markdown,{$endif}
   {$ifdef windows}Windows,{$else}BaseUnix, TermIO,{$endif}
   SysUtils, U8, KlausLex, KlausDef, KlausErr;
 
@@ -219,7 +219,9 @@ function loadJsonData(const fileName: string): tJsonData;
 
 procedure listFileNames(const searchPath, mask: string; exclAttr: longInt; list: tStrings);
 
+{$ifdef klauside}
 function markdownToHtml(const md: string): tIpHTML;
+{$endif}
 
 function klausGetCourseTaskNames(src: tStream; out course, task: string): boolean;
 
@@ -227,7 +229,9 @@ implementation
 
 uses Math, JsonParser, JsonScanner;
 
+{$ifdef klauside}
 var markdownProcessor: tMarkdownDaringFireball = nil;
+{$endif}
 
 resourcestring
   errInvalidInteger = 'Неверное целое число: "%s".';
@@ -1241,6 +1245,7 @@ begin
   end;
 end;
 
+{$ifdef klauside}
 function markdownToHtml(const md: string): tIpHTML;
 var
   html: string;
@@ -1258,6 +1263,7 @@ begin
     freeAndNil(stream);
   end;
 end;
+{$endif}
 
 function klausGetCourseTaskNames(src: tStream; out course, task: string): boolean;
 var
@@ -1401,6 +1407,8 @@ initialization
   defaultFormatSettings := klausLiteralFormat;
   //testKlstrFormat;
 finalization
+  {$ifdef klauside}
   freeAndNil(markdownProcessor);
+  {$endif}
 end.
 

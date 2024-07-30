@@ -884,8 +884,10 @@ begin
   if courseFrame.visible then begin
     cn := courseFrame.activeCourse;
     tn := courseFrame.activeTask;
-  end else
+  end else begin
     cn := '';
+    tn := '';
+  end;
   showCourseInfo('', '');
   klausPracticum.loadCourses(fPracticumOptions.expandPath(fPracticumOptions.searchPath), msg);
   refreshPracticumMenu;
