@@ -84,9 +84,9 @@ type
 
     function  getCaption: string;
     function  getPosition: integer;
-    function  getStoredHeight: integer;
+    function  getFrameStoredHeight: integer;
     procedure setPosition(val: integer);
-    procedure setStoredHeight(val: integer);
+    procedure setFrameStoredHeight(val: integer);
     procedure setViewType(val: tDebugViewType);
     procedure destroyContent;
     procedure createContent;
@@ -103,7 +103,7 @@ type
     procedure enableDisable;
   published
     property position: integer read getPosition write setPosition;
-    property storedHeight: integer read getStoredHeight write setStoredHeight;
+    property frameStoredHeight: integer read getFrameStoredHeight write setFrameStoredHeight;
   end;
 
 implementation
@@ -204,14 +204,14 @@ begin
   else result := (parent as tCustomFlowPanel).GetControlIndex(self);
 end;
 
-function tDebugViewFrame.getStoredHeight: integer;
+function tDebugViewFrame.getFrameStoredHeight: integer;
 begin
   result := mulDiv(height, designTimePPI, screenInfo.pixelsPerInchX);
 end;
 
-procedure tDebugViewFrame.setStoredHeight(val: integer);
+procedure tDebugViewFrame.setFrameStoredHeight(val: integer);
 begin
-  height := min(val, mainForm.height div 3);
+  height := min(val, screen.height div 3);
 end;
 
 procedure tDebugViewFrame.setPosition(val: integer);

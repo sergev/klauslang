@@ -66,6 +66,9 @@ type
   end;
 
 type
+
+  { tMainForm }
+
   tMainForm = class(tForm)
     actFileNew: TAction;
     actFileOpen: TAction;
@@ -367,6 +370,8 @@ type
     function  getDebugViews: tDebugViewTypes;
     function  getDbgWgtStoredWidth: integer;
     function  getCourseStoredWidth: integer;
+    function  getFormStoredHeight: integer;
+    function  getFormStoredWidth: integer;
     function  getIsRunning: boolean;
     function  getWatchCount: integer;
     function  getWatches(idx: integer): tWatchInfo;
@@ -377,6 +382,8 @@ type
     procedure setActiveFrame(val: tEditFrame; focus: boolean = true);
     procedure setDbgWgtStoredWidth(val: integer);
     procedure setCourseStoredWidth(val: integer);
+    procedure setFormStoredHeight(val: integer);
+    procedure setFormStoredWidth(val: integer);
     procedure setStackFrameIdx(value: integer);
     procedure setRecentFiles(val: tStrings);
     procedure updateRecentMenuItems;
@@ -455,6 +462,8 @@ type
     property debugViews: tDebugViewTypes read getDebugViews write setDebugViews;
     property dbgWgtStoredWidth: integer read getDbgWgtStoredWidth write setDbgWgtStoredWidth;
     property courseStoredWidth: integer read getCourseStoredWidth write setCourseStoredWidth;
+    property formStoredWidth: integer read getFormStoredWidth write setFormStoredWidth;
+    property formStoredHeight: integer read getFormStoredHeight write setFormStoredHeight;
   end;
 
 var
@@ -1495,6 +1504,26 @@ begin
   sbCourse.width := min(val, self.width div 3);
 end;
 
+function tMainForm.getFormStoredWidth: integer;
+begin
+  result := mulDiv(width, designTimePPI, screenInfo.pixelsPerInchX);
+end;
+
+procedure tMainForm.setFormStoredWidth(val: integer);
+begin
+  width := min(val, screen.width);
+end;
+
+function tMainForm.getFormStoredHeight: integer;
+begin
+  result := mulDiv(height, designTimePPI, screenInfo.pixelsPerInchX);
+end;
+
+procedure tMainForm.setFormStoredHeight(val: integer);
+begin
+  height := min(val, screen.height);
+end;
+
 function tMainForm.getIsRunning: boolean;
 begin
   result := scene <> nil;
@@ -1818,12 +1847,12 @@ var
   dvt: tDebugViewType;
 begin
   result :=
-    'Height;Left;Top;Width;WindowState;recentFiles;debugViews;'+
+    'FormStoredHeight;Left;Top;FormStoredWidth;WindowState;recentFiles;debugViews;'+
     'actRunInterceptKeyboard.checked;dbgWgtStoredWidth;courseStoredWidth';
   for dvt := low(dvt) to high(dvt) do begin
     if debugView[dvt] = nil then continue;
     n := debugView[dvt].name;
-    result += ';'+n+'.storedHeight;'+n+'.Position';
+    result += ';'+n+'.frameStoredHeight;'+n+'.Position';
   end;
 end;
 
