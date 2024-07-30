@@ -1511,7 +1511,7 @@ end;
 
 procedure tMainForm.setFormStoredWidth(val: integer);
 begin
-  width := min(val, screen.width);
+  width := val;
 end;
 
 function tMainForm.getFormStoredHeight: integer;
@@ -1521,7 +1521,7 @@ end;
 
 procedure tMainForm.setFormStoredHeight(val: integer);
 begin
-  height := min(val, screen.height);
+  height := val;
 end;
 
 function tMainForm.getIsRunning: boolean;
@@ -1852,7 +1852,7 @@ begin
   for dvt := low(dvt) to high(dvt) do begin
     if debugView[dvt] = nil then continue;
     n := debugView[dvt].name;
-    result += ';'+n+'.frameStoredHeight;'+n+'.Position';
+    result += ';'+n+'.FrameStoredHeight;'+n+'.Position';
   end;
 end;
 

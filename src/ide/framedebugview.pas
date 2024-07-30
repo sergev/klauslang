@@ -76,6 +76,7 @@ type
     procedure sbMoveDownClick(Sender: TObject);
     procedure sbMoveUpClick(Sender: TObject);
   private
+    fStoredHeight: integer;
     fSizing: boolean;
     fSizingPoint: tPoint;
     fPosition: integer;
@@ -149,6 +150,7 @@ end;
 constructor tDebugViewFrame.create(aOwner: tComponent);
 begin
   inherited create(aOwner);
+  fStoredHeight := -1;
   mainForm.addControlStateClient(self);
 end;
 
@@ -189,6 +191,10 @@ end;
 
 procedure tDebugViewFrame.enableDisable;
 begin
+  if fStoredHeight >= 0 then begin
+    height := min(mainForm.height div 3, fStoredHeight);
+    fStoredHeight := -1;
+  end;
   if assigned(fContent) then fContent.invalidateControlState;
 end;
 
@@ -206,12 +212,14 @@ end;
 
 function tDebugViewFrame.getFrameStoredHeight: integer;
 begin
-  result := mulDiv(height, designTimePPI, screenInfo.pixelsPerInchX);
+  result := height;
+  //mulDiv(height, designTimePPI, screenInfo.pixelsPerInchX);
 end;
 
 procedure tDebugViewFrame.setFrameStoredHeight(val: integer);
 begin
-  height := min(val, screen.height div 3);
+  fStoredHeight := val;
+  //height := val;
 end;
 
 procedure tDebugViewFrame.setPosition(val: integer);
