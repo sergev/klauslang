@@ -295,6 +295,25 @@ type
   end;
 
 type
+  tKlausEditLinesReadStream = class(tStream)
+    private
+      fLines: tStrings;
+      fSize: longInt;
+      fPos: tPoint;
+      fAbsPos: longInt;
+      fOnReset: tNotifyEvent;
+    protected
+      procedure reset;
+      function  getSize: int64; override;
+    public
+      property onReset: tNotifyEvent read fOnReset write fOnReset;
+
+      constructor create(aLines: tStrings);
+      function read(var buffer; count: longInt): longInt; override;
+      function seek(offset: longInt; origin: word): longInt; override;
+  end;
+
+type
   tKlausEditStrings = class(tStrings)
     private
       fOwner: tCustomKlausEdit;
@@ -303,6 +322,7 @@ type
       fQuantum: integer;
       fCapacity: integer;
       fEditCount: integer;
+      fReadStream: tKlausEditLinesReadStream;
 
       procedure incCount;
       procedure decCount;
@@ -333,6 +353,7 @@ type
       procedure clear; override;
       procedure delete(index: integer); override;
       procedure insert(index: integer; const s: string); override;
+      function  getReadStream: tStream;
   end;
 
 type
@@ -427,6 +448,7 @@ type
 
       function  getLines: tStrings;
       function  getText: string;
+      function  getTextReadStream: tStream;
       procedure setGutterBevel(val: tKlausEditGutterBevel);
       procedure setGutterColor(val: tColor);
       procedure setLineImages(value: tImageList);
@@ -562,6 +584,7 @@ type
       property selText: string read getSelText;
       property caretPos: tPoint read fSelVariable;
       property tabSize: integer read fTabSize write fTabSize default klausEditDefaultTabSize;
+      property textReadStream: tStream read getTextReadStream;
 
       constructor create(aOwner: tComponent); override;
       destructor  destroy; override;
@@ -1199,11 +1222,133 @@ begin
   end;
 end;
 
+{ tKlausEditLinesReadStream }
+
+procedure tKlausEditLinesReadStream.reset;
+begin
+  fSize := -1;
+  seek(0, soFromBeginning);
+  if assigned(fOnReset) then fOnReset(self);
+end;
+
+function tKlausEditLinesReadStream.getSize: int64;
+var
+  i: integer;
+begin
+  if fSize < 0 then begin
+    fSize := 0;
+    for i := 0 to fLines.count-1 do
+      fSize += length(fLines[i]) + 1;
+  end;
+  result := fSize;
+end;
+
+constructor tKlausEditLinesReadStream.create(aLines: tStrings);
+begin
+  inherited create;
+  fLines := aLines;
+  fSize := -1;
+  fPos := point(0, 0);
+  fAbsPos := 0;
+end;
+
+function tKlausEditLinesReadStream.read(var buffer; count: longInt): longInt;
+var
+  p: pChar;
+  s: string;
+  left, cnt: integer;
+begin
+  if fPos.y >= fLines.count then exit(0);
+  p := @buffer;
+  left := count;
+  while left > 0 do begin
+    s := fLines[fPos.y];
+    cnt := length(s)-fPos.x;
+    if cnt > left then cnt := left;
+    if cnt > 0 then system.move(s[fPos.x+1], p^, cnt);
+    left -= cnt;
+    p += cnt;
+    fPos.x += cnt;
+    fAbsPos += cnt;
+    if left > 0 then begin
+      p^ := #10;
+      left -= 1;
+      p += 1;
+      fPos.x := 0;
+      fPos.y += 1;
+      fAbsPos += 1;
+    end;
+    if fPos.y >= fLines.count then break;
+  end;
+  result := count-left;
+end;
+
+function
+tKlausEditLinesReadStream.seek(offset: longInt; origin: word): longInt;
+var
+  left, cnt: integer;
+begin
+  case origin of
+    soFromBeginning: result := seek(offset - fAbsPos, soFromCurrent);
+    soFromEnd: result := seek(size + offset - fAbsPos, soFromCurrent);
+    else begin
+      if offset > 0 then begin
+        if fAbsPos + offset > size then begin
+          fAbsPos := size+1;
+          fPos.y := fLines.count-1;
+          fPos.x := length(fLines[fPos.y]);
+        end else begin
+          left := offset;
+          while left > 0 do begin
+            cnt := length(fLines[fPos.y])-fPos.x;
+            if cnt > left then cnt := left;
+            left -= cnt;
+            fPos.x += cnt;
+            fAbsPos += cnt;
+            if left > 0 then begin
+              left -= 1;
+              fPos.x := 0;
+              fPos.y += 1;
+              fAbsPos += 1;
+            end;
+          end;
+        end;
+      end else if offset < 0 then begin
+        if fAbsPos+offset <= 0 then begin
+          fAbsPos := 0;
+          fPos.x := 0;
+          fPos.y := 0;
+        end else begin;
+          left := -offset;
+          while left > 0 do begin
+            if fPos.x = 0 then begin
+              left -= 1;
+              fPos.y -= 1;
+              fPos.x := length(fLines[fPos.y]);
+              fAbsPos -= 1;
+            end;
+            cnt := fPos.x;
+            if cnt > left then cnt := left;
+            left -= cnt;
+            fPos.x -= cnt;
+            fAbsPos -= cnt;
+          end;
+        end;
+      end;
+      result := fAbsPos;
+    end;
+  end;
+end;
+
 { tKlausEditStrings }
 
 constructor tKlausEditStrings.create(aOwner: tCustomKlausEdit);
 begin
   inherited create;
+  fReadStream := nil;
+  checkSpecialChars;
+  lineBreak := #10;
+  textLineBreakStyle := tlbsLF;
   fOwner := aOwner;
   fQuantum := 256;
 end;
@@ -1211,6 +1356,7 @@ end;
 destructor tKlausEditStrings.destroy;
 begin
   clear;
+  freeAndNil(fReadStream);
   inherited;
 end;
 
@@ -1322,6 +1468,13 @@ begin
   end;
 end;
 
+function tKlausEditStrings.getReadStream: tStream;
+begin
+  if fReadStream = nil then
+    fReadStream := tKlausEditLinesReadStream.create(self);
+  result := fReadStream;
+end;
+
 procedure tKlausEditStrings.put(index: integer; const s: string);
 var
   idx: integer;
@@ -1381,6 +1534,7 @@ begin
   if updating or (fEditCount <> 0) then exit;
   with fOwner do try
     if csDestroying in componentState then exit;
+    if fReadStream <> nil then fReadStream.reset;
     updateScrollRange;
     scrollTo(0, 0);
     selStart := point(0, 0);
@@ -1418,7 +1572,10 @@ procedure tKlausEditStrings.endEdit;
 begin
   if fEditCount > 0 then begin
     dec(fEditCount);
-    if fEditCount = 0 then fOwner.doTextChange;
+    if fEditCount = 0 then begin
+      if fReadStream <> nil then fReadStream.reset;
+      fOwner.doTextChange;
+    end;
   end;
 end;
 
@@ -1652,6 +1809,11 @@ end;
 function tCustomKlausEdit.getText: string;
 begin
   result := fLines.text;
+end;
+
+function tCustomKlausEdit.getTextReadStream: tStream;
+begin
+  result := fLines.getReadStream;
 end;
 
 procedure tCustomKlausEdit.setGutterBevel(val: tKlausEditGutterBevel);
@@ -3135,10 +3297,11 @@ end;
 
 function tCustomKlausEdit.getTextRange(startPos, endPos: tPoint; out startPtr, endPtr: pChar): string;
 var
-  s: string;
+  s, LB: string;
   i: integer;
   p: pChar;
 begin
+  LB := fLines.lineBreak;
   startPos := validPoint(startPos);
   endPos := validPoint(endPos);
   if startPos = endPos then begin
@@ -3154,13 +3317,13 @@ begin
     endPtr := getLinePtrAt(endPos);
     p := pChar(fLines[startPos.y])+length(fLines[startPos.y]);
     setString(result, startPtr, p-startPtr);
-    for i := startPos.y+1 to endPos.y-1 do result += #10+fLines[i];
+    for i := startPos.y+1 to endPos.y-1 do result += LB+fLines[i];
     if endPos.y < fLines.count then begin
       p := pChar(fLines[endPos.y]);
       setString(s, p, endPtr-p);
-      result := result+#10+s;
+      result := result+LB+s;
     end else
-      result += #10;
+      result += LB;
   end;
 end;
 

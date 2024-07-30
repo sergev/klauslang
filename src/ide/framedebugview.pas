@@ -211,7 +211,7 @@ end;
 
 procedure tDebugViewFrame.setStoredHeight(val: integer);
 begin
-  height := val;
+  height := min(val, mainForm.height div 3);
 end;
 
 procedure tDebugViewFrame.setPosition(val: integer);

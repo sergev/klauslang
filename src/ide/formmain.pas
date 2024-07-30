@@ -27,7 +27,8 @@ interface
 uses
   Classes, SysUtils, Messages, LMessages, Forms, Controls, Graphics, Dialogs, StdCtrls,
   ExtCtrls, Menus, ActnList, ComCtrls, IniPropStorage, LazUTF8, KlausEdit,
-  KlausGlobals, FrameEdit, FrameDebugView, KlausSrc, KlausErr, KlausLex, FormScene, Types;
+  KlausGlobals, FrameEdit, FrameDebugView, KlausSrc, KlausErr, KlausLex, FormScene,
+  Types, KlausPract, FrameCourseInfo;
 
 const
   configName = 'klaus-ide.ini';
@@ -48,6 +49,20 @@ type
   tWatchInfo = record
     text: string;
     allowFunctions: boolean;
+  end;
+
+type
+  tFixedPropStorage = class(tIniPropStorage)
+    public
+      procedure StorageNeeded(ReadOnly: Boolean); override;
+  end;
+
+type
+  tCourseMenuItem = class(tMenuItem)
+    private
+      fCourse: tKlausCourse;
+    public
+      property course: tKlausCourse read fCourse write fCourse;
   end;
 
 type
@@ -74,6 +89,7 @@ type
     actFileOptions: TAction;
     actDebugWatches: TAction;
     actDebugEvaluateWatch: TAction;
+    actHelpReferenceGuide: TAction;
     actRunInterceptKeyboard: TAction;
     actDebugRunToCursor: TAction;
     actDebugToggleBreakpoint: TAction;
@@ -117,9 +133,12 @@ type
     actionImages: TImageList;
     applicationProperties: TApplicationProperties;
     bvDebugSizer: TBevel;
+    bvCourseSizer: TBevel;
     editLineImages: TImageList;
     MenuItem1: TMenuItem;
     MenuItem2: TMenuItem;
+    MenuItem3: TMenuItem;
+    miPracticum: TMenuItem;
     miDebug: TMenuItem;
     miDebugBreakpoints: TMenuItem;
     miDebugCallStack: TMenuItem;
@@ -185,8 +204,8 @@ type
     sbDebug: TScrollBox;
     pnDebugContent: TFlowPanel;
     saveDialog: TSaveDialog;
+    sbCourse: TScrollBox;
     Separator1: TMenuItem;
-    propStorage: TIniPropStorage;
     mainMenu: TMainMenu;
     miEditReplace: TMenuItem;
     miEditSearchNext: TMenuItem;
@@ -207,7 +226,6 @@ type
     Separator10: TMenuItem;
     Separator11: TMenuItem;
     Separator12: TMenuItem;
-    Separator13: TMenuItem;
     Separator14: TMenuItem;
     Separator2: TMenuItem;
     Separator3: TMenuItem;
@@ -240,6 +258,8 @@ type
     ToolButton12: TToolButton;
     ToolButton13: TToolButton;
     ToolButton14: TToolButton;
+    ToolButton15: TToolButton;
+    ToolButton16: TToolButton;
     ToolButton2: TToolButton;
     tbRunCheckSyntax: TToolButton;
     tbRunStart: TToolButton;
@@ -278,6 +298,7 @@ type
     procedure actFileSaveAsExecute(sender: TObject);
     procedure actFileSaveExecute(sender: TObject);
     procedure actHelpAboutExecute(Sender: TObject);
+    procedure actHelpReferenceGuideExecute(Sender: TObject);
     procedure actRunCheckSyntaxExecute(Sender: TObject);
     procedure actRunInterceptKeyboardExecute(Sender: TObject);
     procedure actRunPauseExecute(Sender: TObject);
@@ -301,22 +322,28 @@ type
     procedure actWindowPrevTabExecute(Sender: TObject);
     procedure actDebugWatchesExecute(Sender: TObject);
     procedure applicationHint(sender: tObject);
-    procedure formCloseQuery(sender: TObject; var canClose: boolean);
-    procedure formShortCut(var Msg: TLMKey; var Handled: Boolean);
+    procedure formCloseQuery(sender: tObject; var canClose: boolean);
+    procedure formShortCut(var msg: tLMKey; var handled: boolean);
+    procedure formShow(sender: tObject);
     procedure pageControlChange(sender: TObject);
     procedure propStorageRestoreProperties(Sender: TObject);
     procedure bvDebugSizerMouseDown(sender: tObject; button: tMouseButton; shift: tShiftState; x, y: integer);
     procedure bvDebugSizerMouseMove(sender: TObject; shift: TShiftState; x, y: integer);
     procedure bvDebugSizerMouseUp(sender: tObject; button: tMouseButton; shift: tShiftState; x, y: integer);
+    procedure bvCourseSizerMouseDown(sender: tObject; button: tMouseButton; shift: tShiftState; x, y: integer);
+    procedure bvCourseSizerMouseMove(sender: TObject; shift: TShiftState; x, y: integer);
+    procedure bvCourseSizerMouseUp(sender: tObject; button: tMouseButton; shift: tShiftState; x, y: integer);
     procedure pnDebugContentResize(Sender: TObject);
     procedure propStorageRestoringProperties(Sender: TObject);
     procedure propStorageSavingProperties(Sender: TObject);
+    procedure miPracticumCourseClick(sender: tObject);
   private
     fCtlStateClients: tList;
     fPropsLoading: boolean;
     fControlStateInvalid: boolean;
     fRecentFiles: tStringList;
     fDebugPanelSizing: boolean;
+    fCoursePanelSizing: boolean;
     fSizingPoint: tPoint;
     fDebugView: array[tDebugViewType] of tDebugViewFrame;
     fScene: tSceneForm;
@@ -324,11 +351,14 @@ type
     fRunToCursor: tKlausBreakpoint;
     fEditStyles: tKlausEditorOptions;
     fConsoleOptions: tKlausConsoleOptions;
+    fPracticumOptions: tKlausPracticumOptions;
     fBreakpoints: tKlausBreakpoints;
     fBreakpointListInvalid: boolean;
     fStackFrameIdx: integer;
     fSearchInfo: tSearchInfo;
     fWatches: array of tWatchInfo;
+    fCourseFrame: tCourseInfoFrame;
+    fCourseInfoInvalid: boolean;
 
     function  getActiveFrame: tEditFrame;
     function  getBreakpointCount: integer;
@@ -336,6 +366,7 @@ type
     function  getConfigFileName: string;
     function  getDebugViews: tDebugViewTypes;
     function  getDbgWgtStoredWidth: integer;
+    function  getCourseStoredWidth: integer;
     function  getIsRunning: boolean;
     function  getWatchCount: integer;
     function  getWatches(idx: integer): tWatchInfo;
@@ -345,6 +376,7 @@ type
     function  getRecentFiles: tStrings;
     procedure setActiveFrame(val: tEditFrame; focus: boolean = true);
     procedure setDbgWgtStoredWidth(val: integer);
+    procedure setCourseStoredWidth(val: integer);
     procedure setStackFrameIdx(value: integer);
     procedure setRecentFiles(val: tStrings);
     procedure updateRecentMenuItems;
@@ -355,15 +387,19 @@ type
     procedure createDebugViews;
     procedure updateDebugViewPositions;
     procedure editStylesChange(sender: tObject);
+    procedure refreshPracticumMenu;
+    procedure createCourseFrame;
   protected
     procedure createWnd; override;
     function  parentTabSheet(fr: tEditFrame): tTabSheet;
     procedure updateControlState(var msg: tMessage); message APPM_UpdateControlState;
     procedure updateBreakpoints(var msg: tMessage); message APPM_UpdateBreakpoints;
     procedure focusEditor(var msg: tMessage); message APPM_FocusEditor;
+    procedure updateCourseInfo(var msg: tMessage); message APPM_UpdateCourseInfo;
     procedure addRecentFile(fn: string);
     procedure enableDisable;
   public
+    propStorage: TFixedPropStorage;
     property configFileName: string read getConfigFileName;
     property propsLoading: boolean read fPropsLoading;
     property frameCount: integer read getFrameCount;
@@ -375,12 +411,14 @@ type
     property debugView[dvt: tDebugViewType]: tDebugViewFrame read getDebugView;
     property editStyles: tKlausEditorOptions read fEditStyles;
     property consoleOptions: tKlausConsoleOptions read fConsoleOptions;
+    property practicumOptions: tKlausPracticumOptions read fPracticumOptions;
     property runToCursor: tKlausBreakpoint read fRunToCursor;
     property breakpointCount: integer read getBreakpointCount;
     property breakpoint[idx: integer]: tKlausBreakpoint read getBreakpoint;
     property stackFrameIdx: integer read fStackFrameIdx write setStackFrameIdx;
     property watchCount: integer read getWatchCount;
     property watches[idx: integer]: tWatchInfo read getWatches;
+    property courseFrame: tCourseInfoFrame read fCourseFrame;
 
     constructor create(aOwner: tComponent); override;
     destructor  destroy; override;
@@ -388,7 +426,7 @@ type
     procedure removeControlStateClient(ctl: tControl);
     procedure invalidateControlState;
     function  findEditFrame(fn: string): tEditFrame;
-    function  openEditFrame(const fn: string = ''; focus: boolean = true): tEditFrame;
+    function  openEditFrame(fn: string = ''; focus: boolean = true): tEditFrame;
     procedure destroyEditFrame(fr: tEditFrame);
     function  saveEditFrame(fr: tEditFrame; saveAs: boolean = false): boolean;
     function  promptToSaveEditFrame(fr: tEditFrame): boolean;
@@ -407,10 +445,16 @@ type
     procedure addWatch(const txt: string; allowFunctions: boolean);
     procedure editWatch(idx: integer; const txt: string; allowFunctions: boolean);
     procedure deleteWatch(idx: integer);
+    procedure invalidateCourseInfo;
+    procedure showCourseInfo(courseName, taskName: string);
+    procedure showOptionsDlg(tabName: string = '');
+    procedure loadPracticum;
+    procedure openTaskSolution(task: tKlausTask);
   published
     property recentFiles: tStrings read getRecentFiles write setRecentFiles;
     property debugViews: tDebugViewTypes read getDebugViews write setDebugViews;
     property dbgWgtStoredWidth: integer read getDbgWgtStoredWidth write setDbgWgtStoredWidth;
+    property courseStoredWidth: integer read getCourseStoredWidth write setCourseStoredWidth;
   end;
 
 var
@@ -419,7 +463,8 @@ var
 implementation
 
 uses
-  LCLIntf, LCLType, Math, Clipbrd, DlgCmdLineArgs, DlgSearchReplace, FormSplash, DlgOptions, DlgEvaluate;
+  LCLIntf, LCLType, Math, Clipbrd, U8, KlausUtils, DlgCmdLineArgs, DlgSearchReplace, FormSplash, DlgOptions,
+  DlgEvaluate;
 
 resourcestring
   strKlaus = 'Клаус';
@@ -428,11 +473,22 @@ resourcestring
   strConfirmation = 'Подтверждение';
   strPromptToSave = 'Файл "%s" был изменён. Сохранить изменения?';
   strNoErrorFound = 'Ошибки не обнаружены.';
+  strFileOpenError = 'Ошибка при открытии файла:'#13#10'%s';
+  strListEmpty = '(Список пуст)';
+  strPromptCreateDir = 'Каталог "%s" не существует. Создать его?';
 
 {$R *.lfm}
 
 var
   nextFrameIndex: integer = 1;
+
+{ tFixedPropStorage }
+
+procedure tFixedPropStorage.storageNeeded(readOnly: Boolean);
+begin
+  inherited storageNeeded(readOnly);
+  {$PUSH}{$WARNINGS OFF}iniFile.stripQuotes := false;{$POP}
+end;
 
 { tMainForm }
 
@@ -442,20 +498,31 @@ begin
   fCtlStateClients := tList.create;
   fEditStyles := tKlausEditorOptions.create;
   fConsoleOptions := tklausConsoleOptions.create;
+  fPracticumOptions := tklausPracticumOptions.create;
   inherited create(aOwner);
+  propStorage := tFixedPropStorage.create(self);
+  with propStorage do begin
+    onRestoreProperties := @propStorageRestoreProperties;
+    onRestoringProperties := @propStorageRestoringProperties;
+    onSavingProperties := @propStorageSavingProperties;
+  end;
   fRecentFiles := tStringList.create;
   propStorage.iniFileName := configFileName;
   fControlStateInvalid := false;
   createDebugViews;
+  createCourseFrame;
+  fActionLists.clear;
 end;
 
 destructor tMainForm.destroy;
 begin
   freeAndNil(fRecentFiles);
+  freeAndNil(fCourseFrame);
   inherited destroy;
   freeAndNil(fCtlStateClients);
   freeAndNil(fEditStyles);
   freeAndNil(fConsoleOptions);
+  freeAndNil(fPracticumOptions);
 end;
 
 procedure tMainForm.addControlStateClient(ctl: tControl);
@@ -499,6 +566,21 @@ end;
 procedure tMainForm.focusEditor(var msg: tMessage);
 begin
   if activeFrame <> nil then activeFrame.edit.setFocus;
+end;
+
+procedure tMainForm.updateCourseInfo(var msg: tMessage);
+var
+  fr: tEditFrame;
+  tn, cn: string;
+  b: boolean;
+begin
+  fCourseInfoInvalid := false;
+  fr := activeFrame;
+  if fr <> nil then begin
+    fr.edit.textReadStream.position := 0;
+    b := klausGetCourseTaskNames(fr.edit.textReadStream, cn, tn);
+    if b then showCourseInfo(cn, tn) else showCourseInfo('', '');
+  end;
 end;
 
 procedure tMainForm.enableDisable;
@@ -677,10 +759,11 @@ begin
   openEditFrame;
 end;
 
-function tMainForm.openEditFrame(const fn: string = ''; focus: boolean = true): tEditFrame;
+function tMainForm.openEditFrame(fn: string = ''; focus: boolean = true): tEditFrame;
 var
   ts: tTabSheet;
 begin
+  if fn <> '' then fn := expandFileName(fn);
   result := findEditFrame(fn);
   if result <> nil then
     setActiveFrame(result, focus)
@@ -723,7 +806,7 @@ begin
   if fr = nil then exit(false);
   if saveAs or (fr.fileName = '') then begin
     if not saveDialog.execute then exit(false);
-    fn := saveDialog.fileName;
+    fn := expandFileName(saveDialog.fileName);
   end else
     fn := fr.fileName;
   fr.saveToFile(fn);
@@ -793,6 +876,72 @@ begin
   for i := 0 to frameCount-1 do frames[i].edit.invalidate;
 end;
 
+procedure tMainForm.loadPracticum;
+var
+  msg: string;
+  cn, tn: string;
+begin
+  if courseFrame.visible then begin
+    cn := courseFrame.activeCourse;
+    tn := courseFrame.activeTask;
+  end else
+    cn := '';
+  showCourseInfo('', '');
+  klausPracticum.loadCourses(fPracticumOptions.expandPath(fPracticumOptions.searchPath), msg);
+  refreshPracticumMenu;
+  if cn <> '' then showCourseInfo(cn, tn);
+  if msg <> '' then messageDlg(msg, mtError, [mbOK], 0);
+end;
+
+procedure tMainForm.openTaskSolution(task: tKlausTask);
+var
+  path, fn, msg: string;
+begin
+  with practicumOptions do path := expandFileName(expandPath(workingDir));
+  path := includeTrailingPathDelimiter(path) + task.owner.name;
+  if not directoryExists(path) then begin
+    msg := format(strPromptCreateDir, [path]);
+    if messageDlg(msg, mtConfirmation, [mbYes, mbCancel], 0) <> mrYes then exit;
+  end;
+  fn := task.createSolution(path);
+  openEditFrame(fn);
+end;
+
+procedure tMainForm.refreshPracticumMenu;
+var
+  i: integer;
+  mi: tCourseMenuItem;
+begin
+  for i := miPracticum.count-1 downto 0 do
+    if miPracticum.items[i] is tCourseMenuItem then miPracticum.items[i].free;
+  if klausPracticum.count <= 0 then begin
+    mi := tCourseMenuItem.create(self);
+    mi.caption := strListEmpty;
+    mi.enabled := false;
+    mi.course := nil;
+    miPracticum.insert(0, mi);
+    miPracticum.visible := false;
+  end else for i := 0 to klausPracticum.count-1 do begin
+    mi := tCourseMenuItem.create(self);
+    mi.caption := klausPracticum[i].caption;
+    mi.hint := klausPracticum[i].fileName;
+    mi.enabled := true;
+    mi.course := klausPracticum[i];
+    mi.onClick := @miPracticumCourseClick;
+    miPracticum.insert(i, mi);
+    miPracticum.visible := true;
+  end;
+  showCourseInfo('', '');
+  invalidateCourseInfo;
+end;
+
+procedure tMainForm.createCourseFrame;
+begin
+  fCourseFrame := tCourseInfoFrame.create(nil);
+  fCourseFrame.parent := sbCourse;
+  fCourseFrame.align := alClient;
+end;
+
 procedure tMainForm.actFileOpenExecute(sender: TObject);
 begin
   if openDialog.execute then
@@ -801,16 +950,7 @@ end;
 
 procedure tMainForm.actFileOptionsExecute(Sender: TObject);
 begin
-  with tOptionsDlg.create(application) do try
-    editorOptions := fEditStyles;
-    consoleOptions := fConsoleOptions;
-    if showModal = mrOK then begin
-      fEditStyles.assign(editorOptions);
-      fConsoleOptions.assign(consoleOptions);
-    end;
-  finally
-    free;
-  end;
+  showOptionsDlg;
 end;
 
 procedure tMainForm.actFileSaveAllExecute(Sender: TObject);
@@ -837,6 +977,14 @@ begin
     closeOnTimer := false;
     showModal;
   end;
+end;
+
+procedure tMainForm.actHelpReferenceGuideExecute(Sender: TObject);
+var
+  fn: string;
+begin
+  fn := getInstallDir+'/doc/klaus-reference-guide.pdf';
+  openDocument(fn);
 end;
 
 procedure tMainForm.actRunCheckSyntaxExecute(Sender: TObject);
@@ -1058,6 +1206,14 @@ begin
   setLength(fWatches, cnt-1);
   debugView[dvtWatches].updateContent;
   invalidateControlState;
+end;
+
+procedure tMainForm.invalidateCourseInfo;
+begin
+  if not fCourseInfoInvalid then begin
+    fCourseInfoInvalid := true;
+    if handleAllocated then postMessage(handle, APPM_UpdateCourseInfo, 0, 0);
+  end;
 end;
 
 procedure tMainForm.actRunStartExecute(Sender: TObject);
@@ -1322,7 +1478,19 @@ procedure tMainForm.setDbgWgtStoredWidth(val: integer);
 begin
   // здесь не масштабируем, иначе при высоких разрешениях экрана
   // размер растёт при каждом запуске среды
-  sbDebug.width := val;
+  sbDebug.width := min(val, self.width div 3);
+end;
+
+function tMainForm.getCourseStoredWidth: integer;
+begin
+  result := mulDiv(sbCourse.width, designTimePPI, screenInfo.pixelsPerInchX);
+end;
+
+procedure tMainForm.setCourseStoredWidth(val: integer);
+begin
+  // здесь не масштабируем, иначе при высоких разрешениях экрана
+  // размер растёт при каждом запуске среды
+  sbCourse.width := min(val, self.width div 3);
 end;
 
 function tMainForm.getIsRunning: boolean;
@@ -1341,6 +1509,38 @@ function tMainForm.getWatches(idx: integer): tWatchInfo;
 begin
   assert((idx >= 0) and (idx < length(fWatches)), 'Invalid item index');
   result := fWatches[idx];
+end;
+
+procedure tMainForm.showCourseInfo(courseName, taskName: string);
+begin
+  if courseName = '' then taskName := '';
+  courseFrame.updateContent(courseName, taskName);
+  sbCourse.visible := courseName <> '';
+  invalidateControlState;
+end;
+
+procedure tMainForm.showOptionsDlg(tabName: string);
+var
+  i: integer;
+begin
+  with tOptionsDlg.create(application) do try
+    if tabName <> '' then begin
+      tabName := u8Lower(tabName);
+      for i := 0  to pageControl.pageCount-1 do
+        if tabName = u8Lower(pageControl.pages[i].name) then
+          pageControl.activePage := pageControl.pages[i];
+    end;
+    editorOptions := self.editStyles;
+    consoleOptions := self.consoleOptions;
+    practicumOptions := self.practicumOptions;
+    if showModal = mrOK then begin
+      self.editStyles.assign(editorOptions);
+      self.consoleOptions.assign(consoleOptions);
+      self.practicumOptions.assign(practicumOptions);
+    end;
+  finally
+    free;
+  end;
 end;
 
 procedure tMainForm.setDebugViews(val: tDebugViewTypes);
@@ -1480,7 +1680,7 @@ begin
   invalidateControlState;
 end;
 
-procedure tMainForm.formCloseQuery(sender: TObject; var canClose: boolean);
+procedure tMainForm.formCloseQuery(sender: tObject; var canClose: boolean);
 var
   i: integer;
 begin
@@ -1492,10 +1692,11 @@ begin
   canClose := true;
 end;
 
-procedure tMainForm.formShortCut(var Msg: TLMKey; var Handled: Boolean);
+procedure tMainForm.formShortCut(var msg: tLMKey; var handled: boolean);
 var
   ctl: tWinControl;
   frm: tDebugViewContent = nil;
+  cfrm: tCourseInfoFrame = nil;
 begin
   handled := false;
   ctl := activeControl;
@@ -1503,17 +1704,47 @@ begin
   while ctl <> nil do begin
     if ctl is tDebugViewContent then begin
       frm := ctl as tDebugViewContent;
-      break;
+      if frm.actions <> nil then handled := frm.actions.isShortcut(msg);
+      exit;
+    end else if ctl is tCourseInfoFrame then begin
+      cfrm := ctl as tCourseInfoFrame;
+      if cfrm.actionList <> nil then handled := cfrm.actionList.isShortcut(msg);
+      exit;
     end;
     ctl := ctl.parent;
-    if ctl = nil then exit;
+    if ctl = nil then break;
   end;
-  if frm.actions <> nil then
-    handled := frm.actions.isShortcut(msg);
+end;
+
+procedure tMainForm.formShow(sender: tObject);
+var
+  i: integer;
+  fn, err, sep: string;
+begin
+  loadPracticum;
+  err := '';
+  sep := '';
+  for i := 1 to paramCount do begin
+    fn := expandFileName(paramStr(i));
+    try
+      openEditFrame(fn);
+    except
+      on e: exception do begin
+        err += sep + e.message;
+        sep := #13#10;
+      end;
+      else raise;
+    end;
+  end;
+  if err <> '' then begin
+    err := format(strFileOpenError, [err]);
+    messageDlg(err, mtError, [mbOK], 0);
+  end;
 end;
 
 procedure tMainForm.pageControlChange(sender: TObject);
 begin
+  invalidateCourseInfo;
   invalidateControlState;
 end;
 
@@ -1528,10 +1759,13 @@ end;
 procedure tMainForm.bvDebugSizerMouseMove(sender: TObject; shift: TShiftState; x, y: integer);
 var
   p: tPoint;
+  dw: integer;
 begin
   if fDebugPanelSizing then begin
     p := bvDebugSizer.clientToScreen(point(x, y));
-    sbDebug.width := max(100, sbDebug.width + fSizingPoint.x - p.x);
+    dw := fSizingPoint.x - p.x;
+    with pageControl do if width - dw < 100 then dw := width - 100;
+    sbDebug.width := max(100, sbDebug.width + dw);
     fSizingPoint := p;
   end;
 end;
@@ -1539,6 +1773,33 @@ end;
 procedure tMainForm.bvDebugSizerMouseUp(sender: tObject; button: tMouseButton; shift: tShiftState; x, y: integer);
 begin
   if (button = mbLeft) then fDebugPanelSizing := false;
+end;
+
+procedure tMainForm.bvCourseSizerMouseDown(sender: tObject; button: tMouseButton; shift: tShiftState; x, y: integer);
+begin
+  if (button = mbLeft) then begin
+    fCoursePanelSizing := true;
+    fSizingPoint := bvCourseSizer.clientToScreen(point(x, y));
+  end;
+end;
+
+procedure tMainForm.bvCourseSizerMouseMove(sender: TObject; shift: TShiftState; x, y: integer);
+var
+  p: tPoint;
+  dw: integer;
+begin
+  if fCoursePanelSizing then begin
+    p := bvCourseSizer.clientToScreen(point(x, y));
+    dw := p.x - fSizingPoint.x;
+    with pageControl do if width - dw < 100 then dw := width - 100;
+    sbCourse.width := max(100, sbCourse.width + dw);
+    fSizingPoint := p;
+  end;
+end;
+
+procedure tMainForm.bvCourseSizerMouseUp(sender: tObject; button: tMouseButton; shift: tShiftState; x, y: integer);
+begin
+  if (button = mbLeft) then fCoursePanelSizing := false;
 end;
 
 procedure tMainForm.pnDebugContentResize(Sender: TObject);
@@ -1556,7 +1817,7 @@ var
 begin
   result :=
     'Height;Left;Top;Width;WindowState;recentFiles;debugViews;'+
-    'actRunInterceptKeyboard.checked;dbgWgtStoredWidth';
+    'actRunInterceptKeyboard.checked;dbgWgtStoredWidth;courseStoredWidth';
   for dvt := low(dvt) to high(dvt) do begin
     if debugView[dvt] = nil then continue;
     n := debugView[dvt].name;
@@ -1574,6 +1835,7 @@ procedure tMainForm.propStorageRestoringProperties(Sender: TObject);
 begin
   fEditStyles.loadFromIni(propStorage);
   fConsoleOptions.loadFromIni(propStorage);
+  fPracticumOptions.loadFromIni(propStorage);
   sessionProperties := getSessionProperties;
 end;
 
@@ -1582,6 +1844,15 @@ begin
   sessionProperties := getSessionProperties;
   fEditStyles.saveToIni(propStorage);
   fConsoleOptions.saveToIni(propStorage);
+  fPracticumOptions.saveToIni(propStorage);
+end;
+
+procedure tMainForm.miPracticumCourseClick(sender: tObject);
+var
+  course: tKlausCourse;
+begin
+  course := (sender as tCourseMenuItem).course;
+  if course = nil then showCourseinfo('', '') else showCourseInfo(course.name, '');
 end;
 
 procedure tMainForm.propStorageRestoreProperties(Sender: TObject);

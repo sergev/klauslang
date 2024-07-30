@@ -24,9 +24,9 @@ unit KlausUtils;
 interface
 
 uses
-  Classes, SysUtils, Graphics,
+  Classes, Graphics, FpJson, IpHTML, Markdown,
   {$ifdef windows}Windows,{$else}BaseUnix, TermIO,{$endif}
-  U8, KlausLex, KlausDef, KlausErr;
+  SysUtils, U8, KlausLex, KlausDef, KlausErr;
 
 const
   klausInvalidPointer = pointer(ptrInt(-1));
@@ -215,9 +215,19 @@ const
 
 function klausGetFileType(ft: tKlausInteger; const at: tSrcPoint): tKlausFileClass;
 
+function loadJsonData(const fileName: string): tJsonData;
+
+procedure listFileNames(const searchPath, mask: string; exclAttr: longInt; list: tStrings);
+
+function markdownToHtml(const md: string): tIpHTML;
+
+function klausGetCourseTaskNames(src: tStream; out course, task: string): boolean;
+
 implementation
 
-uses Math;
+uses Math, JsonParser, JsonScanner;
+
+var markdownProcessor: tMarkdownDaringFireball = nil;
 
 resourcestring
   errInvalidInteger = 'Неверное целое число: "%s".';
@@ -1185,6 +1195,108 @@ begin
   result := true;
 end;
 
+function loadJsonData(const fileName: string): tJsonData;
+var
+  stream: tFileStream;
+  parser: tJsonParser;
+begin
+  stream := tFileStream.create(fileName, fmOpenRead or fmShareDenyWrite);
+  try
+    parser := tJsonParser.create(stream, [joUTF8]);
+    try
+      result := parser.parse;
+    finally
+      freeAndNil(parser);
+    end;
+  finally
+    freeAndNil(stream);
+  end;
+end;
+
+procedure listFileNames(const searchPath, mask: string; exclAttr: longInt; list: tStrings);
+var
+  i: integer;
+  path: string;
+  sr: tSearchRec;
+  dirs: tStringList;
+begin
+  dirs := tStringList.create;
+  try
+    dirs.strictDelimiter := true;
+    dirs.quoteChar := '"';
+    dirs.delimiter := ';';
+    dirs.delimitedText := searchPath;
+    for i := 0 to dirs.count-1 do begin
+      path := includeTrailingPathDelimiter(dirs[i]);
+      if findFirst(path+mask, longInt($FFFFFFFF), sr) = 0 then try
+        repeat
+          if (sr.attr and exclAttr) = 0 then list.add(path+sr.name);
+        until findNext(sr) <> 0;
+      finally
+        findClose(sr);
+      end;
+    end;
+  finally
+    freeAndNil(dirs);
+  end;
+end;
+
+function markdownToHtml(const md: string): tIpHTML;
+var
+  html: string;
+  stream: tStringReadStream;
+begin
+  if markdownProcessor = nil then
+    markdownProcessor := tMarkdownDaringFireball.create;
+  html := markdownProcessor.process(md);
+  stream := tStringReadStream.create(html);
+  try
+    result := tIpHtml.create;
+    try result.loadFromStream(stream);
+    except freeAndNil(result); raise; end;
+  finally
+    freeAndNil(stream);
+  end;
+end;
+
+function klausGetCourseTaskNames(src: tStream; out course, task: string): boolean;
+var
+  li: tKlausLexInfo;
+  p: tKlausLexParser;
+
+  function next: tKlausLexInfo;
+  begin
+    p.getNextLexem(result);
+    while result.lexem in [klxSLComment, klxMLComment] do p.getNextLexem(result);
+  end;
+
+begin
+  result := false;
+  course := '';
+  task := '';
+  try
+    p := tKlausLexParser.create(src);
+    p.ownsStream := false;
+    try
+      li := next;
+      if (li.lexem <> klxKeyword) or (li.keyword <> kkwdTask) then exit;
+      result := true;
+      li := next;
+      if li.lexem <> klxID then exit;
+      task := li.text;
+      li := next;
+      if (li.lexem <> klxKeyword) or (li.keyword <> kkwdOf) then exit;
+      li := next;
+      if li.lexem <> klxID then exit;
+      course := li.text;
+    finally
+      freeAndNil(p);
+    end;
+  except
+    result := false;
+  end;
+end;
+
 { tKlausFileStream }
 
 procedure tKlausFileStream.setSize(const newSize: int64);
@@ -1289,5 +1401,6 @@ initialization
   defaultFormatSettings := klausLiteralFormat;
   //testKlstrFormat;
 finalization
+  freeAndNil(markdownProcessor);
 end.
 

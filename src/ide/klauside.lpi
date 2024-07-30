@@ -161,6 +161,9 @@
     </RunParams>
     <RequiredPackages>
       <Item>
+        <PackageName Value="TurboPowerIPro"/>
+      </Item>
+      <Item>
         <PackageName Value="FCL"/>
       </Item>
       <Item>
@@ -336,6 +339,27 @@
         <Filename Value="../klaus/klausunitevents_proc.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="KlausUnitEvents_Proc"/>
+      </Unit>
+      <Unit>
+        <Filename Value="klauspracticum.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="KlausPracticum"/>
+      </Unit>
+      <Unit>
+        <Filename Value="framecourseinfo.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="CourseInfoFrame"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="FrameCourseInfo"/>
+      </Unit>
+      <Unit>
+        <Filename Value="framepracticumoptions.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="PracticumOptionsFrame"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="FramePracticumOptions"/>
       </Unit>
     </Units>
   </ProjectOptions>

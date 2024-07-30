@@ -1,0 +1,263 @@
+object CourseInfoFrame: TCourseInfoFrame
+  Left = 0
+  Height = 803
+  Top = 0
+  Width = 402
+  ClientHeight = 803
+  ClientWidth = 402
+  TabOrder = 0
+  DesignLeft = 572
+  DesignTop = 163
+  object pnHeader: TPanel
+    Left = 0
+    Height = 23
+    Top = 4
+    Width = 402
+    Align = alTop
+    Alignment = taLeftJustify
+    BorderSpacing.Top = 4
+    BevelOuter = bvNone
+    BorderWidth = 4
+    ClientHeight = 23
+    ClientWidth = 402
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 0
+    object sbClose: TSpeedButton
+      Left = 387
+      Height = 16
+      Top = 3
+      Width = 16
+      Anchors = [akTop, akRight]
+      Glyph.Data = {
+        C6000000424DC60000000000000076000000280000000B0000000A0000000100
+        0400000000005000000000000000000000000000000000000000000000000000
+        8000008000000080800080000000800080008080000080808000C0C0C0000000
+        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00DDDDDDDDDDD0
+        0000DDDDDDDDDDD00000DD00DDD00DD00000DDD00D00DDD00000DDDD000DDDD0
+        0000DDDD000DDDD00000DDD00D00DDD00000DD00DDD00DD00000DDDDDDDDDDD0
+        0000DDDDDDDDDDD00000
+      }
+      Images = buttonImages
+      ImageIndex = 0
+      OnClick = sbCloseClick
+    end
+    object lblCaption: TLabel
+      Left = 7
+      Height = 17
+      Top = 3
+      Width = 371
+      Anchors = [akTop, akLeft, akRight]
+      AutoSize = False
+      Caption = 'Практикум'
+      ParentColor = False
+    end
+  end
+  object pnContent: TPanel
+    Left = 0
+    Height = 752
+    Top = 51
+    Width = 402
+    Align = alClient
+    BevelOuter = bvNone
+    ClientHeight = 752
+    ClientWidth = 402
+    TabOrder = 1
+    object pnTree: TPanel
+      Left = 4
+      Height = 202
+      Top = 0
+      Width = 398
+      Align = alTop
+      BorderSpacing.Left = 4
+      BevelOuter = bvNone
+      ClientHeight = 202
+      ClientWidth = 398
+      TabOrder = 0
+      object bvTreeSizer: TBevel
+        Cursor = crVSplit
+        Left = 0
+        Height = 5
+        Top = 197
+        Width = 398
+        Align = alBottom
+        Shape = bsSpacer
+        OnMouseDown = bvTreeSizerMouseDown
+        OnMouseMove = bvTreeSizerMouseMove
+        OnMouseUp = bvTreeSizerMouseUp
+      end
+      object tree: TTreeView
+        Left = 0
+        Height = 197
+        Top = 0
+        Width = 398
+        Align = alClient
+        ReadOnly = True
+        ScrollBars = ssAutoBoth
+        TabOrder = 0
+        OnClick = treeClick
+        OnDblClick = treeDblClick
+        Options = [tvoAutoItemHeight, tvoHideSelection, tvoKeepCollapsedNodes, tvoReadOnly, tvoShowButtons, tvoShowLines, tvoShowRoot, tvoToolTips, tvoThemedDraw]
+      end
+    end
+    object pnDoer: TPanel
+      Left = 4
+      Height = 378
+      Top = 374
+      Width = 398
+      Align = alBottom
+      BorderSpacing.Left = 4
+      BevelOuter = bvNone
+      ClientHeight = 378
+      ClientWidth = 398
+      TabOrder = 1
+      Visible = False
+      object bvDoerSizer: TBevel
+        Cursor = crVSplit
+        Left = 0
+        Height = 5
+        Top = 0
+        Width = 398
+        Align = alTop
+        Shape = bsSpacer
+        OnMouseDown = bvDoerSizerMouseDown
+        OnMouseMove = bvDoerSizerMouseMove
+        OnMouseUp = bvDoerSizerMouseUp
+      end
+      object Shape1: TShape
+        Left = 0
+        Height = 373
+        Top = 5
+        Width = 398
+        Align = alClient
+        Brush.Color = clMoneyGreen
+      end
+    end
+    object pnDescription: TPanel
+      Left = 4
+      Height = 172
+      Top = 202
+      Width = 398
+      Align = alClient
+      BorderSpacing.Left = 4
+      BevelOuter = bvNone
+      ClientHeight = 172
+      ClientWidth = 398
+      TabOrder = 2
+      object htmlInfo: TIpHtmlPanel
+        Left = 0
+        Height = 172
+        Top = 0
+        Width = 398
+        Align = alClient
+        BorderStyle = bsSingle
+        FixedTypeface = 'Courier'
+        DefaultTypeFace = 'default'
+        DefaultFontSize = 12
+        FlagErrors = False
+        PrintSettings.MarginLeft = 0.5
+        PrintSettings.MarginTop = 0.5
+        PrintSettings.MarginRight = 0.5
+        PrintSettings.MarginBottom = 0.5
+        PrintSettings.Preview.Left = 480
+        PrintSettings.Preview.Top = 270
+        PrintSettings.Preview.Width = 1440
+        PrintSettings.Preview.Height = 810
+        TabOrder = 0
+        OnHotClick = htmlInfoHotClick
+        OnHotURL = htmlInfoHotURL
+      end
+    end
+  end
+  object toolBar: TToolBar
+    Left = 0
+    Height = 24
+    Top = 27
+    Width = 402
+    Caption = 'toolBar'
+    Images = actionImages
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 2
+    object tbAdd: TToolButton
+      Left = 24
+      Top = 2
+      Action = actSolve
+    end
+    object tbEdit: TToolButton
+      Left = 55
+      Top = 2
+      Action = actSettings
+    end
+    object ToolButton2: TToolButton
+      Left = 1
+      Top = 2
+      Action = actRefresh
+    end
+    object ToolButton1: TToolButton
+      Left = 47
+      Height = 22
+      Top = 2
+      Caption = 'ToolButton1'
+      Style = tbsSeparator
+    end
+  end
+  object buttonImages: TImageList
+    Height = 10
+    Scaled = True
+    Width = 10
+    Left = 184
+    Top = 176
+    Bitmap = {
+      4C7A030000000A0000000A000000480000000000000078DAFBCFF09FEA100840
+      C47F4262E8E2B8D4A0ABC5A7865875C4D84B8A3FA8050F1C3840530C733F316A
+      F0A94557834D2D2E35C4B8611493167EA4843129F130D8E20A005A9B4145
+    }
+  end
+  object actionImages: TImageList
+    Height = 18
+    Scaled = True
+    Width = 18
+    Left = 116
+    Top = 100
+    Bitmap = {
+      4C7A030000001200000012000000610100000000000078DAD557091283200CE4
+      E93CCD9FA5D53118C2E6B2D75487114196CDE628A5461FBDB76DA37760B4D648
+      63EDEFDC32188C23B1E418DA03F1188DAE35638EE6711303DDE79A655E614DDF
+      447CC01CB2C7D247EB6CCD234D91BF3C9F5A635E2C7838D2AEBB76239D177F67
+      75CEF8BA1A3F019F4A3CA39CA8E657E4AF5FD7927FBDA5BEBA59DF86F5ABD9B1
+      62E5849C4317CA9163FC9C437BEC57EF7D34C6917803E3397F3410AF1E1F88E1
+      E0482EDCBF72DCC688F82CB619189E3E5D7E0F74B7FCEE71F1FCEDF1E1BE174B
+      593EFB18631288970C1FEDB32A8E7795CF07C95CABE67BE5DCF3CD9A74FB6C27
+      72A0F25B319D4BD8D7A04678FC96FDF727FB1BC4B599A7727F5D6F12B567E2C2
+      FB83E7C42DAA1DDA16B647D60C4777A90D63202C4F236413AF25DD776CD31A4F
+      FE51FD6C9D9FD62ABB28B00BD58E86B429E81CFABC1A3FC2C6F15E891F65BBF6
+      5FB6A62DFF1F404C56EB08E2F74A0DCAEEFF004A708215
+    }
+  end
+  object actionList: TActionList
+    Images = actionImages
+    Left = 264
+    Top = 100
+    object actSolve: TAction
+      Caption = 'Решать задачу'
+      Hint = 'Решать задачу|Открыть или создать решение выбранной задачи'
+      ImageIndex = 1
+      OnExecute = actSolveExecute
+      ShortCut = 113
+    end
+    object actSettings: TAction
+      Caption = 'Настройки...'
+      Hint = 'Настройки...|Открыть диалог настройки практикума'
+      ImageIndex = 2
+      OnExecute = actSettingsExecute
+    end
+    object actRefresh: TAction
+      Caption = 'Обновить'
+      Hint = 'Обновить|Заново загрузить данные практикума'
+      ImageIndex = 0
+      OnExecute = actRefreshExecute
+      ShortCut = 116
+    end
+  end
+end

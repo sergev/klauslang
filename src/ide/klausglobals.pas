@@ -31,6 +31,7 @@ const
   APPM_UpdateControlState    = $9801;
   APPM_UpdateBreakpoints     = $9802;
   APPM_FocusEditor           = $9803;
+  APPM_UpdateCourseInfo      = $9804;
 
 type
   tKlausEditorOptions = class(tKlausEditStyleSheet)
@@ -90,6 +91,24 @@ type
   end;
 
 type
+  tKlausPracticumOptions = class(tPersistent)
+    private
+      fSearchPath: string;
+      fWorkingDir: string;
+    protected
+      procedure assignTo(dest: tPersistent); override;
+      procedure setDefaults;
+    public
+      property searchPath: string read fSearchPath write fSearchPath;
+      property workingDir: string read fWorkingDir write fWorkingDir;
+
+      constructor create;
+      procedure saveToIni(storage: tIniPropStorage);
+      procedure loadFromIni(storage: tIniPropStorage);
+      function  expandPath(path: string): string;
+  end;
+
+type
   tKlausRunOptions = class(tPersistent)
     private
       fCmdLine: string;
@@ -105,13 +124,29 @@ type
       property appendStdOut: boolean read fAppendStdOut write fAppendStdOut;
   end;
 
+  function getInstallDir(trailingSlash: boolean = false): string;
+
 implementation
 
 uses
-  klausConsole;
+  U8, klausConsole;
 
 resourcestring
   klausConsoleOptionsIniSection = 'KlausConsoleOptions';
+  klausPracticumOptionsIniSection = 'KlausPracticumOptions';
+
+function getInstallDir(trailingSlash: boolean = false): string;
+var
+  i: integer;
+begin
+  result := excludeTrailingPathDelimiter(extractFilePath(expandFileName(paramStr(0))));
+  for i := length(result) downto 1 do
+    if isPathDelimiter(result, i) then begin
+      result := copy(result, 1, i-1);
+      break;
+    end;
+  if trailingSlash then result := includeTrailingPathDelimiter(result);
+end;
 
 { tKlausRunOptions }
 
@@ -332,6 +367,80 @@ begin
   storage.doWriteString(sect, 'stayOnTop', boolToStr(stayOnTop, true));
   storage.doWriteString(sect, 'fontColor', intToStr(fontColor));
   storage.doWriteString(sect, 'backColor', intToStr(backColor));
+end;
+
+{ tKlausPracticumOptions }
+
+constructor tKlausPracticumOptions.create;
+begin
+  inherited;
+  setDefaults;
+end;
+
+procedure tKlausPracticumOptions.assignTo(dest: tPersistent);
+begin
+  if not (dest is tKlausPracticumOptions) then
+    inherited assignTo(dest)
+  else with dest as tKlausPracticumOptions do begin
+    searchPath := self.searchPath;
+    workingDir := self.workingDir;
+  end;
+end;
+
+procedure tKlausPracticumOptions.setDefaults;
+begin
+  searchPath := '"%(дом-кат)/Клаус/Курсы";"%(инст-кат)/practicum"';
+  workingDir := '%(дом-кат)/Клаус/Решения';
+end;
+
+function tKlausPracticumOptions.expandPath(path: string): string;
+
+  function xtpd(const p: string): string; inline;
+  begin result := excludeTrailingPathDelimiter(p); end;
+
+var
+  n: string;
+  idx: integer;
+  p1, p2: pChar;
+begin
+  result := '';
+  p2 := pChar(path);
+  idx := pos('%(', path);
+  while idx > 0 do begin
+    p1 := pChar(path)+idx-1;
+    result += copy(path, p2-pChar(path)+1, p1-p2);
+    while not (p2^ in [#0, ')']) do inc(p2);
+    if p2^ = ')' then begin
+      n := u8Lower(copy(path, p1-pChar(path)+3, p2-p1-2));
+      inc(p2);
+      if n = 'дом-кат' then result += xtpd(getUserDir)
+      else if n = 'инст-кат' then result += xtpd(getInstallDir)
+      else p2 := p1;
+    end else
+      p2 := p1;
+    idx := pos('%(', path, p2-pChar(path)+2);
+  end;
+  result += copy(path, p2-pChar(path)+1, maxInt);
+end;
+
+procedure tKlausPracticumOptions.saveToIni(storage: tIniPropStorage);
+var
+  sect: string;
+begin
+  sect := klausPracticumOptionsIniSection;
+  storage.doWriteString(sect, 'searchPath', searchPath);
+  storage.doWriteString(sect, 'workingDir', workingDir);
+end;
+
+procedure tKlausPracticumOptions.loadFromIni(storage: tIniPropStorage);
+var
+  section, s: string;
+begin
+  section := klausPracticumOptionsIniSection;
+  s := storage.doReadString(section, 'searchPath', 'default');
+  if s <> 'default' then searchPath := s;
+  s := storage.doReadString(section, 'workingDir', 'default');
+  if s <> 'default' then workingDir := s;
 end;
 
 end.

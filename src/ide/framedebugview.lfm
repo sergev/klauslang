@@ -36,7 +36,7 @@ object DebugViewFrame: TDebugViewFrame
     ParentFont = False
     TabOrder = 0
     object sbClose: TSpeedButton
-      Left = 328
+      Left = 332
       Height = 16
       Top = 3
       Width = 16
@@ -55,7 +55,7 @@ object DebugViewFrame: TDebugViewFrame
       OnClick = sbCloseClick
     end
     object sbMoveDown: TSpeedButton
-      Left = 313
+      Left = 317
       Height = 16
       Top = 3
       Width = 16
@@ -73,7 +73,7 @@ object DebugViewFrame: TDebugViewFrame
       OnClick = sbMoveDownClick
     end
     object sbMoveUp: TSpeedButton
-      Left = 298
+      Left = 302
       Height = 16
       Top = 3
       Width = 16

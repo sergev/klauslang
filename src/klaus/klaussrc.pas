@@ -25,6 +25,7 @@ unit KlausSrc;
 //todo: процедурные переменные
 //todo: диапазоны в инструкции выбора
 //todo: обращение к элементам составных констант в разделе определений
+//todo: файлСоздКат()
 //todo: JSON
 
 {$mode ObjFPC}{$H+}
@@ -441,10 +442,12 @@ type
   tKlausProgram = class(tKlausModule)
     private
       fArgs: tKlausProcParam;
+      fCourseName: string;
     protected
       function getDisplayName: string; override;
     public
       property args: tKlausProcParam read fArgs;
+      property courseName: string read fCourseName write fCourseName;
 
       constructor create(aSource: tKlausSource; aName: string; aPoint: tSrcPoint);
       constructor create(aSource: tKlausSource; aName: string; aPoint: tSrcPoint; b: tKlausSyntaxBrowser);
@@ -4114,7 +4117,7 @@ end;
 
 procedure tKlausStmtCycle.run(frame: tKlausStackFrame);
 var
-  i: tKlausInteger;
+  i: integer;
   sv: tKlausSimpleValue;
 begin
   klausDebuggerStep(frame, expr.point);
@@ -5262,16 +5265,24 @@ end;
 
 function tKlausSource.createProgram(prog: tKlausSrcNodeRule): tKlausProgram;
 var
-  s: string;
+  pn, cn: string;
+  kwd: tKlausKeyword;
   b: tKlausSyntaxBrowser;
 begin
   b := tKlausSyntaxBrowser.create(prog);
   try
     b.next;
-    b.check(kkwdProgram);
+    kwd := b.check([kkwdProgram, kkwdTask]);
     b.next;
-    s := b.get(klxID).text;
-    result := tKlausProgram.create(self, s, srcPoint(b.lex), b);
+    pn := b.get(klxID).text;
+    if kwd = kkwdTask then begin
+      b.next;
+      b.check(kkwdOf);
+      b.next;
+      cn := b.get(klxID).text;
+    end;
+    result := tKlausProgram.create(self, pn, srcPoint(b.lex), b);
+    if kwd = kkwdTask then result.courseName := cn;
     b.next;
     b.check(klsDot);
   finally

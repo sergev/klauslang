@@ -6,11 +6,12 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls, ComCtrls,
-  KlausGlobals, FrameEditorOptions, FrameConsoleOptions;
+  KlausGlobals, FrameEditorOptions, FrameConsoleOptions, FramePracticumOptions;
 
 type
   TOptionsDlg = class(TForm)
     pageControl: TPageControl;
+    tsPracticum: TTabSheet;
     tsConsole: TTabSheet;
     tsEditor: TTabSheet;
     pnButtons: TPanel;
@@ -20,12 +21,15 @@ type
     fRefreshCount: integer;
     fEditorOptions: tEditorOptionsFrame;
     fConsoleOptions: tConsoleOptionsFrame;
+    fPracticumOptions: tPracticumOptionsFrame;
 
     function  getRefreshing: boolean;
     function  getEditorOptions: tKlausEditorOptions;
     procedure setEditorOptions(val: tKlausEditorOptions);
     function  getConsoleOptions: tKlausConsoleOptions;
     procedure setConsoleOptions(val: tKlausConsoleOptions);
+    function  getPracticumOptions: tKlausPracticumOptions;
+    procedure setPracticumOptions(val: tKlausPracticumOptions);
   protected
     procedure beginRefresh;
     procedure endRefresh;
@@ -33,6 +37,7 @@ type
     property refreshing: boolean read getRefreshing;
     property editorOptions: tKlausEditorOptions read getEditorOptions write setEditorOptions;
     property consoleOptions: tKlausConsoleOptions read getConsoleOptions write setConsoleOptions;
+    property practicumOptions: tKlausPracticumOptions read getPracticumOptions write setPracticumOptions;
 
     constructor create(aOwner: tComponent); override;
     procedure refreshWindow;
@@ -54,6 +59,9 @@ begin
   fConsoleOptions := tConsoleOptionsFrame.create(self);
   fConsoleOptions.parent := tsConsole;
   fConsoleOptions.align := alClient;
+  fPracticumOptions := tPracticumOptionsFrame.create(self);
+  fPracticumOptions.parent := tsPracticum;
+  fPracticumOptions.align := alClient;
 end;
 
 procedure TOptionsDlg.refreshWindow;
@@ -62,6 +70,7 @@ begin
   try
     fEditorOptions.refreshWindow;
     fConsoleOptions.refreshWindow;
+    fPracticumOptions.refreshWindow;
   finally
     endRefresh;
   end;
@@ -92,6 +101,16 @@ begin
   fConsoleOptions.consoleOptions := val;
 end;
 
+function TOptionsDlg.getPracticumOptions: tKlausPracticumOptions;
+begin
+  result := fPracticumOptions.practicumOptions;
+end;
+
+procedure TOptionsDlg.setPracticumOptions(val: tKlausPracticumOptions);
+begin
+  fPracticumOptions.practicumOptions := val;
+end;
+
 procedure TOptionsDlg.beginRefresh;
 begin
   inc(fRefreshCount);
@@ -106,6 +125,7 @@ procedure TOptionsDlg.enableDisable;
 begin
   fEditorOptions.enableDisable;
   fConsoleOptions.enableDisable;
+  fPracticumOptions.enableDisable;
 end;
 
 end.

@@ -11,26 +11,26 @@ object EditFrame: TEditFrame
   DesignTop = 269
   object pnErrorInfo: TPanel
     Left = 0
-    Height = 17
-    Top = 526
+    Height = 18
+    Top = 525
     Width = 891
     Align = alBottom
     AutoSize = True
     BorderSpacing.Top = 4
     BevelOuter = bvNone
-    ClientHeight = 17
+    ClientHeight = 18
     ClientWidth = 891
     TabOrder = 0
     Visible = False
     OnClick = errorInfoClick
     object pnErrorInfoCloseBtn: TPanel
       Left = 866
-      Height = 17
+      Height = 18
       Top = 0
       Width = 25
       Align = alRight
       BevelOuter = bvNone
-      ClientHeight = 17
+      ClientHeight = 18
       ClientWidth = 25
       TabOrder = 0
       object sbClose: TSpeedButton
@@ -52,7 +52,7 @@ object EditFrame: TEditFrame
     end
     object lblErrorInfo: TLabel
       Left = 25
-      Height = 17
+      Height = 18
       Top = 0
       Width = 841
       Align = alClient
@@ -64,12 +64,12 @@ object EditFrame: TEditFrame
     end
     object pnErrorInfoCloseBtn1: TPanel
       Left = 0
-      Height = 17
+      Height = 18
       Top = 0
       Width = 25
       Align = alLeft
       BevelOuter = bvNone
-      ClientHeight = 17
+      ClientHeight = 18
       ClientWidth = 25
       TabOrder = 1
       object Image1: TImage
@@ -95,5 +95,11 @@ object EditFrame: TEditFrame
         Transparent = True
       end
     end
+  end
+  object courseInfoTimer: TTimer
+    Enabled = False
+    OnTimer = courseInfoTimerTimer
+    Left = 346
+    Top = 178
   end
 end

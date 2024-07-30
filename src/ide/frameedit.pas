@@ -53,7 +53,9 @@ type
     pnErrorInfo: TPanel;
     pnErrorInfoCloseBtn1: TPanel;
     sbClose: TSpeedButton;
+    courseInfoTimer: TTimer;
 
+    procedure courseInfoTimerTimer(Sender: TObject);
     procedure errorInfoClick(Sender: TObject);
     procedure sbCloseClick(Sender: TObject);
   private
@@ -75,6 +77,7 @@ type
     procedure editMouseDown(sender: tObject; button: tMouseButton; shift: tShiftState; x, y: integer);
     procedure setErrorLine(line: integer);
     procedure removeErrorLine;
+    procedure setCourseInfoTimer;
   protected
     procedure enableDisable(var msg: tMessage); message APPM_UpdateControlState;
   public
@@ -171,6 +174,12 @@ begin
   end;
 end;
 
+procedure tEditFrame.courseInfoTimerTimer(Sender: TObject);
+begin
+  mainForm.invalidateCourseInfo;
+  courseInfoTimer.enabled := false;
+end;
+
 function tEditFrame.getCaption: string;
 var
   s: string;
@@ -188,6 +197,7 @@ procedure tEditFrame.editChange(sender: tObject);
 begin
   fModified := true;
   removeErrorLine;
+  setCourseInfoTimer;
   invalidateControlState;
 end;
 
@@ -239,6 +249,7 @@ end;
 
 procedure tEditFrame.editChangeFocus(sender: tObject; focus: boolean);
 begin
+  if focus then mainForm.invalidateCourseInfo;
   invalidateControlState;
 end;
 
@@ -268,6 +279,12 @@ end;
 procedure tEditFrame.removeErrorLine;
 begin
   setErrorLine(-1);
+end;
+
+procedure tEditFrame.setCourseInfoTimer;
+begin
+  courseInfoTimer.enabled := false;
+  courseInfoTimer.enabled := true;
 end;
 
 procedure tEditFrame.enableDisable(var msg: tMessage);
@@ -327,7 +344,9 @@ begin
   result := nil;
   showErrorInfo('', 0, 0);
   try
-    p := tKlausLexParser.create(tStringReadStream.create(edit.text));
+    edit.textReadStream.position := 0;
+    p := tKlausLexParser.create(edit.textReadStream);
+    p.ownsStream := false;
     p.fileName := fileName;
     try result := tKlausSource.create(p);
     finally freeAndNil(p); end;

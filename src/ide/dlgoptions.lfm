@@ -8,7 +8,7 @@ object OptionsDlg: TOptionsDlg
   ClientHeight = 710
   ClientWidth = 824
   Position = poScreenCenter
-  LCLVersion = '3.0.0.3'
+  LCLVersion = '3.2.0.0'
   object pageControl: TPageControl
     Left = 0
     Height = 660
@@ -23,6 +23,9 @@ object OptionsDlg: TOptionsDlg
     end
     object tsConsole: TTabSheet
       Caption = 'Консоль'
+    end
+    object tsPracticum: TTabSheet
+      Caption = 'Практикум'
     end
   end
   object pnButtons: TPanel

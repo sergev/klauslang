@@ -136,12 +136,20 @@ const
   ercWithStructOnly         = 86;
   ercUnimplemented          = 87;
   ercUnitNotFound           = 88;
+  ercInvalidCourseName      = 89;
+  ercDuplicateCourseName    = 90;
+  ercInvalidTaskName        = 91;
+  ercDuplicateTaskName      = 92;
+  ercInvalidFileFormat      = 93;
+  ercFileReadError          = 94;
+  ercCannotCreateDirectory  = 95;
 
 const
   // Классификация кодов eKlausError для трансляции в исключения языка
   klausCodeToStdErr: array[tKlausStdException] of set of byte = (
     //ksxInOutError
-    [ercStreamError, ercInvalidFileType, ercStreamNotOpen],
+    [ercStreamError, ercInvalidFileType, ercStreamNotOpen, ercInvalidFileFormat, ercFileReadError,
+    ercCannotCreateDirectory],
 
     //ksxConvertError
     [ercInvalidLiteralValue, ercInvalidFormatSpecifier, ercInvalidFormatArgIdx,
@@ -181,7 +189,8 @@ const
     //ksxRuntimeError
     [ercStackTooBig, ercInaccurateCleanup, ercInvalidKlausHandle, ercTooManyHandles,
     ercUnexpectedObjectClass, ercCallsNotAllowed, ercCanvasUnavailable, ercGraphicOperationNA,
-    ercEventQueueEmpty],
+    ercEventQueueEmpty, ercInvalidCourseName, ercDuplicateCourseName, ercInvalidTaskName,
+    ercDuplicateTaskName],
 
     //ksxBadNumber
     [ercArgumentIsNaN, ercArgumentIsNotFinite],
@@ -309,6 +318,13 @@ resourcestring
   errWithStructOnly = 'Недопустимый тип данных. Требуется структура.';
   errUnimplemented = 'Эта возможность пока не реализована.';
   errUnitNotFound = 'Модуль "%s" не найден.';
+  errInvalidCourseName = 'Неверное имя учебного курса: "%s". Имя должно быть правильным идентификатором языка Клаус.';
+  errDuplicateCourseName = 'Учебный курс с таким именем уже существует: "%s".';
+  errInvalidTaskName = 'Неверное имя задачи: "%s". Имя должно быть правильным идентификатором языка Клаус.';
+  errDuplicateTaskName = 'Задача с именем "%s" уже существует в данном курсе.';
+  errInvalidFileFormat = 'Неверный формат файла.';
+  errFileReadError = 'Ошибка чтения файла: "%s". %s';
+  errCannotCreateDirectory = 'Ошибка при создании каталога: "%s".';
 
 { Globals }
 
@@ -434,6 +450,13 @@ begin
     ercWithStructOnly: result := errWithStructOnly;
     ercUnimplemented: result := errUnimplemented;
     ercUnitNotFound: result := errUnitNotFound;
+    ercInvalidCourseName: result := errInvalidCourseName;
+    ercDuplicateCourseName: result := errDuplicateCourseName;
+    ercInvalidTaskName: result := errInvalidTaskName;
+    ercDuplicateTaskName: result := errDuplicateTaskName;
+    ercInvalidFileFormat: result := errInvalidFileFormat;
+    ercFileReadError: result := errFileReadError;
+    ercCannotCreateDirectory: result := errCannotCreateDirectory;
   end;
 end;
 

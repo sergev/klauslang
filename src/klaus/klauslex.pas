@@ -168,7 +168,8 @@ type
     kkwdOr,
     kkwdXor,
     kkwdCycle,
-    kkwdTimes
+    kkwdTimes,
+    kkwdTask
   );
 
 type
@@ -328,6 +329,7 @@ type
       class function  isEOLN(c: u8Char): boolean;
       class function  isLetter(c: u8Char): boolean;
       class function  isIdentChar(c: u8Char): boolean;
+      class function  isValidIdent(const s: string): boolean;
       class function  isDigit(c: u8Char): boolean;
       class function  isHexDigit(c: u8Char): boolean;
       class function  translateHexDigit(c: u8Char): u8Char;
@@ -450,7 +452,8 @@ const
     (s: 'либо'; k: kkwdXor),
     (s: 'повторить'; k: kkwdCycle),
     (s: 'раз'; k: kkwdTimes),
-    (s: 'раза'; k: kkwdTimes)
+    (s: 'раза'; k: kkwdTimes),
+    (s: 'задача'; k: kkwdTask)
   );
 
 const
@@ -881,6 +884,24 @@ end;
 class function tKlausLexParser.isIdentChar(c: u8Char): boolean;
 begin
   result := system.pos(c, klausIdentChars) > 0;
+end;
+
+// Возвращает true, если переданная строка является правильным идентификатором.
+class function tKlausLexParser.isValidIdent(const s: string): boolean;
+var
+  p: pChar;
+  c: u8Char;
+begin
+  if s = '' then exit(false);
+  p := pChar(s);
+  c := u8GetChar(p);
+  if not isLetter(c) then exit(false);
+  c := u8GetChar(p);
+  while c <> '' do begin
+    if not isIdentChar(c) then exit(false);
+    c := u8GetChar(p);
+  end;
+  result := true;
 end;
 
 // Возвращает true для символов, с которых может начинаться численный литерал

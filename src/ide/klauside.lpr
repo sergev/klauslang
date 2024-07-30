@@ -35,7 +35,8 @@ uses
   DlgEvaluate, FrameEditorOptions, FrameConsoleOptions, KlausPaintBox,
   KlausUnitSystem, KlausUnitSystem_Proc, KlausUnitTerminal,
   KlausUnitTerminal_Proc, KlausUnitFiles, KlausUnitFiles_Proc,
-  KlausUnitGraphics, KlausUnitGraphics_Proc, KlausUnitEvents, KlausUnitEvents_Proc;
+  KlausUnitGraphics, KlausUnitGraphics_Proc, KlausUnitEvents,
+  KlausUnitEvents_Proc, KlausPract, FrameCourseInfo, FramePracticumOptions;
 
 {$R *.res}
 

@@ -9,9 +9,6 @@ uses
   ColorBox, EditBtn, Dialogs, Graphics, GraphUtils;
 
 type
-
-  { tConsoleOptionsFrame }
-
   tConsoleOptionsFrame = class(TFrame)
     Bevel1: TBevel;
     Bevel3: TBevel;

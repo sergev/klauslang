@@ -1,0 +1,277 @@
+object PracticumOptionsFrame: TPracticumOptionsFrame
+  Left = 0
+  Height = 422
+  Top = 0
+  Width = 749
+  ClientHeight = 422
+  ClientWidth = 749
+  TabOrder = 0
+  DesignLeft = 574
+  DesignTop = 218
+  object Panel14: TPanel
+    Left = 10
+    Height = 22
+    Top = 10
+    Width = 729
+    Align = alTop
+    AutoSize = True
+    BorderSpacing.Around = 10
+    BevelOuter = bvNone
+    ChildSizing.Layout = cclTopToBottomThenLeftToRight
+    ClientHeight = 22
+    ClientWidth = 729
+    TabOrder = 0
+    object Label10: TLabel
+      Left = 0
+      Height = 18
+      Top = 0
+      Width = 724
+      Align = alClient
+      BorderSpacing.Right = 5
+      Caption = 'Каталоги'
+      Font.Style = [fsBold]
+      ParentColor = False
+      ParentFont = False
+    end
+    object Bevel4: TBevel
+      Left = 0
+      Height = 4
+      Top = 18
+      Width = 729
+      Align = alBottom
+      Constraints.MaxHeight = 4
+      Shape = bsBottomLine
+    end
+  end
+  object pnDirectories: TPanel
+    Left = 0
+    Height = 168
+    Top = 42
+    Width = 749
+    Align = alTop
+    AutoSize = True
+    BevelOuter = bvNone
+    ClientHeight = 168
+    ClientWidth = 749
+    TabOrder = 1
+    object Panel3: TPanel
+      Left = 20
+      Height = 35
+      Top = 0
+      Width = 719
+      Align = alTop
+      AutoSize = True
+      BorderSpacing.Left = 20
+      BorderSpacing.Right = 10
+      BorderSpacing.Bottom = 2
+      BevelOuter = bvNone
+      ClientHeight = 35
+      ClientWidth = 719
+      TabOrder = 0
+      object Label3: TLabel
+        Left = 0
+        Height = 35
+        Top = 0
+        Width = 220
+        Align = alLeft
+        BorderSpacing.Right = 8
+        Caption = 'Путь поиска учебных курсов:'
+        Constraints.MinWidth = 220
+        Layout = tlCenter
+        ParentColor = False
+      end
+      object edSearchPath: TEditButton
+        Left = 228
+        Height = 35
+        Top = 0
+        Width = 491
+        Align = alClient
+        ButtonHint = 'Обновить данные (F5)|Заново выполнить поиск учебных курсов по указанному пути'
+        ButtonWidth = 35
+        Glyph.Data = {
+          D2010000424DD201000000000000CA0000007C00000016000000160000000100
+          04000000000008010000130B0000130B000010000000100000000000FF0000FF
+          0000FF0000000000000042475273000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000200
+          0000000000000000000000000000000000000000800000800000008080008000
+          0000800080008080000080808000C0C0C0000000FF0000FF000000FFFF00FF00
+          0000FF00FF00FFFF0000FFFFFF00DDDDDDDDDDDDDDDDDDDDDD00DDDDDDDDDDDD
+          DDDDDDDDDD00DDDDDDDDDDDDDD8DDDDDDD00DDDDD88888DDD808DDDDDD00DDD8
+          8770008D80088DDDDD00DD87707AA0880A00788DDD00D8707AAAA080AAAA7078
+          DD00D80AAA700080AAAAAA078D0080AA707888D80A007AA08D0080A0788DDDDD
+          800870AA080080088DDDDDDDD808880A08008008DDD8DDDDDD8DDD80080080A0
+          88808DDDDDDDD880080080AA078008DDDDD8870A0800D80AA700A08D888707AA
+          0800D870AAAAAA080007AAA08D00DD8707AAAA080AAAA7078D00DDD88700A088
+          0AA70778DD00DDDDD88008D80007788DDD00DDDDDD808DDD88888DDDDD00DDDD
+          DDD8DDDDDDDDDDDDDD00DDDDDDDDDDDDDDDDDDDDDD00
+        }
+        MaxLength = 0
+        NumGlyphs = 1
+        OnButtonClick = edSearchPathButtonClick
+        OnChange = edSearchPathChange
+        OnKeyDown = edSearchPathKeyDown
+        ParentShowHint = False
+        PasswordChar = #0
+        ShowHint = True
+        TabOrder = 0
+      end
+    end
+    object Panel4: TPanel
+      Left = 20
+      Height = 35
+      Top = 37
+      Width = 719
+      Align = alTop
+      AutoSize = True
+      BorderSpacing.Left = 20
+      BorderSpacing.Right = 10
+      BorderSpacing.Bottom = 2
+      BevelOuter = bvNone
+      ClientHeight = 35
+      ClientWidth = 719
+      TabOrder = 1
+      object Label4: TLabel
+        Left = 0
+        Height = 35
+        Top = 0
+        Width = 220
+        Align = alLeft
+        BorderSpacing.Right = 8
+        Caption = 'Рабочий каталог практикума:'
+        Constraints.MinWidth = 220
+        Layout = tlCenter
+        ParentColor = False
+      end
+      object edWorkingDir: TEdit
+        Left = 228
+        Height = 35
+        Top = 0
+        Width = 491
+        Align = alClient
+        TabOrder = 0
+        OnChange = edWorkingDirChange
+      end
+    end
+    object Label1: TLabel
+      Left = 20
+      Height = 90
+      Top = 76
+      Width = 719
+      Align = alTop
+      BorderSpacing.Left = 20
+      BorderSpacing.Top = 4
+      BorderSpacing.Right = 10
+      BorderSpacing.Bottom = 2
+      Caption = 'При указании путей можно использовать следующие подстановочные макросы:'#10'    %(дом-кат) -- домашний каталог текущего пользователя ОС;'#10'    %(инст-кат) -- каталог инсталляции Клаус.'#10'В рабочем каталоге практикума будут создаваться подкаталоги с именами учебных курсов, в которых будут размещаться файлы решений задач.'
+      Font.Style = [fsItalic]
+      ParentFont = False
+      WordWrap = True
+    end
+  end
+  object Panel15: TPanel
+    Left = 10
+    Height = 22
+    Top = 220
+    Width = 729
+    Align = alTop
+    AutoSize = True
+    BorderSpacing.Around = 10
+    BevelOuter = bvNone
+    ChildSizing.Layout = cclTopToBottomThenLeftToRight
+    ClientHeight = 22
+    ClientWidth = 729
+    TabOrder = 2
+    object Label11: TLabel
+      Left = 0
+      Height = 18
+      Top = 0
+      Width = 724
+      Align = alClient
+      BorderSpacing.Right = 5
+      Caption = 'Доступные курсы'
+      Font.Style = [fsBold]
+      ParentColor = False
+      ParentFont = False
+    end
+    object Bevel5: TBevel
+      Left = 0
+      Height = 4
+      Top = 18
+      Width = 729
+      Align = alBottom
+      Constraints.MaxHeight = 4
+      Shape = bsBottomLine
+    end
+  end
+  object sgCourses: TStringGrid
+    Left = 20
+    Height = 142
+    Top = 252
+    Width = 719
+    Align = alClient
+    AutoEdit = False
+    AutoFillColumns = True
+    BorderSpacing.Left = 20
+    BorderSpacing.Right = 10
+    BorderSpacing.Bottom = 4
+    Columns = <    
+      item
+        SizePriority = 0
+        Title.Alignment = taCenter
+        Title.Caption = 'Имя курса'
+        Width = 150
+      end    
+      item
+        SizePriority = 0
+        Title.Alignment = taCenter
+        Title.Caption = 'Автор'
+        Width = 200
+      end    
+      item
+        Alignment = taRightJustify
+        SizePriority = 0
+        Title.Alignment = taCenter
+        Title.Caption = 'Задач'
+        Width = 70
+      end    
+      item
+        Title.Alignment = taCenter
+        Title.Caption = 'Название курса'
+        Width = 297
+      end    
+      item
+        SizePriority = 0
+        Title.Caption = 'Имя файла'
+        Width = 0
+        Visible = False
+      end>
+    DefaultRowHeight = 22
+    FixedCols = 0
+    GridLineStyle = psDot
+    Options = [goVertLine, goDrawFocusSelected, goColSizing, goRowSelect, goSmoothScroll, goCellHints]
+    ScrollBars = ssAutoVertical
+    TabOrder = 3
+    OnAfterSelection = sgCoursesAfterSelection
+    ColWidths = (
+      150
+      200
+      70
+      297
+      0
+    )
+  end
+  object lblCourseFileName: TLabel
+    Left = 20
+    Height = 18
+    Top = 398
+    Width = 719
+    Align = alBottom
+    BorderSpacing.Left = 20
+    BorderSpacing.Top = 4
+    BorderSpacing.Right = 10
+    BorderSpacing.Bottom = 6
+    Caption = 'Файл курса: (нет)'
+    ParentFont = False
+    WordWrap = True
+  end
+end
