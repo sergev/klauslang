@@ -46,17 +46,17 @@ begin
 end;
 
 begin
-  OnGetApplicationName:=@getAppName;
-  RequireDerivedFormResource:=True;
+  onGetApplicationName := @getAppName;
+  requireDerivedFormResource := true;
   Application.Scaled:=True;
   Application.Title:='Klaus IDE';
-  Application.Initialize;
+  application.initialize;
   {$push}{$warn SYMBOL_PLATFORM off}
-  Application.updateFormatSettings := false;
+  application.updateFormatSettings := false;
   {$pop}
-  Application.CreateForm(TMainForm, MainForm);
-  Application.CreateForm(TSplashForm, SplashForm);
+  application.createForm(tMainForm, mainForm);
+  application.createForm(tSplashForm, splashForm);
   splashForm.showModal;
-  Application.Run;
+  application.run;
 end.
 

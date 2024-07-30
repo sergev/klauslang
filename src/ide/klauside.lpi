@@ -33,7 +33,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="../lib;../klaus;../lib/edit;../lib/console;../lib/bgrabitmap"/>
+            <OtherUnitFiles Value="../lib;../klaus;../lib/edit;../lib/console"/>
             <UnitOutputDirectory Value="../../compiled/$NameOnly($(ProjFile))/$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>

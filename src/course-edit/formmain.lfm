@@ -1,0 +1,198 @@
+object MainForm: TMainForm
+  Left = 516
+  Height = 603
+  Top = 245
+  Width = 1014
+  Caption = 'Клаус - редактор практикума'
+  ClientHeight = 603
+  ClientWidth = 1014
+  Menu = mainMenu
+  Position = poDefaultPosOnly
+  LCLVersion = '3.2.0.0'
+  object statusBar: TStatusBar
+    Left = 0
+    Height = 20
+    Top = 583
+    Width = 1014
+    Panels = <>
+  end
+  object ToolBar1: TToolBar
+    Left = 0
+    Height = 34
+    Top = 0
+    Width = 1014
+    AutoSize = True
+    ButtonHeight = 30
+    ButtonWidth = 30
+    Caption = 'toolBar'
+    EdgeBorders = [ebTop, ebBottom]
+    Images = actionImages
+    TabOrder = 1
+    object tbFileNew: TToolButton
+      Left = 1
+      Top = 2
+      Action = actFileNew
+    end
+    object tbFileOpen: TToolButton
+      Left = 31
+      Top = 2
+      Action = actFileOpen
+    end
+    object tbFileSave: TToolButton
+      Left = 61
+      Top = 2
+      Action = actFileSave
+    end
+    object ToolButton4: TToolButton
+      Left = 91
+      Height = 30
+      Top = 2
+      Caption = 'ToolButton4'
+      Style = tbsSeparator
+    end
+    object tbTaskAdd: TToolButton
+      Left = 99
+      Top = 2
+      Action = actTaskAdd
+    end
+    object tbTaskRename: TToolButton
+      Left = 129
+      Top = 2
+      Action = actTaskRename
+    end
+    object tbTaskDelete: TToolButton
+      Left = 159
+      Top = 2
+      Action = actTaskDelete
+    end
+  end
+  object actionImages: TImageList
+    Height = 22
+    Scaled = True
+    Width = 22
+    Left = 400
+    Top = 204
+    Bitmap = {
+      4C7A080000001600000016000000BD0200000000000078DAED9A0B9682300C45
+      593A4B63671D1103B1A6F957C0A99C1C11F1F21A4B13D296A9ECDBB22C456365
+      D26FEBF9D334A9CCC206AEF4B2B23117E8D4FB7E8E926DD28BF625B6556F51B2
+      5D7A156C8B5E4B3FD1EAE5DA217139BD5C3B86DEA177E8BD86DE8871635AC42C
+      F1F4CE5B8F7653FF2BB0BDD70166AD178E69E332D55EA96F6A62B2251E6AFA2E
+      19C3D1BD64EDBF1C538AEFDA9CC43C36387DA01D6F287FB4F446C71E4AEFDE37
+      1FFBDAF716B7F65B8449EA35325BF75CADD7EC03E9DE49F22BA937C1AFE4BD9E
+      E0D78C98E9191FAF1C2BA3319ED29F91935031EF796C7ED9637F9E6D56FF1EC7
+      3F7CDC93F369B843EF3DF5F6E2BA4CE246ED4CAEB6ED16AEB6D6E3E4E2B16E70
+      F3B9DEFFAD571CEA193747BDDA594FED54AF966A2F11BD5AB647AF86FD53F5EA
+      5A5B52BD6F63BD36E61C975EC48DE8FD6C3BE222B3EA7D63B536C53D42EA5572
+      CD7A957EF8E5FE408DB9ADB83CEAD5D7AC577FBB9E1CD5B73D23CD4FE3EA8659
+      F989A51603E7AEDADE34BDFA293E06FAB531B9C5E4D89E3A78A62F40F3FABEBE
+      E033DED768E5B8D076D8CFE20EBD0797BA46861FE0F334F4A6E9DD63228E8FE8
+      B3958BC729C9F6FED7A1167C768CECC18CC445F1392B894DE57C96BC488C3F42
+      8EF856B731CCC572F967AB7E84D9D2FC5B2BFFE5AECBCD438ACFA8C277D2FCA6
+      872BCD6F0EBDF97A25B657AFE40FFC5BC8AFEB1C553D87DAE8FB750EFB96CB6A
+      F355CBFCBFB1E6D5AAE958D74270EB0BB29F35B4EB4B3C71F9BFACA9BAFB1AB0
+      ABCFA367BDEAF81DE11462FDB9873B13394444EFCA03F370A9DF533CAF5ECCC2
+      D7CAD05B7329ED1AAE8675252EE7CBA87FCFBA2FB4F32E779D371DDB77F308EA
+      3930C2AE79CBB26596D15A35E68161AEB56F1D75824F2B259E43B25C63CE7B36
+      D73227FD4B7E3818B97E386A8AF97ED874F6FDDFEED61F6EE707E77A1E699CC4
+      356B6B0CE1C6750FAF771CCA889B7F0A68EE88
+    }
+  end
+  object actionList: TActionList
+    Images = actionImages
+    Left = 280
+    Top = 204
+    object actFileNew: TAction
+      Category = 'Файл'
+      Caption = 'Создать'
+      Hint = 'Создать|Создать новый учебный курс'
+      ImageIndex = 0
+      ShortCut = 16462
+    end
+    object actFileOpen: TAction
+      Category = 'Файл'
+      Caption = 'Открыть...'
+      Hint = 'Открыть|Открыть файл учебного курса'
+      ImageIndex = 1
+      ShortCut = 16463
+    end
+    object actFileSave: TAction
+      Category = 'Файл'
+      Caption = 'Сохранить'
+      Hint = 'Сохранить|Сохранить учебный курс'
+      ImageIndex = 2
+      ShortCut = 16467
+    end
+    object actFileSaveAs: TAction
+      Category = 'Файл'
+      Caption = 'Сохранить как...'
+      Hint = 'Сохранить как...|Сохранить учебный курс в файле с новым именем'
+    end
+    object actTaskAdd: TAction
+      Category = 'Задача'
+      Caption = 'Добавить задачу'
+      Hint = 'Добавить задачу|Добавить задачу в выбранную категорию'
+      ImageIndex = 3
+      ShortCut = 45
+    end
+    object actTaskDelete: TAction
+      Category = 'Задача'
+      Caption = 'Удалить'
+      Hint = 'Удалить|Удалить выбранный элемент'
+      ImageIndex = 4
+      ShortCut = 16430
+    end
+    object actTaskRename: TAction
+      Category = 'Задача'
+      Caption = 'Переименовать'
+      Hint = 'Переименовать|Переименовать выделенный элемент'
+      ImageIndex = 6
+      ShortCut = 113
+    end
+    object actFileExit: TAction
+      Category = 'Файл'
+      Caption = 'Выход'
+      Hint = 'Выход|Закрыть приложение'
+      ImageIndex = 7
+      ShortCut = 32883
+    end
+  end
+  object mainMenu: TMainMenu
+    Images = actionImages
+    Left = 524
+    Top = 204
+    object MenuItem1: TMenuItem
+      Caption = 'Файл'
+      object miFileNew: TMenuItem
+        Action = actFileNew
+      end
+      object miFileOpen: TMenuItem
+        Action = actFileOpen
+      end
+      object miFileSave: TMenuItem
+        Action = actFileSave
+      end
+      object miFileSaveAs: TMenuItem
+        Action = actFileSaveAs
+      end
+      object Separator1: TMenuItem
+        Caption = '-'
+      end
+      object miFileExit: TMenuItem
+        Action = actFileExit
+      end
+    end
+    object MenuItem2: TMenuItem
+      Caption = 'Задача'
+      object miTaskAdd: TMenuItem
+        Action = actTaskAdd
+      end
+      object miTaskRename: TMenuItem
+        Action = actTaskRename
+      end
+      object miTaskDelete: TMenuItem
+        Action = actTaskDelete
+      end
+    end
+  end
+end

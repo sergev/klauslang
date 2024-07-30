@@ -86,9 +86,6 @@ type
   end;
 
 type
-
-  { tKlausTask }
-
   tKlausTask = class
     private
       fOwner: tKlausCourse;
