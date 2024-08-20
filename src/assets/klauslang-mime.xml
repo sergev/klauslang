@@ -6,7 +6,8 @@
     <comment>Klaus source code</comment>
     <acronym>Klaus</acronym>
     <expanded-acronym>Klaus source code</expanded-acronym>
-    <glob pattern="*.клаус"/>
+    <glob pattern="*.klaus"/>
+    <generic-icon name="text-klauslang-source-code"/>
     <comment xml:lang="ru">Исходный код Клаус</comment>
   </mime-type>
   <mime-type type="application/klauslang-training-course">
@@ -15,7 +16,8 @@
     <comment>Klaus training course</comment>
     <acronym>Klaus</acronym>
     <expanded-acronym>Klaus training course</expanded-acronym>
-    <glob pattern="*.клаус-курс"/>
+    <glob pattern="*.klaus-course"/>
+    <generic-icon name="application-klauslang-training-course"/>
     <comment xml:lang="ru">Учебный курс Клаус</comment>
   </mime-type>
 </mime-info>
