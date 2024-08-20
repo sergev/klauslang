@@ -1199,8 +1199,8 @@ object MainForm: TMainForm
   end
   object openDialog: TOpenDialog
     Title = 'Открыть файл'
-    Filter = 'Файлы Клаус|*.klaus|Все файлы|*'
-    FilterIndex = 0
+    DefaultExt = '.klaus'
+    Filter = 'Файлы Клаус|*.klaus;*.клаус|Все файлы|*'
     Options = [ofPathMustExist, ofFileMustExist, ofEnableSizing, ofViewDetail]
     Left = 136
     Top = 260
