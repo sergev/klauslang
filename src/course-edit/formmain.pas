@@ -10,6 +10,9 @@ uses
   FrameTaskProps;
 
 type
+
+  { tMainForm }
+
   tMainForm = class(tForm)
     actFileOpen: tAction;
     actFileNew: tAction;
@@ -56,6 +59,7 @@ type
     procedure bvTreeSizerMouseMove(sender: tObject; shift: tShiftState; x, y: integer);
     procedure bvTreeSizerMouseUp(sender: tObject; button: tMouseButton; shift: tShiftState; x, y: integer);
     procedure formCloseQuery(sender: tObject; var canClose: boolean);
+    procedure formShow(sender: tObject);
     procedure treeChange(sender: tObject; node: tTreeNode);
     procedure treeChanging(sender: tObject; node: tTreeNode; var allowChange: boolean);
   private
@@ -238,6 +242,16 @@ end;
 procedure tMainForm.formCloseQuery(sender: tObject; var canClose: boolean);
 begin
   canClose := promptToSave;
+end;
+
+procedure tMainForm.formShow(sender: tObject);
+var
+  fn: string;
+begin
+  if paramCount > 0 then begin
+    fn := expandFileName(paramStr(1));
+    openCourse(fn);
+  end;
 end;
 
 procedure tMainForm.treeChange(sender: tObject; node: tTreeNode);
@@ -478,7 +492,7 @@ begin
   result := false;
   if course = nil then exit;
   if saveAs or (course.fileName = '') then begin
-    if course.fileName = '' then saveDialog.fileName := course.name + '.клаус-курс'
+    if course.fileName = '' then saveDialog.fileName := course.name + '.klaus-course'
     else saveDialog.fileName := course.fileName;
     if not saveDialog.execute then exit;
     course.saveToFile(saveDialog.fileName);

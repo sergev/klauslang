@@ -52,125 +52,125 @@ object MainForm: TMainForm
       Style = tbsSeparator
     end
     object tbEditUndo: TToolButton
-      Left = 127
+      Left = 129
       Top = 2
       Action = actEditUndo
     end
     object ToolButton7: TToolButton
-      Left = 247
+      Left = 249
       Height = 30
       Top = 2
       Caption = 'ToolButton7'
       Style = tbsSeparator
     end
     object tbEditSearch: TToolButton
-      Left = 319
+      Left = 325
       Top = 2
       Action = actEditSearch
     end
     object tbEditSearchNext: TToolButton
-      Left = 349
+      Left = 355
       Top = 2
       Action = actEditSearchNext
     end
     object tbEditReplace: TToolButton
-      Left = 379
+      Left = 385
       Top = 2
       Action = actEditReplace
     end
     object ToolButton1: TToolButton
-      Left = 481
+      Left = 491
       Height = 30
       Top = 2
       Caption = 'ToolButton1'
       Style = tbsSeparator
     end
     object tbWindowLocalVariables: TToolButton
-      Left = 811
+      Left = 831
       Top = 2
       Action = actDebugLocalVariables
     end
     object tbWindowCallStack: TToolButton
-      Left = 841
+      Left = 861
       Top = 2
       Action = actDebugCallStack
     end
     object tbWindowBreakpoints: TToolButton
-      Left = 871
+      Left = 891
       Top = 2
       Action = actDebugBreakpoints
     end
     object tbEditCut: TToolButton
-      Left = 157
+      Left = 159
       Top = 2
       Action = actEditCut
     end
     object tbEditCopy: TToolButton
-      Left = 187
+      Left = 189
       Top = 2
       Action = actEditCopy
     end
     object tbEditPaste: TToolButton
-      Left = 217
+      Left = 219
       Top = 2
       Action = actEditPaste
     end
     object ToolButton2: TToolButton
-      Left = 445
+      Left = 453
       Height = 30
       Top = 2
       Caption = 'ToolButton2'
       Style = tbsSeparator
     end
     object tbRunCheckSyntax: TToolButton
-      Left = 451
+      Left = 461
       Top = 2
       Action = actRunCheckSyntax
     end
     object tbRunStart: TToolButton
-      Left = 517
+      Left = 529
       Top = 2
       Action = actRunStart
     end
     object tbRunStartArgs: TToolButton
-      Left = 487
+      Left = 499
       Top = 2
       Action = actRunStartArgs
     end
     object tbRunPause: TToolButton
-      Left = 577
+      Left = 589
       Top = 2
       Action = actRunPause
     end
     object tbRunStop: TToolButton
-      Left = 607
+      Left = 619
       Top = 2
       Action = actRunStop
     end
     object ToolButton10: TToolButton
-      Left = 673
+      Left = 687
       Height = 30
       Top = 2
       Caption = 'ToolButton10'
       Style = tbsSeparator
     end
     object tbRunStepInto: TToolButton
-      Left = 679
+      Left = 695
       Top = 2
       Action = actDebugStepInto
     end
     object tbRunStepOver: TToolButton
-      Left = 709
+      Left = 725
       Top = 2
       Action = actDebugStepOver
     end
     object tbRunShowExecPoint: TToolButton
-      Left = 739
+      Left = 755
       Top = 2
       Action = actDebugShowExecPoint
     end
     object ToolButton14: TToolButton
-      Left = 769
+      Left = 785
       Height = 30
       Top = 2
       Caption = 'ToolButton14'
@@ -178,77 +178,77 @@ object MainForm: TMainForm
       Visible = False
     end
     object ToolButton3: TToolButton
-      Left = 637
+      Left = 649
       Height = 30
       Top = 2
       Caption = 'ToolButton3'
       Style = tbsSeparator
     end
     object tbRunShowScene: TToolButton
-      Left = 643
+      Left = 657
       Top = 2
       Action = actRunShowScene
     end
     object ToolButton4: TToolButton
-      Left = 547
+      Left = 559
       Top = 2
       Action = actDebugRunToCursor
     end
     object ToolButton6: TToolButton
-      Left = 253
+      Left = 257
       Top = 2
       Action = actEditUnindentBlock
     end
     object ToolButton8: TToolButton
-      Left = 283
+      Left = 287
       Top = 2
       Action = actEditIndentBlock
     end
     object ToolButton9: TToolButton
-      Left = 313
+      Left = 317
       Height = 30
       Top = 2
       Caption = 'ToolButton9'
       Style = tbsSeparator
     end
     object tbFileOptions: TToolButton
-      Left = 415
+      Left = 423
       Top = 2
       Action = actFileOptions
     end
     object ToolButton12: TToolButton
-      Left = 409
+      Left = 415
       Height = 30
       Top = 2
       Caption = 'ToolButton12'
       Style = tbsSeparator
     end
     object tbWindowWatches: TToolButton
-      Left = 901
+      Left = 921
       Top = 2
       Action = actDebugWatches
     end
     object ToolButton11: TToolButton
-      Left = 775
+      Left = 793
       Top = 2
       Action = actDebugEvaluateWatch
     end
     object ToolButton13: TToolButton
-      Left = 805
+      Left = 823
       Height = 30
       Top = 2
       Caption = 'ToolButton13'
       Style = tbsSeparator
     end
     object ToolButton15: TToolButton
-      Left = 931
+      Left = 951
       Height = 30
       Top = 2
       Caption = 'ToolButton15'
       Style = tbsSeparator
     end
     object ToolButton16: TToolButton
-      Left = 937
+      Left = 959
       Top = 2
       Action = actHelpReferenceGuide
     end
@@ -1199,7 +1199,7 @@ object MainForm: TMainForm
   end
   object openDialog: TOpenDialog
     Title = 'Открыть файл'
-    Filter = 'Файлы Клаус|*.клаус|Все файлы|*'
+    Filter = 'Файлы Клаус|*.klaus|Все файлы|*'
     FilterIndex = 0
     Options = [ofPathMustExist, ofFileMustExist, ofEnableSizing, ofViewDetail]
     Left = 136
@@ -1214,8 +1214,8 @@ object MainForm: TMainForm
   end
   object saveDialog: TSaveDialog
     Title = 'Сохранить'
-    DefaultExt = '.клаус'
-    Filter = 'Файлы Клаус|*.клаус|Все файлы|*'
+    DefaultExt = '.klaus'
+    Filter = 'Файлы Клаус|*.klaus|Все файлы|*'
     FilterIndex = 0
     Options = [ofOverwritePrompt, ofPathMustExist, ofEnableSizing, ofViewDetail]
     Left = 248

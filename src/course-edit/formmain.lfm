@@ -8,6 +8,7 @@ object MainForm: TMainForm
   ClientWidth = 1213
   Menu = mainMenu
   OnCloseQuery = FormCloseQuery
+  OnShow = FormShow
   Position = poDefaultPosOnly
   LCLVersion = '3.4.0.0'
   object statusBar: TStatusBar
@@ -238,16 +239,16 @@ object MainForm: TMainForm
   end
   object openDialog: TOpenDialog
     Title = 'Открыть учебный курс'
-    DefaultExt = '.клаус-курс'
-    Filter = 'Файлы курсов|*.клаус-курс|Все файлы|*.*'
+    DefaultExt = '.klaus-course'
+    Filter = 'Файлы курсов|*.klaus-course|Все файлы|*.*'
     Options = [ofPathMustExist, ofFileMustExist, ofEnableSizing, ofViewDetail]
     Left = 400
     Top = 307
   end
   object saveDialog: TSaveDialog
     Title = 'Сохранить курс'
-    DefaultExt = '.клаус-курс'
-    Filter = 'Файлы курсов|*.клаус-курс|Все файлы|*.*'
+    DefaultExt = '.klaus-course'
+    Filter = 'Файлы курсов|*.klaus-course|Все файлы|*.*'
     Options = [ofOverwritePrompt, ofPathMustExist, ofEnableSizing, ofViewDetail]
     Left = 524
     Top = 307

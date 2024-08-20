@@ -137,7 +137,7 @@ resourcestring
   strNewCourseCaption = 'Новый курс %d';
   strNewTaskName = 'НоваяЗадача%d';
   strNewTaskCaption = 'Новая задача %d';
-  strTaskFileName = '%s.клаус';
+  strTaskFileName = '%s.klaus';
   strDefaultSolutionTepmlate = 'задача %s из %s;'#10'начало'#10#10'окончание.';
 
 { tKlausPracticum }
@@ -183,7 +183,7 @@ begin
   fn := tStringList.create;
   try
     {$PUSH}{$WARN SYMBOL_PLATFORM OFF}
-    listFileNames(searchPath, '*.клаус-курс', faHidden or faDirectory, fn);
+    listFileNames(searchPath, '*.klaus-course', faHidden or faDirectory, fn);
     {$POP}
     for i := 0 to fn.count-1 do begin
       name := tKlausCourse.extractCourseName(fn[i]);
@@ -306,7 +306,7 @@ var
   newName: string;
 begin
   if newFileName = '' then newFileName := fileName;
-  if newFileName = '' then newFileName := name + '.клаус-курс';
+  if newFileName = '' then newFileName := name + '.klaus-course';
   newFileName := expandFileName(newFileName);
   newName := extractCourseName(newFileName);
   if not tKlausLexParser.isValidIdent(newName) then raise eKlausError.createFmt(ercInvalidCourseName, zeroSrcPt, [newName]);

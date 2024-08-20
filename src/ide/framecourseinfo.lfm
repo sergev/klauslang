@@ -110,7 +110,7 @@ object CourseInfoFrame: TCourseInfoFrame
       BevelOuter = bvNone
       ClientHeight = 378
       ClientWidth = 398
-      TabOrder = 1
+      TabOrder = 2
       Visible = False
       object bvDoerSizer: TBevel
         Cursor = crVSplit
@@ -143,7 +143,7 @@ object CourseInfoFrame: TCourseInfoFrame
       BevelOuter = bvNone
       ClientHeight = 172
       ClientWidth = 398
-      TabOrder = 2
+      TabOrder = 1
       object htmlInfo: TIpHtmlPanel
         Left = 0
         Height = 172
@@ -244,7 +244,7 @@ object CourseInfoFrame: TCourseInfoFrame
       Hint = 'Решать задачу|Открыть или создать решение выбранной задачи'
       ImageIndex = 1
       OnExecute = actSolveExecute
-      ShortCut = 113
+      ShortCut = 13
     end
     object actSettings: TAction
       Caption = 'Настройки...'

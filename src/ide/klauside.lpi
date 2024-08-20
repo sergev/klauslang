@@ -15,8 +15,8 @@
       </XPManifest>
       <Icon Value="0"/>
       <Resources Count="2">
-        <Resource_0 FileName="../klaus.ico" Type="ICON" ResourceName="KLAUS"/>
-        <Resource_1 FileName="../klaus-source.ico" Type="ICON" ResourceName="KLAUS-SOURCE"/>
+        <Resource_0 FileName="../assets/klaus.ico" Type="ICON" ResourceName="KLAUS"/>
+        <Resource_1 FileName="../assets/klaus-source.ico" Type="ICON" ResourceName="KLAUS-SOURCE"/>
       </Resources>
     </General>
     <VersionInfo>

@@ -9,9 +9,6 @@ uses
   ActnList, ComCtrls, IpHtml, IpFileBroker, KlausGlobals, KlausPract;
 
 type
-
-  { tCourseInfoFrame }
-
   tCourseInfoFrame = class(tFrame)
     actSolve: TAction;
     actSettings: TAction;

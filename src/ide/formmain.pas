@@ -1544,10 +1544,14 @@ begin
 end;
 
 procedure tMainForm.showCourseInfo(courseName, taskName: string);
+var
+  wasVisible: boolean;
 begin
   if courseName = '' then taskName := '';
   courseFrame.updateContent(courseName, taskName);
+  wasVisible := sbCourse.visible;
   sbCourse.visible := courseName <> '';
+  if not wasVisible and sbCourse.visible then courseFrame.tree.setFocus;
   invalidateControlState;
 end;
 
