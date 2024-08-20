@@ -42,7 +42,7 @@ type
     procedure htmlInfoHotClick(Sender: TObject);
     procedure htmlInfoHotURL(Sender: TObject; const URL: String);
     procedure sbCloseClick(Sender: TObject);
-    procedure treeClick(Sender: TObject);
+    procedure treeChange(Sender: TObject; Node: TTreeNode);
     procedure bvTreeSizerMouseDown(sender: tObject; button: tMouseButton; shift: tShiftState; x, y: integer);
     procedure bvTreeSizerMouseMove(sender: TObject; shift: TShiftState; x, y: integer);
     procedure bvTreeSizerMouseUp(sender: tObject; button: tMouseButton; shift: tShiftState; x, y: integer);
@@ -81,6 +81,7 @@ resourcestring
   strCourseNotFound = '(курс не найден)';
   strOtherTasks = '(другие задачи)';
   strItemCaption = '%s - %s';
+  strUnnamed = '(без названия)';
   strTaskNotFound = 'Задача не найдена: **%s**';
 
 { tCourseInfoFrame }
@@ -90,7 +91,7 @@ begin
   mainForm.showCourseInfo('', '');
 end;
 
-procedure tCourseInfoFrame.treeClick(Sender: TObject);
+procedure tCourseInfoFrame.treeChange(Sender: TObject; Node: TTreeNode);
 begin
   fTaskNotFound := false;
   updateActiveTaskInfo;
@@ -153,11 +154,15 @@ begin
     try
       clear;
       if course <> nil then begin
-        s := format(strItemCaption, [course.name, course.caption]);
+        s := course.caption;
+        if s = '' then s := strUnnamed;
+        s := format(strItemCaption, [course.name, s]);
         pn := addObject(nil, s, course);
         if course.catCount <= 0 then begin
           for i := 0 to course.taskCount-1 do begin
-            s := format(strItemCaption, [course[i].name, course[i].caption]);
+            s := course[i].caption;
+            if s = '' then s := strUnnamed;
+            s := format(strItemCaption, [course[i].name, s]);
             tn := addChildObject(pn, s, course[i]);
             if u8Lower(course[i].name) = fActiveTask then sel := tn;
           end;
@@ -167,7 +172,9 @@ begin
             cn := addChildObject(pn, course.categories[j], nil);
             for i := 0 to course.taskCount-1 do begin
               if u8Lower(course[i].category) <> cat then continue;
-              s := format(strItemCaption, [course[i].name, course[i].caption]);
+              s := course[i].caption;
+              if s = '' then s := strUnnamed;
+              s := format(strItemCaption, [course[i].name, s]);
               tn := addChildObject(cn, s, course[i]);
               if u8Lower(course[i].name) = fActiveTask then sel := tn;
             end;
@@ -233,6 +240,7 @@ end;
 procedure tCourseInfoFrame.updateActiveTaskInfo;
 var
   n: tTreeNode;
+  desc: string;
   obj: tObject = nil;
 begin
   if fTaskNotFound then
@@ -242,10 +250,16 @@ begin
     if n <> nil then obj := tObject(n.data);
     if obj is tKlausCourse then begin
       fActiveTask := '';
-      htmlInfo.setHtml(markdownToHtml((obj as tKlausCourse).description));
+      desc := (obj as tKlausCourse).description;
+      if desc = '' then desc := (obj as tKlausCourse).caption;
+      if desc = '' then desc := (obj as tKlausCourse).name;
+      htmlInfo.setHtml(markdownToHtml(desc));
     end else if obj is tKlausTask then begin
       fActiveTask := u8Lower((obj as tKlausTask).name);
-      htmlInfo.setHtml(markdownToHtml((obj as tKlausTask).description));
+      desc := (obj as tKlausTask).description;
+      if desc = '' then desc := (obj as tKlausTask).caption;
+      if desc = '' then desc := (obj as tKlausTask).name;
+      htmlInfo.setHtml(markdownToHtml(desc));
     end else begin
       fActiveTask := '';
       htmlInfo.setHtml(nil);

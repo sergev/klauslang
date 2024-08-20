@@ -5,7 +5,7 @@ unit KlausPract;
 interface
 
 uses
-  Classes, SysUtils, FpJson;
+  Classes, SysUtils, FpJson, ComCtrls;
 
 type
   tKlausPracticum = class;
@@ -63,17 +63,19 @@ type
       procedure updateCategories(renamed: string = '');
       procedure loadFromFile; virtual;
       procedure loadData(data: tJsonData);
+      function  getJsonData: tJsonData;
+      procedure saveData(fn: string);
     public
-      class function extractPracticumName(fileName: string): string;
+      class function extractCourseName(fileName: string): string;
     public
       property owner: tKlausPracticum read fOwner;
       property name: string read fName;
       property fileName: string read fFileName;
-      property caption: string read fCaption;
-      property author: string read fAuthor;
-      property license: string read fLicense;
-      property url: string read fURL;
-      property description: string read fDescription;
+      property caption: string read fCaption write fCaption;
+      property author: string read fAuthor write fAuthor;
+      property license: string read fLicense write fLicense;
+      property url: string read fURL write fURL;
+      property description: string read fDescription write fDescription;
       property catCount: integer read getCatCount;
       property categories[idx: integer]: string read getCategories;
       property taskCount: integer read getTaskCount;
@@ -83,6 +85,8 @@ type
       constructor create(aOwner: tKlausPracticum; aFileName: string = '');
       destructor  destroy; override;
       procedure beforeDestruction; override;
+      procedure renameCategory(old, new: string);
+      procedure saveToFile(newFileName: string = '');
   end;
 
 type
@@ -93,18 +97,31 @@ type
       fCaption: string;
       fCategory: string;
       fDescription: string;
+
+      procedure setCategory(val: string);
+      procedure setName(val: string);
     protected
       procedure loadData(data: tJsonData);
+      function  getJsonData: tJsonData;
     public
       property owner: tKlausCourse read fOwner;
-      property name: string read fName;
-      property caption: string read fCaption;
-      property category: string read fCategory;
-      property description: string read fDescription;
+      property name: string read fName write setName;
+      property caption: string read fCaption write fCaption;
+      property category: string read fCategory write setCategory;
+      property description: string read fDescription write fDescription;
 
       constructor create(aOwner: tKlausCourse; data: tJsonData = nil);
       destructor  destroy; override;
       function  createSolution(dir: string): string;
+  end;
+
+  tCategoryTreeNode = class(tTreeNode)
+    private
+      fCourse: tKlausCourse;
+      fCategory: string;
+    public
+      property course: tKlausCourse read fCourse write fCourse;
+      property category: string read fCategory write fCategory;
   end;
 
 var
@@ -169,7 +186,7 @@ begin
     listFileNames(searchPath, '*.клаус-курс', faHidden or faDirectory, fn);
     {$POP}
     for i := 0 to fn.count-1 do begin
-      name := tKlausCourse.extractPracticumName(fn[i]);
+      name := tKlausCourse.extractCourseName(fn[i]);
       if course[name] <> nil then continue;
       try
         tKlausCourse.create(self, fn[i]);
@@ -240,7 +257,7 @@ begin
   fFileName := aFileName;
   if fFileName <> '' then begin
     fFileName := expandFileName(fFileName);
-    fName := extractPracticumName(fileName);
+    fName := extractCourseName(fileName);
     fCaption := fName;
   end else begin
     idx := 1;
@@ -270,6 +287,35 @@ procedure tKlausCourse.beforeDestruction;
 begin
   fDestroying := true;
   inherited beforeDestruction;
+end;
+
+procedure tKlausCourse.renameCategory(old, new: string);
+var
+  i: integer;
+  s: string;
+begin
+  s := u8Lower(old);
+  for i := 0 to taskCount-1 do
+    if u8Lower(tasks[i].category) = s then
+      tasks[i].fCategory := new;
+  updateCategories;
+end;
+
+procedure tKlausCourse.saveToFile(newFileName: string = '');
+var
+  newName: string;
+begin
+  if newFileName = '' then newFileName := fileName;
+  if newFileName = '' then newFileName := name + '.клаус-курс';
+  newFileName := expandFileName(newFileName);
+  newName := extractCourseName(newFileName);
+  if not tKlausLexParser.isValidIdent(newName) then raise eKlausError.createFmt(ercInvalidCourseName, zeroSrcPt, [newName]);
+  if (u8Lower(name) <> u8Lower(newName)) and (owner.course[newName] <> nil) then raise eKlausError.createFmt(ercDuplicateCourseName, zeroSrcPt, [newName]);
+  saveData(newFileName);
+  owner.removeCourse(self);
+  fName := newName;
+  fFileName := newFileName;
+  owner.addCourse(self);
 end;
 
 function tKlausCourse.getCatCount: integer;
@@ -320,19 +366,17 @@ begin
   end;
 end;
 
-procedure tKlausCourse.updateCategories(renamed: string);
+procedure tKlausCourse.updateCategories(renamed: string = '');
 var
   s: string;
   i: integer;
 begin
   if fLoading or fDestroying then exit;
-  if renamed <> '' then begin
-    s := u8Lower(renamed);
-    for i := 0 to taskCount-1 do
-      if u8Lower(tasks[i].category) = s then
-        tasks[i].fCategory := renamed;
-  end;
   fCategories.clear;
+  s := u8Lower(renamed);
+  for i := 0 to taskCount-1 do
+    if u8Lower(tasks[i].category) = s then
+      tasks[i].fCategory := renamed;
   for i := 0 to taskCount-1 do
     if tasks[i].category <> '' then
       fCategories.add(tasks[i].category);
@@ -368,19 +412,52 @@ var
 begin
   if not (data is tJsonObject) then raise eKlausError.create(ercInvalidFileFormat, zeroSrcPt);
   with data as tJsonObject do begin
-    fCaption := get('название', '');
-    fAuthor := get('автор', '');
-    fLicense := get('лицензия', '');
-    fURL := get('ссылка', '');
-    fDescription := get('описание', '');
-    arr := find('задачи', jtArray) as tJsonArray;
+    fCaption := get('title', '');
+    fAuthor := get('author', '');
+    fLicense := get('license', '');
+    fURL := get('url', '');
+    fDescription := get('description', '');
+    arr := find('tasks', jtArray) as tJsonArray;
     if arr <> nil then
       for i := 0 to arr.count-1 do
         tKlausTask.create(self, arr[i]);
   end;
 end;
 
-class function tKlausCourse.extractPracticumName(fileName: string): string;
+procedure tKlausCourse.saveData(fn: string);
+var
+  data: tJsonData;
+begin
+  data := getJsonData;
+  try
+    saveJsonData(fn, data);
+  finally
+    freeAndNil(data);
+  end;
+end;
+
+function tKlausCourse.getJsonData: tJsonData;
+var
+  arr: tJsonArray;
+  i: integer;
+begin
+  result := tJsonObject.create;
+  with result as tJsonObject do begin
+    add('title', fCaption);
+    add('author', fAuthor);
+    add('license', fLicense);
+    add('url', fURL);
+    add('description', fDescription);
+    if taskCount > 0 then begin
+      arr := tJsonArray.create;
+      for i := 0 to taskCount-1 do
+        arr.add(tasks[i].getJsonData);
+      add('tasks', arr);
+    end;
+  end;
+end;
+
+class function tKlausCourse.extractCourseName(fileName: string): string;
 begin
   result := changeFileExt(extractFileName(fileName), '');
 end;
@@ -428,14 +505,51 @@ begin
   end;
 end;
 
+procedure tKlausTask.setCategory(val: string);
+begin
+  if fCategory <> val then begin
+    fCategory := val;
+    owner.updateCategories(val);
+  end;
+end;
+
+procedure tKlausTask.setName(val: string);
+var
+  idx: integer;
+begin
+  if fName <> val then begin
+    if not tKlausLexParser.isValidIdent(val) then
+      raise eKlausError.createFmt(ercInvalidTaskName, zeroSrcPt, [val]);
+    if u8Lower(name) <> u8Lower(val) then begin
+      idx := owner.fTasks.indexOf(val);
+      if idx >= 0 then raise eKlausError.createFmt(ercDuplicateTaskName, zeroSrcPt, [val]);
+      idx := owner.fTasks.indexOf(name);
+      if idx >= 0 then owner.fTasks.delete(idx);
+      owner.fTasks.addObject(val, self);
+    end;
+    fName := val;
+  end;
+end;
+
 procedure tKlausTask.loadData(data: tJsonData);
 begin
   if not (data is tJsonObject) then raise eKlausError.create(ercInvalidFileFormat, zeroSrcPt);
   with data as tJsonObject do begin
-    fName := get('имя', '');
-    fCaption := get('название', '');
-    fCategory := get('категория', '');
-    fDescription := get('описание', '');
+    fName := get('name', '');
+    fCaption := get('title', '');
+    fCategory := get('category', '');
+    fDescription := get('description', '');
+  end;
+end;
+
+function tKlausTask.getJsonData: tJsonData;
+begin
+  result := tJsonObject.create;
+  with result as tJsonObject do begin
+    add('name', fName);
+    add('title', fCaption);
+    add('category', fCategory);
+    add('description', fDescription);
   end;
 end;
 

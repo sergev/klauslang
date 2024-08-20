@@ -1,12 +1,11 @@
 object MainForm: TMainForm
   Left = 466
-  Height = 699
+  Height = 559
   Top = 164
-  Width = 1565
+  Width = 1252
   Caption = 'Клаус'
-  ClientHeight = 699
-  ClientWidth = 1565
-  DesignTimePPI = 120
+  ClientHeight = 559
+  ClientWidth = 1252
   Menu = mainMenu
   OnCloseQuery = formCloseQuery
   OnShortCut = FormShortCut
@@ -14,12 +13,12 @@ object MainForm: TMainForm
   LCLVersion = '3.4.0.0'
   object toolBar: TToolBar
     Left = 0
-    Height = 42
+    Height = 34
     Top = 0
-    Width = 1565
+    Width = 1252
     AutoSize = True
-    ButtonHeight = 38
-    ButtonWidth = 38
+    ButtonHeight = 30
+    ButtonWidth = 30
     EdgeBorders = [ebTop, ebBottom]
     Images = actionImages
     ParentShowHint = False
@@ -31,278 +30,278 @@ object MainForm: TMainForm
       Action = actFileNew
     end
     object tbFileOpen: TToolButton
-      Left = 39
+      Left = 31
       Top = 2
       Action = actFileOpen
     end
     object tbFileSave: TToolButton
-      Left = 77
+      Left = 61
       Top = 2
       Action = actFileSave
     end
     object tbFileClose: TToolButton
-      Left = 115
+      Left = 91
       Top = 2
       Action = actFileClose
     end
     object ToolButton5: TToolButton
-      Left = 153
-      Height = 38
+      Left = 121
+      Height = 30
       Top = 2
       Caption = 'ToolButton5'
       Style = tbsSeparator
     end
     object tbEditUndo: TToolButton
-      Left = 163
+      Left = 127
       Top = 2
       Action = actEditUndo
     end
     object ToolButton7: TToolButton
-      Left = 315
-      Height = 38
+      Left = 247
+      Height = 30
       Top = 2
       Caption = 'ToolButton7'
       Style = tbsSeparator
     end
     object tbEditSearch: TToolButton
-      Left = 411
+      Left = 319
       Top = 2
       Action = actEditSearch
     end
     object tbEditSearchNext: TToolButton
-      Left = 449
+      Left = 349
       Top = 2
       Action = actEditSearchNext
     end
     object tbEditReplace: TToolButton
-      Left = 487
+      Left = 379
       Top = 2
       Action = actEditReplace
     end
     object ToolButton1: TToolButton
-      Left = 621
-      Height = 38
+      Left = 481
+      Height = 30
       Top = 2
       Caption = 'ToolButton1'
       Style = tbsSeparator
     end
     object tbWindowLocalVariables: TToolButton
-      Left = 1051
+      Left = 811
       Top = 2
       Action = actDebugLocalVariables
     end
     object tbWindowCallStack: TToolButton
-      Left = 1089
+      Left = 841
       Top = 2
       Action = actDebugCallStack
     end
     object tbWindowBreakpoints: TToolButton
-      Left = 1127
+      Left = 871
       Top = 2
       Action = actDebugBreakpoints
     end
     object tbEditCut: TToolButton
-      Left = 201
+      Left = 157
       Top = 2
       Action = actEditCut
     end
     object tbEditCopy: TToolButton
-      Left = 239
+      Left = 187
       Top = 2
       Action = actEditCopy
     end
     object tbEditPaste: TToolButton
-      Left = 277
+      Left = 217
       Top = 2
       Action = actEditPaste
     end
     object ToolButton2: TToolButton
-      Left = 573
-      Height = 38
+      Left = 445
+      Height = 30
       Top = 2
       Caption = 'ToolButton2'
       Style = tbsSeparator
     end
     object tbRunCheckSyntax: TToolButton
-      Left = 583
+      Left = 451
       Top = 2
       Action = actRunCheckSyntax
     end
     object tbRunStart: TToolButton
-      Left = 669
+      Left = 517
       Top = 2
       Action = actRunStart
     end
     object tbRunStartArgs: TToolButton
-      Left = 631
+      Left = 487
       Top = 2
       Action = actRunStartArgs
     end
     object tbRunPause: TToolButton
-      Left = 745
+      Left = 577
       Top = 2
       Action = actRunPause
     end
     object tbRunStop: TToolButton
-      Left = 783
+      Left = 607
       Top = 2
       Action = actRunStop
     end
     object ToolButton10: TToolButton
-      Left = 869
-      Height = 38
+      Left = 673
+      Height = 30
       Top = 2
       Caption = 'ToolButton10'
       Style = tbsSeparator
     end
     object tbRunStepInto: TToolButton
-      Left = 879
+      Left = 679
       Top = 2
       Action = actDebugStepInto
     end
     object tbRunStepOver: TToolButton
-      Left = 917
+      Left = 709
       Top = 2
       Action = actDebugStepOver
     end
     object tbRunShowExecPoint: TToolButton
-      Left = 955
+      Left = 739
       Top = 2
       Action = actDebugShowExecPoint
     end
     object ToolButton14: TToolButton
-      Left = 993
-      Height = 38
+      Left = 769
+      Height = 30
       Top = 2
       Caption = 'ToolButton14'
       Style = tbsSeparator
       Visible = False
     end
     object ToolButton3: TToolButton
-      Left = 821
-      Height = 38
+      Left = 637
+      Height = 30
       Top = 2
       Caption = 'ToolButton3'
       Style = tbsSeparator
     end
     object tbRunShowScene: TToolButton
-      Left = 831
+      Left = 643
       Top = 2
       Action = actRunShowScene
     end
     object ToolButton4: TToolButton
-      Left = 707
+      Left = 547
       Top = 2
       Action = actDebugRunToCursor
     end
     object ToolButton6: TToolButton
-      Left = 325
+      Left = 253
       Top = 2
       Action = actEditUnindentBlock
     end
     object ToolButton8: TToolButton
-      Left = 363
+      Left = 283
       Top = 2
       Action = actEditIndentBlock
     end
     object ToolButton9: TToolButton
-      Left = 401
-      Height = 38
+      Left = 313
+      Height = 30
       Top = 2
       Caption = 'ToolButton9'
       Style = tbsSeparator
     end
     object tbFileOptions: TToolButton
-      Left = 535
+      Left = 415
       Top = 2
       Action = actFileOptions
     end
     object ToolButton12: TToolButton
-      Left = 525
-      Height = 38
+      Left = 409
+      Height = 30
       Top = 2
       Caption = 'ToolButton12'
       Style = tbsSeparator
     end
     object tbWindowWatches: TToolButton
-      Left = 1165
+      Left = 901
       Top = 2
       Action = actDebugWatches
     end
     object ToolButton11: TToolButton
-      Left = 1003
+      Left = 775
       Top = 2
       Action = actDebugEvaluateWatch
     end
     object ToolButton13: TToolButton
-      Left = 1041
-      Height = 38
+      Left = 805
+      Height = 30
       Top = 2
       Caption = 'ToolButton13'
       Style = tbsSeparator
     end
     object ToolButton15: TToolButton
-      Left = 1203
-      Height = 38
+      Left = 931
+      Height = 30
       Top = 2
       Caption = 'ToolButton15'
       Style = tbsSeparator
     end
     object ToolButton16: TToolButton
-      Left = 1213
+      Left = 937
       Top = 2
       Action = actHelpReferenceGuide
     end
   end
   object statusBar: TStatusBar
     Left = 2
-    Height = 29
-    Top = 668
-    Width = 1561
+    Height = 19
+    Top = 538
+    Width = 1248
     BorderSpacing.Left = 2
     BorderSpacing.Right = 2
     BorderSpacing.Bottom = 2
     Panels = <    
       item
-        Width = 188
+        Width = 150
       end    
       item
-        Width = 125
+        Width = 100
       end    
       item
-        Width = 62
+        Width = 50
       end>
     SimplePanel = False
   end
   object pageControl: TPageControl
-    Left = 342
-    Height = 626
-    Top = 42
-    Width = 881
+    Left = 274
+    Height = 504
+    Top = 34
+    Width = 704
     Align = alClient
     TabOrder = 2
     OnChange = pageControlChange
     Options = [nboDoChangeOnSetIndex]
   end
   object sbDebug: TScrollBox
-    Left = 1223
-    Height = 626
-    Top = 42
-    Width = 342
+    Left = 978
+    Height = 504
+    Top = 34
+    Width = 274
     HorzScrollBar.Page = 1
     HorzScrollBar.Visible = False
-    VertScrollBar.Page = 63
+    VertScrollBar.Page = 50
     Align = alRight
     BorderStyle = bsNone
-    ClientHeight = 626
-    ClientWidth = 342
+    ClientHeight = 504
+    ClientWidth = 274
     TabOrder = 3
     object bvDebugSizer: TBevel
       Cursor = crHSplit
       Left = 0
-      Height = 626
+      Height = 504
       Top = 0
-      Width = 6
+      Width = 5
       Align = alLeft
       Shape = bsSpacer
       OnMouseDown = bvDebugSizerMouseDown
@@ -310,10 +309,10 @@ object MainForm: TMainForm
       OnMouseUp = bvDebugSizerMouseUp
     end
     object pnDebugContent: TFlowPanel
-      Left = 6
-      Height = 626
+      Left = 5
+      Height = 504
       Top = 0
-      Width = 336
+      Width = 269
       Align = alClient
       AutoSize = True
       BevelOuter = bvNone
@@ -326,23 +325,23 @@ object MainForm: TMainForm
   end
   object sbCourse: TScrollBox
     Left = 0
-    Height = 626
-    Top = 42
-    Width = 342
+    Height = 504
+    Top = 34
+    Width = 274
     HorzScrollBar.Visible = False
     VertScrollBar.Visible = False
     Align = alLeft
     AutoScroll = False
     BorderStyle = bsNone
-    ClientHeight = 626
-    ClientWidth = 342
+    ClientHeight = 504
+    ClientWidth = 274
     TabOrder = 4
     object bvCourseSizer: TBevel
       Cursor = crHSplit
-      Left = 336
-      Height = 626
+      Left = 269
+      Height = 504
       Top = 0
-      Width = 6
+      Width = 5
       Align = alRight
       Shape = bsSpacer
       OnMouseDown = bvCourseSizerMouseDown
@@ -352,8 +351,8 @@ object MainForm: TMainForm
   end
   object mainMenu: TMainMenu
     Images = actionImages
-    Left = 115
-    Top = 220
+    Left = 92
+    Top = 176
     object miFile: TMenuItem
       Caption = 'Файл'
       object miFileNew: TMenuItem
@@ -614,8 +613,8 @@ object MainForm: TMainForm
   end
   object actionList: TActionList
     Images = actionImages
-    Left = 235
-    Top = 220
+    Left = 188
+    Top = 176
     object actFileNew: TAction
       Category = 'Файл'
       Caption = 'Создать'
@@ -1101,8 +1100,8 @@ object MainForm: TMainForm
     Masked = True
     Scaled = True
     Width = 22
-    Left = 350
-    Top = 220
+    Left = 280
+    Top = 176
     Bitmap = {
       4C7A220000001600000016000000520B00000000000078DAED9D8D7AEA200C86
       B9742EEDDC1967D3D5A669FE13B42AEBD347E7F4DD670A046808A38DDBF1EFDF
@@ -1203,15 +1202,15 @@ object MainForm: TMainForm
     Filter = 'Файлы Клаус|*.клаус|Все файлы|*'
     FilterIndex = 0
     Options = [ofPathMustExist, ofFileMustExist, ofEnableSizing, ofViewDetail]
-    Left = 170
-    Top = 325
+    Left = 136
+    Top = 260
   end
   object applicationProperties: TApplicationProperties
     ExceptionDialog = aedOkMessageBox
     Title = 'Клаус'
     OnHint = applicationHint
-    Left = 235
-    Top = 105
+    Left = 188
+    Top = 84
   end
   object saveDialog: TSaveDialog
     Title = 'Сохранить'
@@ -1219,13 +1218,13 @@ object MainForm: TMainForm
     Filter = 'Файлы Клаус|*.клаус|Все файлы|*'
     FilterIndex = 0
     Options = [ofOverwritePrompt, ofPathMustExist, ofEnableSizing, ofViewDetail]
-    Left = 310
-    Top = 325
+    Left = 248
+    Top = 260
   end
   object editLineImages: TImageList
     Scaled = True
-    Left = 501
-    Top = 220
+    Left = 401
+    Top = 176
     Bitmap = {
       4C7A0C0000001000000010000000460100000000000078DAED995B1283200C45
       59BA4B736774FA41450C312F51CB9561A6054F643047A8CD29FFCABAAE595273

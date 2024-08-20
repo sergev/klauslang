@@ -1,0 +1,92 @@
+inherited CategoryPropsFrame: TCategoryPropsFrame
+  Height = 239
+  Width = 903
+  ClientHeight = 239
+  ClientWidth = 903
+  DesignLeft = 627
+  DesignTop = 248
+  object Panel13: TPanel[0]
+    Left = 10
+    Height = 21
+    Top = 10
+    Width = 883
+    Align = alTop
+    AutoSize = True
+    BorderSpacing.Around = 10
+    BevelOuter = bvNone
+    ChildSizing.Layout = cclTopToBottomThenLeftToRight
+    ClientHeight = 21
+    ClientWidth = 883
+    TabOrder = 0
+    object Label9: TLabel
+      Left = 0
+      Height = 17
+      Top = 0
+      Width = 878
+      Align = alClient
+      BorderSpacing.Right = 5
+      Caption = 'Категория'
+      Font.Style = [fsBold]
+      ParentColor = False
+      ParentFont = False
+    end
+    object Bevel3: TBevel
+      Left = 0
+      Height = 4
+      Top = 17
+      Width = 883
+      Align = alBottom
+      Constraints.MaxHeight = 4
+      Shape = bsBottomLine
+    end
+  end
+  object pnProps: TPanel[1]
+    Left = 0
+    Height = 36
+    Top = 41
+    Width = 903
+    Align = alTop
+    AutoSize = True
+    BevelOuter = bvNone
+    ClientHeight = 36
+    ClientWidth = 903
+    TabOrder = 1
+    object Panel3: TPanel
+      Left = 20
+      Height = 34
+      Top = 0
+      Width = 873
+      Align = alTop
+      AutoSize = True
+      BorderSpacing.Left = 20
+      BorderSpacing.Right = 10
+      BorderSpacing.Bottom = 2
+      BevelOuter = bvNone
+      ClientHeight = 34
+      ClientWidth = 873
+      TabOrder = 0
+      object Label3: TLabel
+        Left = 0
+        Height = 34
+        Top = 0
+        Width = 80
+        Align = alLeft
+        BorderSpacing.Right = 8
+        Caption = 'Название:'
+        Constraints.MinWidth = 80
+        Layout = tlCenter
+        ParentColor = False
+      end
+      object edCaption: TEdit
+        Left = 88
+        Height = 34
+        Top = 0
+        Width = 785
+        Align = alClient
+        TabOrder = 0
+        OnChange = somethingChange
+        OnEditingDone = somethingEditingDone
+      end
+    end
+  end
+end

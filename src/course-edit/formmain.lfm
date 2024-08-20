@@ -2,32 +2,33 @@ object MainForm: TMainForm
   Left = 516
   Height = 603
   Top = 245
-  Width = 1014
-  Caption = 'Клаус - редактор практикума'
+  Width = 1213
+  Caption = 'Редактор практикума'
   ClientHeight = 603
-  ClientWidth = 1014
+  ClientWidth = 1213
   Menu = mainMenu
+  OnCloseQuery = FormCloseQuery
   Position = poDefaultPosOnly
-  LCLVersion = '3.2.0.0'
+  LCLVersion = '3.4.0.0'
   object statusBar: TStatusBar
     Left = 0
-    Height = 20
-    Top = 583
-    Width = 1014
+    Height = 19
+    Top = 584
+    Width = 1213
     Panels = <>
   end
-  object ToolBar1: TToolBar
+  object toolBar: TToolBar
     Left = 0
     Height = 34
     Top = 0
-    Width = 1014
+    Width = 1213
     AutoSize = True
     ButtonHeight = 30
     ButtonWidth = 30
     Caption = 'toolBar'
     EdgeBorders = [ebTop, ebBottom]
     Images = actionImages
-    TabOrder = 1
+    TabOrder = 0
     object tbFileNew: TToolButton
       Left = 1
       Top = 2
@@ -55,16 +56,59 @@ object MainForm: TMainForm
       Top = 2
       Action = actTaskAdd
     end
-    object tbTaskRename: TToolButton
-      Left = 129
-      Top = 2
-      Action = actTaskRename
-    end
     object tbTaskDelete: TToolButton
-      Left = 159
+      Left = 129
       Top = 2
       Action = actTaskDelete
     end
+  end
+  object pnTree: TPanel
+    Left = 0
+    Height = 550
+    Top = 34
+    Width = 310
+    Align = alLeft
+    BevelOuter = bvNone
+    ClientHeight = 550
+    ClientWidth = 310
+    TabOrder = 1
+    object bvTreeSizer: TBevel
+      Cursor = crHSplit
+      Left = 305
+      Height = 550
+      Top = 0
+      Width = 5
+      Align = alRight
+      Shape = bsSpacer
+      OnMouseDown = bvTreeSizerMouseDown
+      OnMouseMove = bvTreeSizerMouseMove
+      OnMouseUp = bvTreeSizerMouseUp
+    end
+    object tree: TTreeView
+      Left = 4
+      Height = 546
+      Top = 4
+      Width = 301
+      Align = alClient
+      BorderSpacing.Left = 4
+      BorderSpacing.Top = 4
+      ReadOnly = True
+      ScrollBars = ssAutoBoth
+      SortType = stText
+      TabOrder = 0
+      OnChange = treeChange
+      OnChanging = treeChanging
+      Options = [tvoAutoItemHeight, tvoHideSelection, tvoKeepCollapsedNodes, tvoReadOnly, tvoShowButtons, tvoShowLines, tvoShowRoot, tvoToolTips, tvoThemedDraw]
+    end
+  end
+  object pnProps: TPanel
+    Left = 310
+    Height = 550
+    Top = 34
+    Width = 903
+    Align = alClient
+    BevelOuter = bvNone
+    TabOrder = 2
   end
   object actionImages: TImageList
     Height = 22
@@ -107,6 +151,7 @@ object MainForm: TMainForm
       Caption = 'Создать'
       Hint = 'Создать|Создать новый учебный курс'
       ImageIndex = 0
+      OnExecute = actFileNewExecute
       ShortCut = 16462
     end
     object actFileOpen: TAction
@@ -114,6 +159,7 @@ object MainForm: TMainForm
       Caption = 'Открыть...'
       Hint = 'Открыть|Открыть файл учебного курса'
       ImageIndex = 1
+      OnExecute = actFileOpenExecute
       ShortCut = 16463
     end
     object actFileSave: TAction
@@ -121,39 +167,37 @@ object MainForm: TMainForm
       Caption = 'Сохранить'
       Hint = 'Сохранить|Сохранить учебный курс'
       ImageIndex = 2
+      OnExecute = actFileSaveExecute
       ShortCut = 16467
     end
     object actFileSaveAs: TAction
       Category = 'Файл'
       Caption = 'Сохранить как...'
       Hint = 'Сохранить как...|Сохранить учебный курс в файле с новым именем'
+      OnExecute = actFileSaveAsExecute
     end
     object actTaskAdd: TAction
       Category = 'Задача'
       Caption = 'Добавить задачу'
       Hint = 'Добавить задачу|Добавить задачу в выбранную категорию'
       ImageIndex = 3
+      OnExecute = actTaskAddExecute
       ShortCut = 45
     end
     object actTaskDelete: TAction
       Category = 'Задача'
-      Caption = 'Удалить'
-      Hint = 'Удалить|Удалить выбранный элемент'
+      Caption = 'Удалить задачу'
+      Hint = 'Удалить задачу|Удалить выбранную задачу'
       ImageIndex = 4
+      OnExecute = actTaskDeleteExecute
       ShortCut = 16430
-    end
-    object actTaskRename: TAction
-      Category = 'Задача'
-      Caption = 'Переименовать'
-      Hint = 'Переименовать|Переименовать выделенный элемент'
-      ImageIndex = 6
-      ShortCut = 113
     end
     object actFileExit: TAction
       Category = 'Файл'
       Caption = 'Выход'
       Hint = 'Выход|Закрыть приложение'
       ImageIndex = 7
+      OnExecute = actFileExitExecute
       ShortCut = 32883
     end
   end
@@ -187,12 +231,25 @@ object MainForm: TMainForm
       object miTaskAdd: TMenuItem
         Action = actTaskAdd
       end
-      object miTaskRename: TMenuItem
-        Action = actTaskRename
-      end
       object miTaskDelete: TMenuItem
         Action = actTaskDelete
       end
     end
+  end
+  object openDialog: TOpenDialog
+    Title = 'Открыть учебный курс'
+    DefaultExt = '.клаус-курс'
+    Filter = 'Файлы курсов|*.клаус-курс|Все файлы|*.*'
+    Options = [ofPathMustExist, ofFileMustExist, ofEnableSizing, ofViewDetail]
+    Left = 400
+    Top = 307
+  end
+  object saveDialog: TSaveDialog
+    Title = 'Сохранить курс'
+    DefaultExt = '.клаус-курс'
+    Filter = 'Файлы курсов|*.клаус-курс|Все файлы|*.*'
+    Options = [ofOverwritePrompt, ofPathMustExist, ofEnableSizing, ofViewDetail]
+    Left = 524
+    Top = 307
   end
 end

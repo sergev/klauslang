@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+  <mime-type type="text/klauslang-source-code">
+    <sub-class-of type="text/plain"/>
+    <alias type="text/klauslang-source-code"/>
+    <comment>Klaus source code</comment>
+    <acronym>Klaus</acronym>
+    <expanded-acronym>Klaus source code</expanded-acronym>
+    <glob pattern="*.клаус"/>
+    <comment xml:lang="ru">Исходный код Клаус</comment>
+  </mime-type>
+  <mime-type type="application/klauslang-training-course">
+    <sub-class-of type="application/json"/>
+    <alias type="application/klauslang-training-course"/>
+    <comment>Klaus training course</comment>
+    <acronym>Klaus</acronym>
+    <expanded-acronym>Klaus training course</expanded-acronym>
+    <glob pattern="*.клаус-курс"/>
+    <comment xml:lang="ru">Учебный курс Клаус</comment>
+  </mime-type>
+</mime-info>

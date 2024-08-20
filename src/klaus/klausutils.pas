@@ -216,6 +216,7 @@ const
 function klausGetFileType(ft: tKlausInteger; const at: tSrcPoint): tKlausFileClass;
 
 function loadJsonData(const fileName: string): tJsonData;
+procedure saveJsonData(const fileName: string; data: tJsonData);
 
 procedure listFileNames(const searchPath, mask: string; exclAttr: longInt; list: tStrings);
 
@@ -1217,6 +1218,20 @@ begin
   end;
 end;
 
+procedure saveJsonData(const fileName: string; data: tJsonData);
+var
+  s: string;
+  stream: tFileStream;
+begin
+  stream := tFileStream.create(fileName, fmCreate or fmShareDenyWrite);
+  try
+    s := data.formatJson;
+    if s <> '' then stream.writeBuffer(pChar(s)^, length(s));
+  finally
+    freeAndNil(stream);
+  end;
+end;
+
 procedure listFileNames(const searchPath, mask: string; exclAttr: longInt; list: tStrings);
 var
   i: integer;
@@ -1251,8 +1266,10 @@ var
   html: string;
   stream: tStringReadStream;
 begin
-  if markdownProcessor = nil then
+  if markdownProcessor = nil then begin
     markdownProcessor := tMarkdownDaringFireball.create;
+    markdownProcessor.config.forceExtendedProfile := true;
+  end;
   html := markdownProcessor.process(md);
   stream := tStringReadStream.create(html);
   try

@@ -14,6 +14,10 @@
         <TextDesc Value="Klaus Development Environment"/>
       </XPManifest>
       <Icon Value="0"/>
+      <Resources Count="2">
+        <Resource_0 FileName="../klaus.ico" Type="ICON" ResourceName="KLAUS"/>
+        <Resource_1 FileName="../klaus-source.ico" Type="ICON" ResourceName="KLAUS-SOURCE"/>
+      </Resources>
     </General>
     <VersionInfo>
       <UseVersionInfo Value="True"/>

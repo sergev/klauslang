@@ -1,0 +1,235 @@
+inherited TaskPropsFrame: TTaskPropsFrame
+  Height = 414
+  Width = 903
+  ClientHeight = 414
+  ClientWidth = 903
+  DesignLeft = 620
+  DesignTop = 318
+  object Panel13: TPanel[0]
+    Left = 10
+    Height = 21
+    Top = 10
+    Width = 883
+    Align = alTop
+    AutoSize = True
+    BorderSpacing.Around = 10
+    BevelOuter = bvNone
+    ChildSizing.Layout = cclTopToBottomThenLeftToRight
+    ClientHeight = 21
+    ClientWidth = 883
+    TabOrder = 0
+    object Label9: TLabel
+      Left = 0
+      Height = 17
+      Top = 0
+      Width = 878
+      Align = alClient
+      BorderSpacing.Right = 5
+      Caption = 'Задача'
+      Font.Style = [fsBold]
+      ParentColor = False
+      ParentFont = False
+    end
+    object Bevel3: TBevel
+      Left = 0
+      Height = 4
+      Top = 17
+      Width = 883
+      Align = alBottom
+      Constraints.MaxHeight = 4
+      Shape = bsBottomLine
+    end
+  end
+  object pnProps: TPanel[1]
+    Left = 0
+    Height = 72
+    Top = 41
+    Width = 903
+    Align = alTop
+    AutoSize = True
+    BevelOuter = bvNone
+    ClientHeight = 72
+    ClientWidth = 903
+    TabOrder = 1
+    object Panel3: TPanel
+      Left = 20
+      Height = 34
+      Top = 36
+      Width = 873
+      Align = alTop
+      AutoSize = True
+      BorderSpacing.Left = 20
+      BorderSpacing.Right = 10
+      BorderSpacing.Bottom = 2
+      BevelOuter = bvNone
+      ClientHeight = 34
+      ClientWidth = 873
+      TabOrder = 1
+      object Label3: TLabel
+        Left = 0
+        Height = 34
+        Top = 0
+        Width = 80
+        Align = alLeft
+        BorderSpacing.Right = 8
+        Caption = 'Название:'
+        Constraints.MinWidth = 80
+        Layout = tlCenter
+        ParentColor = False
+      end
+      object edCaption: TEdit
+        Left = 88
+        Height = 34
+        Top = 0
+        Width = 785
+        Align = alClient
+        TabOrder = 0
+        OnChange = somethingChange
+        OnEditingDone = somethingEditingDone
+      end
+    end
+    object FlowPanel1: TFlowPanel
+      Left = 0
+      Height = 36
+      Top = 0
+      Width = 903
+      Align = alTop
+      AutoSize = True
+      BevelOuter = bvNone
+      ControlList = <      
+        item
+          Control = Panel6
+          WrapAfter = waForbid
+          Index = 0
+        end      
+        item
+          Control = Panel5
+          WrapAfter = waForbid
+          Index = 1
+        end>
+      FlowLayout = tlTop
+      FlowStyle = fsLeftRightTopBottom
+      TabOrder = 0
+      object Panel6: TPanel
+        Left = 20
+        Height = 34
+        Top = 0
+        Width = 288
+        Anchors = []
+        AutoSize = True
+        BorderSpacing.Left = 20
+        BorderSpacing.Bottom = 2
+        BevelOuter = bvNone
+        ClientHeight = 34
+        ClientWidth = 288
+        TabOrder = 0
+        object Label5: TLabel
+          Left = 0
+          Height = 34
+          Top = 0
+          Width = 80
+          Align = alLeft
+          BorderSpacing.Right = 8
+          Caption = 'Имя:'
+          Constraints.MinWidth = 80
+          Layout = tlCenter
+          ParentColor = False
+        end
+        object edName: TEdit
+          Left = 88
+          Height = 34
+          Top = 0
+          Width = 200
+          Align = alClient
+          Constraints.MinWidth = 200
+          TabOrder = 0
+          OnChange = somethingChange
+          OnEditingDone = somethingEditingDone
+        end
+      end
+      object Panel5: TPanel
+        Left = 328
+        Height = 34
+        Top = 0
+        Width = 280
+        Anchors = []
+        AutoSize = True
+        BorderSpacing.Left = 20
+        BorderSpacing.Bottom = 2
+        BevelOuter = bvNone
+        ClientHeight = 34
+        ClientWidth = 280
+        TabOrder = 1
+        object Label6: TLabel
+          Left = 0
+          Height = 34
+          Top = 0
+          Width = 80
+          Align = alLeft
+          Caption = 'Категория'
+          Constraints.MinWidth = 80
+          Layout = tlCenter
+          ParentColor = False
+        end
+        object edCategory: TEdit
+          Left = 80
+          Height = 34
+          Top = 0
+          Width = 200
+          Align = alClient
+          Constraints.MinWidth = 200
+          TabOrder = 0
+          OnChange = somethingChange
+          OnEditingDone = somethingEditingDone
+        end
+      end
+    end
+  end
+  object Panel14: TPanel[2]
+    Left = 10
+    Height = 21
+    Top = 123
+    Width = 883
+    Align = alTop
+    AutoSize = True
+    BorderSpacing.Around = 10
+    BevelOuter = bvNone
+    ChildSizing.Layout = cclTopToBottomThenLeftToRight
+    ClientHeight = 21
+    ClientWidth = 883
+    TabOrder = 2
+    object Label10: TLabel
+      Left = 0
+      Height = 17
+      Top = 0
+      Width = 878
+      Align = alClient
+      BorderSpacing.Right = 5
+      Caption = 'Описание'
+      Font.Style = [fsBold]
+      ParentColor = False
+      ParentFont = False
+    end
+    object Bevel4: TBevel
+      Left = 0
+      Height = 4
+      Top = 17
+      Width = 883
+      Align = alBottom
+      Constraints.MaxHeight = 4
+      Shape = bsBottomLine
+    end
+  end
+  object pnDescription: TPanel[3]
+    Left = 20
+    Height = 258
+    Top = 154
+    Width = 873
+    Align = alClient
+    BorderSpacing.Left = 20
+    BorderSpacing.Right = 10
+    BorderSpacing.Bottom = 2
+    BevelOuter = bvNone
+    TabOrder = 3
+  end
+end

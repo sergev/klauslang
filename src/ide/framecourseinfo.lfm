@@ -95,7 +95,7 @@ object CourseInfoFrame: TCourseInfoFrame
         ReadOnly = True
         ScrollBars = ssAutoBoth
         TabOrder = 0
-        OnClick = treeClick
+        OnChange = treeChange
         OnDblClick = treeDblClick
         Options = [tvoAutoItemHeight, tvoHideSelection, tvoKeepCollapsedNodes, tvoReadOnly, tvoShowButtons, tvoShowLines, tvoShowRoot, tvoToolTips, tvoThemedDraw]
       end

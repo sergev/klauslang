@@ -9,7 +9,8 @@ uses
   {$IFDEF HASAMIGA}
   athreads,
   {$ENDIF}
-  Interfaces, SysUtils, Forms, FormMain;
+  Interfaces, SysUtils, Forms, FormMain, FrameProps, FrameMarkdown,
+  FrameCourseProps, FrameCategoryProps, FrameTaskProps;
 
 {$R *.res}
 
@@ -23,6 +24,7 @@ begin
   requireDerivedFormResource := true;
   Application.Title:='KlausCourseEdit';
   Application.Scaled:=True;
+  application.exceptionDialog := aedOkMessageBox;
   application.initialize;
   {$push}{$warn SYMBOL_PLATFORM off}
   application.updateFormatSettings := false;

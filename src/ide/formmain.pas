@@ -934,7 +934,8 @@ begin
     miPracticum.visible := false;
   end else for i := 0 to klausPracticum.count-1 do begin
     mi := tCourseMenuItem.create(self);
-    mi.caption := klausPracticum[i].caption;
+    if klausPracticum[i].caption = '' then mi.caption := klausPracticum[i].name
+    else mi.caption := klausPracticum[i].caption;
     mi.hint := klausPracticum[i].fileName;
     mi.enabled := true;
     mi.course := klausPracticum[i];

@@ -32,6 +32,7 @@ const
   APPM_UpdateBreakpoints     = $9802;
   APPM_FocusEditor           = $9803;
   APPM_UpdateCourseInfo      = $9804;
+  APPM_FocusControl          = $9805;
 
 type
   tKlausEditorOptions = class(tKlausEditStyleSheet)

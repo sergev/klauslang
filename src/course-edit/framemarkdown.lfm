@@ -1,0 +1,73 @@
+object MarkdownFrame: TMarkdownFrame
+  Left = 0
+  Height = 407
+  Top = 0
+  Width = 805
+  ClientHeight = 407
+  ClientWidth = 805
+  TabOrder = 0
+  DesignLeft = 712
+  DesignTop = 287
+  object pageControl: TPageControl
+    Left = 0
+    Height = 407
+    Top = 0
+    Width = 805
+    TabStop = False
+    ActivePage = tsPreview
+    Align = alClient
+    TabIndex = 1
+    TabOrder = 0
+    TabPosition = tpBottom
+    Options = [nboKeyboardTabSwitch]
+    object tsEdit: TTabSheet
+      Caption = 'Markdown'
+      ClientHeight = 376
+      ClientWidth = 795
+      object mlEdit: TMemo
+        Left = 0
+        Height = 376
+        Top = 0
+        Width = 795
+        Align = alClient
+        BorderStyle = bsNone
+        ScrollBars = ssAutoVertical
+        TabOrder = 0
+        OnChange = mlEditChange
+      end
+    end
+    object tsPreview: TTabSheet
+      Caption = 'Предпросмотр'
+      ClientHeight = 376
+      ClientWidth = 795
+      OnShow = tsPreviewShow
+      object htmlPanel: TIpHtmlPanel
+        Left = 0
+        Height = 376
+        Top = 0
+        Width = 795
+        Align = alClient
+        FixedTypeface = 'Courier'
+        DefaultTypeFace = 'default'
+        DefaultFontSize = 12
+        FlagErrors = False
+        PrintSettings.MarginLeft = 0.5
+        PrintSettings.MarginTop = 0.5
+        PrintSettings.MarginRight = 0.5
+        PrintSettings.MarginBottom = 0.5
+        PrintSettings.Preview.Left = 480
+        PrintSettings.Preview.Top = 270
+        PrintSettings.Preview.Width = 1440
+        PrintSettings.Preview.Height = 810
+        TabOrder = 0
+        TabStop = True
+        OnHotClick = htmlPanelHotClick
+        OnHotURL = htmlPanelHotURL
+      end
+    end
+  end
+  object changeTimer: TTimer
+    Left = 329
+    Top = 161
+  end
+end

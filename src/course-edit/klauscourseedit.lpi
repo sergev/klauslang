@@ -33,6 +33,9 @@
     </RunParams>
     <RequiredPackages>
       <Item>
+        <PackageName Value="TurboPowerIPro"/>
+      </Item>
+      <Item>
         <PackageName Value="LCL"/>
       </Item>
     </RequiredPackages>
@@ -49,6 +52,46 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="FormMain"/>
+      </Unit>
+      <Unit>
+        <Filename Value="framecourseprops.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="CoursePropsFrame"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="FrameCourseProps"/>
+      </Unit>
+      <Unit>
+        <Filename Value="framemarkdown.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="MarkdownFrame"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="FrameMarkdown"/>
+      </Unit>
+      <Unit>
+        <Filename Value="framecategoryprops.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="CategoryPropsFrame"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="FrameCategoryProps"/>
+      </Unit>
+      <Unit>
+        <Filename Value="frametaskprops.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="TaskPropsFrame"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="FrameTaskProps"/>
+      </Unit>
+      <Unit>
+        <Filename Value="frameprops.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="PropsFrame"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="FrameProps"/>
       </Unit>
     </Units>
   </ProjectOptions>
@@ -76,6 +119,7 @@
       <CompilerMessages>
         <IgnoredMessages idx6058="True" idx5024="True"/>
       </CompilerMessages>
+      <CustomOptions Value="-dklauside"/>
     </Other>
   </CompilerOptions>
   <Debugging>
@@ -88,6 +132,9 @@
       </Item>
       <Item>
         <Name Value="EFOpenError"/>
+      </Item>
+      <Item>
+        <Name Value="eKlausError"/>
       </Item>
     </Exceptions>
   </Debugging>

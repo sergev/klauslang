@@ -27,6 +27,7 @@ unit KlausSrc;
 //todo: обращение к элементам составных констант в разделе определений
 //todo: файлСоздКат()
 //todo: JSON
+//todo: Проверить nil is
 
 {$mode ObjFPC}{$H+}
 {$i ../lib/klaus.inc}
