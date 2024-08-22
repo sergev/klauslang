@@ -1,6 +1,7 @@
 Последнюю версию можно скачать здесь:
 - Linux: [https://czaerlag.ru/klauslang/klauslang_2.3.0_amd64.deb](https://czaerlag.ru/klauslang/klauslang_2.3.0_amd64.deb).<br>
-- Windows: [https://czaerlag.ru/klauslang/klauslang_2.3.0_x64.exe](https://czaerlag.ru/klauslang/klauslang_2.3.0_x64.exe).<br><br>
+- Windows: [https://czaerlag.ru/klauslang/klauslang_2.3.0_x64.exe](https://czaerlag.ru/klauslang/klauslang_2.3.0_x64.exe).<br>
+
 (или в разделе "Релизы", но это требует регистрации).
 
 Для самостоятельной сборки проекта используйте [Lazarus 3.2](https://www.lazarus-ide.org).
