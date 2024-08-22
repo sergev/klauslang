@@ -1,9 +1,7 @@
-Последнюю версию можно скачать здесь: [https://czaerlag.ru/klauslang/klaus-v2.2.0.zip](https://czaerlag.ru/klauslang/klaus-v2.2.0.zip).<br>
+Последнюю версию можно скачать здесь:
+- Linux: [https://czaerlag.ru/klauslang/klauslang_2.3.0_amd64.deb](https://czaerlag.ru/klauslang/klauslang_2.3.0_amd64.deb).<br>
+- Windows: [https://czaerlag.ru/klauslang/klauslang_2.3.0_x64.exe](https://czaerlag.ru/klauslang/klauslang_2.3.0_x64.exe).<br>
 (или в разделе "Релизы", но это требует регистрации).
-
-Инсталляция не требуется. Достаточно распаковать архив и запустить исполняемый файл:
-- **klaus** — для выполнения программы в командной строке
-- **klaus-ide** — для редактирования и отладки исходного кода
 
 Для самостоятельной сборки проекта используйте [Lazarus 3.2](https://www.lazarus-ide.org).
 
