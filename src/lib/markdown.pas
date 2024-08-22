@@ -1064,22 +1064,22 @@ end;
 
 procedure TDecorator.openCodeBlock(out_: TStringBuilder);
 begin
-  out_.append('<pre><code><font size="3">');
+  out_.append('<pre><code>');
 end;
 
 procedure TDecorator.closeCodeBlock(out_: TStringBuilder);
 begin
-  out_.append('</font></code></pre>'#10);
+  out_.append('</code></pre>'#10);
 end;
 
 procedure TDecorator.openCodeSpan(out_: TStringBuilder);
 begin
-  out_.append('<code><font size="3">');
+  out_.append('<code>');
 end;
 
 procedure TDecorator.closeCodeSpan(out_: TStringBuilder);
 begin
-  out_.append('</font></code>');
+  out_.append('</code>');
 end;
 
 procedure TDecorator.openHeadline(out_: TStringBuilder; level: integer);

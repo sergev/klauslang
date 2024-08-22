@@ -1347,8 +1347,6 @@ begin
   inherited create;
   fReadStream := nil;
   checkSpecialChars;
-  lineBreak := #10;
-  textLineBreakStyle := tlbsLF;
   fOwner := aOwner;
   fQuantum := 256;
 end;
