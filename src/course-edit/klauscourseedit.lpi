@@ -16,13 +16,96 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="2"/>
-      <MinorVersionNr Value="2"/>
+      <MinorVersionNr Value="3"/>
       <BuildNr Value="1"/>
       <Language Value="0419"/>
-      <StringTable Comments="С благодарностью Дмитрию Тарасевичу и Анне Михеевой" CompanyName="Константин Захаров" FileDescription="Редактор практикума Клаус" InternalName="klauscourseedit" LegalCopyright="Программа распространяется бесплатно по Стандартной общественной лицензии GNU GPLv3 или более поздней версии: https://www.gnu.org/licenses/gpl-3.0.html" LegalTrademarks="Репозиторий проекта: https://gitflic.ru/project/czaerlag/klauslang" OriginalFilename="klaus-course-edit" ProductName="Клаус" ProductVersion="2.2.0"/>
+      <StringTable Comments="С благодарностью Дмитрию Тарасевичу и Анне Михеевой" CompanyName="Константин Захаров" FileDescription="Редактор практикума Клаус" InternalName="klauscourseedit" LegalCopyright="Программа распространяется бесплатно по Стандартной общественной лицензии GNU GPLv3 или более поздней версии: https://www.gnu.org/licenses/gpl-3.0.html" LegalTrademarks="Репозиторий проекта: https://gitflic.ru/project/czaerlag/klauslang" OriginalFilename="klaus-course-edit" ProductName="Клаус" ProductVersion="2.3.0"/>
     </VersionInfo>
     <BuildModes>
       <Item Name="Default" Default="True"/>
+      <Item Name="Debug">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <Target>
+            <Filename Value="../../compiled/klaus-course-edit"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir)"/>
+            <OtherUnitFiles Value="../lib;../klaus;../lib/edit;../lib/console;../ide"/>
+            <UnitOutputDirectory Value="../../compiled/$NameOnly($(ProjFile))/$(TargetCPU)-$(TargetOS)"/>
+          </SearchPaths>
+          <Parsing>
+            <SyntaxOptions>
+              <IncludeAssertionCode Value="True"/>
+            </SyntaxOptions>
+          </Parsing>
+          <CodeGeneration>
+            <Checks>
+              <IOChecks Value="True"/>
+              <RangeChecks Value="True"/>
+              <OverflowChecks Value="True"/>
+              <StackChecks Value="True"/>
+            </Checks>
+            <VerifyObjMethodCallValidity Value="True"/>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <DebugInfoType Value="dsDwarf3"/>
+              <UseHeaptrc Value="True"/>
+              <TrashVariables Value="True"/>
+              <UseExternalDbgSyms Value="True"/>
+            </Debugging>
+            <Options>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
+          </Linking>
+          <Other>
+            <CompilerMessages>
+              <IgnoredMessages idx6058="True" idx5024="True"/>
+            </CompilerMessages>
+            <CustomOptions Value="-dklauside"/>
+          </Other>
+        </CompilerOptions>
+      </Item>
+      <Item Name="Release">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <Target>
+            <Filename Value="../../compiled/klaus-course-edit"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir)"/>
+            <OtherUnitFiles Value="../lib;../klaus;../lib/edit;../lib/console;../ide"/>
+            <UnitOutputDirectory Value="../../compiled/$NameOnly($(ProjFile))/$(TargetCPU)-$(TargetOS)"/>
+          </SearchPaths>
+          <CodeGeneration>
+            <SmartLinkUnit Value="True"/>
+            <Optimizations>
+              <OptimizationLevel Value="3"/>
+            </Optimizations>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <GenerateDebugInfo Value="False"/>
+              <RunWithoutDebug Value="True"/>
+            </Debugging>
+            <LinkSmart Value="True"/>
+            <Options>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
+          </Linking>
+          <Other>
+            <CompilerMessages>
+              <IgnoredMessages idx6058="True" idx5024="True"/>
+            </CompilerMessages>
+            <CustomOptions Value="-dklauside"/>
+          </Other>
+        </CompilerOptions>
+      </Item>
     </BuildModes>
     <PublishOptions>
       <Version Value="2"/>
@@ -108,6 +191,7 @@
     <Linking>
       <Debugging>
         <DebugInfoType Value="dsDwarf3"/>
+        <UseExternalDbgSyms Value="True"/>
       </Debugging>
       <Options>
         <Win32>

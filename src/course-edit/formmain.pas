@@ -107,7 +107,7 @@ implementation
 uses Math, U8;
 
 resourcestring
-  strFormCaption = '%s - редактор практикума';
+  strFormCaption = '%s';
   strPromptToSave = 'Учебный курс "%s" был изменён. Сохранить изменения?';
   strOtherTasks = '(другие задачи)';
   strConfirmDelete = 'Удалить задачу "%s"?';
@@ -145,8 +145,11 @@ begin
 end;
 
 procedure tMainForm.updateCaption;
+var
+  s: string;
 begin
-  caption := format(strFormCaption, [course.name]);
+  if course.fileName = '' then s := course.name else s := course.fileName;
+  caption := format(strFormCaption, [s]);
   application.title := caption;
 end;
 

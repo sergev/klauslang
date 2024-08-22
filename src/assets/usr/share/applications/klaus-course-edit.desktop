@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Редактор курсов Клаус
+Comment=Редактор учебных курсов Клаус
+MimeType=application/klauslang-training-course
+Exec=klaus-course-edit %U
+Terminal=false
+Categories=Development
+Icon=klaus-course-edit
