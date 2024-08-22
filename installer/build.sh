@@ -61,3 +61,7 @@ cd ..
 mkdir v$VER
 
 fakeroot dpkg-deb --build $DIRNAME ./v$VER/klauslang_${VER}_amd64.deb
+
+cp ../compiled/klaus.exe /mnt/ntfs/working/dev/klauslang/compiled/
+cp ../compiled/klaus-ide.exe /mnt/ntfs/working/dev/klauslang/compiled/
+cp ../compiled/klaus-course-edit.exe /mnt/ntfs/working/dev/klauslang/compiled/
