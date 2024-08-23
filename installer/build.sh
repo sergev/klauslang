@@ -1,7 +1,13 @@
 #!/bin/bash
 
-set -e # fail on any error
-set -u # treat unset variables as errors
+# Version number must be passed in $1
+# ../build directory must exist
+# ../build/v$1 must NOT exist, as well as temporary ../build/v$1-build
+# Compiled binaries of the $1 version must exist in ../compiled
+# NSIS 3.10 must be installed under Wine in %ProgramFiles%\NSIS\ 
+
+set -e
+set -u
 
 VER="$1"
 DIRNAME="v$VER-build"
@@ -12,8 +18,14 @@ if [ -d "$DIRNAME" ]; then
   echo "Directory already exists: $DIRNAME"
   exit 1
 fi
+if [ -d "v$VER" ]; then
+  echo "Directory already exists: v$VER"
+  exit 1
+fi
 
 mkdir "$DIRNAME" && cd "$DIRNAME"
+
+# DEBIAN package
 
 mkdir -p ./opt/klauslang/amd64
 cp ../../compiled/klaus ./opt/klauslang/amd64/
@@ -63,6 +75,8 @@ mkdir v$VER
 fakeroot dpkg-deb --build $DIRNAME ./v$VER/klauslang_${VER}_amd64.deb
 
 rm -r $DIRNAME
+
+# Windows installer
 
 cd ../installer
 
