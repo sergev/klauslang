@@ -47,7 +47,6 @@ object MarkdownFrame: TMarkdownFrame
         Top = 0
         Width = 795
         Align = alClient
-        FixedTypeface = 'Courier'
         DefaultTypeFace = 'default'
         DefaultFontSize = 12
         FlagErrors = False
