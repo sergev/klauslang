@@ -62,6 +62,16 @@ mkdir v$VER
 
 fakeroot dpkg-deb --build $DIRNAME ./v$VER/klauslang_${VER}_amd64.deb
 
-cp ../compiled/klaus.exe /mnt/ntfs/working/dev/klauslang/compiled/
-cp ../compiled/klaus-ide.exe /mnt/ntfs/working/dev/klauslang/compiled/
-cp ../compiled/klaus-course-edit.exe /mnt/ntfs/working/dev/klauslang/compiled/
+rm -r $DIRNAME
+
+cd ../installer
+
+echo "!define PRODUCT_VERSION \"$VER\"" > version.nsi
+
+wine "$(wine cmd /c echo %ProgramFiles% | tr -d \\r)\NSIS\makensis" klaus.nsi
+
+rm version.nsi
+
+cd ../build/v$VER
+zip klauslang_${VER}_amd64-linux.zip klauslang_${VER}_amd64.deb
+zip klauslang_${VER}_x64-windows.zip klauslang_${VER}_x64.exe

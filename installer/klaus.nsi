@@ -3,7 +3,7 @@ RequestExecutionLevel admin
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "Клаус"
-!define PRODUCT_VERSION "2.3.0"
+!include "version.nsi"
 !define PRODUCT_PUBLISHER "Константин Захаров"
 !define PRODUCT_WEB_SITE "https://gitflic.ru/project/czaerlag/klauslang"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\klaus-ide.exe"
