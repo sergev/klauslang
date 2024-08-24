@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+  <mime-type type="application/klauslang-training-course">
+    <sub-class-of type="application/json"/>
+    <alias type="application/klauslang-training-course"/>
+    <comment>Klaus training course</comment>
+    <comment xml:lang="ru">Учебный курс Клаус</comment>
+    <glob pattern="*.klaus-course"/>
+    <generic-icon name="application-klauslang-training-course"/>
+  </mime-type>
+</mime-info>
