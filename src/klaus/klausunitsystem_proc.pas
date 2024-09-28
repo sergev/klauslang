@@ -37,14 +37,11 @@ type
   end;
 
 type
-  // функция прочесть(вых арг0, арг1, арг2, ...): целое;
+  // функция ввести(вых арг0, арг1, арг2, ...): целое;
   tKlausSysProc_ReadLn = class(tKlausSysProcDecl)
     private
-      fStream: tStringReadStream;
-      function processInputData(frame: tKlausStackFrame; const data: string; values: array of tKlausVarValueAt; const at: tSrcPoint): tKlausInteger;
     public
       constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
-      destructor  destroy; override;
       function  isCustomParamHandler: boolean; override;
       procedure checkCallParamTypes(expr: array of tKlausExpression; at: tSrcPoint); override;
       procedure getCustomParamModes(types: array of tKlausTypeDef; out modes: tKlausProcParamModes; const at: tSrcPoint); override;
@@ -362,6 +359,17 @@ type
   end;
 
 type
+  // функция окр(вх число: дробное; вх знаков: целое): дробное;
+  tKlausSysProc_RoundTo = class(tKlausSysProcDecl)
+    private
+      fNum: tKlausProcParam;
+      fDigits: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
   // функция цел(вх число: дробное): дробное;
   tKlausSysProc_Int = class(tKlausSysProcDecl)
     private
@@ -547,7 +555,7 @@ begin
   cnt := length(values);
   if cnt > 1 then errWrongParamCount(cnt, 2, 3, at);
   if cnt = 0 then dt := now else dt := getSimpleMoment(values[0]);
-  returnSimple(frame, klausSimple(tKlausMoment(int(dt))));
+  returnSimple(frame, klausSimpleM(int(dt)));
 end;
 
 { tKlausSysProc_Time }
@@ -589,7 +597,7 @@ begin
   cnt := length(values);
   if cnt > 1 then errWrongParamCount(cnt, 2, 3, at);
   if cnt = 0 then dt := now else dt := getSimpleMoment(values[0]);
-  returnSimple(frame, klausSimple(tKlausMoment(frac(dt))));
+  returnSimple(frame, klausSimpleM(frac(dt)));
 end;
 
 { tKlausSysProc_Now }
@@ -602,7 +610,7 @@ end;
 
 procedure tKlausSysProc_Now.run(frame: tKlausStackFrame; const at: tSrcPoint);
 begin
-  returnSimple(frame, klausSimple(tKlausMoment(now)));
+  returnSimple(frame, klausSimpleM(now));
 end;
 
 { tKlausSysProc_exceptionName }
@@ -615,7 +623,7 @@ end;
 
 procedure tKlausSysProc_ExceptionName.run(frame: tKlausStackFrame; const at: tSrcPoint);
 begin
-  returnSimple(frame, klausSimple(globalErrorInfo.name));
+  returnSimple(frame, klausSimpleS(globalErrorInfo.name));
 end;
 
 { tKlausSysProc_exceptionText }
@@ -628,7 +636,7 @@ end;
 
 procedure tKlausSysProc_ExceptionText.run(frame: tKlausStackFrame; const at: tSrcPoint);
 begin
-  returnSimple(frame, klausSimple(globalErrorInfo.text));
+  returnSimple(frame, klausSimpleS(globalErrorInfo.text));
 end;
 
 { tKlausSysProc_ReadLn }
@@ -637,29 +645,6 @@ constructor tKlausSysProc_ReadLn.create(aOwner: tKlausRoutine; aPoint: tSrcPoint
 begin
   inherited create(aOwner, klausProcName_ReadLn, aPoint);
   declareRetValue(kdtInteger);
-  fStream := tStringReadStream.create('');
-end;
-
-destructor tKlausSysProc_ReadLn.destroy;
-begin
-  freeAndNil(fStream);
-  inherited destroy;
-end;
-
-function tKlausSysProc_ReadLn.processInputData(
-  frame: tKlausStackFrame; const data: string; values: array of tKlausVarValueAt; const at: tSrcPoint): tKlausInteger;
-var
-  i: integer;
-  sv: tKlausSimpleValue;
-begin
-  fStream.data := data;
-  for i := 0 to length(values)-1 do try
-    if not klausReadFromText(fStream, values[i].v.dataType.dataType, sv, values[i].at) then exit(i);
-    (values[i].v as tKlausVarValueSimple).setSimple(sv, values[i].at);
-  except
-    klausTranslateException(frame, values[i].at);
-  end;
-  result := length(values);
 end;
 
 function tKlausSysProc_ReadLn.isCustomParamHandler: boolean;
@@ -692,32 +677,26 @@ end;
 
 procedure tKlausSysProc_ReadLn.customRun(
   frame: tKlausStackFrame; values: array of tKlausVarValueAt; const at: tSrcPoint);
-const
-  prev: u8Char = #0;
 var
   s: string;
-  c: u8Char;
-  l, idx: sizeInt;
+  i, cnt: integer;
+  r: tKlausInputReader;
+  sv: tKlausSimpleValue;
 begin
-  try
-    s := '';
-    idx := 1;
-    frame.owner.readStdIn(c);
-    if (c = #10) and (prev = #13) then frame.owner.readStdIn(c);
-    prev := c;
-    while (c <> '') and not (c[1] in [#0, #10, #13, #26]) do begin
-      l := byte(c[0]);
-      if idx-1 > length(s)-l then setLength(s, idx+32);
-      move(c[1], s[idx], l);
-      idx += l;
-      frame.owner.readStdIn(c);
-      prev := c;
+  r := frame.owner.inputReader;
+  if length(values) = 0 then begin
+    r.readNextValue(kdtString, s);
+    returnSimple(frame, klausSimpleI(0));
+  end else begin
+    cnt := 0;
+    for i := 0 to length(values)-1 do try
+      if not r.readNextValue(values[i].v.dataType.dataType, sv, values[i].at) then break;
+      (values[i].v as tKlausVarValueSimple).setSimple(sv, at);
+      cnt += 1;
+    except
+      klausTranslateException(frame, values[i].at);
     end;
-    setLength(s, idx-1);
-    //frame.owner.writeStdOut('"'+s+'"'#10);
-    returnSimple(frame, klausSimple(processInputData(frame, s, values, at)));
-  except
-    klausTranslateException(frame, at);
+    returnSimple(frame, klausSimpleI(cnt));
   end;
 end;
 
@@ -850,18 +829,18 @@ begin
   if values[0].v is tKlausVarValueArray then begin
     // массив
     if cnt > 1 then (values[0].v as tKlausVarValueArray).count := getSimpleInt(values[1]);
-    returnSimple(frame, klausSimple((values[0].v as tKlausVarValueArray).count));
+    returnSimple(frame, klausSimpleI((values[0].v as tKlausVarValueArray).count));
   end else if values[0].v is tKlausVarValueDict then begin
     // словарь
-    returnSimple(frame, klausSimple((values[0].v as tKlausVarValueDict).count));
+    returnSimple(frame, klausSimpleI((values[0].v as tKlausVarValueDict).count));
   end else if values[0].v is tKlausVarValueSimple then begin
     // строка
     if cnt > 1 then begin
       rslt := getSimpleInt(values[1]);
       rslt := (values[0].v as tKlausVarValueSimple).stringSetLength(rslt, at);
-      returnSimple(frame, klausSimple(rslt));
+      returnSimple(frame, klausSimpleI(rslt));
     end else
-      returnSimple(frame, klausSimple(length(getSimpleStr(values[0]))));
+      returnSimple(frame, klausSimpleI(length(getSimpleStr(values[0]))));
   end else
     errTypeMismatch(values[0].at);
 end;
@@ -1184,7 +1163,7 @@ begin
   if (cnt < 2) or (cnt > 3) then errWrongParamCount(cnt, 2, 3, at);
   if cnt = 2 then count := high(tKlausInteger) else count := getSimpleInt(values[2]);
   rslt := klstrPart(getSimpleStr(values[0]), getSimpleInt(values[1]), count, at);
-  returnSimple(frame, klausSimple(rslt));
+  returnSimple(frame, klausSimpleS(rslt));
 end;
 
 { tKlausSysProc_Char }
@@ -1231,7 +1210,7 @@ begin
   if (cnt < 1) or (cnt > 2) then errWrongParamCount(cnt, 1, 2, at);
   if cnt = 1 then idx := 0 else idx := getSimpleInt(values[1]);
   rslt := klstrChar(getSimpleStr(values[0]), idx, at);
-  returnSimple(frame, klausSimple(rslt));
+  returnSimple(frame, klausSimpleC(rslt));
 end;
 
 { tKlausSysProc_PrevNext }
@@ -1279,8 +1258,8 @@ begin
   if (cnt < 2) or (cnt > 4) then errWrongParamCount(cnt, 2, 4, at);
   if cnt = 2 then count := 1 else count := getSimpleInt(values[2]);
   rslt := doPrevNext(getSimpleStr(values[0]), getSimpleInt(values[1]), count, chars, at);
-  if cnt = 4 then (values[3].v as tKlausVarValueSimple).setSimple(klausSimple(chars), at);
-  returnSimple(frame, klausSimple(rslt));
+  if cnt = 4 then (values[3].v as tKlausVarValueSimple).setSimple(klausSimpleI(chars), at);
+  returnSimple(frame, klausSimpleI(rslt));
 end;
 
 { tKlausSysProc_Next }
@@ -1421,7 +1400,7 @@ begin
     where := u8Lower(where);
   end;
   rslt := system.pos(what, where, index+1);
-  returnSimple(frame, klausSimple(rslt-1));
+  returnSimple(frame, klausSimpleI(rslt-1));
 end;
 
 { tKlausSysProc_Replace }
@@ -1516,7 +1495,7 @@ begin
     end;
   end;
   rslt := klstrFormat(rslt, v, at);
-  returnSimple(frame, klausSimple(rslt));
+  returnSimple(frame, klausSimpleS(rslt));
 end;
 
 { tKlausSysProc_Upper }
@@ -1531,7 +1510,7 @@ end;
 
 procedure tKlausSysProc_Upper.run(frame: tKlausStackFrame; const at: tSrcPoint);
 begin
-  returnSimple(frame, klausSimple(u8Upper(getSimpleStr(frame, fStr, at))));
+  returnSimple(frame, klausSimpleS(u8Upper(getSimpleStr(frame, fStr, at))));
 end;
 
 { tKlausSysProc_Lower }
@@ -1546,7 +1525,7 @@ end;
 
 procedure tKlausSysProc_Lower.run(frame: tKlausStackFrame; const at: tSrcPoint);
 begin
-  returnSimple(frame, klausSimple(u8Lower(getSimpleStr(frame, fStr, at))));
+  returnSimple(frame, klausSimpleS(u8Lower(getSimpleStr(frame, fStr, at))));
 end;
 
 { tKlausSysProc_IsNaN }
@@ -1561,7 +1540,7 @@ end;
 
 procedure tKlausSysProc_IsNaN.run(frame: tKlausStackFrame; const at: tSrcPoint);
 begin
-  returnSimple(frame, klausSimple(isNaN(getSimpleFloat(frame, fNum, at))));
+  returnSimple(frame, klausSimpleB(isNaN(getSimpleFloat(frame, fNum, at))));
 end;
 
 { tKlausSysProc_IsFinite }
@@ -1579,7 +1558,7 @@ var
   f: tKlausFloat;
 begin
   f := getSimpleFloat(frame, fNum, at);
-  returnSimple(frame, klausSimple(not (isNaN(f) or IsInfinite(f))));
+  returnSimple(frame, klausSimpleB(not (isNaN(f) or IsInfinite(f))));
 end;
 
 { tKlausSysProc_Round }
@@ -1598,7 +1577,31 @@ var
 begin
   f := getSimpleFloat(frame, fNum, at);
   if isNaN(f) or IsInfinite(f) then raise eKlausError.create(ercArgumentIsNotFinite, at);
-  returnSimple(frame, klausSimple(round(f)));
+  returnSimple(frame, klausSimpleI(round(f)));
+end;
+
+{ tKlausSysProc_RoundTo }
+
+constructor tKlausSysProc_RoundTo.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausProcName_RoundTo, aPoint);
+  fNum := tKlausProcParam.create(self, 'число', aPoint, kpmInput, source.simpleTypes[kdtFloat]);
+  addParam(fNum);
+  fDigits := tKlausProcParam.create(self, 'знаков', aPoint, kpmInput, source.simpleTypes[kdtInteger]);
+  addParam(fDigits);
+  declareRetValue(kdtFloat);
+end;
+
+procedure tKlausSysProc_RoundTo.run(frame: tKlausStackFrame; const at: tSrcPoint);
+var
+  rslt: tKlausFloat;
+  n: tKlausFloat;
+  d: tKlausInteger;
+begin
+  n := getSimpleFloat(frame, fNum, at);
+  d := getSimpleInt(frame, fDigits, at);
+  rslt := roundTo(n, -d);
+  returnSimple(frame, klausSimpleF(rslt));
 end;
 
 { tKlausSysProc_Int }
@@ -1616,7 +1619,7 @@ var
   f: tKlausFloat;
 begin
   f := getSimpleFloat(frame, fNum, at);
-  returnSimple(frame, klausSimple(tKlausFloat(int(f))));
+  returnSimple(frame, klausSimpleF(int(f)));
 end;
 
 { tKlausSysProc_Frac }
@@ -1634,7 +1637,7 @@ var
   f: tKlausFloat;
 begin
   f := getSimpleFloat(frame, fNum, at);
-  returnSimple(frame, klausSimple(tKlausFloat(frac(f))));
+  returnSimple(frame, klausSimpleF(frac(f)));
 end;
 
 { tKlausSysProc_Sin }
@@ -1652,7 +1655,7 @@ var
   f: tKlausFloat;
 begin
   f := getSimpleFloat(frame, fNum, at);
-  returnSimple(frame, klausSimple(tKlausFloat(sin(f))));
+  returnSimple(frame, klausSimpleF(sin(f)));
 end;
 
 { tKlausSysProc_Cos }
@@ -1670,7 +1673,7 @@ var
   f: tKlausFloat;
 begin
   f := getSimpleFloat(frame, fNum, at);
-  returnSimple(frame, klausSimple(tKlausFloat(cos(f))));
+  returnSimple(frame, klausSimpleF(cos(f)));
 end;
 
 { tKlausSysProc_Tan }
@@ -1688,7 +1691,7 @@ var
   f: tKlausFloat;
 begin
   f := getSimpleFloat(frame, fNum, at);
-  returnSimple(frame, klausSimple(tKlausFloat(tan(f))));
+  returnSimple(frame, klausSimpleF(tan(f)));
 end;
 
 { tKlausSysProc_ArcSin }
@@ -1706,7 +1709,7 @@ var
   f: tKlausFloat;
 begin
   f := getSimpleFloat(frame, fNum, at);
-  returnSimple(frame, klausSimple(tKlausFloat(arcsin(f))));
+  returnSimple(frame, klausSimpleF(arcsin(f)));
 end;
 
 { tKlausSysProc_ArcCos }
@@ -1724,7 +1727,7 @@ var
   f: tKlausFloat;
 begin
   f := getSimpleFloat(frame, fNum, at);
-  returnSimple(frame, klausSimple(tKlausFloat(arccos(f))));
+  returnSimple(frame, klausSimpleF(arccos(f)));
 end;
 
 { tKlausSysProc_ArcTan }
@@ -1742,7 +1745,7 @@ var
   f: tKlausFloat;
 begin
   f := getSimpleFloat(frame, fNum, at);
-  returnSimple(frame, klausSimple(tKlausFloat(arctan(f))));
+  returnSimple(frame, klausSimpleF(arctan(f)));
 end;
 
 { tKlausSysProc_Ln }
@@ -1760,7 +1763,7 @@ var
   f: tKlausFloat;
 begin
   f := getSimpleFloat(frame, fNum, at);
-  returnSimple(frame, klausSimple(tKlausFloat(ln(f))));
+  returnSimple(frame, klausSimpleF(ln(f)));
 end;
 
 { tKlausSysProc_Exp }
@@ -1778,7 +1781,7 @@ var
   f: tKlausFloat;
 begin
   f := getSimpleFloat(frame, fNum, at);
-  returnSimple(frame, klausSimple(tKlausFloat(exp(f))));
+  returnSimple(frame, klausSimpleF(exp(f)));
 end;
 
 { tKlausSysProc_Delay }
@@ -1813,7 +1816,7 @@ begin
     randomize;
     init := true;
   end;
-  returnSimple(frame, klausSimple(random(getSimpleInt(frame, fRange, at))));
+  returnSimple(frame, klausSimpleI(random(getSimpleInt(frame, fRange, at))));
 end;
 
 end.

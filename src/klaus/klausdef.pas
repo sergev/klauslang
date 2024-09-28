@@ -487,13 +487,13 @@ function klausIsZeroValue(v: tKlausSimpleValue): boolean;
 function klausLiteralValue(const li: tKlausLexInfo): tKlausSimpleValue;
 
 // Возвращает tKlausSimpleValue, заполненный переданными данными
-function klausSimple(const c: tKlausChar): tKlausSimpleValue;
-function klausSimple(const s: tKlausString): tKlausSimpleValue;
-function klausSimple(const i: tKlausInteger): tKlausSimpleValue;
-function klausSimple(const f: tKlausFloat): tKlausSimpleValue;
-function klausSimple(const m: tKlausMoment): tKlausSimpleValue;
-function klausSimple(const b: tKlausBoolean): tKlausSimpleValue;
-function klausSimpleObj(const o: tKlausObject): tKlausSimpleValue;
+function klausSimpleC(const c: tKlausChar): tKlausSimpleValue;
+function klausSimpleS(const s: tKlausString): tKlausSimpleValue;
+function klausSimpleI(const i: tKlausInteger): tKlausSimpleValue;
+function klausSimpleF(const f: tKlausFloat): tKlausSimpleValue;
+function klausSimpleM(const m: tKlausMoment): tKlausSimpleValue;
+function klausSimpleB(const b: tKlausBoolean): tKlausSimpleValue;
+function klausSimpleO(const o: tKlausObject): tKlausSimpleValue;
 
 // Возвращает true, если тип src можно неявно привести к типу dt
 function klausCanAssign(src, dt: tKlausDataType): boolean;
@@ -613,49 +613,49 @@ begin
 end;
 
 // Возвращает tKlausSimpleValue, заполненный переданными данными
-function klausSimple(const c: tKlausChar): tKlausSimpleValue;
+function klausSimpleC(const c: tKlausChar): tKlausSimpleValue;
 begin
   result.dataType := kdtChar;
   result.cValue := c;
 end;
 
 // Возвращает tKlausSimpleValue, заполненный переданными данными
-function klausSimple(const s: tKlausString): tKlausSimpleValue;
+function klausSimpleS(const s: tKlausString): tKlausSimpleValue;
 begin
   result.dataType := kdtString;
   result.sValue := s;
 end;
 
 // Возвращает tKlausSimpleValue, заполненный переданными данными
-function klausSimple(const i: tKlausInteger): tKlausSimpleValue;
+function klausSimpleI(const i: tKlausInteger): tKlausSimpleValue;
 begin
   result.dataType := kdtInteger;
   result.iValue := i;
 end;
 
 // Возвращает tKlausSimpleValue, заполненный переданными данными
-function klausSimple(const f: tKlausFloat): tKlausSimpleValue;
+function klausSimpleF(const f: tKlausFloat): tKlausSimpleValue;
 begin
   result.dataType := kdtFloat;
   result.fValue := f;
 end;
 
 // Возвращает tKlausSimpleValue, заполненный переданными данными
-function klausSimple(const m: tKlausMoment): tKlausSimpleValue;
+function klausSimpleM(const m: tKlausMoment): tKlausSimpleValue;
 begin
   result.dataType := kdtMoment;
   result.mValue := m;
 end;
 
 // Возвращает tKlausSimpleValue, заполненный переданными данными
-function klausSimple(const b: tKlausBoolean): tKlausSimpleValue;
+function klausSimpleB(const b: tKlausBoolean): tKlausSimpleValue;
 begin
   result.dataType := kdtBoolean;
   result.bValue := b;
 end;
 
 // Возвращает tKlausSimpleValue, заполненный переданными данными
-function klausSimpleObj(const o: tKlausObject): tKlausSimpleValue;
+function klausSimpleO(const o: tKlausObject): tKlausSimpleValue;
 begin
   result.dataType := kdtObject;
   result.oValue := o;

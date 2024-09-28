@@ -385,7 +385,7 @@ procedure tSceneForm.inStreamReadChar(out c: u8Char);
 begin
   if fInStream = nil then raise eKlausError.create(ercStreamNotOpen, zeroSrcPt);
   with fInStream do
-    if position = size then c := #26
+    if position >= size then c := #26
     else c := u8ReadChar(fInStream);
 end;
 

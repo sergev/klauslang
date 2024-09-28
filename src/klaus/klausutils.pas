@@ -173,6 +173,31 @@ const
   klausFilePosFromCurrent   = 2;
 
 type
+  tKlausInputReader = class
+    private
+      fStashed: u8Char;
+    protected
+      function eof(const c: u8Char): boolean; virtual;
+      function doReadChar: u8Char; virtual; abstract;
+    public
+      property stashed: u8Char read fStashed write fStashed;
+
+      function readChar: u8Char;
+      function readNextValue(dt: tKlausSimpleType; out s: string): boolean;
+      function readNextValue(dt: tKlausDataType; out sv: tKlausSimpleValue; const at: tSrcPoint): boolean;
+  end;
+
+type
+  tKlausStreamReader = class(tKlausInputReader)
+    private
+      fStream: tStream;
+    protected
+      function doReadChar: u8Char; override;
+    public
+      constructor create(aStream: tStream);
+  end;
+
+type
   tKlausFileStream = class(tFileStream)
     private
       fMode: tKlausInteger;
@@ -190,7 +215,11 @@ type
 
 type
   tKlausTextFile = class(tKlausFileStream)
+    private
+      fReader: tKlausStreamReader;
     public
+      constructor create(const aFileName: string; aMode: tKlausInteger); override;
+
       function  readSimpleValue(dt: tKlausSimpleType; const at: tSrcPoint): tKlausSimpleValue; override;
       procedure writeSimpleValue(const sv: tKlausSimpleValue; const at: tSrcPoint); override;
   end;
@@ -213,9 +242,9 @@ const
   klausFileClass: array[klausFileTypeText..klausFileTypeBinary] of tKlausFileClass = (
     tKlausTextFile, tKlausBinaryFile);
 
-function klausGetFileType(ft: tKlausInteger; const at: tSrcPoint): tKlausFileClass;
+function  klausGetFileType(ft: tKlausInteger; const at: tSrcPoint): tKlausFileClass;
 
-function loadJsonData(const fileName: string): tJsonData;
+function  loadJsonData(const fileName: string): tJsonData;
 procedure saveJsonData(const fileName: string; data: tJsonData);
 
 procedure listFileNames(const searchPath, mask: string; exclAttr: longInt; list: tStrings);
@@ -881,243 +910,243 @@ var
 begin
   at := zeroSrcPt;
   fmt := '[%i]';
-  v := klausSimple(10);
+  v := klausSimpleI(10);
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%%]';
-  v := klausSimple(10);
+  v := klausSimpleI(10);
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%10i]';
-  v := klausSimple(10);
+  v := klausSimpleI(10);
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%.4i]';
-  v := klausSimple(-10);
+  v := klausSimpleI(-10);
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%10.4ц]';
-  v := klausSimple(-10);
+  v := klausSimpleI(-10);
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%0:ц]';
-  v := klausSimple(10);
+  v := klausSimpleI(10);
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%0:10Ц]';
-  v := klausSimple(10);
+  v := klausSimpleI(10);
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%0:10.4Ц]';
-  v := klausSimple(10);
+  v := klausSimpleI(10);
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%0:-10i]';
-  v := klausSimple(10);
+  v := klausSimpleI(10);
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%0:-10.4I]';
-  v := klausSimple(10);
+  v := klausSimpleI(10);
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%x]';
-  v := klausSimple(1234567);
+  v := klausSimpleI(1234567);
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%10x]';
-  v := klausSimple(1234567);
+  v := klausSimpleI(1234567);
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%.4x]';
-  v := klausSimple(-1234567);
+  v := klausSimpleI(-1234567);
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%10.4ш]';
-  v := klausSimple(-1234567);
+  v := klausSimpleI(-1234567);
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%0:ш]';
-  v := klausSimple(tKlausChar($0401));
+  v := klausSimpleC(tKlausChar($0401));
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%0:10Ш]';
-  v := klausSimple(tKlausChar($0401));
+  v := klausSimpleC(tKlausChar($0401));
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%0:10.4Ш]';
-  v := klausSimple(tKlausChar($0401));
+  v := klausSimpleC(tKlausChar($0401));
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%0:-10x]';
-  v := klausSimple(tKlausChar($0401));
+  v := klausSimpleC(tKlausChar($0401));
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%0:-10.4X]';
-  v := klausSimple(tKlausChar($0401));
+  v := klausSimpleC(tKlausChar($0401));
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%e]';
-  v := klausSimple(tKlausFloat(1.234));
+  v := klausSimpleF(tKlausFloat(1.234));
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%12e]';
-  v := klausSimple(tKlausFloat(-1.234));
+  v := klausSimpleF(tKlausFloat(-1.234));
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%12.4e]';
-  v := klausSimple(tKlausFloat(-1.234));
+  v := klausSimpleF(tKlausFloat(-1.234));
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%0:э]';
-  v := klausSimple(tKlausFloat(1.234));
+  v := klausSimpleF(tKlausFloat(1.234));
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%0:12э]';
-  v := klausSimple(tKlausFloat(1.234));
+  v := klausSimpleF(tKlausFloat(1.234));
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%0:12.4Э]';
-  v := klausSimple(tKlausFloat(1.234));
+  v := klausSimpleF(tKlausFloat(1.234));
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%0:-12Э]';
-  v := klausSimple(tKlausFloat(1.234));
+  v := klausSimpleF(tKlausFloat(1.234));
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%0:-12.4E]';
-  v := klausSimple(tKlausFloat(1.234));
+  v := klausSimpleF(tKlausFloat(1.234));
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%f]';
-  v := klausSimple(tKlausFloat(1.234));
+  v := klausSimpleF(tKlausFloat(1.234));
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%12f]';
-  v := klausSimple(tKlausFloat(-1.234));
+  v := klausSimpleF(tKlausFloat(-1.234));
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%12.4f]';
-  v := klausSimple(tKlausFloat(-1.234));
+  v := klausSimpleF(tKlausFloat(-1.234));
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%0:ф]';
-  v := klausSimple(tKlausFloat(1.234));
+  v := klausSimpleF(tKlausFloat(1.234));
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%0:12ф]';
-  v := klausSimple(tKlausFloat(1.234));
+  v := klausSimpleF(tKlausFloat(1.234));
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%0:12.4Ф]';
-  v := klausSimple(tKlausFloat(1.234));
+  v := klausSimpleF(tKlausFloat(1.234));
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%0:-12Ф]';
-  v := klausSimple(tKlausFloat(1.234));
+  v := klausSimpleF(tKlausFloat(1.234));
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%0:-12.4F]';
-  v := klausSimple(tKlausFloat(1.234));
+  v := klausSimpleF(tKlausFloat(1.234));
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%g]';
-  v := klausSimple(tKlausFloat(1.234));
+  v := klausSimpleF(tKlausFloat(1.234));
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%12g]';
-  v := klausSimple(tKlausFloat(-1.234));
+  v := klausSimpleF(tKlausFloat(-1.234));
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%12.4g]';
-  v := klausSimple(tKlausFloat(-1.234));
+  v := klausSimpleF(tKlausFloat(-1.234));
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%0:о]';
-  v := klausSimple(tKlausFloat(1.234));
+  v := klausSimpleF(tKlausFloat(1.234));
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%0:12о]';
-  v := klausSimple(tKlausFloat(1.234));
+  v := klausSimpleF(tKlausFloat(1.234));
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%0:12.4О]';
-  v := klausSimple(tKlausFloat(1.234));
+  v := klausSimpleF(tKlausFloat(1.234));
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%0:-12О]';
-  v := klausSimple(tKlausFloat(1.234));
+  v := klausSimpleF(tKlausFloat(1.234));
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%0:-12.4G]';
-  v := klausSimple(tKlausFloat(1.234));
+  v := klausSimpleF(tKlausFloat(1.234));
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%n]';
-  v := klausSimple(tKlausFloat(1234567));
+  v := klausSimpleF(tKlausFloat(1234567));
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%14n]';
-  v := klausSimple(tKlausFloat(-1234567));
+  v := klausSimpleF(tKlausFloat(-1234567));
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%14.4n]';
-  v := klausSimple(tKlausFloat(-1234567));
+  v := klausSimpleF(tKlausFloat(-1234567));
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%0:ч]';
-  v := klausSimple(tKlausFloat(1234567));
+  v := klausSimpleF(tKlausFloat(1234567));
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%0:14ч]';
-  v := klausSimple(tKlausFloat(1234567));
+  v := klausSimpleF(tKlausFloat(1234567));
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%0:14.4Ч]';
-  v := klausSimple(tKlausFloat(1234567));
+  v := klausSimpleF(tKlausFloat(1234567));
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%0:-14Ч]';
-  v := klausSimple(tKlausFloat(1234567));
+  v := klausSimpleF(tKlausFloat(1234567));
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%0:-14.4N]';
-  v := klausSimple(tKlausFloat(1234567));
+  v := klausSimpleF(tKlausFloat(1234567));
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%14d]';
-  v := klausSimple(tKlausMoment(44567.123));
+  v := klausSimpleM(tKlausMoment(44567.123));
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%-14д]';
-  v := klausSimple(tKlausMoment(44567.123));
+  v := klausSimpleM(tKlausMoment(44567.123));
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%14t]';
-  v := klausSimple(tKlausMoment(44567.123));
+  v := klausSimpleM(tKlausMoment(44567.123));
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%-14в]';
-  v := klausSimple(tKlausMoment(44567.123));
+  v := klausSimpleM(tKlausMoment(44567.123));
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%14m]';
-  v := klausSimple(tKlausMoment(44567.123));
+  v := klausSimpleM(tKlausMoment(44567.123));
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%-14м]';
-  v := klausSimple(tKlausMoment(44567.123));
+  v := klausSimpleM(tKlausMoment(44567.123));
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%s]';
-  v := klausSimple('Привет!');
+  v := klausSimpleS('Привет!');
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%14с]';
-  v := klausSimple('Привет!');
+  v := klausSimpleS('Привет!');
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
   fmt := '[%-14с]';
-  v := klausSimple('Привет!');
+  v := klausSimpleS('Привет!');
   s := klstrFormat(fmt, [v], at);
   writeln(format('стр := формат("%s", %s); // стр = "%s"', [fmt, klausDisplayValue(v), s]));
 end;
@@ -1308,7 +1337,7 @@ begin
       if li.lexem <> klxID then exit;
       task := li.text;
       li := next;
-      if (li.lexem <> klxKeyword) or (li.keyword <> kkwdOf) then exit;
+      if (li.lexem <> klxKeyword) or (li.keyword <> kkwdPracticum) then exit;
       li := next;
       if li.lexem <> klxID then exit;
       course := li.text;
@@ -1318,6 +1347,134 @@ begin
   except
     result := false;
   end;
+end;
+
+{ tKlausInputReader }
+
+function tKlausInputReader.readChar: u8Char;
+begin
+  if stashed <> '' then begin
+    result := stashed;
+    stashed := '';
+  end else
+    result := doReadChar;
+end;
+
+function tKlausInputReader.eof(const c: u8Char): boolean;
+begin
+  if c = '' then exit(true);
+  result := c[1] in [#04, #26];
+end;
+
+function tKlausInputReader.readNextValue(dt: tKlausSimpleType; out s: string): boolean;
+var
+  c: u8Char;
+  l, idx: integer;
+begin
+  case dt of
+    kdtChar: begin
+      s := readChar;
+      result := not eof(s);
+    end;
+    kdtString: begin
+      s := '';
+      idx := 1;
+      c := readChar;
+      if eof(c) then exit(false)
+      else repeat
+        if c = #10 then break
+        else if c = #13 then begin
+          c := readChar;
+          if (c <> '') and (c <> #10) then stashed := c;
+          break;
+        end;
+        l := byte(c[0]);
+        if idx-1 > length(s)-l then setLength(s, idx+32);
+        move(c[1], s[idx], l);
+        idx += l;
+        c := readChar;
+      until eof(c);
+      setLength(s, idx-1);
+      result := true;
+    end;
+    kdtInteger, kdtFloat, kdtMoment, kdtBoolean: begin
+      c := readChar;
+      if eof(c) then exit(false);
+      while c[1] in [#9, #10, #13, ' '] do begin
+        c := readChar;
+        if eof(c) then exit(false);
+      end;
+      s := '';
+      idx := 1;
+      repeat
+        if c = #10 then break
+        else if c = #13 then begin
+          c := readChar;
+          if (c <> '') and (c <> #10) then stashed := c;
+          break;
+        end else if c[1] in [#9, ' '] then begin
+          stashed := c;
+          break;
+        end;
+        l := byte(c[0]);
+        if idx-1 > length(s)-l then setLength(s, idx+32);
+        move(c[1], s[idx], l);
+        idx += l;
+        c := readChar;
+      until eof(c);
+      setLength(s, idx-1);
+      while (stashed = #9) or (stashed = ' ') do begin
+        stashed := '';
+        c := readChar;
+        if c = #10 then break
+        else if c = #13 then begin
+          c := readChar;
+          if (c <> '') and (c <> #10) then stashed := c;
+          break;
+        end else
+          stashed := c;
+      end;
+    end;
+    else begin
+      assert(dt in [kdtChar..kdtBoolean], 'Value of this data type cannot be read.');
+      result := false;
+    end;
+  end;
+end;
+
+function tKlausInputReader.readNextValue(dt: tKlausDataType; out sv: tKlausSimpleValue; const at: tSrcPoint): boolean;
+var
+  s: string;
+begin
+  case dt of
+    kdtComplex: raise eKlausError.create(ercCannotReadComplexType, at);
+    kdtObject: raise eKlausError.createFmt(ercValueCannotBeRead, at, [klausDataTypeCaption[dt]]);
+  end;
+  if not readNextValue(dt, s) then exit(false);
+  case dt of
+    kdtChar:    sv := klausSimpleC(klausStrToChar(s));
+    kdtString:  sv := klausSimpleS(s);
+    kdtInteger: sv := klausSimpleI(klausStrToInt(s));
+    kdtFloat:   sv := klausSimpleF(klausStrToFloat(s));
+    kdtMoment:  sv := klausSimpleM(klausStrToMoment(s));
+    kdtBoolean: sv := klausSimpleB(klausStrToBool(s));
+    else assert(false, 'Invalid datatype.');
+  end;
+  result := true;
+end;
+
+{ tKlausStreamReader }
+
+constructor tKlausStreamReader.create(aStream: tStream);
+begin
+  inherited create;
+  fStream := aStream;
+end;
+
+function tKlausStreamReader.doReadChar: u8Char;
+begin
+  result := u8ReadChar(fStream);
+  if result = '' then result := #04;
 end;
 
 { tKlausFileStream }
@@ -1362,9 +1519,15 @@ end;
 
 { tKlausTextFile }
 
+constructor tKlausTextFile.create(const aFileName: string; aMode: tKlausInteger);
+begin
+  inherited;
+  fReader := tKlausStreamReader.create(self);
+end;
+
 function tKlausTextFile.readSimpleValue(dt: tKlausSimpleType; const at: tSrcPoint): tKlausSimpleValue;
 begin
-  if not klausReadFromText(self, dt, result, at) then raise eStreamError.create(errFileReadError);
+  if not fReader.readNextValue(dt, result, at) then raise eStreamError.create(errFileReadError);
 end;
 
 procedure tKlausTextFile.writeSimpleValue(const sv: tKlausSimpleValue; const at: tSrcPoint);

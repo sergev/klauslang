@@ -106,7 +106,7 @@ const
     def: '<expression>'),
 
     (name: 'program';
-    def:   '(`программа` #id | `задача` #id `из` #id) [<program_params>] ";" [<uses_list>] <routine> "."'),
+    def:   '(`программа` #id | `задача` #id `практикум` #id) [<program_params>] ";" [<uses_list>] <routine> "."'),
 
     (name: 'program_params';
     def:   '"(" [`вх`] #id ":" `массив` `строк` ")"'),

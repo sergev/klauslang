@@ -128,29 +128,29 @@ end;
 
 procedure tKlausUnitFiles.createVariables;
 begin
-  tKlausConstDecl.create(self, [klausConstName_FileTypeText], zeroSrcPt, klausSimple(tKlausInteger(klausFileTypeText)));
-  tKlausConstDecl.create(self, [klausConstName_FileTypeBinary], zeroSrcPt, klausSimple(tKlausInteger(klausFileTypeBinary)));
-  tKlausConstDecl.create(self, [klausConstName_FileOpenRead], zeroSrcPt, klausSimple(tKlausInteger(klausFileOpenRead)));
-  tKlausConstDecl.create(self, [klausConstName_FileOpenWrite], zeroSrcPt, klausSimple(tKlausInteger(klausFileOpenWrite)));
-  tKlausConstDecl.create(self, [klausConstName_FileShareExclusive], zeroSrcPt, klausSimple(tKlausInteger(klausFileShareExclusive)));
-  tKlausConstDecl.create(self, [klausConstName_FileShareDenyWrite], zeroSrcPt, klausSimple(tKlausInteger(klausFileShareDenyWrite)));
-  tKlausConstDecl.create(self, [klausConstName_FileShareDenyNone], zeroSrcPt, klausSimple(tKlausInteger(klausFileShareDenyNone)));
-  tKlausConstDecl.create(self, [klausConstName_FilePosFromBeginning], zeroSrcPt, klausSimple(tKlausInteger(klausFilePosFromBeginning)));
-  tKlausConstDecl.create(self, [klausConstName_FilePosFromEnd], zeroSrcPt, klausSimple(tKlausInteger(klausFilePosFromEnd)));
-  tKlausConstDecl.create(self, [klausConstName_FilePosFromCurrent], zeroSrcPt, klausSimple(tKlausInteger(klausFilePosFromCurrent)));
-  tKlausConstDecl.create(self, [klausConstName_FileAttrReadOnly], zeroSrcPt, klausSimple(tKlausInteger(faReadOnly)));
+  tKlausConstDecl.create(self, [klausConstName_FileTypeText], zeroSrcPt, klausSimpleI(klausFileTypeText));
+  tKlausConstDecl.create(self, [klausConstName_FileTypeBinary], zeroSrcPt, klausSimpleI(klausFileTypeBinary));
+  tKlausConstDecl.create(self, [klausConstName_FileOpenRead], zeroSrcPt, klausSimpleI(klausFileOpenRead));
+  tKlausConstDecl.create(self, [klausConstName_FileOpenWrite], zeroSrcPt, klausSimpleI(klausFileOpenWrite));
+  tKlausConstDecl.create(self, [klausConstName_FileShareExclusive], zeroSrcPt, klausSimpleI(klausFileShareExclusive));
+  tKlausConstDecl.create(self, [klausConstName_FileShareDenyWrite], zeroSrcPt, klausSimpleI(klausFileShareDenyWrite));
+  tKlausConstDecl.create(self, [klausConstName_FileShareDenyNone], zeroSrcPt, klausSimpleI(klausFileShareDenyNone));
+  tKlausConstDecl.create(self, [klausConstName_FilePosFromBeginning], zeroSrcPt, klausSimpleI(klausFilePosFromBeginning));
+  tKlausConstDecl.create(self, [klausConstName_FilePosFromEnd], zeroSrcPt, klausSimpleI(klausFilePosFromEnd));
+  tKlausConstDecl.create(self, [klausConstName_FilePosFromCurrent], zeroSrcPt, klausSimpleI(klausFilePosFromCurrent));
+  tKlausConstDecl.create(self, [klausConstName_FileAttrReadOnly], zeroSrcPt, klausSimpleI(faReadOnly));
   {$push}{$warnings off}
-  tKlausConstDecl.create(self, [klausConstName_FileAttrHidden], zeroSrcPt, klausSimple(tKlausInteger(faHidden)));
-  tKlausConstDecl.create(self, [klausConstName_FileAttrSystem], zeroSrcPt, klausSimple(tKlausInteger(faSysFile)));
-  tKlausConstDecl.create(self, [klausConstName_FileAttrVolumeID], zeroSrcPt, klausSimple(tKlausInteger(faVolumeID)));
-  tKlausConstDecl.create(self, [klausConstName_FileAttrDirectory], zeroSrcPt, klausSimple(tKlausInteger(faDirectory)));
-  tKlausConstDecl.create(self, [klausConstName_FileAttrArchive], zeroSrcPt, klausSimple(tKlausInteger(faArchive)));
-  tKlausConstDecl.create(self, [klausConstName_FileAttrNormal], zeroSrcPt, klausSimple(tKlausInteger(faNormal)));
-  tKlausConstDecl.create(self, [klausConstName_FileAttrTemporary], zeroSrcPt, klausSimple(tKlausInteger(faTemporary)));
-  tKlausConstDecl.create(self, [klausConstName_FileAttrSymLink], zeroSrcPt, klausSimple(tKlausInteger(faSymLink)));
-  tKlausConstDecl.create(self, [klausConstName_FileAttrCompressed], zeroSrcPt, klausSimple(tKlausInteger(faCompressed)));
-  tKlausConstDecl.create(self, [klausConstName_FileAttrEncrypted], zeroSrcPt, klausSimple(tKlausInteger(faEncrypted)));
-  tKlausConstDecl.create(self, [klausConstName_FileAttrVirtual], zeroSrcPt, klausSimple(tKlausInteger(faVirtual)));
+  tKlausConstDecl.create(self, [klausConstName_FileAttrHidden], zeroSrcPt, klausSimpleI(faHidden));
+  tKlausConstDecl.create(self, [klausConstName_FileAttrSystem], zeroSrcPt, klausSimpleI(faSysFile));
+  tKlausConstDecl.create(self, [klausConstName_FileAttrVolumeID], zeroSrcPt, klausSimpleI(faVolumeID));
+  tKlausConstDecl.create(self, [klausConstName_FileAttrDirectory], zeroSrcPt, klausSimpleI(faDirectory));
+  tKlausConstDecl.create(self, [klausConstName_FileAttrArchive], zeroSrcPt, klausSimpleI(faArchive));
+  tKlausConstDecl.create(self, [klausConstName_FileAttrNormal], zeroSrcPt, klausSimpleI(faNormal));
+  tKlausConstDecl.create(self, [klausConstName_FileAttrTemporary], zeroSrcPt, klausSimpleI(faTemporary));
+  tKlausConstDecl.create(self, [klausConstName_FileAttrSymLink], zeroSrcPt, klausSimpleI(faSymLink));
+  tKlausConstDecl.create(self, [klausConstName_FileAttrCompressed], zeroSrcPt, klausSimpleI(faCompressed));
+  tKlausConstDecl.create(self, [klausConstName_FileAttrEncrypted], zeroSrcPt, klausSimpleI(faEncrypted));
+  tKlausConstDecl.create(self, [klausConstName_FileAttrVirtual], zeroSrcPt, klausSimpleI(faVirtual));
   {$pop}
 end;
 

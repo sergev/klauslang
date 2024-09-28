@@ -19,15 +19,16 @@ KlausLang — свободное программное обеспечение: 
 
 unit KlausSrc;
 
+//todo: Переделать функцию ввести()
+
 //todo: Добавить в VarPath возможность ссылки на модуль (точнее, путь к области видимости)
 //todo: Запретить инструкцию ВЕРНУТЬ в секциях подготовки и завершения модулей
 
 //todo: процедурные переменные
 //todo: диапазоны в инструкции выбора
 //todo: обращение к элементам составных констант в разделе определений
-//todo: файлСоздКат()
+//todo: функции работы с каталогами
 //todo: JSON
-//todo: Проверить nil is
 
 {$mode ObjFPC}{$H+}
 {$i ../lib/klaus.inc}
@@ -35,7 +36,7 @@ unit KlausSrc;
 interface
 
 uses
-  Types, Classes, SysUtils, FGL, Graphics, U8, KlausErr, KlausLex, KlausDef, KlausSyn;
+  Types, Classes, SysUtils, FGL, Graphics, U8, KlausErr, KlausUtils, KlausLex, KlausDef, KlausSyn;
 
 type
   tKlausMap = class;
@@ -1741,6 +1742,16 @@ type
   tSynchronizeMethod = procedure(method: tThreadMethod) of object;
 
 type
+  tKlausStdInReader = class(tKlausInputReader)
+    private
+      fRuntime: tKlausRuntime;
+    protected
+      function doReadChar: u8Char; override;
+    public
+      constructor create(aRuntime: tKlausRuntime);
+  end;
+
+type
   // Экземпляр исполняемой программы
   tKlausRuntime = class(tObject)
     private
@@ -1751,6 +1762,7 @@ type
       fExitCode: integer;
       fStdIO: tKlausInOutMethods;
       fOnSync: tSynchronizeMethod;
+      fInputReader: tKlausStdInReader;
 
       function  getStackCount: integer;
       function  getStackFrames(idx: integer): tKlausStackFrame;
@@ -1766,6 +1778,7 @@ type
       property stackTop: tKlausStackFrame read getStackTop;
       property exitCode: integer read fExitCode write fExitCode;
       property onSync: tSynchronizeMethod read fOnSync write fOnSync;
+      property inputReader: tKlausStdInReader read fInputReader;
 
       constructor create(aSource: tKlausSource);
       destructor  destroy; override;
@@ -1929,7 +1942,7 @@ threadvar
 implementation
 
 uses
-  Math, KlausUtils, KlausUnitSystem
+  Math, KlausUnitSystem
   {$ifdef enableLogging}, KlausLog{$endif};
 
 const
@@ -2166,7 +2179,7 @@ begin
   if fData = nil then begin
     fData := tKlausVarValueStruct.create(decl.data);
     fv := fData.getMember(klausExceptionMessageFieldName, zeroSrcPt) as tKlausVarValueSimple;
-    fv.setSimple(klausSimple(aMsg), zeroSrcPt);
+    fv.setSimple(klausSimpleS(aMsg), zeroSrcPt);
   end;
 end;
 
@@ -2354,7 +2367,7 @@ begin
         end;
         c := klstrChar(s, sv.iValue, steps[idx].point);
         result := tKlausVarValueSimple.create(decl.source.simpleTypes[kdtChar]);
-        try (result as tKlausVarValueSimple).setSimple(klausSimple(c), steps[idx].point);
+        try (result as tKlausVarValueSimple).setSimple(klausSimpleC(c), steps[idx].point);
         finally frame.deferRelease(result); end;
       end else if result is tKlausVarValueArray then begin
         sv := steps[idx].indices[i].evaluate(frame, allowCalls);
@@ -3013,7 +3026,7 @@ end;
 
 function tKlausOpndExists.doEvaluate(frame: tKlausStackFrame; allowCalls: boolean): tKlausSimpleValue;
 begin
-  result := klausSimple(fPath.evaluate(frame, vpmCheckExist, allowCalls) <> nil);
+  result := klausSimpleB(fPath.evaluate(frame, vpmCheckExist, allowCalls) <> nil);
   if negate then result.bValue := not result.bValue;
 end;
 
@@ -3222,7 +3235,7 @@ begin
         code := retCode.evaluate(frame, true);
         if code.dataType <> kdtInteger then raise eKlausError.create(ercTypeMismatch, retCode.point);
       end else
-        code := klausSimple(tKlausInteger(0));
+        code := klausSimpleI(0);
       raise eKlausHalt.create(code.iValue);
     except
       klausTranslateException(frame, point);
@@ -4216,7 +4229,7 @@ begin
       try
         if reverse then begin
           for i := strt downto fnsh do try
-            cntr.setSimple(klausSimple(i), counter.point);
+            cntr.setSimple(klausSimpleI(i), counter.point);
             body.run(frame);
           except
             on eKlausContinue do;
@@ -4224,7 +4237,7 @@ begin
           end
         end else begin
           for i := strt to fnsh do try
-            cntr.setSimple(klausSimple(i), counter.point);
+            cntr.setSimple(klausSimpleI(i), counter.point);
             body.run(frame);
           except
             on eKlausContinue do;
@@ -4342,7 +4355,7 @@ begin
         try
           if reverse then begin
             for i := strt downto 0 do try
-              kv.setSimple(klausSimple(i), key.point);
+              kv.setSimple(klausSimpleI(i), key.point);
               body.run(frame);
             except
               on eKlausContinue do;
@@ -4350,7 +4363,7 @@ begin
             end
           end else begin
             for i := strt to len-1 do try
-              kv.setSimple(klausSimple(i), key.point);
+              kv.setSimple(klausSimpleI(i), key.point);
               body.run(frame);
             except
               on eKlausContinue do;
@@ -4421,7 +4434,7 @@ begin
               p := pChar(s) + strt;
               if not u8Start(p) then raise eKlausError.createFmt(ercInvalidCharAtIndex, start.point, [strt]);
               while p >= pChar(s) do try
-                kv.setSimple(klausSimple(p-pChar(s)), key.point);
+                kv.setSimple(klausSimpleI(p-pChar(s)), key.point);
                 body.run(frame);
                 if p = pChar(s) then break;
                 p := u8SkipCharsLeft(p, pChar(s), 1);
@@ -4437,7 +4450,7 @@ begin
               p := pChar(s) + strt;
               if not u8Start(p) then raise eKlausError.createFmt(ercInvalidCharAtIndex, start.point, [strt]);
               while p^ <> #0 do try
-                kv.setSimple(klausSimple(p-pChar(s)), key.point);
+                kv.setSimple(klausSimpleI(p-pChar(s)), key.point);
                 body.run(frame);
                 p := u8SkipChars(p, 1);
               except
@@ -5278,7 +5291,7 @@ begin
     pn := b.get(klxID).text;
     if kwd = kkwdTask then begin
       b.next;
-      b.check(kkwdOf);
+      b.check(kkwdPracticum);
       b.next;
       cn := b.get(klxID).text;
     end;
@@ -6804,11 +6817,13 @@ begin
   fStack := tFPList.create;
   fMaxStackSize := klausDefaultMaxStackSize;
   fillChar(fStdIO, sizeOf(fStdIO), 0);
+  fInputReader := tKlausStdInReader.create(self);
 end;
 
 destructor tKlausRuntime.destroy;
 begin
   assert(stackCount = 0, 'Stack integrity violation');
+  freeAndNil(fInputReader);
   freeAndNil(fStack);
   freeAndNil(fObjects);
   inherited destroy;
@@ -7288,6 +7303,19 @@ procedure tKlausCanvasLink.endPaint;
 begin
   if fNestCount > 0 then dec(fNestCount);
   invalidate;
+end;
+
+{ tKlausStdInReader }
+
+constructor tKlausStdInReader.create(aRuntime: tKlausRuntime);
+begin
+  inherited create;
+  fRuntime := aRuntime;
+end;
+
+function tKlausStdInReader.doReadChar: u8Char;
+begin
+  fRuntime.readStdIn(result);
 end;
 
 { tKlausObjects }

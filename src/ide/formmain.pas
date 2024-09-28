@@ -1735,8 +1735,7 @@ var
   cfrm: tCourseInfoFrame = nil;
 begin
   handled := false;
-  ctl := activeControl;
-  if ctl = nil then exit;
+  ctl := screen.activeControl;
   while ctl <> nil do begin
     if ctl is tDebugViewContent then begin
       frm := ctl as tDebugViewContent;
@@ -1748,7 +1747,6 @@ begin
       exit;
     end;
     ctl := ctl.parent;
-    if ctl = nil then break;
   end;
 end;
 

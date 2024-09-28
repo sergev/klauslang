@@ -138,7 +138,7 @@ resourcestring
   strNewTaskName = 'НоваяЗадача%d';
   strNewTaskCaption = 'Новая задача %d';
   strTaskFileName = '%s.klaus';
-  strDefaultSolutionTepmlate = 'задача %s из %s;'#10'начало'#10#10'окончание.';
+  strDefaultSolutionTepmlate = 'задача %s практикум %s;'#10'начало'#10#10'окончание.';
 
 { tKlausPracticum }
 

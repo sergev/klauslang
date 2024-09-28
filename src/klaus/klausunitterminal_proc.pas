@@ -539,7 +539,7 @@ begin
   r := getSimpleInt(frame, fRed, at);
   g := getSimpleInt(frame, fGreen, at);
   b := getSimpleInt(frame, fBlue, at);
-  returnSimple(frame, klausSimple(tKlausInteger(rgbTo256(r, g, b))));
+  returnSimple(frame, klausSimpleI(rgbTo256(r, g, b)));
 end;
 
 { tKlausSysProc_InputAvailable }
@@ -552,7 +552,7 @@ end;
 
 procedure tKlausSysProc_InputAvailable.run(frame: tKlausStackFrame; const at: tSrcPoint);
 begin
-  returnSimple(frame, klausSimple(frame.owner.inputAvailable));
+  returnSimple(frame, klausSimpleB(frame.owner.inputAvailable));
 end;
 
 { tKlausSysProc_ReadChar }
@@ -571,7 +571,7 @@ begin
   frame.owner.readStdIn(c);
   if (c = '') or (c[1] = #0) then rslt := 0
   else rslt := u8ToUni(c);
-  returnSimple(frame, klausSimple(rslt));
+  returnSimple(frame, klausSimpleC(rslt));
 end;
 
 end.

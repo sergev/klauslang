@@ -169,7 +169,8 @@ type
     kkwdXor,
     kkwdCycle,
     kkwdTimes,
-    kkwdTask
+    kkwdTask,
+    kkwdPracticum
   );
 
 type
@@ -453,7 +454,8 @@ const
     (s: 'повторить'; k: kkwdCycle),
     (s: 'раз'; k: kkwdTimes),
     (s: 'раза'; k: kkwdTimes),
-    (s: 'задача'; k: kkwdTask)
+    (s: 'задача'; k: kkwdTask),
+    (s: 'практикум'; k: kkwdPracticum)
   );
 
 const

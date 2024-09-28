@@ -88,14 +88,14 @@ end;
 
 procedure tKlausUnitTerminal.createVariables;
 begin
-  tKlausConstDecl.create(self, [klausConstName_StdOut], zeroSrcPt, klausSimple(tKlausInteger(klausConst_StdOut)));
-  tKlausConstDecl.create(self, [klausConstName_StdErr], zeroSrcPt, klausSimple(tKlausInteger(klausConst_StdErr)));
-  tKlausConstDecl.create(self, [klausConstName_TermCanon], zeroSrcPt, klausSimple(false));
-  tKlausConstDecl.create(self, [klausConstName_TermDirect], zeroSrcPt, klausSimple(true));
-  tKlausConstDecl.create(self, [klausConstName_FontBold], zeroSrcPt, klausSimple(tKlausInteger(klausConst_FontBold)));
-  tKlausConstDecl.create(self, [klausConstName_FontItalic], zeroSrcPt, klausSimple(tKlausInteger(klausConst_FontItalic)));
-  tKlausConstDecl.create(self, [klausConstName_FontUnderline], zeroSrcPt, klausSimple(tKlausInteger(klausConst_FontUnderline)));
-  tKlausConstDecl.create(self, [klausConstName_FontStrikeOut], zeroSrcPt, klausSimple(tKlausInteger(klausConst_FontStrikeOut)));
+  tKlausConstDecl.create(self, [klausConstName_StdOut], zeroSrcPt, klausSimpleI(klausConst_StdOut));
+  tKlausConstDecl.create(self, [klausConstName_StdErr], zeroSrcPt, klausSimpleI(klausConst_StdErr));
+  tKlausConstDecl.create(self, [klausConstName_TermCanon], zeroSrcPt, klausSimpleB(false));
+  tKlausConstDecl.create(self, [klausConstName_TermDirect], zeroSrcPt, klausSimpleB(true));
+  tKlausConstDecl.create(self, [klausConstName_FontBold], zeroSrcPt, klausSimpleI(klausConst_FontBold));
+  tKlausConstDecl.create(self, [klausConstName_FontItalic], zeroSrcPt, klausSimpleI(klausConst_FontItalic));
+  tKlausConstDecl.create(self, [klausConstName_FontUnderline], zeroSrcPt, klausSimpleI(klausConst_FontUnderline));
+  tKlausConstDecl.create(self, [klausConstName_FontStrikeOut], zeroSrcPt, klausSimpleI(klausConst_FontStrikeOut));
 end;
 
 procedure tKlausUnitTerminal.createRoutines;

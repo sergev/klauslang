@@ -315,7 +315,7 @@ begin
   rslt := frame.owner.objects.allocate(tObject(klausInvalidPointer), at);
   try
     frame.owner.objects.put(rslt, klausGetFileType(ft, at).create(fn, mode), at);
-    returnSimple(frame, klausSimpleObj(rslt));
+    returnSimple(frame, klausSimpleO(rslt));
   except
     frame.owner.objects.release(rslt, at);
     raise;
@@ -348,7 +348,7 @@ begin
   rslt := frame.owner.objects.allocate(tObject(klausInvalidPointer), at);
   try
     frame.owner.objects.put(rslt, klausGetFileType(ft, at).create(fn, mode), at);
-    returnSimple(frame, klausSimpleObj(rslt));
+    returnSimple(frame, klausSimpleO(rslt));
   except
     frame.owner.objects.release(rslt, at);
     raise;
@@ -533,7 +533,7 @@ begin
   try
     stream := getKlausObject(frame, getSimpleObj(values[0]), tKlausFileStream, values[0].at) as tKlausFileStream;
     if cnt >= 2 then stream.seek(getSimpleInt(values[1]), origin);
-    returnSimple(frame, klausSimple(stream.position));
+    returnSimple(frame, klausSimpleI(stream.position));
   except
     klausTranslateException(frame, at);
   end;
@@ -582,7 +582,7 @@ begin
   try
     stream := getKlausObject(frame, getSimpleObj(values[0]), tKlausFileStream, values[0].at) as tKlausFileStream;
     if cnt >= 2 then stream.size := getSimpleInt(values[1]);
-    returnSimple(frame, klausSimple(stream.size));
+    returnSimple(frame, klausSimpleI(stream.size));
   except
     klausTranslateException(frame, at);
   end;
@@ -603,7 +603,7 @@ var
   fn: tKlausString;
 begin
   fn := getSimpleStr(frame, fName, at);
-  returnSimple(frame, klausSimple(fileExists(fn)));
+  returnSimple(frame, klausSimpleB(fileExists(fn)));
 end;
 
 { tKlausSysProc_FileDirExists }
@@ -621,7 +621,7 @@ var
   fn: tKlausString;
 begin
   fn := getSimpleStr(frame, fName, at);
-  returnSimple(frame, klausSimple(directoryExists(fn)));
+  returnSimple(frame, klausSimpleB(directoryExists(fn)));
 end;
 
 { tKlausSysProc_FileTempDir }
@@ -636,7 +636,7 @@ end;
 
 procedure tKlausSysProc_FileTempDir.run(frame: tKlausStackFrame; const at: tSrcPoint);
 begin
-  returnSimple(frame, klausSimple(getTempDir(getSimpleBool(frame, fGlobal, at))));
+  returnSimple(frame, klausSimpleS(getTempDir(getSimpleBool(frame, fGlobal, at))));
 end;
 
 { tKlausSysProc_FileTempName }
@@ -656,7 +656,7 @@ var
   td: string;
 begin
   td := getTempDir(getSimpleBool(frame, fGlobal, at));
-  returnSimple(frame, klausSimple(getTempFileName(td, getSimpleStr(frame, fPrefix, at))));
+  returnSimple(frame, klausSimpleS(getTempFileName(td, getSimpleStr(frame, fPrefix, at))));
 end;
 
 { tKlausSysProc_FileExpandName }
@@ -671,7 +671,7 @@ end;
 
 procedure tKlausSysProc_FileExpandName.run(frame: tKlausStackFrame; const at: tSrcPoint);
 begin
-  returnSimple(frame, klausSimple(expandFileName(getSimpleStr(frame, fName, at))));
+  returnSimple(frame, klausSimpleS(expandFileName(getSimpleStr(frame, fName, at))));
 end;
 
 { tKlausSysProc_FileExtractPath }
@@ -689,7 +689,7 @@ var
   s: tKlausString;
 begin
   s := extractFilePath(getSimpleStr(frame, fPath, at));
-  returnSimple(frame, klausSimple(s));
+  returnSimple(frame, klausSimpleS(s));
 end;
 
 { tKlausSysProc_FileExtractName }
@@ -707,7 +707,7 @@ var
   s: tKlausString;
 begin
   s := getSimpleStr(frame, fPath, at);
-  returnSimple(frame, klausSimple(extractFileName(s)));
+  returnSimple(frame, klausSimpleS(extractFileName(s)));
 end;
 
 { tKlausSysProc_FileExtractExt }
@@ -725,7 +725,7 @@ var
   s: tKlausString;
 begin
   s := getSimpleStr(frame, fPath, at);
-  returnSimple(frame, klausSimple(extractFileExt(s)));
+  returnSimple(frame, klausSimpleS(extractFileExt(s)));
 end;
 
 { tKlausSysProc_FileProgName }
@@ -754,7 +754,7 @@ end;
 
 procedure tKlausSysProc_FileHomeDir.run(frame: tKlausStackFrame; const at: tSrcPoint);
 begin
-  returnSimple(frame, klausSimple(getUserDir));
+  returnSimple(frame, klausSimpleS(getUserDir));
 end;
 
 { tKlausSysProc_FileGetAttrs }
@@ -773,7 +773,7 @@ var
 begin
   rslt := fileGetAttr(getSimpleStr(frame, fName, at));
   if rslt = -1 then raise eInOutError.create(sysErrorMessage(getLastOsError));
-  returnSimple(frame, klausSimple(rslt));
+  returnSimple(frame, klausSimpleI(rslt));
 end;
 
 { tKlausSysProc_FileGetAge }
@@ -788,11 +788,11 @@ end;
 
 procedure tKlausSysProc_FileGetAge.run(frame: tKlausStackFrame; const at: tSrcPoint);
 var
-  rslt: longInt;
+  age: longInt;
 begin
-  rslt := fileAge(getSimpleStr(frame, fName, at));
-  if rslt = -1 then raise eInOutError.create(sysErrorMessage(getLastOsError));
-  returnSimple(frame, klausSimple(tKlausMoment(fileDateToDateTime(rslt))));
+  age := fileAge(getSimpleStr(frame, fName, at));
+  if age = -1 then raise eInOutError.create(sysErrorMessage(getLastOsError));
+  returnSimple(frame, klausSimpleM(fileDateToDateTime(age)));
 end;
 
 { tKlausSysProc_FileRename }
@@ -846,13 +846,13 @@ var
   mv: tKlausVarValueSimple;
 begin
   mv := v.getMember('имя', at) as tKlausVarValueSimple;
-  mv.setSimple(klausSimple(search.searchRec.name), at);
+  mv.setSimple(klausSimpleS(search.searchRec.name), at);
   mv := v.getMember('размер', at) as tKlausVarValueSimple;
-  mv.setSimple(klausSimple(search.searchRec.size), at);
+  mv.setSimple(klausSimpleI(search.searchRec.size), at);
   mv := v.getMember('атрибуты', at) as tKlausVarValueSimple;
-  mv.setSimple(klausSimple(search.searchRec.attr), at);
+  mv.setSimple(klausSimpleI(search.searchRec.attr), at);
   mv := v.getMember('возраст', at) as tKlausVarValueSimple;
-  mv.setSimple(klausSimple(tKlausMoment(fileDateToDateTime(search.searchRec.time))), at);
+  mv.setSimple(klausSimpleM(fileDateToDateTime(search.searchRec.time)), at);
 end;
 
 { tKlausSysProc_FileFindFirst }
@@ -881,7 +881,7 @@ begin
       fillInFileInfo(search, frame.varByDecl(fInfo, at).value as tKlausVarValueStruct, at);
     end else
       freeAndNil(search);
-    returnSimple(frame, klausSimpleObj(rslt));
+    returnSimple(frame, klausSimpleO(rslt));
   except
     freeAndNil(search);
     raise;
@@ -908,7 +908,7 @@ begin
   search := getKlausObject(frame, getSimpleObj(frame, fObj, at), tKlausFileSearch, at) as tKlausFileSearch;
   rslt := findNext(search.searchRec) = 0;
   if rslt then fillInFileInfo(search, frame.varByDecl(fInfo, at).value as tKlausVarValueStruct, at);
-  returnSimple(frame, klausSimple(rslt));
+  returnSimple(frame, klausSimpleB(rslt));
 end;
 
 end.

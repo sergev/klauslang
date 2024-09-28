@@ -172,7 +172,7 @@ begin
     cn := tKlausObjects.klausObjectName(obj.classType);
     raise eKlausError.createFmt(ercUnexpectedObjectClass, at, [strEventQueue, cn]);
   end;
-  returnSimple(frame, klausSimple(intf.eventExists));
+  returnSimple(frame, klausSimpleB(intf.eventExists));
 end;
 
 { tKlausSysProc_EvtRet }
@@ -186,17 +186,17 @@ var
 begin
   v := frame.varByDecl(retValue, at).value as tKlausVarValueStruct;
   mv := v.getMember('что', at) as tKlausVarValueSimple;
-  mv.setSimple(klausSimple(klausEventWhatCode[evt.what]), at);
+  mv.setSimple(klausSimpleI(klausEventWhatCode[evt.what]), at);
   mv := v.getMember('код', at) as tKlausVarValueSimple;
-  mv.setSimple(klausSimple(tKlausInteger(evt.code)), at);
+  mv.setSimple(klausSimpleI(evt.code), at);
   for k := low(k) to high(k) do
     if k in evt.shift then ks := ks or klausKeyStateCode[k];
   mv := v.getMember('инфо', at) as tKlausVarValueSimple;
-  mv.setSimple(klausSimple(tKlausInteger(ks)), at);
+  mv.setSimple(klausSimpleI(ks), at);
   mv := v.getMember('г', at) as tKlausVarValueSimple;
-  mv.setSimple(klausSimple(tKlausInteger(evt.point.x)), at);
+  mv.setSimple(klausSimpleI(evt.point.x), at);
   mv := v.getMember('в', at) as tKlausVarValueSimple;
-  mv.setSimple(klausSimple(tKlausInteger(evt.point.y)), at);
+  mv.setSimple(klausSimpleI(evt.point.y), at);
 end;
 
 { tKlausSysProc_EvtGet }
@@ -250,7 +250,7 @@ begin
     cn := tKlausObjects.klausObjectName(obj.classType);
     raise eKlausError.createFmt(ercUnexpectedObjectClass, at, [strEventQueue, cn]);
   end;
-  returnSimple(frame, klausSimple(tKlausInteger(intf.eventCount)));
+  returnSimple(frame, klausSimpleI(intf.eventCount));
 end;
 
 { tKlausSysProc_EvtPeek }

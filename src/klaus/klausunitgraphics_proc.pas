@@ -341,7 +341,7 @@ begin
   try
     if klausCanvasLinkClass = nil then raise eKlausError.create(ercCanvasUnavailable, at);
     frame.owner.objects.put(rslt, klausCanvasLinkClass.create(frame.owner, cap), at);
-    returnSimple(frame, klausSimpleObj(rslt));
+    returnSimple(frame, klausSimpleO(rslt));
   except
     frame.owner.objects.release(rslt, at);
     raise;
@@ -423,8 +423,8 @@ begin
     sz := cnv.setSize(sz);
   end;
   v := frame.varByDecl(retValue, at).value as tKlausVarValueStruct;
-  (v.getMember('г', at) as tKlausVarValueSimple).setSimple(klausSimple(tKlausInteger(sz.cx)), at);
-  (v.getMember('в', at) as tKlausVarValueSimple).setSimple(klausSimple(tKlausInteger(sz.cy)), at);
+  (v.getMember('г', at) as tKlausVarValueSimple).setSimple(klausSimpleI(sz.cx), at);
+  (v.getMember('в', at) as tKlausVarValueSimple).setSimple(klausSimpleI(sz.cy), at);
 end;
 
 { tKlausSysProc_GrBeginPaint }
@@ -1038,9 +1038,9 @@ begin
   y := getSimpleInt(values[2]);
   if cnt > 3 then begin
     color := getSimpleInt(values[3]);
-    returnSimple(frame, klausSimple(tKlausInteger(cnv.setPoint(x, y, color))));
+    returnSimple(frame, klausSimpleI(cnv.setPoint(x, y, color)));
   end else
-    returnSimple(frame, klausSimple(tKlausInteger(cnv.getPoint(x, y))));
+    returnSimple(frame, klausSimpleI(cnv.getPoint(x, y)));
 end;
 
 { tKlausSysProc_GrTextSize }
@@ -1068,8 +1068,8 @@ begin
   text := getSimpleStr(frame, fText, at);
   p := cnv.textSize(text);
   v := frame.varByDecl(retValue, at).value as tKlausVarValueStruct;
-  (v.getMember('г', at) as tKlausVarValueSimple).setSimple(klausSimple(tKlausInteger(p.x)), at);
-  (v.getMember('в', at) as tKlausVarValueSimple).setSimple(klausSimple(tKlausInteger(p.y)), at);
+  (v.getMember('г', at) as tKlausVarValueSimple).setSimple(klausSimpleI(p.x), at);
+  (v.getMember('в', at) as tKlausVarValueSimple).setSimple(klausSimpleI(p.y), at);
 end;
 
 { tKlausSysProc_GrText }
@@ -1104,8 +1104,8 @@ begin
   text := getSimpleStr(frame, fText, at);
   p := cnv.textOut(x, y, text);
   v := frame.varByDecl(retValue, at).value as tKlausVarValueStruct;
-  (v.getMember('г', at) as tKlausVarValueSimple).setSimple(klausSimple(tKlausInteger(p.x)), at);
-  (v.getMember('в', at) as tKlausVarValueSimple).setSimple(klausSimple(tKlausInteger(p.y)), at);
+  (v.getMember('г', at) as tKlausVarValueSimple).setSimple(klausSimpleI(p.x), at);
+  (v.getMember('в', at) as tKlausVarValueSimple).setSimple(klausSimpleI(p.y), at);
 end;
 
 { tKlausSysProc_GrClipRect }
@@ -1190,7 +1190,7 @@ begin
     try
       lnk.loadFromFile(fileName);
       frame.owner.objects.put(rslt, lnk, at);
-      returnSimple(frame, klausSimpleObj(rslt));
+      returnSimple(frame, klausSimpleO(rslt));
     except
       freeAndNil(lnk);
       raise;
@@ -1241,7 +1241,7 @@ begin
     try
       lnk.copyFrom(srclnk, x1, y1, x2, y2);
       frame.owner.objects.put(rslt, lnk, at);
-      returnSimple(frame, klausSimpleObj(rslt));
+      returnSimple(frame, klausSimpleO(rslt));
     except
       freeAndNil(lnk);
       raise;

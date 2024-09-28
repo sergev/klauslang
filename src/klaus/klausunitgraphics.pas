@@ -131,18 +131,18 @@ end;
 
 procedure tKlausUnitGraphics.createVariables;
 begin
-  tKlausConstDecl.create(self, [klausConstName_GrPenStyleClear], zeroSrcPt, klausSimple(tKlausInteger(klausConst_psClear)));
-  tKlausConstDecl.create(self, [klausConstName_GrPenStyleSolid], zeroSrcPt, klausSimple(tKlausInteger(klausConst_psSolid)));
-  tKlausConstDecl.create(self, [klausConstName_GrPenStyleDot], zeroSrcPt, klausSimple(tKlausInteger(klausConst_psDot)));
-  tKlausConstDecl.create(self, [klausConstName_GrPenStyleDash], zeroSrcPt, klausSimple(tKlausInteger(klausConst_psDash)));
-  tKlausConstDecl.create(self, [klausConstName_GrPenStyleDashDot], zeroSrcPt, klausSimple(tKlausInteger(klausConst_psDashDot)));
-  tKlausConstDecl.create(self, [klausConstName_GrPenStyleDashDotDot], zeroSrcPt, klausSimple(tKlausInteger(klausConst_psDashDotDot)));
-  tKlausConstDecl.create(self, [klausConstName_GrBrushStyleClear], zeroSrcPt, klausSimple(tKlausInteger(klausConst_bsClear)));
-  tKlausConstDecl.create(self, [klausConstName_GrBrushStyleSolid], zeroSrcPt, klausSimple(tKlausInteger(klausConst_bsSolid)));
-  tKlausConstDecl.create(self, [klausConstName_GrFontBold], zeroSrcPt, klausSimple(tKlausInteger(klausConst_FontBold)));
-  tKlausConstDecl.create(self, [klausConstName_GrFontItalic], zeroSrcPt, klausSimple(tKlausInteger(klausConst_FontItalic)));
-  tKlausConstDecl.create(self, [klausConstName_GrFontUnderline], zeroSrcPt, klausSimple(tKlausInteger(klausConst_FontUnderline)));
-  tKlausConstDecl.create(self, [klausConstName_GrFontStrikeOut], zeroSrcPt, klausSimple(tKlausInteger(klausConst_FontStrikeOut)));
+  tKlausConstDecl.create(self, [klausConstName_GrPenStyleClear], zeroSrcPt, klausSimpleI(klausConst_psClear));
+  tKlausConstDecl.create(self, [klausConstName_GrPenStyleSolid], zeroSrcPt, klausSimpleI(klausConst_psSolid));
+  tKlausConstDecl.create(self, [klausConstName_GrPenStyleDot], zeroSrcPt, klausSimpleI(klausConst_psDot));
+  tKlausConstDecl.create(self, [klausConstName_GrPenStyleDash], zeroSrcPt, klausSimpleI(klausConst_psDash));
+  tKlausConstDecl.create(self, [klausConstName_GrPenStyleDashDot], zeroSrcPt, klausSimpleI(klausConst_psDashDot));
+  tKlausConstDecl.create(self, [klausConstName_GrPenStyleDashDotDot], zeroSrcPt, klausSimpleI(klausConst_psDashDotDot));
+  tKlausConstDecl.create(self, [klausConstName_GrBrushStyleClear], zeroSrcPt, klausSimpleI(klausConst_bsClear));
+  tKlausConstDecl.create(self, [klausConstName_GrBrushStyleSolid], zeroSrcPt, klausSimpleI(klausConst_bsSolid));
+  tKlausConstDecl.create(self, [klausConstName_GrFontBold], zeroSrcPt, klausSimpleI(klausConst_FontBold));
+  tKlausConstDecl.create(self, [klausConstName_GrFontItalic], zeroSrcPt, klausSimpleI(klausConst_FontItalic));
+  tKlausConstDecl.create(self, [klausConstName_GrFontUnderline], zeroSrcPt, klausSimpleI(klausConst_FontUnderline));
+  tKlausConstDecl.create(self, [klausConstName_GrFontStrikeOut], zeroSrcPt, klausSimpleI(klausConst_FontStrikeOut));
 end;
 
 procedure tKlausUnitGraphics.createRoutines;

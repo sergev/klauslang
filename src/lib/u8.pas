@@ -298,8 +298,11 @@ begin
     if (byte(result[cnt]) and u8mask) <> u8next then raise eStreamError.create(err);
 end;
 
+// Читает символ из консоли или перенаправленного потока ввода.
+// При необходимости запрашивает пользовательский ввод;
+// в случае конца потока возвращает символ #26.
 function u8ReadChar(var inp: text): u8Char; iocheck;
-
+{$push}{$i-}
   function readChar(var inp: text): char;
   {$ifdef windows}
   var
@@ -358,6 +361,7 @@ begin
       break;
     end;
   end;
+{$pop}
 end;
 
 // Возвращает переданную строку в верхнем регистре

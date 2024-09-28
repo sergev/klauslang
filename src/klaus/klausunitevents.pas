@@ -102,22 +102,22 @@ end;
 
 procedure tKlausUnitEvents.createVariables;
 begin
-  tKlausConstDecl.create(self, [klausConstName_EvtKeyDown], zeroSrcPt, klausSimple(tKlausInteger(klausConst_EvtKeyDown)));
-  tKlausConstDecl.create(self, [klausConstName_EvtKeyUp], zeroSrcPt, klausSimple(tKlausInteger(klausConst_EvtKeyUp)));
-  tKlausConstDecl.create(self, [klausConstName_EvtKeyChar], zeroSrcPt, klausSimple(tKlausInteger(klausConst_EvtKeyChar)));
-  tKlausConstDecl.create(self, [klausConstName_EvtMouseDown], zeroSrcPt, klausSimple(tKlausInteger(klausConst_EvtMouseDown)));
-  tKlausConstDecl.create(self, [klausConstName_EvtMouseUp], zeroSrcPt, klausSimple(tKlausInteger(klausConst_EvtMouseUp)));
-  tKlausConstDecl.create(self, [klausConstName_EvtMouseWheel], zeroSrcPt, klausSimple(tKlausInteger(klausConst_EvtMouseWheel)));
-  tKlausConstDecl.create(self, [klausConstName_EvtEnter], zeroSrcPt, klausSimple(tKlausInteger(klausConst_EvtMouseEnter)));
-  tKlausConstDecl.create(self, [klausConstName_EvtLeave], zeroSrcPt, klausSimple(tKlausInteger(klausConst_EvtMouseLeave)));
-  tKlausConstDecl.create(self, [klausConstName_EvtMove], zeroSrcPt, klausSimple(tKlausInteger(klausConst_EvtMouseMove)));
-  tKlausConstDecl.create(self, [klausConstName_KeyStateShift], zeroSrcPt, klausSimple(tKlausInteger(klausConst_KeyStateShift)));
-  tKlausConstDecl.create(self, [klausConstName_KeyStateCtrl], zeroSrcPt, klausSimple(tKlausInteger(klausConst_KeyStateCtrl)));
-  tKlausConstDecl.create(self, [klausConstName_KeyStateAlt], zeroSrcPt, klausSimple(tKlausInteger(klausConst_KeyStateAlt)));
-  tKlausConstDecl.create(self, [klausConstName_KeyStateLeft], zeroSrcPt, klausSimple(tKlausInteger(klausConst_KeyStateLeft)));
-  tKlausConstDecl.create(self, [klausConstName_KeyStateRight], zeroSrcPt, klausSimple(tKlausInteger(klausConst_KeyStateRight)));
-  tKlausConstDecl.create(self, [klausConstName_KeyStateMiddle], zeroSrcPt, klausSimple(tKlausInteger(klausConst_KeyStateMiddle)));
-  tKlausConstDecl.create(self, [klausConstName_KeyStateDouble], zeroSrcPt, klausSimple(tKlausInteger(klausConst_KeyStateDouble)));
+  tKlausConstDecl.create(self, [klausConstName_EvtKeyDown], zeroSrcPt, klausSimpleI(klausConst_EvtKeyDown));
+  tKlausConstDecl.create(self, [klausConstName_EvtKeyUp], zeroSrcPt, klausSimpleI(klausConst_EvtKeyUp));
+  tKlausConstDecl.create(self, [klausConstName_EvtKeyChar], zeroSrcPt, klausSimpleI(klausConst_EvtKeyChar));
+  tKlausConstDecl.create(self, [klausConstName_EvtMouseDown], zeroSrcPt, klausSimpleI(klausConst_EvtMouseDown));
+  tKlausConstDecl.create(self, [klausConstName_EvtMouseUp], zeroSrcPt, klausSimpleI(klausConst_EvtMouseUp));
+  tKlausConstDecl.create(self, [klausConstName_EvtMouseWheel], zeroSrcPt, klausSimpleI(klausConst_EvtMouseWheel));
+  tKlausConstDecl.create(self, [klausConstName_EvtEnter], zeroSrcPt, klausSimpleI(klausConst_EvtMouseEnter));
+  tKlausConstDecl.create(self, [klausConstName_EvtLeave], zeroSrcPt, klausSimpleI(klausConst_EvtMouseLeave));
+  tKlausConstDecl.create(self, [klausConstName_EvtMove], zeroSrcPt, klausSimpleI(klausConst_EvtMouseMove));
+  tKlausConstDecl.create(self, [klausConstName_KeyStateShift], zeroSrcPt, klausSimpleI(klausConst_KeyStateShift));
+  tKlausConstDecl.create(self, [klausConstName_KeyStateCtrl], zeroSrcPt, klausSimpleI(klausConst_KeyStateCtrl));
+  tKlausConstDecl.create(self, [klausConstName_KeyStateAlt], zeroSrcPt, klausSimpleI(klausConst_KeyStateAlt));
+  tKlausConstDecl.create(self, [klausConstName_KeyStateLeft], zeroSrcPt, klausSimpleI(klausConst_KeyStateLeft));
+  tKlausConstDecl.create(self, [klausConstName_KeyStateRight], zeroSrcPt, klausSimpleI(klausConst_KeyStateRight));
+  tKlausConstDecl.create(self, [klausConstName_KeyStateMiddle], zeroSrcPt, klausSimpleI(klausConst_KeyStateMiddle));
+  tKlausConstDecl.create(self, [klausConstName_KeyStateDouble], zeroSrcPt, klausSimpleI(klausConst_KeyStateDouble));
 end;
 
 procedure tKlausUnitEvents.createRoutines;
