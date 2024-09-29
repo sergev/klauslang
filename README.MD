@@ -1,6 +1,6 @@
 Последнюю версию можно скачать здесь:
-- Linux:   [https://czaerlag.ru/klauslang/klauslang_2.3.1_amd64-linux.zip](https://czaerlag.ru/klauslang/klauslang_2.3.1_amd64-linux.zip).<br>
-- Windows: [https://czaerlag.ru/klauslang/klauslang_2.3.1_x64-windows.zip](https://czaerlag.ru/klauslang/klauslang_2.3.1_x64-windows.zip).<br>
+- Linux:   [https://czaerlag.ru/klauslang/klauslang_2.3.2_amd64-linux.zip](https://czaerlag.ru/klauslang/klauslang_2.3.2_amd64-linux.zip).<br>
+- Windows: [https://czaerlag.ru/klauslang/klauslang_2.3.2_x64-windows.zip](https://czaerlag.ru/klauslang/klauslang_2.3.2_x64-windows.zip).<br>
 
 (или в разделе "Релизы", но это требует регистрации).
 

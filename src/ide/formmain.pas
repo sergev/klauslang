@@ -66,9 +66,6 @@ type
   end;
 
 type
-
-  { tMainForm }
-
   tMainForm = class(tForm)
     actFileNew: TAction;
     actFileOpen: TAction;
@@ -952,6 +949,7 @@ begin
   fCourseFrame := tCourseInfoFrame.create(nil);
   fCourseFrame.parent := sbCourse;
   fCourseFrame.align := alClient;
+  fCourseFrame.htmlInfo.fixedTypeface := editStyles.font.name;
 end;
 
 procedure tMainForm.actFileOpenExecute(sender: TObject);

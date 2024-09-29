@@ -46,6 +46,9 @@ uses KlausUtils;
 constructor tMarkdownFrame.create(aOwner: tComponent);
 begin
   inherited create(aOwner);
+  {$if defined(windows)} htmlPanel.fixedTypeface := 'Courier New';
+  {$elseif defined(darwin)} htmlPanel.fixedTypeface := 'Menlo';
+  {$else} htmlPanel.fixedTypeface := 'Monospace'; {$endif}
   fHtmlInvalid := true;
 end;
 

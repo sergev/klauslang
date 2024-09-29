@@ -151,6 +151,7 @@ object CourseInfoFrame: TCourseInfoFrame
         Width = 398
         Align = alClient
         BorderStyle = bsSingle
+        FixedTypeface = 'Courier'
         DefaultTypeFace = 'default'
         DefaultFontSize = 12
         FlagErrors = False

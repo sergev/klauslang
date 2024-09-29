@@ -1434,6 +1434,7 @@ begin
         end else
           stashed := c;
       end;
+      result := true;
     end;
     else begin
       assert(dt in [kdtChar..kdtBoolean], 'Value of this data type cannot be read.');
