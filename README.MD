@@ -25,7 +25,7 @@
 [![](https://gitflic.ru/project/czaerlag/klauslang/blob/raw?file=doc%2Fscr3.png){width=250px}](https://gitflic.ru/project/czaerlag/klauslang/blob/raw?file=doc%2Fscr3.png)
 
 ## Документация и примеры
-- [Язык Клаус. Справочное руководство](https://gitflic.ru/project/czaerlag/klauslang/blob?file=doc%2F%D0%AF%D0%B7%D1%8B%D0%BA%20%D0%9A%D0%BB%D0%B0%D1%83%D1%81.odt)
+- [Язык Клаус. Справочное руководство](https://gitflic.ru/project/czaerlag/klauslang/blob?file=doc%2Fklaus-reference-guide.pdf)
 - [Примеры исходного кода](https://gitflic.ru/project/czaerlag/klauslang/file?file=samples)
 - [Ещё тестовые примеры](https://gitflic.ru/project/czaerlag/klauslang/file?file=test)
 
