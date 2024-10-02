@@ -603,11 +603,11 @@ object MainForm: TMainForm
     end
     object miHelp: TMenuItem
       Caption = 'Справка'
-      object miHelpAbout: TMenuItem
-        Action = actHelpAbout
-      end
       object MenuItem3: TMenuItem
         Action = actHelpReferenceGuide
+      end
+      object miHelpAbout: TMenuItem
+        Action = actHelpAbout
       end
     end
   end
