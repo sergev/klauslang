@@ -84,6 +84,8 @@ const
   klausProcName_Exp = 'exp';
   klausProcName_Delay = 'пауза';
   klausProcName_Random = 'случайное';
+  klausProcName_ProgramName = 'имя_программы';
+  klausProcName_CourseName = 'имя_практикума';
 
 const
   klausConstName_Newline = 'НС';
@@ -434,6 +436,8 @@ begin
   tKlausSysProc_Exp.create(self, zeroSrcPt);
   tKlausSysProc_Delay.create(self, zeroSrcPt);
   tKlausSysProc_Random.create(self, zeroSrcPt);
+  tKlausSysProc_ProgramName.create(self, zeroSrcPt);
+  tKlausSysProc_CourseName.create(self, zeroSrcPt);
 end;
 
 procedure tKlausUnitSystem.setArgs(val: tStrings);

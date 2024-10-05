@@ -53,6 +53,9 @@ const
   klausProcName_FileDelete = 'файлУдалить';
   klausProcName_FileFindFirst = 'файлПервый';
   klausProcName_FileFindNext = 'файлСледующий';
+  klausProcName_FileMkDir = 'файлСоздКат';
+  klausProcName_FileRmDir = 'файлУдалКат';
+  klausProcName_FileCurDir = 'файлТекКат';
 
 const
   klausConstName_FileTypeText = 'фтТекст';
@@ -178,6 +181,9 @@ begin
   tKlausSysProc_FileDelete.create(self, zeroSrcPt);
   tKlausSysProc_FileFindFirst.create(self, zeroSrcPt);
   tKlausSysProc_FileFindNext.create(self, zeroSrcPt);
+  tKlausSysProc_FileMkDir.create(self, zeroSrcPt);
+  tKlausSysProc_FileRmDir.create(self, zeroSrcPt);
+  tKlausSysProc_FileCurDir.create(self, zeroSrcPt);
 end;
 
 function tKlausUnitFiles.getHidden: boolean;

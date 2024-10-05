@@ -482,8 +482,24 @@ type
 type
   // функция случайное(вх макс: целое): целое;
   tKlausSysProc_Random = class(tKlausSysProcDecl)
-  private
-    fRange: tKlausProcParam;
+    private
+      fRange: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  // функция имя_программы(): строка;
+  tKlausSysProc_ProgramName = class(tKlausSysProcDecl)
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  // функция имя_практикума(): строка;
+  tKlausSysProc_CourseName = class(tKlausSysProcDecl)
     public
       constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
       procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
@@ -1794,8 +1810,16 @@ begin
 end;
 
 procedure tKlausSysProc_Delay.run(frame: tKlausStackFrame; const at: tSrcPoint);
+var
+  msec: tKlausInteger;
 begin
-  sleep(getSimpleInt(frame, fDelay, at));
+  msec := getSimpleInt(frame, fDelay, at);
+  while msec > 0 do begin
+    sleep(min(msec, 100));
+    msec -= 100;
+    if klausDebugThread <> nil then
+      klausDebugThread.checkTerminated;
+  end;
 end;
 
 { tKlausSysProc_Random }
@@ -1817,6 +1841,36 @@ begin
     init := true;
   end;
   returnSimple(frame, klausSimpleI(random(getSimpleInt(frame, fRange, at))));
+end;
+
+{ tKlausSysProc_ProgramName }
+
+constructor tKlausSysProc_ProgramName.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausProcName_ProgramName, aPoint);
+  declareRetValue(kdtString);
+end;
+
+procedure tKlausSysProc_ProgramName.run(frame: tKlausStackFrame; const at: tSrcPoint);
+begin
+  returnSimple(frame, klausSimpleS(frame.owner.source.module.name));
+end;
+
+{ tKlausSysProc_CourseName }
+
+constructor tKlausSysProc_CourseName.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausProcName_CourseName, aPoint);
+  declareRetValue(kdtString);
+end;
+
+procedure tKlausSysProc_CourseName.run(frame: tKlausStackFrame; const at: tSrcPoint);
+var
+  m: tKlausModule;
+begin
+  m := frame.owner.source.module;
+  if not (m is tKlausProgram) then returnSimple(frame, klausSimpleS(''))
+  else returnSimple(frame, klausSimpleS((m as tKlausProgram).courseName));
 end;
 
 end.

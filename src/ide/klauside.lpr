@@ -36,7 +36,8 @@ uses
   KlausUnitSystem, KlausUnitSystem_Proc, KlausUnitTerminal,
   KlausUnitTerminal_Proc, KlausUnitFiles, KlausUnitFiles_Proc,
   KlausUnitGraphics, KlausUnitGraphics_Proc, KlausUnitEvents,
-  KlausUnitEvents_Proc, KlausPract, FrameCourseInfo, FramePracticumOptions;
+  KlausUnitEvents_Proc, KlausPract, FrameCourseInfo, FramePracticumOptions,
+  KlausDoer;
 
 {$R *.res}
 

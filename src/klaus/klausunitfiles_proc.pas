@@ -284,6 +284,38 @@ type
       procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
   end;
 
+type
+  // процедура файлСоздКат(вх имя: строка);
+  tKlausSysProc_FileMkDir = class(tKlausSysProcFileFind)
+    private
+      fName: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  // процедура файлУдалКат(вх имя: строка);
+  tKlausSysProc_FileRmDir = class(tKlausSysProcFileFind)
+    private
+      fName: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  // функция файлТекКат(): строка;
+  // функция файлТекКат(вх имя: строка): строка;
+  tKlausSysProc_FileCurDir = class(tKlausSysProcFileFind)
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      function  isCustomParamHandler: boolean; override;
+      procedure checkCallParamTypes(expr: array of tKlausExpression; at: tSrcPoint); override;
+      procedure getCustomParamModes(types: array of tKlausTypeDef; out modes: tKlausProcParamModes; const at: tSrcPoint); override;
+      procedure customRun(frame: tKlausStackFrame; values: array of tKlausVarValueAt; const at: tSrcPoint); override;
+  end;
+
 implementation
 
 uses
@@ -909,6 +941,88 @@ begin
   rslt := findNext(search.searchRec) = 0;
   if rslt then fillInFileInfo(search, frame.varByDecl(fInfo, at).value as tKlausVarValueStruct, at);
   returnSimple(frame, klausSimpleB(rslt));
+end;
+
+{ tKlausSysProc_FileMkDir }
+
+constructor tKlausSysProc_FileMkDir.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausProcName_FileMkDir, aPoint);
+  fName := tKlausProcParam.create(self, 'имя', aPoint, kpmInput, source.simpleTypes[kdtString]);
+  addParam(fName);
+end;
+
+procedure tKlausSysProc_FileMkDir.run(frame: tKlausStackFrame; const at: tSrcPoint);
+begin
+  {$push}{$i+}
+  mkDir(getSimpleStr(frame, fName, at));
+  {$pop}
+end;
+
+{ tKlausSysProc_FileRmDir }
+
+constructor tKlausSysProc_FileRmDir.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausProcName_FileRmDir, aPoint);
+  fName := tKlausProcParam.create(self, 'имя', aPoint, kpmInput, source.simpleTypes[kdtString]);
+  addParam(fName);
+end;
+
+procedure tKlausSysProc_FileRmDir.run(frame: tKlausStackFrame; const at: tSrcPoint);
+begin
+  {$push}{$i+}
+  rmDir(getSimpleStr(frame, fName, at));
+  {$pop}
+end;
+
+{ tKlausSysProc_FileCurDir }
+
+constructor tKlausSysProc_FileCurDir.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausProcName_FileCurDir, aPoint);
+  declareRetValue(kdtString);
+end;
+
+function tKlausSysProc_FileCurDir.isCustomParamHandler: boolean;
+begin
+  result := true;
+end;
+
+procedure tKlausSysProc_FileCurDir.checkCallParamTypes(expr: array of tKlausExpression; at: tSrcPoint);
+var
+  cnt: integer;
+begin
+  cnt := length(expr);
+  if cnt > 1 then errWrongParamCount(cnt, 0, 1, at);
+  if cnt > 0 then checkCanAssign(kdtString, expr[0].resultTypeDef, expr[0].point);
+end;
+
+procedure tKlausSysProc_FileCurDir.getCustomParamModes(
+  types: array of tKlausTypeDef; out modes: tKlausProcParamModes; const at: tSrcPoint);
+var
+  i: integer;
+begin
+  modes := nil;
+  setLength(modes, length(types));
+  for i := 0 to length(modes)-1 do modes[i] := kpmInput;
+end;
+
+procedure tKlausSysProc_FileCurDir.customRun(
+  frame: tKlausStackFrame; values: array of tKlausVarValueAt; const at: tSrcPoint);
+var
+  cnt: integer;
+  rslt: string = '';
+begin
+  cnt := length(values);
+  try
+    {$push}{$i+}
+    if cnt > 0 then chDir(getSimpleStr(values[0]));
+    getDir(0, rslt);
+    {$pop}
+    returnSimple(frame, klausSimpleS(rslt));
+  except
+    klausTranslateException(frame, at);
+  end;
 end;
 
 end.
