@@ -1,10 +1,10 @@
 inherited TaskPropsFrame: TTaskPropsFrame
-  Height = 414
+  Height = 553
   Width = 903
-  ClientHeight = 414
+  ClientHeight = 553
   ClientWidth = 903
-  DesignLeft = 620
-  DesignTop = 318
+  DesignLeft = 612
+  DesignTop = 240
   object Panel13: TPanel[0]
     Left = 10
     Height = 21
@@ -185,51 +185,24 @@ inherited TaskPropsFrame: TTaskPropsFrame
       end
     end
   end
-  object Panel14: TPanel[2]
+  object pageControl: TPageControl[2]
     Left = 10
-    Height = 21
+    Height = 430
     Top = 123
     Width = 883
-    Align = alTop
-    AutoSize = True
-    BorderSpacing.Around = 10
-    BevelOuter = bvNone
-    ChildSizing.Layout = cclTopToBottomThenLeftToRight
-    ClientHeight = 21
-    ClientWidth = 883
-    TabOrder = 2
-    object Label10: TLabel
-      Left = 0
-      Height = 17
-      Top = 0
-      Width = 878
-      Align = alClient
-      BorderSpacing.Right = 5
-      Caption = 'Описание'
-      Font.Style = [fsBold]
-      ParentColor = False
-      ParentFont = False
-    end
-    object Bevel4: TBevel
-      Left = 0
-      Height = 4
-      Top = 17
-      Width = 883
-      Align = alBottom
-      Constraints.MaxHeight = 4
-      Shape = bsBottomLine
-    end
-  end
-  object pnDescription: TPanel[3]
-    Left = 20
-    Height = 258
-    Top = 154
-    Width = 873
+    ActivePage = tsDoer
     Align = alClient
-    BorderSpacing.Left = 20
+    BorderSpacing.Left = 10
+    BorderSpacing.Top = 10
     BorderSpacing.Right = 10
-    BorderSpacing.Bottom = 2
-    BevelOuter = bvNone
-    TabOrder = 3
+    TabIndex = 1
+    TabOrder = 2
+    Options = [nboKeyboardTabSwitch]
+    object tsDescription: TTabSheet
+      Caption = 'Описание'
+    end
+    object tsDoer: TTabSheet
+      Caption = 'Исполнитель'
+    end
   end
 end

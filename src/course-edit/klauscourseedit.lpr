@@ -9,8 +9,9 @@ uses
   {$IFDEF HASAMIGA}
   athreads,
   {$ENDIF}
-  Interfaces, SysUtils, Forms, FormMain, FrameProps, FrameMarkdown,
-  FrameCourseProps, FrameCategoryProps, FrameTaskProps;
+  Interfaces, SysUtils, Forms, FormMain, FrameProps,
+  FrameMarkdown, FrameCourseProps, FrameCategoryProps, FrameTaskProps,
+  FrameDoer, KlausDoer_Mouse;
 
 {$R *.res}
 

@@ -1062,7 +1062,7 @@ var
   src: tKlausSource;
 begin
   if (scene <> nil) or (fr = nil) then exit;
-  if not saveEditFrame(fr) then exit;
+  if fr.modified then if not saveEditFrame(fr) then exit;
   src := fr.createSource;
   if src <> nil then begin
     consoleOptions.updateConsoleDefaults;

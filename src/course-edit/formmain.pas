@@ -7,12 +7,9 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ActnList, Menus,
   ComCtrls, ExtCtrls, KlausPract, FrameCourseProps, FrameCategoryProps,
-  FrameTaskProps;
+  FrameTaskProps, LMessages;
 
 type
-
-  { tMainForm }
-
   tMainForm = class(tForm)
     actFileOpen: tAction;
     actFileNew: tAction;
@@ -23,6 +20,7 @@ type
     actTaskAdd: tAction;
     actionImages: tImageList;
     actionList: tActionList;
+    applicationProperties: TApplicationProperties;
     bvTreeSizer: tBevel;
     mainMenu: tMainMenu;
     MenuItem1: tMenuItem;
@@ -55,10 +53,12 @@ type
     procedure actFileSaveExecute(Sender: TObject);
     procedure actTaskAddExecute(sender: tObject);
     procedure actTaskDeleteExecute(sender: tObject);
+    procedure applicationPropertiesHint(Sender: TObject);
     procedure bvTreeSizerMouseDown(sender: tObject; button: tMouseButton; shift: tShiftState; x, y: integer);
     procedure bvTreeSizerMouseMove(sender: tObject; shift: tShiftState; x, y: integer);
     procedure bvTreeSizerMouseUp(sender: tObject; button: tMouseButton; shift: tShiftState; x, y: integer);
     procedure formCloseQuery(sender: tObject; var canClose: boolean);
+    procedure formShortCut(var msg: tLMKey; var handled: boolean);
     procedure formShow(sender: tObject);
     procedure treeChange(sender: tObject; node: tTreeNode);
     procedure treeChanging(sender: tObject; node: tTreeNode; var allowChange: boolean);
@@ -104,7 +104,7 @@ var
 
 implementation
 
-uses Math, U8;
+uses Math, U8, FrameDoer;
 
 resourcestring
   strFormCaption = '%s';
@@ -245,6 +245,23 @@ end;
 procedure tMainForm.formCloseQuery(sender: tObject; var canClose: boolean);
 begin
   canClose := promptToSave;
+end;
+
+procedure tMainForm.formShortCut(var msg: tLMKey; var handled: boolean);
+var
+  ctl: tWinControl;
+  frm: tDoerFrame = nil;
+begin
+  handled := false;
+  ctl := screen.activeControl;
+  while ctl <> nil do begin
+    if ctl is tDoerFrame then begin
+      frm := ctl as tDoerFrame;
+      handled := frm.isShortcut(msg);
+      exit;
+    end;
+    ctl := ctl.parent;
+  end;
 end;
 
 procedure tMainForm.formShow(sender: tObject);
@@ -479,6 +496,11 @@ begin
       if n <> nil then n.expanded := true;
       modified := true;
     end;
+end;
+
+procedure tMainForm.applicationPropertiesHint(Sender: TObject);
+begin
+  statusBar.simpleText := application.hint;
 end;
 
 procedure tMainForm.openCourse(fileName: string);

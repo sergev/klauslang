@@ -111,7 +111,6 @@ object CourseInfoFrame: TCourseInfoFrame
       ClientHeight = 378
       ClientWidth = 398
       TabOrder = 2
-      Visible = False
       object bvDoerSizer: TBevel
         Cursor = crVSplit
         Left = 0

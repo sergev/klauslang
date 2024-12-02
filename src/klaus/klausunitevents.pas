@@ -60,7 +60,7 @@ const
 
 type
   // Встроенный модуль, содержащий библиотеку обработки событий в окнах GUI.
-  tKlausUnitEvents = class(tKlausUnit)
+  tKlausUnitEvents = class(tKlausStdUnit)
     private
       procedure createTypes;
       procedure createVariables;
@@ -68,7 +68,8 @@ type
     protected
       function  getHidden: boolean; override;
     public
-      constructor create(aSource: tKlausSource; aName: string; aPoint: tSrcPoint); override;
+      constructor create(aSource: tKlausSource); override;
+      class function stdUnitName: string; override;
   end;
 
 implementation
@@ -78,9 +79,9 @@ uses
 
 { tKlausUnitEvents }
 
-constructor tKlausUnitEvents.create(aSource: tKlausSource; aName: string; aPoint: tSrcPoint);
+constructor tKlausUnitEvents.create(aSource: tKlausSource);
 begin
-  inherited create(aSource, klausUnitName_Events, aPoint);
+  inherited create(aSource);
   createTypes;
   createVariables;
   createRoutines;
@@ -129,12 +130,17 @@ begin
   tKlausSysProc_EvtPeek.create(self, zeroSrcPt);
 end;
 
+class function tKlausUnitEvents.stdUnitName: string;
+begin
+  result := klausUnitName_Events;
+end;
+
 function tKlausUnitEvents.getHidden: boolean;
 begin
   result := true;
 end;
 
 initialization
-  klausRegisterStdUnit(klausUnitName_Events, tKlausUnitEvents);
+  klausRegisterStdUnit(tKlausUnitEvents);
 end.
 

@@ -86,7 +86,7 @@ const
 
 type
   // Встроенный модуль, содержащий библиотеку файлового ввода-вывода.
-  tKlausUnitFiles = class(tKlausUnit)
+  tKlausUnitFiles = class(tKlausStdUnit)
     private
       procedure createTypes;
       procedure createVariables;
@@ -94,7 +94,8 @@ type
     protected
       function  getHidden: boolean; override;
     public
-      constructor create(aSource: tKlausSource; aName: string; aPoint: tSrcPoint); override;
+      constructor create(aSource: tKlausSource); override;
+      class function stdUnitName: string; override;
   end;
 
 implementation
@@ -108,9 +109,9 @@ resourcestring
 
 { tKlausUnitFiles }
 
-constructor tKlausUnitFiles.create(aSource: tKlausSource; aName: string; aPoint: tSrcPoint);
+constructor tKlausUnitFiles.create(aSource: tKlausSource);
 begin
-  inherited create(aSource, klausUnitName_Files, aPoint);
+  inherited create(aSource);
   createTypes;
   createVariables;
   createRoutines;
@@ -186,13 +187,18 @@ begin
   tKlausSysProc_FileCurDir.create(self, zeroSrcPt);
 end;
 
+class function tKlausUnitFiles.stdUnitName: string;
+begin
+  result := klausUnitName_Files;
+end;
+
 function tKlausUnitFiles.getHidden: boolean;
 begin
   result := true;
 end;
 
 initialization
-  klausRegisterStdUnit(klausUnitName_Files, tKlausUnitFiles);
+  klausRegisterStdUnit(tKlausUnitFiles);
   tKlausObjects.registerKlausObject(tKlausFileSearch, strKlausFileSearch);
   tKlausObjects.registerKlausObject(tKlausFileStream, strKlausFileStream);
 end.

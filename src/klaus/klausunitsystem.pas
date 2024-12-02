@@ -113,7 +113,7 @@ var
 type
   // Встроенный модуль, содержащий системные определения и подпрограммы.
   // Запускается в корневом фрейме стека при запуске программы.
-  tKlausUnitSystem = class(tKlausUnit)
+  tKlausUnitSystem = class(tKlausStdUnit)
     private
       fStdErrors: array[tKlausStdexception] of tKlausExceptDecl;
       fFileName: string;
@@ -131,8 +131,9 @@ type
       property fileName: string read fFileName write fFileName;
       property args: tStrings read fArgs write setArgs;
 
-      constructor create(aSource: tKlausSource; aName: string; aPoint: tSrcPoint); override;
+      constructor create(aSource: tKlausSource); override;
       destructor  destroy; override;
+      class function stdUnitName: string; override;
   end;
 
 type
@@ -222,8 +223,9 @@ const
   klausConst_MouseBtnRight = 16;
   klausConst_MouseBtnMiddle = 32;
 
-procedure klausRegisterStdUnit(const name: string; unitClass: tKlausUnitClass);
-function  klausFindStdUnit(const name: string): tKlausUnitClass;
+procedure klausRegisterStdUnit(unitClass: tKlausStdUnitClass);
+function  klausFindStdUnit(const name: string): tKlausStdUnitClass;
+procedure klausEnumStdUnits(sl: tStrings; clsType: tKlausStdUnitClass = nil);
 
 implementation
 
@@ -311,31 +313,45 @@ begin
   end;
 end;
 
-procedure klausRegisterStdUnit(const name: string; unitClass: tKlausUnitClass);
+procedure klausRegisterStdUnit(unitClass: tKlausStdUnitClass);
 begin
   if klausStdUnits = nil then begin
     klausStdUnits := tStringList.create;
     klausStdUnits.sorted := true;
+    klausStdUnits.caseSensitive := false;
     klausStdUnits.duplicates := dupError;
   end;
-  klausStdUnits.addObject(u8Lower(name), tObject(unitClass));
+  klausStdUnits.addObject(u8Lower(unitClass.stdUnitName), tObject(unitClass));
 end;
 
-function klausFindStdUnit(const name: string): tKlausUnitClass;
+function klausFindStdUnit(const name: string): tKlausStdUnitClass;
 var
   idx: integer;
 begin
   if klausStdUnits = nil then exit(nil);
   idx := klausStdUnits.indexOf(u8Lower(name));
   if idx < 0 then result := nil
-  else result := tKlausUnitClass(klausStdUnits.objects[idx]);
+  else result := tKlausStdUnitClass(klausStdUnits.objects[idx]);
+end;
+
+procedure klausEnumStdUnits(sl: tStrings; clsType: tKlausStdUnitClass = nil);
+var
+  i: integer;
+  u: tKlausStdUnitClass;
+begin
+  if klausStdUnits = nil then exit;
+  for i := 0 to klausStdUnits.count-1 do begin
+    u := tKlausStdUnitClass(klausStdUnits.objects[i]);
+    if clsType <> nil then if not u.inheritsFrom(clsType) then continue;
+    sl.addObject(u.stdUnitName, tObject(u));
+  end;
 end;
 
 { tKlausUnitSystem }
 
-constructor tKlausUnitSystem.create(aSource: tKlausSource; aName: string; aPoint: tSrcPoint);
+constructor tKlausUnitSystem.create(aSource: tKlausSource);
 begin
-  inherited create(aSource, klausUnitName_System, aPoint);
+  inherited create(aSource);
   fFileName := '';
   fArgs := tStringList.create;
   createStdExceptions;
@@ -438,6 +454,11 @@ begin
   tKlausSysProc_Random.create(self, zeroSrcPt);
   tKlausSysProc_ProgramName.create(self, zeroSrcPt);
   tKlausSysProc_CourseName.create(self, zeroSrcPt);
+end;
+
+class function tKlausUnitSystem.stdUnitName: string;
+begin
+  result := klausUnitName_System;
 end;
 
 procedure tKlausUnitSystem.setArgs(val: tStrings);
@@ -861,7 +882,7 @@ begin
 end;
 
 initialization
-  klausRegisterStdUnit(klausUnitName_System, tKlausUnitSystem);
+  klausRegisterStdUnit(tKlausUnitSystem);
 end.
 
 

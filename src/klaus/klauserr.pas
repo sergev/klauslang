@@ -143,6 +143,8 @@ const
   ercInvalidFileFormat      = 93;
   ercFileReadError          = 94;
   ercCannotCreateDirectory  = 95;
+  ercInvalidCellIndex       = 96;
+  ercDoerNotFound           = 97;
 
 const
   // Классификация кодов eKlausError для трансляции в исключения языка
@@ -156,7 +158,7 @@ const
     ercInvalidFormatArgType],
 
     //ksxIndexError
-    [ercInvalidArrayIndex, ercInvalidDictIndex, ercInvalidListIndex],
+    [ercInvalidArrayIndex, ercInvalidDictIndex, ercInvalidListIndex, ercInvalidCellIndex],
 
     //ksxKeyError
     [ercInvalidDictKey],
@@ -169,7 +171,7 @@ const
     ercInvalidFormatParamType],
 
     //ksxInvalidName
-    [ercVarNameNotFound, ercStructMemberNotFound],
+    [ercVarNameNotFound, ercStructMemberNotFound, ercDoerNotFound],
 
     //ksxSyntaxError
     [ercQuoteNotClosed, ercCommentNotClosed, ercEmptyChar, ercCharTooLong, ercApostropheNotClosed,
@@ -325,6 +327,8 @@ resourcestring
   errInvalidFileFormat = 'Неверный формат файла.';
   errFileReadError = 'Ошибка чтения файла: "%s". %s';
   errCannotCreateDirectory = 'Ошибка при создании каталога: "%s".';
+  errInvalidCellIndex = 'Неверные координаты ячейки: %d, %d.';
+  errDoerNotFound = 'Модуль исполнителя не найден: "%s". Неверное имя исполнителя или устаревшая версия Клауса.';
 
 { Globals }
 
@@ -457,6 +461,8 @@ begin
     ercInvalidFileFormat: result := errInvalidFileFormat;
     ercFileReadError: result := errFileReadError;
     ercCannotCreateDirectory: result := errCannotCreateDirectory;
+    ercInvalidCellIndex: result := errInvalidCellIndex;
+    ercDoerNotFound: result := errDoerNotFound;
   end;
 end;
 

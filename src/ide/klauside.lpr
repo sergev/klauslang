@@ -37,7 +37,7 @@ uses
   KlausUnitTerminal_Proc, KlausUnitFiles, KlausUnitFiles_Proc,
   KlausUnitGraphics, KlausUnitGraphics_Proc, KlausUnitEvents,
   KlausUnitEvents_Proc, KlausPract, FrameCourseInfo, FramePracticumOptions,
-  KlausDoer;
+  KlausDoer, KlausDoer_Mouse;
 
 {$R *.res}
 

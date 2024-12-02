@@ -383,6 +383,11 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="KlausDoer"/>
       </Unit>
+      <Unit>
+        <Filename Value="klausdoer_mouse.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="KlausDoer_Mouse"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

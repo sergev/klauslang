@@ -5,33 +5,34 @@ unit FrameTaskProps;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, StdCtrls, ExtCtrls, KlausPract, FrameProps, FrameMarkdown;
+  Classes, SysUtils, Forms, Controls, StdCtrls, ExtCtrls, ComCtrls, KlausPract,
+  FrameProps, FrameMarkdown, FrameDoer;
 
 type
   tTaskPropsFrame = class(tPropsFrame)
     Bevel3: tBevel;
-    Bevel4: tBevel;
     edName: tEdit;
     edCaption: tEdit;
     edCategory: tEdit;
     FlowPanel1: tFlowPanel;
-    Label10: tLabel;
     Label3: tLabel;
     Label5: tLabel;
     Label6: tLabel;
     Label9: tLabel;
+    pageControl: TPageControl;
     Panel13: tPanel;
-    Panel14: tPanel;
     Panel3: tPanel;
     Panel5: tPanel;
     Panel6: tPanel;
-    pnDescription: tPanel;
     pnProps: tPanel;
+    tsDoer: TTabSheet;
+    tsDescription: TTabSheet;
     procedure somethingEditingDone(sender: tObject);
     procedure somethingChange(sender: tObject);
     procedure descChange(sender: tObject);
   private
     fDesc: tMarkdownFrame;
+    fDoer: tDoerFrame;
 
     function  getTask: tKlausTask;
     procedure setTask(val: tKlausTask);
@@ -55,9 +56,12 @@ constructor tTaskPropsFrame.create(aOwner: tComponent);
 begin
   inherited create(aOwner);
   fDesc := tMarkdownFrame.create(self);
-  fDesc.parent := pnDescription;
+  fDesc.parent := tsDescription;
   fDesc.align := alClient;
   fDesc.onChange := @descChange;
+  fDoer := tDoerFrame.create(self);
+  fDoer.parent := tsDoer;
+  fDoer.align := alClient;
 end;
 
 procedure tTaskPropsFrame.setTask(val: tKlausTask);
@@ -65,7 +69,7 @@ begin
   setData(val);
 end;
 
-procedure tTaskPropsFrame.somethingChange(Sender: tObject);
+procedure tTaskPropsFrame.somethingChange(sender: tObject);
 begin
   changed(sender);
 end;
@@ -76,7 +80,7 @@ begin
   updateData;
 end;
 
-procedure tTaskPropsFrame.somethingEditingDone(Sender: tObject);
+procedure tTaskPropsFrame.somethingEditingDone(sender: tObject);
 begin
   updateData;
 end;
@@ -93,12 +97,15 @@ begin
     edCategory.text := '';
     edCaption.text := '';
     fDesc.markdown := '';
+    fDoer.task := nil;
   end else begin
     edName.text := task.name;
     edCategory.text := task.category;
     edCaption.text := task.caption;
     fDesc.markdown := task.description;
+    fDoer.task := task;
   end;
+  pageControl.activePage := tsDescription;
   fDesc.pageControl.activePage := fDesc.tsEdit;
 end;
 

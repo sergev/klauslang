@@ -5,7 +5,7 @@ unit KlausPract;
 interface
 
 uses
-  Classes, SysUtils, FpJson, ComCtrls;
+  Classes, SysUtils, FpJson, ComCtrls, KlausDoer;
 
 type
   tKlausPracticum = class;
@@ -62,9 +62,8 @@ type
       procedure removeTask(item: tKlausTask);
       procedure updateCategories(renamed: string = '');
       procedure loadFromFile; virtual;
-      procedure loadData(data: tJsonData);
-      function  getJsonData: tJsonData;
-      procedure saveData(fn: string);
+      procedure fromJson(data: tJsonData);
+      function  toJson: tJsonData;
     public
       class function extractCourseName(fileName: string): string;
     public
@@ -97,18 +96,23 @@ type
       fCaption: string;
       fCategory: string;
       fDescription: string;
+      fDoerSettings: tKlausDoerSettings;
 
+      function  getDoer: tKlausDoerClass;
       procedure setCategory(val: string);
+      procedure setDoer(val: tKlausDoerClass);
       procedure setName(val: string);
     protected
-      procedure loadData(data: tJsonData);
-      function  getJsonData: tJsonData;
+      procedure fromJson(data: tJsonData);
+      function  toJson: tJsonData;
     public
       property owner: tKlausCourse read fOwner;
       property name: string read fName write setName;
       property caption: string read fCaption write fCaption;
       property category: string read fCategory write setCategory;
       property description: string read fDescription write fDescription;
+      property doer: tKlausDoerClass read getDoer write setDoer;
+      property doerSettings: tKlausDoerSettings read fDoerSettings;
 
       constructor create(aOwner: tKlausCourse; data: tJsonData = nil);
       destructor  destroy; override;
@@ -130,7 +134,7 @@ var
 implementation
 
 uses
-  U8, KlausLex, KlausErr, KlausUtils;
+  U8, KlausLex, KlausErr, KlausUtils, KlausUnitSystem;
 
 resourcestring
   strNewCourseName = 'НовыйКурс%d';
@@ -304,6 +308,7 @@ end;
 procedure tKlausCourse.saveToFile(newFileName: string = '');
 var
   newName: string;
+  data: tJsonData;
 begin
   if newFileName = '' then newFileName := fileName;
   if newFileName = '' then newFileName := name + '.klaus-course';
@@ -311,7 +316,9 @@ begin
   newName := extractCourseName(newFileName);
   if not tKlausLexParser.isValidIdent(newName) then raise eKlausError.createFmt(ercInvalidCourseName, zeroSrcPt, [newName]);
   if (u8Lower(name) <> u8Lower(newName)) and (owner.course[newName] <> nil) then raise eKlausError.createFmt(ercDuplicateCourseName, zeroSrcPt, [newName]);
-  saveData(newFileName);
+  data := toJson;
+  try saveJsonData(newFileName, data);
+  finally freeAndNil(data); end;
   owner.removeCourse(self);
   fName := newName;
   fFileName := newFileName;
@@ -391,7 +398,7 @@ begin
     try
       data := loadJsonData(fileName);
       try
-        loadData(data);
+        fromJson(data);
       finally
         freeAndNil(data);
       end;
@@ -405,7 +412,7 @@ begin
   end;
 end;
 
-procedure tKlausCourse.loadData(data: tJsonData);
+procedure tKlausCourse.fromJson(data: tJsonData);
 var
   arr: tJsonArray;
   i: integer;
@@ -424,19 +431,7 @@ begin
   end;
 end;
 
-procedure tKlausCourse.saveData(fn: string);
-var
-  data: tJsonData;
-begin
-  data := getJsonData;
-  try
-    saveJsonData(fn, data);
-  finally
-    freeAndNil(data);
-  end;
-end;
-
-function tKlausCourse.getJsonData: tJsonData;
+function tKlausCourse.toJson: tJsonData;
 var
   arr: tJsonArray;
   i: integer;
@@ -451,7 +446,7 @@ begin
     if taskCount > 0 then begin
       arr := tJsonArray.create;
       for i := 0 to taskCount-1 do
-        arr.add(tasks[i].getJsonData);
+        arr.add(tasks[i].toJson);
       add('tasks', arr);
     end;
   end;
@@ -477,7 +472,7 @@ begin
     fName := format(strNewTaskName, [idx]);
   end;
   fCaption := format(strNewTaskCaption, [idx]);
-  if data <> nil then loadData(data);
+  if data <> nil then fromJson(data);
   fOwner.addTask(self);
 end;
 
@@ -513,6 +508,20 @@ begin
   end;
 end;
 
+function tKlausTask.getDoer: tKlausDoerClass;
+begin
+  if fDoerSettings = nil then result := nil
+  else result := fDoerSettings.doerClass;
+end;
+
+procedure tKlausTask.setDoer(val: tKlausDoerClass);
+begin
+  if doer <> val then begin
+    if fDoerSettings <> nil then freeAndNil(fDoerSettings);
+    if val <> nil then fDoerSettings := tKlausDoerSettings.create(val);
+  end;
+end;
+
 procedure tKlausTask.setName(val: string);
 var
   idx: integer;
@@ -531,7 +540,12 @@ begin
   end;
 end;
 
-procedure tKlausTask.loadData(data: tJsonData);
+procedure tKlausTask.fromJson(data: tJsonData);
+var
+  s: string;
+  d: tJsonObject;
+  ds: tJsonArray;
+  u: tKlausDoerClass;
 begin
   if not (data is tJsonObject) then raise eKlausError.create(ercInvalidFileFormat, zeroSrcPt);
   with data as tJsonObject do begin
@@ -539,10 +553,22 @@ begin
     fCaption := get('title', '');
     fCategory := get('category', '');
     fDescription := get('description', '');
+    d := get('doer', tJsonObject(nil));
+    if d <> nil then begin
+      s := d.get('name', '');
+      u := klausFindDoer(s);
+      if u = nil then raise eKlausError.createFmt(ercDoerNotFound, zeroSrcPt, [s]);
+      doer := u;
+      ds := d.get('settings', tJsonArray(nil));
+      if ds <> nil then doerSettings.fromJson(ds);
+    end;
   end;
 end;
 
-function tKlausTask.getJsonData: tJsonData;
+function tKlausTask.toJson: tJsonData;
+var
+  ds: tJsonObject;
+  data: tJsonData;
 begin
   result := tJsonObject.create;
   with result as tJsonObject do begin
@@ -550,6 +576,13 @@ begin
     add('title', fCaption);
     add('category', fCategory);
     add('description', fDescription);
+    if doer <> nil then begin
+      ds := tJsonObject.create;
+      ds.add('name', doer.stdUnitName);
+      data := doerSettings.toJson;
+      ds.add('settings', data);
+      add('doer', ds);
+    end;
   end;
 end;
 

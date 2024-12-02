@@ -46,6 +46,7 @@ type
   tKlausUsesListItem = class;
   tKlausModule = class;
   tKlausUnit = class;
+  tKlausStdUnit = class;
   tKlausProgram = class;
   tKlausTypeDef = class;
   tKlausTypeDefSimple = class;
@@ -121,7 +122,7 @@ type
   tKlausVarValueClass = class of tKlausVarValue;
   tKlausOpndCompoundClass = class of tKlausOpndCompound;
   tKlausStmtCtlStructClass = class of tKlausStmtCtlStruct;
-  tKlausUnitClass = class of tKlausUnit;
+  tKlausStdUnitClass = class of tKlausStdUnit;
 
 type
   // Область поиска имён
@@ -431,9 +432,17 @@ type
       property initBody: tKlausStmtCompound read fBody;
       property doneBody: tKlausStmtCompound read fDoneBody;
 
-      constructor create(aSource: tKlausSource; aName: string; aPoint: tSrcPoint); virtual;
+      constructor create(aSource: tKlausSource; aName: string; aPoint: tSrcPoint);
       destructor  destroy; override;
       procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  // Встроенный модуль
+  tKlausStdUnit = class(tKlausUnit)
+    public
+      constructor create(aSource: tKlausSource); virtual;
+      class function stdUnitName: string; virtual; abstract;
   end;
 
 type
@@ -5170,7 +5179,7 @@ begin
   fUnits.sorted := true;
   fUnits.caseSensitive := false;
   fUnits.duplicates := dupError;
-  fSystemUnit := tKlausUnitSystem.create(self, klausUnitName_System, zeroSrcPt);
+  fSystemUnit := tKlausUnitSystem.create(self);
   syn := tKlausSyntax.create(klausSourceSyntaxRoot);
   try
     syn.setParser(p);
@@ -5906,7 +5915,7 @@ var
   i: integer;
   u, prev: tKlausUnit;
   uli: tKlausUsesListItem;
-  cls: tKlausUnitClass;
+  cls: tKlausStdUnitClass;
 begin
   prev := nil;
   for i := 0 to usesCount-1 do begin
@@ -5915,7 +5924,7 @@ begin
     if u = nil then begin
       cls := klausFindStdUnit(uli.name);
       if cls = nil then raise eKlausError.createFmt(ercUnitNotFound, uli.point, [uli.name]);
-      u := cls.create(source, uli.name, uli.point);
+      u := cls.create(source);
     end;
     uli.fModule := u;
     u.fUpperScope := prev;
@@ -5984,6 +5993,13 @@ end;
 
 procedure tKlausUnit.afterDone(stack: tKlausStackFrame);
 begin
+end;
+
+{ tKlausStdUnit }
+
+constructor tKlausStdUnit.create(aSource: tKlausSource);
+begin
+  inherited create(aSource, stdUnitName, zeroSrcPt);
 end;
 
 { tKlausProgram }

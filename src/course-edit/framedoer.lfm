@@ -1,0 +1,302 @@
+object DoerFrame: TDoerFrame
+  Left = 0
+  Height = 515
+  Top = 0
+  Width = 906
+  ClientHeight = 515
+  ClientWidth = 906
+  TabOrder = 0
+  DesignLeft = 600
+  DesignTop = 238
+  object pnList: TPanel
+    Left = 0
+    Height = 515
+    Top = 0
+    Width = 290
+    Align = alLeft
+    BevelOuter = bvNone
+    ClientHeight = 515
+    ClientWidth = 290
+    TabOrder = 0
+    object pnListContent: TPanel
+      Left = 0
+      Height = 515
+      Top = 0
+      Width = 285
+      Align = alClient
+      BevelOuter = bvNone
+      ClientHeight = 515
+      ClientWidth = 285
+      TabOrder = 0
+      object Panel13: TPanel
+        Left = 10
+        Height = 21
+        Top = 10
+        Width = 275
+        Align = alTop
+        AutoSize = True
+        BorderSpacing.Left = 10
+        BorderSpacing.Top = 10
+        BorderSpacing.Bottom = 10
+        BevelOuter = bvNone
+        ChildSizing.Layout = cclTopToBottomThenLeftToRight
+        ClientHeight = 21
+        ClientWidth = 275
+        TabOrder = 0
+        object Label9: TLabel
+          Left = 0
+          Height = 17
+          Top = 0
+          Width = 270
+          Align = alClient
+          BorderSpacing.Right = 5
+          Caption = 'Исполнитель'
+          Font.Style = [fsBold]
+          ParentColor = False
+          ParentFont = False
+        end
+        object Bevel3: TBevel
+          Left = 0
+          Height = 4
+          Top = 17
+          Width = 275
+          Align = alBottom
+          Constraints.MaxHeight = 4
+          Shape = bsBottomLine
+        end
+      end
+      object Panel14: TPanel
+        Left = 10
+        Height = 21
+        Top = 84
+        Width = 275
+        Align = alTop
+        AutoSize = True
+        BorderSpacing.Left = 10
+        BorderSpacing.Top = 10
+        BevelOuter = bvNone
+        ChildSizing.Layout = cclTopToBottomThenLeftToRight
+        ClientHeight = 21
+        ClientWidth = 275
+        TabOrder = 2
+        object Label10: TLabel
+          Left = 0
+          Height = 17
+          Top = 0
+          Width = 270
+          Align = alClient
+          BorderSpacing.Right = 5
+          Caption = 'Обстановка'
+          Font.Style = [fsBold]
+          ParentColor = False
+          ParentFont = False
+        end
+        object Bevel4: TBevel
+          Left = 0
+          Height = 4
+          Top = 17
+          Width = 275
+          Align = alBottom
+          Constraints.MaxHeight = 4
+          Shape = bsBottomLine
+        end
+      end
+      object cbDoer: TComboBox
+        Left = 20
+        Height = 33
+        Top = 41
+        Width = 265
+        Align = alTop
+        BorderSpacing.Left = 20
+        BorderSpacing.Bottom = 2
+        ItemHeight = 0
+        Style = csDropDownList
+        TabOrder = 1
+        OnChange = cbDoerChange
+      end
+      object pnSetting: TPanel
+        Left = 20
+        Height = 408
+        Top = 105
+        Width = 265
+        Align = alClient
+        BorderSpacing.Left = 20
+        BorderSpacing.Bottom = 2
+        BevelOuter = bvNone
+        ClientHeight = 408
+        ClientWidth = 265
+        TabOrder = 3
+        object toolBar: TToolBar
+          Left = 0
+          Height = 24
+          Top = 0
+          Width = 265
+          Caption = 'toolBar'
+          EdgeBorders = []
+          Images = actionImages
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 0
+          object tbRename: TToolButton
+            Left = 24
+            Top = 0
+            Action = actSettingRename
+          end
+          object tbDelete: TToolButton
+            Left = 47
+            Top = 0
+            Action = actSettingDelete
+          end
+          object tbAdd: TToolButton
+            Left = 1
+            Top = 0
+            Action = actSettingAdd
+          end
+          object ToolButton1: TToolButton
+            Left = 70
+            Height = 22
+            Top = 0
+            Caption = 'ToolButton1'
+            Style = tbsSeparator
+          end
+          object tbMoveDown: TToolButton
+            Left = 78
+            Top = 0
+            Action = actSettingMoveDown
+          end
+          object tbMoveUp: TToolButton
+            Left = 101
+            Top = 0
+            Action = actSettingMoveUp
+          end
+          object ToolButton5: TToolButton
+            Left = 124
+            Height = 22
+            Top = 0
+            Caption = 'ToolButton5'
+            Style = tbsSeparator
+          end
+          object tbLoad: TToolButton
+            Left = 132
+            Top = 0
+            Action = actSettingLoad
+          end
+          object tbSave: TToolButton
+            Left = 155
+            Top = 0
+            Action = actSettingSave
+          end
+        end
+        object lbSetting: TListBox
+          Left = 0
+          Height = 384
+          Top = 24
+          Width = 265
+          Align = alClient
+          ItemHeight = 0
+          TabOrder = 1
+          TopIndex = -1
+          OnDblClick = lbSettingDblClick
+          OnSelectionChange = lbSettingSelectionChange
+        end
+      end
+    end
+    object bvListSizer: TBevel
+      Cursor = crHSplit
+      Left = 285
+      Height = 515
+      Top = 0
+      Width = 5
+      Align = alRight
+      Shape = bsSpacer
+      OnMouseDown = bvListSizerMouseDown
+      OnMouseMove = bvListSizerMouseMove
+      OnMouseUp = bvListSizerMouseUp
+    end
+  end
+  object pnDoer: TPanel
+    Left = 290
+    Height = 515
+    Top = 0
+    Width = 616
+    Align = alClient
+    BevelOuter = bvNone
+    TabOrder = 1
+  end
+  object actionImages: TImageList
+    Height = 18
+    Width = 18
+    Left = 122
+    Top = 236
+    Bitmap = {
+      4C7A070000001200000012000000DC0100000000000078DAED9901B284200886
+      3DBA47EB66EEAB091F4BF00B6A3BDBAC394C6DD1178260B9A594546E946DDB8A
+      2651464A499508AB7264FB2047FA01712C7F99FE5038C85FE6F35BEDD738837E
+      9E15F76F1CCF77E4E9ACBAD1255FDA2C7F1C3E3174B5F3567C6A8C145DC9A26B
+      DAC6EFE17AE9BCA63D63DF72CE5588C37995F177FD10C6F2D8A3320087DB42C7
+      FFF96F335AF65CFA6630907F32D757FC6EC51DD982E28DECA1633496BCF6ECE7
+      885994F1E2B147C62CCA419B97E311C469E53BCAFD27B6913E5DE654E1630F73
+      46DC38631F776CBE3AEA05FDE6B98272556358AC9E5ADFD337B289DBC6CF79F3
+      E3ED9EB33FA39C65CFFDF6143606B95D1E8E364748A9CF5975713525DEBDBAB2
+      1646E670EB9DD853C3915E4BC7FB2CA41B6144E60D6F7E35BF0783E36094E1F9
+      B6E91D9F2B537FB32E8D32668EE599B93533D7476A4FB48ECDA8ABB3EAFCAC79
+      67D63CB8DA6A33DE95E97D5E4A84450C6DE3DF2BC856CE38F247ECB57533CD56
+      CE4980A5D929D70F913DD69E732CDFB624097B907F5B7DB138DE3ED1B7DCA87F
+      E87EC4F1FA58E3F4B0ACF59B9EB845E69F91B59B883CB58645FBD5E363737ECF
+      A78835E4B7FF1D84DE933917A69793816F7390E311C4F1C6DCC1C919CBA7399E
+      FF311E65CF609EF6D68C3BEAE10B6DF3CBC4
+    }
+  end
+  object listActions: TActionList
+    Images = actionImages
+    Left = 124
+    Top = 312
+    object actSettingAdd: TAction
+      Caption = 'Добавить обстановку'
+      Hint = 'Добавить|Добавить новую обстановку для выбранного исполнителя'
+      ImageIndex = 0
+      OnExecute = actSettingAddExecute
+      ShortCut = 45
+    end
+    object actSettingRename: TAction
+      Caption = 'Переименовать обстановку'
+      Hint = 'Переименовать|Переименовать выделенную обстановку'
+      ImageIndex = 1
+      OnExecute = actSettingRenameExecute
+      ShortCut = 113
+    end
+    object actSettingDelete: TAction
+      Caption = 'Удалить обстановку'
+      Hint = 'Удалить|Удалить выделенную обстановку'
+      ImageIndex = 2
+      OnExecute = actSettingDeleteExecute
+      ShortCut = 16430
+    end
+    object actSettingMoveDown: TAction
+      Caption = 'Переместить вниз'
+      Hint = 'Переместить вниз|Переместить выделенную обстановку ближе к концу списка'
+      ImageIndex = 3
+      OnExecute = actSettingMoveDownExecute
+      ShortCut = 16424
+    end
+    object actSettingMoveUp: TAction
+      Caption = 'Переместить вверх'
+      Hint = 'Переместить вверх|Переместить выделенную обстановку ближе к началу списка'
+      ImageIndex = 4
+      OnExecute = actSettingMoveUpExecute
+      ShortCut = 16422
+    end
+    object actSettingLoad: TAction
+      Caption = 'Добавить из файла'
+      Hint = 'Добавить из файла...|Загрузить обстановки из файла и добавить в список'
+      ImageIndex = 5
+      ShortCut = 24655
+    end
+    object actSettingSave: TAction
+      Caption = 'Сохранить в файле'
+      Hint = 'Сохранить в файле...|Сохранить все обстановки в файле'
+      ImageIndex = 6
+      ShortCut = 24659
+    end
+  end
+end

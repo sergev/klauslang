@@ -62,14 +62,15 @@ const
 
 type
   // Встроенный модуль, содержащий библиотеку управления терминалом.
-  tKlausUnitTerminal = class(tKlausUnit)
+  tKlausUnitTerminal = class(tKlausStdUnit)
     private
       procedure createVariables;
       procedure createRoutines;
     protected
       function  getHidden: boolean; override;
     public
-      constructor create(aSource: tKlausSource; aName: string; aPoint: tSrcPoint); override;
+      constructor create(aSource: tKlausSource); override;
+      class function stdUnitName: string; override;
   end;
 
 implementation
@@ -79,9 +80,9 @@ uses
 
 { tKlausUnitTerminal }
 
-constructor tKlausUnitTerminal.create(aSource: tKlausSource; aName: string; aPoint: tSrcPoint);
+constructor tKlausUnitTerminal.create(aSource: tKlausSource);
 begin
-  inherited create(aSource, klausUnitName_Terminal, aPoint);
+  inherited create(aSource);
   createVariables;
   createRoutines;
 end;
@@ -121,12 +122,17 @@ begin
   tKlausSysProc_ReadChar.create(self, zeroSrcPt);
 end;
 
+class function tKlausUnitTerminal.stdUnitName: string;
+begin
+  result := klausUnitName_Terminal;
+end;
+
 function tKlausUnitTerminal.getHidden: boolean;
 begin
   result := true;
 end;
 
 initialization
-  klausRegisterStdUnit(klausUnitName_Terminal, tKlausUnitTerminal);
+  klausRegisterStdUnit(tKlausUnitTerminal);
 end.
 

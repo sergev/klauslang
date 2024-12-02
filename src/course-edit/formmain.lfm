@@ -8,14 +8,19 @@ object MainForm: TMainForm
   ClientWidth = 1213
   Menu = mainMenu
   OnCloseQuery = FormCloseQuery
+  OnShortCut = FormShortCut
   OnShow = FormShow
   Position = poDefaultPosOnly
+  ShowHint = True
   LCLVersion = '3.4.0.0'
   object statusBar: TStatusBar
-    Left = 0
+    Left = 4
     Height = 19
-    Top = 584
-    Width = 1213
+    Top = 582
+    Width = 1205
+    BorderSpacing.Left = 2
+    BorderSpacing.Right = 2
+    BorderSpacing.Around = 2
     Panels = <>
   end
   object toolBar: TToolBar
@@ -65,18 +70,18 @@ object MainForm: TMainForm
   end
   object pnTree: TPanel
     Left = 0
-    Height = 550
+    Height = 546
     Top = 34
     Width = 310
     Align = alLeft
     BevelOuter = bvNone
-    ClientHeight = 550
+    ClientHeight = 546
     ClientWidth = 310
     TabOrder = 1
     object bvTreeSizer: TBevel
       Cursor = crHSplit
       Left = 305
-      Height = 550
+      Height = 546
       Top = 0
       Width = 5
       Align = alRight
@@ -87,7 +92,7 @@ object MainForm: TMainForm
     end
     object tree: TTreeView
       Left = 4
-      Height = 546
+      Height = 542
       Top = 4
       Width = 301
       Align = alClient
@@ -104,7 +109,7 @@ object MainForm: TMainForm
   end
   object pnProps: TPanel
     Left = 310
-    Height = 550
+    Height = 546
     Top = 34
     Width = 903
     Align = alClient
@@ -252,5 +257,12 @@ object MainForm: TMainForm
     Options = [ofOverwritePrompt, ofPathMustExist, ofEnableSizing, ofViewDetail]
     Left = 524
     Top = 307
+  end
+  object applicationProperties: TApplicationProperties
+    ExceptionDialog = aedOkMessageBox
+    ShowButtonGlyphs = sbgNever
+    OnHint = applicationPropertiesHint
+    Left = 671
+    Top = 207
   end
 end

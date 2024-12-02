@@ -83,7 +83,7 @@ const
 
 type
   // Встроенный модуль, содержащий библиотеку графического вывода.
-  tKlausUnitGraphics = class(tKlausUnit)
+  tKlausUnitGraphics = class(tKlausStdUnit)
     private
       procedure createTypes;
       procedure createVariables;
@@ -91,7 +91,8 @@ type
     protected
       function  getHidden: boolean; override;
     public
-      constructor create(aSource: tKlausSource; aName: string; aPoint: tSrcPoint); override;
+      constructor create(aSource: tKlausSource); override;
+      class function stdUnitName: string; override;
   end;
 
 implementation
@@ -104,9 +105,9 @@ resourcestring
 
 { tKlausUnitGraphics }
 
-constructor tKlausUnitGraphics.create(aSource: tKlausSource; aName: string; aPoint: tSrcPoint);
+constructor tKlausUnitGraphics.create(aSource: tKlausSource);
 begin
-  inherited create(aSource, klausUnitName_Graphics, aPoint);
+  inherited create(aSource);
   createTypes;
   createVariables;
   createRoutines;
@@ -174,13 +175,18 @@ begin
   tKlausSysProc_GrImgDraw.create(self, zeroSrcPt);
 end;
 
+class function tKlausUnitGraphics.stdUnitName: string;
+begin
+  result := klausUnitName_Graphics;
+end;
+
 function tKlausUnitGraphics.getHidden: boolean;
 begin
   result := true;
 end;
 
 initialization
-  klausRegisterStdUnit(klausUnitName_Graphics, tKlausUnitGraphics);
+  klausRegisterStdUnit(tKlausUnitGraphics);
   tKlausObjects.registerKlausObject(tKlausCanvasLink, strKlausCanvasLink);
 end.
 
