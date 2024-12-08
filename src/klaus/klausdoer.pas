@@ -89,9 +89,6 @@ type
   end;
 
 type
-
-  { tKlausDoerView }
-
   tKlausDoerView = class(tCustomControl)
     private
       fOnChange: tNotifyEvent;

@@ -131,7 +131,7 @@ object DoerFrame: TDoerFrame
           Height = 24
           Top = 0
           Width = 265
-          Caption = 'toolBar'
+          Caption = 'tbList'
           EdgeBorders = []
           Images = actionImages
           ParentShowHint = False
@@ -227,7 +227,7 @@ object DoerFrame: TDoerFrame
     Height = 18
     Width = 18
     Left = 122
-    Top = 236
+    Top = 240
     Bitmap = {
       4C7A070000001200000012000000DC0100000000000078DAED9901B284200886
       3DBA47EB66EEAB091F4BF00B6A3BDBAC394C6DD1178260B9A594546E946DDB8A

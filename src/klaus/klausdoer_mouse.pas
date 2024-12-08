@@ -25,7 +25,7 @@ interface
 
 uses
   Classes, SysUtils, KlausLex, KlausDef, KlausSyn, KlausErr, Controls, Forms,
-  Graphics, LCLType, KlausDoer, FpJson;
+  Graphics, LCLType, KlausDoer, FpJson, BGRABitmap, BGRABitmapTypes, BGRASVG;
 
 const
   klausDoerName_Mouse = 'Мышка';
@@ -159,6 +159,25 @@ type
   end;
 
 type
+  tKlausMouseImageCache = class(tObject)
+    private
+      fSize: integer;
+      fFit: tRect;
+      fWidth, fHeight: integer;
+      fImg: array[kmdLeft..kmdDown] of array of tBGRABitmap;
+
+      function getImg(dir: tKlausMouseDirection; idx: integer): tBGRABitmap;
+    public
+      property img[dir: tKlausMouseDirection; idx: integer]: tBGRABitmap read getImg; default;
+
+      constructor create;
+      destructor  destroy; override;
+      procedure clear;
+      procedure rebuild(aSize: integer);
+      procedure draw(canvas: tCanvas; cell: tRect; dir: tKlausMouseDirection; idx: integer);
+  end;
+
+type
   tKlausMouseView = class(tKlausDoerView)
     private
       fReadOnly: boolean;
@@ -167,6 +186,7 @@ type
       fFocusX: integer;
       fFocusY: integer;
       fColors: tKlausMouseViewColors;
+      fImg: tKlausMouseImageCache;
 
       function  getSetting: tKlausMouseSetting;
       procedure setColors(val: tKlausMouseViewColors);
@@ -202,8 +222,26 @@ type
 
 implementation
 
+{$R *.rc}
+
 uses
   Types, Math, Clipbrd, U8, KlausUnitSystem;
+
+const
+  mouseImageInfo: record
+    count: integer;
+    size: tSize;
+    fit: tRect;
+    resName: string;
+  end = (
+    count: 6;
+    size: (cx: 185; cy: 514);
+    fit: (left: 0; top: 0; right: 186; bottom: 301);
+    resName: 'klaus_doer_mouse%.2d_svg';
+  );
+
+var
+  mouseSVG: array of tBGRASVG = nil;
 
 { Globals }
 
@@ -401,6 +439,7 @@ var
   x, y: integer;
 begin
   inherited create;
+  fMouseDir := kmdLeft;
   fWidth := max(aWidth, 1);
   fHeight := max(aHeight, 1);
   setLength(fCells, fHeight, fWidth);
@@ -534,6 +573,7 @@ end;
 
 procedure tKlausMouseSetting.setMouseX(val: integer);
 begin
+  val := min(width-1, max(0, val));
   if fMouseX <> val then begin
     updating;
     try fMouseX := val;
@@ -543,6 +583,7 @@ end;
 
 procedure tKlausMouseSetting.setMouseY(val: integer);
 begin
+  val := min(height-1, max(0, val));
   if fMouseY <> val then begin
     updating;
     try fMouseY := val;
@@ -690,6 +731,99 @@ begin
   fCellText := clWhite;
 end;
 
+{ tKlausMouseImageCache }
+
+function tKlausMouseImageCache.getImg(dir: tKlausMouseDirection; idx: integer): tBGRABitmap;
+begin
+  assert((idx >= 0) and (idx < mouseImageInfo.count), 'Invalid mouse image index.');
+  if dir = kmdNone then dir := kmdLeft;
+  result := fImg[dir, idx];
+end;
+
+constructor tKlausMouseImageCache.create;
+var
+  i: integer;
+  d: tKlausMouseDirection;
+begin
+  inherited;
+  for d := kmdLeft to kmdDown do begin
+    setLength(fImg[d], mouseImageInfo.count);
+    for i := 0 to mouseImageInfo.count-1 do fImg[d, i] := nil;
+  end;
+end;
+
+destructor tKlausMouseImageCache.destroy;
+begin
+  clear;
+  inherited destroy;
+end;
+
+procedure tKlausMouseImageCache.clear;
+var
+  i: integer;
+  d: tKlausMouseDirection;
+begin
+  for d := kmdLeft to kmdDown do
+    for i := 0 to mouseImageInfo.count-1 do freeAndNil(fImg[d, i]);
+end;
+
+procedure tKlausMouseImageCache.rebuild(aSize: integer);
+var
+  i: integer;
+  scale: double;
+begin
+  if fSize <> aSize then begin
+    clear;
+    fSize := aSize;
+    with mouseImageInfo do begin
+      scale := min(fSize/fit.width, fSize/fit.height);
+      fFit := rect(round(fit.left*scale), round(fit.top*scale), round(fit.right*scale), round(fit.bottom*scale));
+      fWidth := round(size.cx*scale);
+      fHeight := round(size.cy*scale);
+      for i := 0 to count-1 do begin
+        fImg[kmdUp, i] := tBGRABitmap.create(fWidth, fHeight, bgra(0, 0, 0, 0));
+        mouseSVG[i].stretchDraw(fImg[kmdUp, i].canvas2D, rectf(0, 0, fWidth, fHeight));
+        fImg[kmdLeft, i] := fImg[kmdUp, i].rotateCCW;
+        fImg[kmdRight, i] := fImg[kmdUp, i].rotateCW;
+        fImg[kmdDown, i] := fImg[kmdUp, i].rotateUD;
+      end;
+    end;
+  end;
+end;
+
+procedure tKlausMouseImageCache.draw(canvas: tCanvas; cell: tRect; dir: tKlausMouseDirection; idx: integer);
+var
+  r: tRect;
+  x, y: integer;
+begin
+  if dir < kmdLeft then dir := kmdLeft;
+  rebuild(cell.width - (cell.width div 10)*2);
+  with fFit do
+    case dir of
+      kmdLeft: begin
+        r := rect(top, fWidth - right, bottom, fWidth - left);
+        x := cell.left - r.left + cell.width div 10;
+        y := cell.top - r.top + cell.height div 2 - r.height div 2;
+      end;
+      kmdUp: begin
+        r := rect(left, top, right, bottom);
+        x := cell.left - r.left + cell.width div 2 - r.width div 2;
+        y := cell.top - r.top + cell.height div 10;
+      end;
+      kmdRight: begin
+        r := rect(fHeight - bottom, left, fHeight - top, right);
+        x := cell.right - r.width - r.left - cell.Width div 10;
+        y := cell.top - r.top + cell.height div 2 - r.height div 2;
+      end;
+      kmdDown: begin
+        r := rect(fWidth - right, fHeight - bottom, fWidth - left, fHeight - top);
+        x := cell.left - r.left + cell.width div 2 - r.width div 2;
+        y := cell.bottom - r.height - r.top - cell.height div 10;
+      end;
+    end;
+  fImg[dir, idx].draw(canvas, x, y, false);
+end;
+
 { tKlausMouseView }
 
 constructor tKlausMouseView.create(aOwner: tComponent);
@@ -699,18 +833,20 @@ begin
   borderSpacing.innerBorder := 3;
   tabStop := true;
   fColors := tKlausMouseViewColors.create(self);
+  fImg := tKlausMouseImageCache.create;
 end;
 
 destructor tKlausMouseView.destroy;
 begin
   freeAndNil(fColors);
+  freeAndNil(fImg);
   inherited destroy;
 end;
 
 function tKlausMouseView.cellRect(x, y: integer): tRect;
 begin
-  result.Left := fOrigin.x + x*fCellSize;
-  result.top := fOrigin.Y + y*fCellSize;
+  result.left := fOrigin.x + x*fCellSize;
+  result.top := fOrigin.y + y*fCellSize;
   result.width := fCellSize;
   result.height := fCellSize;
 end;
@@ -780,7 +916,7 @@ begin
     fillRect(r);
   end;
   if setting = nil then exit;
-  fCellSize := min(r.width div setting.width, r.height div setting.height);
+  fCellSize := max(5, min(r.width div setting.width, r.height div setting.height));
   w := fCellSize * setting.width;
   h := fCellSize * setting.height;
   fOrigin.x := r.left + (r.width - w) div 2;
@@ -843,8 +979,13 @@ begin
       r.inflate(-fCellSize div 10, -fCellSize div 10);
       r.left := r.left + 1;
       r.top := r.top + 1;
-      drawFocusRect(r);
+      if fCellSize < 20 then w := 1 else w := 2;
+      with pen do begin color := self.colors.wallSet; width := w; style := psDot; end;
+      brush.style := bsClear;
+      rectangle(r);
     end;
+    r := cellRect(setting.mouseX, setting.mouseY);
+    fImg.draw(canvas, r, setting.mouseDir, 0);
   end;
 end;
 
@@ -877,6 +1018,7 @@ procedure tKlausMouseView.mouseDown(button: tMouseButton; shift: tShiftState; x,
 var
   r: tRect;
   cell: tPoint;
+  mouseHere: boolean;
 begin
   inherited mouseDown(button, shift, x, y);
   shift := shift * [ssShift, ssCtrl, ssAlt, ssDouble];
@@ -884,20 +1026,28 @@ begin
     cell := cellFromPoint(x, y);
     focusX := cell.x;
     focusY := cell.y;
+    with setting do mouseHere := (mouseX = cell.x) and (mouseY = cell.y);
     r := cellRect(focusX, focusY);
     with setting[focusX, focusY] do
-      if abs(r.left-x) <= fCellSize div 5 then begin
+      if ssDouble in shift then begin
+        setting.mouseX := cell.x;
+        setting.mouseY := cell.y;
+      end else if abs(r.left-x) <= fCellSize div 5 then begin
         if shift = [] then wall[kmdLeft] := not wall[kmdLeft]
-        else if shift = [ssCtrl] then toggleArrow(kmdLeft);
+        else if shift = [ssCtrl] then toggleArrow(kmdLeft)
+        else if (shift = [ssAlt]) and mouseHere then setting.mouseDir := kmdLeft;
       end else if abs(r.right-x) <= fCellSize div 5 then begin
         if shift = [] then wall[kmdRight] := not wall[kmdRight]
-        else if shift = [ssCtrl] then toggleArrow(kmdRight);
+        else if shift = [ssCtrl] then toggleArrow(kmdRight)
+        else if (shift = [ssAlt]) and mouseHere then setting.mouseDir := kmdRight;
       end else if abs(r.top-y) <= fCellSize div 5 then begin
         if shift = [] then wall[kmdUp] := not wall[kmdUp]
-        else if shift = [ssCtrl] then toggleArrow(kmdUp);
+        else if shift = [ssCtrl] then toggleArrow(kmdUp)
+        else if (shift = [ssAlt]) and mouseHere then setting.mouseDir := kmdUp;
       end else if abs(r.bottom-y) <= fCellSize div 5 then begin
         if shift = [] then wall[kmdDown] := not wall[kmdDown]
-        else if shift = [ssCtrl] then toggleArrow(kmdDown);
+        else if shift = [ssCtrl] then toggleArrow(kmdDown)
+        else if (shift = [ssAlt]) and mouseHere then setting.mouseDir := kmdDown;
       end;
   end;
 end;
@@ -922,6 +1072,9 @@ begin
     end else if shift = [ssCtrl] then begin
       toggleArrow(kmdLeft);
       key := 0;
+    end else if shift = [ssAlt] then begin
+      setting.mouseDir := kmdLeft;
+      key := 0;
     end;
     VK_RIGHT: if shift = [] then begin
       focusX := x + 1;
@@ -931,6 +1084,9 @@ begin
       key := 0;
     end else if shift = [ssCtrl] then begin
       toggleArrow(kmdRight);
+      key := 0;
+    end else if shift = [ssAlt] then begin
+      setting.mouseDir := kmdRight;
       key := 0;
     end;
     VK_UP: if shift = [] then begin
@@ -942,6 +1098,9 @@ begin
     end else if shift = [ssCtrl] then begin
       toggleArrow(kmdUp);
       key := 0;
+    end else if shift = [ssAlt] then begin
+      setting.mouseDir := kmdUp;
+      key := 0;
     end;
     VK_DOWN: if shift = [] then begin
       focusY := y + 1;
@@ -951,6 +1110,9 @@ begin
       key := 0;
     end else if shift = [ssCtrl] then begin
       toggleArrow(kmdDown);
+      key := 0;
+    end else if shift = [ssAlt] then begin
+      setting.mouseDir := kmdDown;
       key := 0;
     end;
     VK_DELETE: if shift = [] then begin
@@ -968,7 +1130,12 @@ begin
     VK_SPACE: if shift = [] then begin
       painted := not painted;
       key := 0;
-    end
+    end;
+    VK_RETURN: if shift = [] then begin
+      setting.mouseX := x;
+      setting.mouseY := y;
+      key := 0;
+    end;
   end;
   if key <> 0 then inherited;
 end;
@@ -990,7 +1157,18 @@ begin
   result := tKlausDoerMouse;
 end;
 
+var
+  i: integer;
+  stream: tResourceStream;
 initialization
   klausRegisterStdUnit(tKlausDoerMouse);
+  setLength(mouseSVG, mouseImageInfo.count);
+  for i := 0 to mouseImageInfo.count-1 do begin
+    stream := tResourceStream.create(hInstance, format(mouseImageInfo.resName, [i]), RT_RCDATA);
+    try mouseSVG[i] := tBGRASVG.create(stream);
+    finally freeAndNil(stream); end;
+  end;
+finalization
+  for i := 0 to mouseImageInfo.count-1 do freeAndNil(mouseSVG[i]);
 end.
 

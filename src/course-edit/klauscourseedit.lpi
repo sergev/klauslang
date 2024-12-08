@@ -32,7 +32,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="../lib;../klaus;../lib/edit;../lib/console;../ide"/>
+            <OtherUnitFiles Value="../lib;../lib/bgrabitmap;../klaus;../lib/edit;../lib/console;../ide"/>
             <UnitOutputDirectory Value="../../compiled/$NameOnly($(ProjFile))/$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -222,6 +222,14 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
         <UnitName Value="FrameDoer"/>
+      </Unit>
+      <Unit>
+        <Filename Value="framedoer_mouse.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="DoerFrame_Mouse"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="FrameDoerSetting_Mouse"/>
       </Unit>
     </Units>
   </ProjectOptions>

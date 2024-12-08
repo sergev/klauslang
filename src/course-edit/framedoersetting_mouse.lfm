@@ -1,0 +1,287 @@
+object DoerSettingFrame_Mouse: TDoerSettingFrame_Mouse
+  Left = 0
+  Height = 532
+  Top = 0
+  Width = 824
+  ClientHeight = 532
+  ClientWidth = 824
+  TabOrder = 0
+  DesignLeft = 640
+  DesignTop = 240
+  object toolBar: TToolBar
+    Left = 800
+    Height = 532
+    Top = 0
+    Width = 24
+    Align = alRight
+    AutoSize = True
+    BorderSpacing.Left = 2
+    Caption = 'tbSetting'
+    EdgeBorders = []
+    Images = actionImages
+    TabOrder = 0
+    object ToolButton2: TToolButton
+      Left = 1
+      Top = 0
+      Action = actFieldSize
+    end
+    object ToolButton3: TToolButton
+      Left = 1
+      Top = 22
+      Width = 23
+      Caption = 'ToolButton3'
+      Style = tbsSeparator
+    end
+    object ToolButton4: TToolButton
+      Left = 1
+      Top = 30
+      Action = actWallLeft
+    end
+    object ToolButton6: TToolButton
+      Left = 1
+      Top = 52
+      Action = actWallUp
+    end
+    object ToolButton7: TToolButton
+      Left = 1
+      Top = 74
+      Action = actWallRight
+    end
+    object ToolButton8: TToolButton
+      Left = 1
+      Top = 96
+      Action = actWallDown
+    end
+    object ToolButton9: TToolButton
+      Left = 1
+      Top = 118
+      Width = 23
+      Caption = 'ToolButton9'
+      Style = tbsSeparator
+    end
+    object ToolButton10: TToolButton
+      Left = 1
+      Top = 126
+      Action = actArrowLeft
+    end
+    object ToolButton11: TToolButton
+      Left = 1
+      Top = 148
+      Action = actArrowUp
+    end
+    object ToolButton12: TToolButton
+      Left = 1
+      Top = 170
+      Action = actArrowRight
+    end
+    object ToolButton13: TToolButton
+      Left = 1
+      Top = 192
+      Action = actArrowDown
+    end
+    object ToolButton14: TToolButton
+      Left = 1
+      Top = 214
+      Width = 23
+      Caption = 'ToolButton14'
+      Style = tbsSeparator
+    end
+    object ToolButton15: TToolButton
+      Left = 1
+      Top = 222
+      Action = actPaint
+    end
+    object ToolButton16: TToolButton
+      Left = 1
+      Top = 244
+      Width = 23
+      Caption = 'ToolButton16'
+      Style = tbsSeparator
+    end
+    object ToolButton17: TToolButton
+      Left = 1
+      Top = 252
+      Action = actSymbolA
+    end
+    object ToolButton18: TToolButton
+      Left = 1
+      Top = 274
+      Action = actSymbolB
+    end
+    object ToolButton19: TToolButton
+      Left = 1
+      Top = 296
+      Action = actSymbolBullet
+    end
+    object ToolButton20: TToolButton
+      Left = 1
+      Top = 318
+      Action = actSymbolOther
+    end
+    object ToolButton21: TToolButton
+      Left = 1
+      Top = 340
+      Width = 23
+      Caption = 'ToolButton21'
+      Style = tbsSeparator
+    end
+    object ToolButton22: TToolButton
+      Left = 1
+      Top = 348
+      Action = actMousePos
+    end
+    object ToolButton23: TToolButton
+      Left = 1
+      Top = 370
+      Action = actMouseRotate
+    end
+  end
+  object actionImages: TImageList
+    Height = 18
+    Width = 18
+    Left = 164
+    Top = 176
+    Bitmap = {
+      4C7A100000001200000012000000230300000000000078DAED9CDB6EDB300C86
+      955D0D4530602FBCB9B9DE7DD11DEEF60EBD685AE405F64C6E9C851ECD911245
+      313E148C20248EE52F3F75A04E8EFBD4A7D3E9D4E3D8A7FA305C97529A440B6B
+      E4F4FDDF78E568A2C8417AA8462E6296A46778FFFDE79B18B31CA2C7CC093D8B
+      E8F1A83F35516A5FB511B3204E6C54BE67DB9A36E63846BB28CB92CFDE81E675
+      CD3B972FB53A876B3C38A127F4849E79F460BF51EB33B09E35068B5FF6EA2772
+      7EB58563E9D339DB5AFA205CEE2D7520F4849E35EAB1FAC25B8DEB3C82D51ECE
+      1F5AE7EAD48F7970424FE8093DB7D563F1196BF68556BBB8716FF4A7A127F4F0
+      7AAC519AE7AE61FEE535AF8CB09CDFF7EC3B5A192D1C5AA7DFC3FA86975D9EF9
+      EC59EE9EF530C2B2EB8A1E75C9B3FD5BD7826BF6BA6A1916D664BFB0714EE1D5
+      FE83131C8F361F7E3FC68E9E63911CAB66BEA51D8B6D69FED57A7FD82DFC488C
+      1D637C18FD6970D6CEF118877BCF0B5A19DEF70FC7F870FE7B78AC8CAEEBFAEE
+      5C469778FE6C6D131D6A075616E6A4ABA664600107EA1EE8C12C0D6F323639BF
+      40DB24CF0AF59B32B05DA3B6028B328617DD572C699218385E180ADBC6BD880C
+      83DA575A87CC31B4756AAC37600762E0FA5E53F69461196BC61877DEF1A1A65D
+      CEC1D1B6EF3938D41EAB7D6BE2700C0B8BCBDFDAFCD630B4FD8564538D6DA574
+      5ADF3CD76FD568D296E9D67CA5C75EB9B61E7AD5E71A8E975D9E7E7D2BF9BC25
+      BFB1058E47FE7895574BFDF1F21B11623DC07B9CD9C27AAF1CCF798157B94788
+      1021C2D26B3DDAEF72633FED77B7E078D915C1A7CF2BDDDF0B6BBBA56758E034
+      78FD1818BB0F3B71CD595A97866B401B1CDFFF781D235D0307064D335C8B39F8
+      3CA4C1B6C2314D4739875F47560F1C737A0E3F8F130E970658DC67CE76C8C34F
+      9FF7A276C9E6BBFD47712F6438FFE5E1E93F263E96D6FFA57D029CBFF83829F7
+      89E8EFD3630D0797D3D7C7E77F9CEF2F93722BF930AC5F2A9FDCFF61B967F650
+      BBB834A5E73048FBD4B9FFE742D03ED7A5B467937BDECD1AF66CBCFA17BC27DB
+      EAAB979C53CEB5C66F593BCCE54FB6FF627E972B2F296D89A3FDCDD2398DFD35
+      E7AD6972FB44357B216BA947B89C243BB7B09EF0061FFA495B
+    }
+  end
+  object actions: TActionList
+    Images = actionImages
+    Left = 304
+    Top = 176
+    object actFieldSize: TAction
+      Caption = 'Размер поля...'
+      Hint = 'Размер поля...|Установить размеры поля'
+      ImageIndex = 0
+      OnExecute = actFieldSizeExecute
+      ShortCut = 32836
+    end
+    object actWallLeft: TAction
+      Caption = 'Стена слева'
+      Hint = 'Стена слева|Установить/убрать стену слева от текущей клетки'
+      ImageIndex = 1
+      OnExecute = actWallLeftExecute
+      ShortCut = 8229
+    end
+    object actWallUp: TAction
+      Caption = 'Стена сверху'
+      Hint = 'Стена сверху|Установить/убрать стену сверху от текущей клетки'
+      ImageIndex = 2
+      OnExecute = actWallUpExecute
+      ShortCut = 8230
+    end
+    object actWallRight: TAction
+      Caption = 'Стена справа'
+      Hint = 'Стена справа|Установить/убрать стену справа от текущей клетки'
+      ImageIndex = 3
+      OnExecute = actWallRightExecute
+      ShortCut = 8231
+    end
+    object actWallDown: TAction
+      Caption = 'Стена снизу'
+      Hint = 'Стена снизу|Установить/убрать стену снизу от текущей клетки'
+      ImageIndex = 4
+      OnExecute = actWallDownExecute
+      ShortCut = 8232
+    end
+    object actArrowLeft: TAction
+      Caption = 'Стрелка влево'
+      Hint = 'Стрелка влево|Установить/убрать стрелку влево в текущей клетке'
+      ImageIndex = 5
+      OnExecute = actArrowLeftExecute
+      ShortCut = 16421
+    end
+    object actArrowUp: TAction
+      Caption = 'Стрелка вверх'
+      Hint = 'Стрелка вверх|Установить/убрать стрелку вверх в текущей клетке'
+      ImageIndex = 6
+      OnExecute = actArrowUpExecute
+      ShortCut = 16422
+    end
+    object actArrowRight: TAction
+      Caption = 'Стрелка вправо'
+      Hint = 'Стрелка вправо|Установить/убрать стрелку вправо в текущей клетке'
+      ImageIndex = 7
+      OnExecute = actArrowRightExecute
+      ShortCut = 16423
+    end
+    object actArrowDown: TAction
+      Caption = 'Стрелка вниз'
+      Hint = 'Стрелка вниз|Установить/убрать стрелку вниз в текущей клетке'
+      ImageIndex = 8
+      OnExecute = actArrowDownExecute
+      ShortCut = 16424
+    end
+    object actPaint: TAction
+      Caption = 'Закрасить/очистить'
+      Hint = 'Закрасить/очистить|Закрасить/очистить текущую клетку'
+      ImageIndex = 9
+      OnExecute = actPaintExecute
+      ShortCut = 32
+    end
+    object actSymbolA: TAction
+      Caption = 'Буква "А"'
+      Hint = 'Буква "А"|Обозначить текущую клетку буквой "А"'
+      ImageIndex = 10
+      OnExecute = actSymbolAExecute
+    end
+    object actSymbolB: TAction
+      Caption = 'Буква "Б"'
+      Hint = 'Буква "Б"|Обозначить текущую клетку буквой "Б"'
+      ImageIndex = 11
+      OnExecute = actSymbolBExecute
+    end
+    object actSymbolBullet: TAction
+      Caption = 'Символ "•"'
+      Hint = 'Символ "•"|Обозначить текущую клетку символом "•"'
+      ImageIndex = 12
+      OnExecute = actSymbolBulletExecute
+    end
+    object actSymbolOther: TAction
+      Caption = 'Другой символ...'
+      Hint = 'Другой символ...|Обозначить текущую клетку другим символом'
+      ImageIndex = 13
+      OnExecute = actSymbolOtherExecute
+      ShortCut = 32851
+    end
+    object actMousePos: TAction
+      Caption = 'Установить мышку'
+      Hint = 'Установить мышку|Установить начальное положение мышки в текущую клетку'
+      ImageIndex = 14
+      OnExecute = actMousePosExecute
+      ShortCut = 13
+    end
+    object actMouseRotate: TAction
+      Caption = 'Повернуть мышку'
+      Hint = 'Повернуть мышку|Повернуть мышку по часовой стрелке'
+      ImageIndex = 15
+      OnExecute = actMouseRotateExecute
+      ShortCut = 32850
+    end
+  end
+end

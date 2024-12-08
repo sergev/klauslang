@@ -1,10 +1,10 @@
 object MainForm: TMainForm
   Left = 516
-  Height = 603
+  Height = 674
   Top = 245
   Width = 1213
   Caption = 'Редактор практикума'
-  ClientHeight = 603
+  ClientHeight = 674
   ClientWidth = 1213
   Menu = mainMenu
   OnCloseQuery = FormCloseQuery
@@ -16,7 +16,7 @@ object MainForm: TMainForm
   object statusBar: TStatusBar
     Left = 4
     Height = 19
-    Top = 582
+    Top = 653
     Width = 1205
     BorderSpacing.Left = 2
     BorderSpacing.Right = 2
@@ -70,18 +70,18 @@ object MainForm: TMainForm
   end
   object pnTree: TPanel
     Left = 0
-    Height = 546
+    Height = 617
     Top = 34
     Width = 310
     Align = alLeft
     BevelOuter = bvNone
-    ClientHeight = 546
+    ClientHeight = 617
     ClientWidth = 310
     TabOrder = 1
     object bvTreeSizer: TBevel
       Cursor = crHSplit
       Left = 305
-      Height = 546
+      Height = 617
       Top = 0
       Width = 5
       Align = alRight
@@ -92,7 +92,7 @@ object MainForm: TMainForm
     end
     object tree: TTreeView
       Left = 4
-      Height = 542
+      Height = 613
       Top = 4
       Width = 301
       Align = alClient
@@ -109,7 +109,7 @@ object MainForm: TMainForm
   end
   object pnProps: TPanel
     Left = 310
-    Height = 546
+    Height = 617
     Top = 34
     Width = 903
     Align = alClient

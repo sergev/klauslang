@@ -9,10 +9,44 @@ uses
   ActnList, LMessages, KlausPract, KlausDoer;
 
 type
+  tDoerSettingFrame = class(tFrame)
+    private
+      fSetting: tKlausDoerSetting;
+      fOnChange: tNotifyEvent;
+    protected
+      procedure setSetting(val: tKlausDoerSetting); virtual;
+      procedure change; virtual;
+      function  handleShortCut(var msg: tLMKey): boolean; virtual;
+    public
+      property setting: tKlausDoerSetting read fSetting write setSetting;
+      property onChange: tNotifyEvent read fOnChange write fOnChange;
 
-  { tDoerFrame }
+      class function doerClass: tKlausDoerClass; virtual; abstract;
+      function  isShortCut(var msg: tLMKey): boolean;
+      procedure enableDisable; virtual;
+  end;
 
+type
+  tDoerSettingFrameClass = class of tDoerSettingFrame;
+
+type
   tDoerFrame = class(tFrame)
+    actFieldSize: TAction;
+    actArrowLeft: TAction;
+    actArrowUp: TAction;
+    actArrowRight: TAction;
+    actArrowDown: TAction;
+    actSymbolBullet: TAction;
+    actMouseRotate: TAction;
+    actMousePos: TAction;
+    actSymbolOther: TAction;
+    actSymbolB: TAction;
+    actSymbolA: TAction;
+    actPaint: TAction;
+    actWallDown: TAction;
+    actWallRight: TAction;
+    actWallUp: TAction;
+    actWallLeft: TAction;
     actSettingSave: tAction;
     actSettingLoad: tAction;
     actSettingMoveUp: tAction;
@@ -46,28 +80,28 @@ type
     tbLoad: TToolButton;
     tbSave: TToolButton;
     procedure actSettingAddExecute(sender: tObject);
-    procedure actSettingDeleteExecute(Sender: TObject);
-    procedure actSettingMoveDownExecute(Sender: TObject);
-    procedure actSettingMoveUpExecute(Sender: TObject);
-    procedure actSettingRenameExecute(Sender: TObject);
+    procedure actSettingDeleteExecute(sender: tObject);
+    procedure actSettingMoveDownExecute(sender: tObject);
+    procedure actSettingMoveUpExecute(sender: tObject);
+    procedure actSettingRenameExecute(sender: tObject);
     procedure bvListSizerMouseDown(sender: tObject; button: tMouseButton; shift: tShiftState; x, y: integer);
     procedure bvListSizerMouseMove(sender: tObject; shift: tShiftState; x, y: integer);
     procedure bvListSizerMouseUp(sender: tObject; button: tMouseButton; shift: tShiftState; x, y: integer);
     procedure cbDoerChange(sender: tObject);
-    procedure lbSettingDblClick(Sender: TObject);
-    procedure lbSettingSelectionChange(Sender: TObject; User: boolean);
+    procedure lbSettingDblClick(sender: TObject);
+    procedure lbSettingSelectionChange(sender: tObject; user: boolean);
   private
     fListSizing: boolean;
     fSizingPoint: tPoint;
     fTask: tKlausTask;
-    fView: tKlausDoerView;
+    fSettingFrame: tDoerSettingFrame;
 
     procedure setTask(val: tKlausTask);
     procedure refreshSettingList;
     procedure moveSettingListItem(delta: integer);
     function  selectedSetting: tKlausDoerSetting;
     procedure updateDoerView;
-    procedure doerViewChange(sender: tObject);
+    procedure settingFrameChange(sender: tObject);
   public
     property task: tKlausTask read fTask write setTask;
 
@@ -77,11 +111,14 @@ type
     function  isShortcut(var msg: tLMKey): boolean;
   end;
 
+  procedure registerDoerSettingFrame(doerClass: tKlausDoerClass; frameClass: tDoerSettingFrameClass);
+  function  getDoerSettingFrame(doerClass: tKlausDoerClass): tDoerSettingFrameClass;
+
 implementation
 
 {$R *.lfm}
 
-uses Math, FormMain;
+uses Math, U8, FormMain;
 
 resourcestring
   strNone = '(нет)';
@@ -92,6 +129,66 @@ resourcestring
   strDeleteSetting = 'Удалить обстановку "%s"?';
   strCaption = 'Название: ';
   strConfirmChangeDoer = 'При смене исполнителя все существующие обстановки будут удалены. Продолжить?';
+
+var
+  doerFrameClass: tStringList = nil;
+
+procedure registerDoerSettingFrame(doerClass: tKlausDoerClass; frameClass: tDoerSettingFrameClass);
+begin
+  if doerFrameClass = nil then begin
+    doerFrameClass := tStringList.create;
+    doerFrameClass.sorted := true;
+    doerFrameClass.duplicates := dupError;
+    doerFrameClass.caseSensitive := false;
+  end;
+  doerFrameClass.addObject(u8Lower(doerClass.className), tObject(frameClass));
+end;
+
+function getDoerSettingFrame(doerClass: tKlausDoerClass): tDoerSettingFrameClass;
+var
+  idx: integer;
+begin
+  if doerFrameClass = nil then exit(nil);
+  idx := doerFrameClass.indexOf(u8Lower(doerClass.className));
+  if idx < 0 then result := nil
+  else result := tDoerSettingFrameClass(doerFrameClass.objects[idx]);
+end;
+
+{ tDoerSettingFrame }
+
+procedure tDoerSettingFrame.setSetting(val: tKlausDoerSetting);
+begin
+  fSetting := val;
+end;
+
+procedure tDoerSettingFrame.change;
+begin
+  if assigned(fOnChange) then fOnChange(self);
+end;
+
+function tDoerSettingFrame.handleShortCut(var msg: tLMKey): boolean;
+begin
+  result := false;
+end;
+
+function tDoerSettingFrame.isShortCut(var msg: tLMKey): boolean;
+var
+  ctl: tWinControl;
+begin
+  result := false;
+  ctl := screen.activeControl;
+  while ctl <> nil do begin
+    if ctl = self then begin
+      result := handleShortcut(msg);
+      exit;
+    end;
+    ctl := ctl.parent;
+  end;
+end;
+
+procedure tDoerSettingFrame.enableDisable;
+begin
+end;
 
 { tDoerFrame }
 
@@ -107,13 +204,13 @@ procedure tDoerFrame.refreshWindow;
 begin
   try
     if task <> nil then begin
-      cbDoer.itemIndex := cbDoer.items.indexOfObject(tObject(task.doer));
+      with cbDoer do itemIndex := items.indexOfObject(tObject(task.doer));
       refreshSettingList;
       updateDoerView;
     end else begin
       cbDoer.itemIndex := 0;
       lbSetting.items.clear;
-      freeAndNil(fView);
+      freeAndNil(fSettingFrame);
     end;
   finally
     enableDisable;
@@ -142,12 +239,14 @@ begin
     actSettingMoveDown.enabled := sel <> nil;
     actSettingMoveUp.enabled := sel <> nil;
   end;
+  if fSettingFrame <> nil then fSettingFrame.enableDisable;
 end;
 
 function tDoerFrame.isShortcut(var msg: tLMKey): boolean;
 begin
   result := false;
-  if screen.activeControl = lbSetting then result := listActions.isShortCut(msg);
+  if screen.activeControl = lbSetting then result := listActions.isShortCut(msg)
+  else if fSettingFrame <> nil then result := fSettingFrame.isShortCut(msg);
 end;
 
 procedure tDoerFrame.bvListSizerMouseDown(sender: tObject; button: tMouseButton; shift: tShiftState; x, y: integer);
@@ -179,7 +278,7 @@ begin
   end;
 end;
 
-procedure tDoerFrame.actSettingDeleteExecute(Sender: TObject);
+procedure tDoerFrame.actSettingDeleteExecute(sender: tObject);
 var
   s: string;
   idx: integer;
@@ -192,6 +291,7 @@ begin
   with lbSetting do ds := items.objects[idx] as tKlausDoerSetting;
   s := format(strDeleteSetting, [ds.caption]);
   if messageDlg(s, mtConfirmation, [mbYes, mbCancel], 0) = mrYes then try
+    if fSettingFrame <> nil then fSettingFrame.setting := nil;
     task.doerSettings.remove(ds);
     refreshSettingList;
     mainForm.modified := true;
@@ -204,17 +304,17 @@ begin
   end;
 end;
 
-procedure tDoerFrame.actSettingMoveDownExecute(Sender: TObject);
+procedure tDoerFrame.actSettingMoveDownExecute(sender: tObject);
 begin
   moveSettingListItem(1);
 end;
 
-procedure tDoerFrame.actSettingMoveUpExecute(Sender: TObject);
+procedure tDoerFrame.actSettingMoveUpExecute(sender: tObject);
 begin
   moveSettingListItem(-1);
 end;
 
-procedure tDoerFrame.actSettingRenameExecute(Sender: TObject);
+procedure tDoerFrame.actSettingRenameExecute(sender: tObject);
 var
   s: string;
   ds: tKlausDoerSetting;
@@ -277,12 +377,12 @@ begin
   end;
 end;
 
-procedure tDoerFrame.lbSettingDblClick(Sender: TObject);
+procedure tDoerFrame.lbSettingDblClick(sender: tObject);
 begin
   actSettingRename.execute;
 end;
 
-procedure tDoerFrame.lbSettingSelectionChange(Sender: TObject; User: boolean);
+procedure tDoerFrame.lbSettingSelectionChange(sender: tObject; user: boolean);
 begin
   updateDoerView();
   enableDisable;
@@ -355,31 +455,35 @@ end;
 procedure tDoerFrame.updateDoerView;
 var
   cls: tKlausDoerClass;
+  fcls: tDoerSettingFrameClass;
   ds: tKlausDoerSetting;
 begin
   ds := selectedSetting;
   if ds = nil then
-    freeAndNil(fView)
+    freeAndNil(fSettingFrame)
   else begin
-    if fView = nil then cls := nil else cls := fView.doerClass;
+    if fSettingFrame = nil then cls := nil
+    else cls := fSettingFrame.doerClass;
     if cls <> task.doer then begin
-      freeAndNil(fView);
-      fView := task.doer.createView(self);
-      fView.parent := pnDoer;
-      fView.align := alClient;
-      fView.borderStyle := bsSingle;
-      fView.borderSpacing.around := 2;
-      fView.onChange := @doerViewChange;
+      freeAndNil(fSettingFrame);
+      fcls := getDoerSettingFrame(task.doer);
+      fSettingFrame := fcls.create(self);
+      fSettingFrame.parent := pnDoer;
+      fSettingFrame.align := alClient;
+      fSettingFrame.borderSpacing.around := 2;
+      fSettingFrame.onChange := @settingFrameChange;
     end;
-    fView.setting := ds;
+    fSettingFrame.setting := ds;
   end;
 end;
 
-procedure tDoerFrame.doerViewChange(sender: tObject);
+procedure tDoerFrame.settingFrameChange(sender: tObject);
 begin
   mainForm.modified := true;
   enableDisable;
 end;
 
+finalization
+  freeAndNil(doerFrameClass);
 end.
 

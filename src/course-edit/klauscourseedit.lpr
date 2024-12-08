@@ -11,7 +11,7 @@ uses
   {$ENDIF}
   Interfaces, SysUtils, Forms, FormMain, FrameProps,
   FrameMarkdown, FrameCourseProps, FrameCategoryProps, FrameTaskProps,
-  FrameDoer, KlausDoer_Mouse;
+  FrameDoer, KlausDoer_Mouse, FrameDoerSetting_Mouse;
 
 {$R *.res}
 
