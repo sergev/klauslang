@@ -66,6 +66,9 @@ type
   end;
 
 type
+
+  { tMainForm }
+
   tMainForm = class(tForm)
     actFileNew: TAction;
     actFileOpen: TAction;
@@ -403,7 +406,7 @@ type
     procedure addRecentFile(fn: string);
     procedure enableDisable;
   public
-    propStorage: TFixedPropStorage;
+    propStorage: tFixedPropStorage;
     property configFileName: string read getConfigFileName;
     property propsLoading: boolean read fPropsLoading;
     property frameCount: integer read getFrameCount;
@@ -449,6 +452,7 @@ type
     procedure addWatch(const txt: string; allowFunctions: boolean);
     procedure editWatch(idx: integer; const txt: string; allowFunctions: boolean);
     procedure deleteWatch(idx: integer);
+    procedure updateDebugViewTabOrder;
     procedure invalidateCourseInfo;
     procedure showCourseInfo(courseName, taskName: string);
     procedure showOptionsDlg(tabName: string = '');
@@ -872,6 +876,7 @@ begin
       pnDebugContent.setControlIndex(tDebugViewFrame(l[i]), i);
   finally
     freeAndNil(l);
+    updateDebugViewTabOrder;
   end;
 end;
 
@@ -1216,6 +1221,14 @@ begin
   setLength(fWatches, cnt-1);
   debugView[dvtWatches].updateContent;
   invalidateControlState;
+end;
+
+procedure tMainForm.updateDebugViewTabOrder;
+var
+  i: integer;
+begin
+  for i := pnDebugContent.controlList.count-1 downto 0 do
+    (pnDebugContent.controlList[i].control as tWinControl).tabOrder := i;
 end;
 
 procedure tMainForm.invalidateCourseInfo;

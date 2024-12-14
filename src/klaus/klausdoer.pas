@@ -91,14 +91,17 @@ type
 type
   tKlausDoerView = class(tCustomControl)
     private
+      fReadOnly: boolean;
       fOnChange: tNotifyEvent;
       fSetting: tKlausDoerSetting;
     protected
       procedure setSetting(aSetting: tKlausDoerSetting); virtual;
+      procedure setReadOnly(val: boolean); virtual;
       procedure change; virtual;
     public
       class function doerClass: tKlausDoerClass; virtual; abstract;
 
+      property readOnly: boolean read fReadOnly write setReadOnly;
       property setting: tKlausDoerSetting read fSetting write setSetting;
       property onChange: tNotifyEvent read fOnChange write fOnChange;
   end;
@@ -269,6 +272,11 @@ begin
     fSetting := aSetting;
     if handleAllocated then invalidate;
   end;
+end;
+
+procedure tKlausDoerView.setReadOnly(val: boolean);
+begin
+  fReadOnly := val;
 end;
 
 procedure tKlausDoerView.change;

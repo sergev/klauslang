@@ -207,19 +207,17 @@ function tDebugViewFrame.getPosition: integer;
 begin
   if mainForm.propsLoading then result := fPosition
   else if not (parent is tCustomFlowPanel) then result := -1
-  else result := (parent as tCustomFlowPanel).GetControlIndex(self);
+  else result := (parent as tCustomFlowPanel).getControlIndex(self);
 end;
 
 function tDebugViewFrame.getFrameStoredHeight: integer;
 begin
   result := height;
-  //mulDiv(height, designTimePPI, screenInfo.pixelsPerInchX);
 end;
 
 procedure tDebugViewFrame.setFrameStoredHeight(val: integer);
 begin
   fStoredHeight := val;
-  //height := val;
 end;
 
 procedure tDebugViewFrame.setPosition(val: integer);
@@ -281,6 +279,7 @@ begin
       p += 1;
     end;
   position := p;
+  mainForm.updateDebugViewTabOrder;
 end;
 
 procedure tDebugViewFrame.sbMoveUpClick(Sender: TObject);
@@ -296,6 +295,7 @@ begin
       p -= 1;
     end;
   position := p;
+  mainForm.updateDebugViewTabOrder;
 end;
 
 end.

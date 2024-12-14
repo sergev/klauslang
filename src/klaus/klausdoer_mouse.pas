@@ -180,7 +180,6 @@ type
 type
   tKlausMouseView = class(tKlausDoerView)
     private
-      fReadOnly: boolean;
       fOrigin: tPoint;
       fCellSize: integer;
       fFocusX: integer;
@@ -192,11 +191,11 @@ type
       procedure setColors(val: tKlausMouseViewColors);
       procedure setFocusX(val: integer);
       procedure setFocusY(val: integer);
-      procedure setReadOnly(val: boolean);
       procedure setSetting(val: tKlausMouseSetting);
     protected
       procedure paint; override;
       procedure setSetting(aSetting: tKlausDoerSetting); override;
+      procedure setReadOnly(val: boolean); override;
       procedure settingChange(sender: tObject); virtual;
       procedure doOnResize; override;
       procedure mouseDown(button: tMouseButton; shift: tShiftState; x, y: integer); override;
@@ -216,7 +215,6 @@ type
     published
       property color;
       property colors: tKlausMouseViewColors read fColors write setColors;
-      property readOnly: boolean read fReadOnly write setReadOnly;
       property tabStop default true;
   end;
 
@@ -512,7 +510,7 @@ end;
 
 function tKlausMouseSetting.getCells(x, y: integer): tKlausMouseCell;
 begin
-  if (x < 0) or (x >= width) or (y < 0) or (y >= width) then raise eKlausError.createFmt(ercInvalidCellIndex, zeroSrcPt, [x, y]);
+  if (x < 0) or (x >= width) or (y < 0) or (y >= height) then raise eKlausError.createFmt(ercInvalidCellIndex, zeroSrcPt, [x, y]);
   result := fCells[y, x];
 end;
 
@@ -889,8 +887,8 @@ end;
 
 procedure tKlausMouseView.setReadOnly(val: boolean);
 begin
-  if fReadOnly <> val then begin
-    fReadOnly := val;
+  if readOnly <> val then begin
+    inherited;
     invalidate;
   end;
 end;
@@ -974,6 +972,8 @@ begin
     line(fOrigin.x, fOrigin.y+h, fOrigin.x+w, fOrigin.y+h);
     line(fOrigin.x, fOrigin.y, fOrigin.x, fOrigin.y+h);
     line(fOrigin.x+w, fOrigin.y, fOrigin.x+w, fOrigin.y+h);
+    r := cellRect(setting.mouseX, setting.mouseY);
+    fImg.draw(canvas, r, setting.mouseDir, 0);
     if focused and not readOnly and (focusX >= 0) and (focusY >= 0) then begin
       r := cellRect(focusX, focusY);
       r.inflate(-fCellSize div 10, -fCellSize div 10);
@@ -984,8 +984,6 @@ begin
       brush.style := bsClear;
       rectangle(r);
     end;
-    r := cellRect(setting.mouseX, setting.mouseY);
-    fImg.draw(canvas, r, setting.mouseDir, 0);
   end;
 end;
 

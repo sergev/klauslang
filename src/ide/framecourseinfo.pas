@@ -6,7 +6,8 @@ interface
 
 uses
   Classes, SysUtils, Messages, Forms, Controls, ExtCtrls, Buttons, StdCtrls,
-  ActnList, ComCtrls, IpHtml, IpFileBroker, KlausGlobals, KlausPract;
+  ActnList, ComCtrls, IpHtml, IpFileBroker, KlausGlobals, KlausPract, KlausDoer,
+  FrameTaskDoerInfo;
 
 type
   tCourseInfoFrame = class(tFrame)
@@ -55,11 +56,13 @@ type
     fTreePanelSizing: boolean;
     fDoerPanelSizing: boolean;
     fSizingPoint: tPoint;
+    fDoerFrame: tTaskDoerInfoFrame;
 
     function  getSelectedTask: tKlausTask;
     procedure updateTree(course: tKlausCourse);
     procedure updateSelection;
     procedure updateActiveTaskInfo;
+    procedure updateTaskDoerSettings;
   public
     property activeCourse: string read fActiveCourse;
     property activeTask: string read fActiveTask;
@@ -262,7 +265,29 @@ begin
       htmlInfo.setHtml(nil);
     end;
   end;
+  updateTaskDoerSettings;
   actSolve.enabled := selectedTask <> nil;
+end;
+
+procedure tCourseInfoFrame.updateTaskDoerSettings;
+var
+  task: tKlausTask;
+  doer: tKlausDoerClass;
+begin
+  task := selectedTask;
+  if task = nil then doer := nil else doer := task.doer;
+  if doer = nil then begin
+    pnDoer.visible := false;
+    freeAndNil(fDoerFrame);
+  end else begin
+    pnDoer.visible := true;
+    if fDoerFrame = nil then begin
+      fDoerFrame := tTaskDoerInfoFrame.create(self);
+      fDoerFrame.parent := pnDoer;
+      fDoerFrame.align := alClient;
+    end;
+    fDoerFrame.settings := task.doerSettings;
+  end;
 end;
 
 procedure tCourseInfoFrame.bvTreeSizerMouseDown(sender: tObject; button: tMouseButton; shift: tShiftState; x, y: integer);
