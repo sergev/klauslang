@@ -28,7 +28,7 @@ uses
   Classes, SysUtils, Messages, LMessages, Forms, Controls, Graphics, Dialogs, StdCtrls,
   ExtCtrls, Menus, ActnList, ComCtrls, IniPropStorage, LazUTF8, KlausEdit,
   KlausGlobals, FrameEdit, FrameDebugView, KlausSrc, KlausErr, KlausLex, FormScene,
-  Types, KlausPract, FrameCourseInfo;
+  Types, KlausPract, FrameCourseInfo, KlausDoer;
 
 const
   configName = 'klaus-ide.ini';
@@ -66,9 +66,6 @@ type
   end;
 
 type
-
-  { tMainForm }
-
   tMainForm = class(tForm)
     actFileNew: TAction;
     actFileOpen: TAction;
@@ -373,6 +370,8 @@ type
     function  getFormStoredHeight: integer;
     function  getFormStoredWidth: integer;
     function  getIsRunning: boolean;
+    function  getSelectedSetting: tKlausDoerSetting;
+    function  getSelectedTask: tKlausTask;
     function  getWatchCount: integer;
     function  getWatches(idx: integer): tWatchInfo;
     procedure setDebugViews(val: tDebugViewTypes);
@@ -426,6 +425,8 @@ type
     property watchCount: integer read getWatchCount;
     property watches[idx: integer]: tWatchInfo read getWatches;
     property courseFrame: tCourseInfoFrame read fCourseFrame;
+    property selectedTask: tKlausTask read getSelectedTask;
+    property selectedSetting: tKlausDoerSetting read getSelectedSetting;
 
     constructor create(aOwner: tComponent); override;
     destructor  destroy; override;
@@ -454,7 +455,7 @@ type
     procedure deleteWatch(idx: integer);
     procedure updateDebugViewTabOrder;
     procedure invalidateCourseInfo;
-    procedure showCourseInfo(courseName, taskName: string);
+    procedure showCourseInfo(courseName, taskName: string; focus: boolean = false);
     procedure showOptionsDlg(tabName: string = '');
     procedure loadPracticum;
     procedure openTaskSolution(task: tKlausTask);
@@ -1543,6 +1544,18 @@ begin
   if result then result := not scene.thread.finished;
 end;
 
+function tMainForm.getSelectedSetting: tKlausDoerSetting;
+begin
+  if not sbCourse.visible then exit(nil);
+  result := courseFrame.selectedSetting;
+end;
+
+function tMainForm.getSelectedTask: tKlausTask;
+begin
+  if not sbCourse.visible then exit(nil);
+  result := courseFrame.selectedTask;
+end;
+
 function tMainForm.getWatchCount: integer;
 begin
   result := length(fWatches);
@@ -1554,15 +1567,12 @@ begin
   result := fWatches[idx];
 end;
 
-procedure tMainForm.showCourseInfo(courseName, taskName: string);
-var
-  wasVisible: boolean;
+procedure tMainForm.showCourseInfo(courseName, taskName: string; focus: boolean = false);
 begin
   if courseName = '' then taskName := '';
   courseFrame.updateContent(courseName, taskName);
-  wasVisible := sbCourse.visible;
   sbCourse.visible := courseName <> '';
-  if not wasVisible and sbCourse.visible then courseFrame.tree.setFocus;
+  if sbCourse.visible and focus then courseFrame.tree.setFocus;
   invalidateControlState;
 end;
 
@@ -1897,7 +1907,7 @@ var
   course: tKlausCourse;
 begin
   course := (sender as tCourseMenuItem).course;
-  if course = nil then showCourseinfo('', '') else showCourseInfo(course.name, '');
+  if course = nil then showCourseinfo('', '') else showCourseInfo(course.name, '', true);
 end;
 
 procedure tMainForm.propStorageRestoreProperties(Sender: TObject);

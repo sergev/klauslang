@@ -15,6 +15,5 @@ object TaskDoerInfoFrame: TTaskDoerInfoFrame
     Width = 404
     Align = alClient
     TabOrder = 0
-    TabPosition = tpBottom
   end
 end

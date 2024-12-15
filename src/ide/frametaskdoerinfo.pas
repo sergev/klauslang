@@ -5,7 +5,15 @@ unit FrameTaskDoerInfo;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, ComCtrls, KlausDoer;
+  Classes, SysUtils, Forms, Controls, ComCtrls, Buttons, KlausDoer;
+
+type
+  tDoerSettingTabSheet = class(tTabSheet)
+    private
+      fSetting: tKlausDoerSetting;
+    public
+      property setting: tKlausDoerSetting read fSetting write fSetting;
+  end;
 
 type
   tTaskDoerInfoFrame = class(tFrame)
@@ -13,9 +21,11 @@ type
   private
     fSettings: tKlausDoerSettings;
 
+    function  getSelectedSetting: tKlausDoerSetting;
     procedure setSettings(val: tKlausDoerSettings);
   public
     property settings: tKlausDoerSettings read fSettings write setSettings;
+    property selectedSetting: tKlausDoerSetting read getSelectedSetting;
 
     procedure refreshWindow;
   end;
@@ -34,11 +44,17 @@ begin
   end;
 end;
 
+function tTaskDoerInfoFrame.getSelectedSetting: tKlausDoerSetting;
+begin
+  if pageControl.activePage = nil then exit(nil);
+  result := (pageControl.activePage as tDoerSettingTabSheet).setting;
+end;
+
 procedure tTaskDoerInfoFrame.refreshWindow;
 var
   s: string;
   i: integer;
-  page: tTabSheet;
+  page: tDoerSettingTabSheet;
   ds: tKlausDoerSetting;
   view: tKlausDoerView;
 begin
@@ -49,8 +65,10 @@ begin
     ds := settings[i];
     s := ds.caption;
     if s = '' then s := format('%.2d', [i]);
-    page := pageControl.addTabSheet;
+    page := tDoerSettingTabSheet.create(pageControl);
+    page.pageControl := pageControl;
     page.caption := s;
+    page.setting := ds;
     view := settings.doerClass.createView(self);
     view.readOnly := true;
     view.parent := page;

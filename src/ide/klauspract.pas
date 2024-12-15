@@ -143,6 +143,7 @@ resourcestring
   strNewTaskCaption = 'Новая задача %d';
   strTaskFileName = '%s.klaus';
   strDefaultSolutionTepmlate = 'задача %s практикум %s;'#10'начало'#10#10'окончание.';
+  strDoerSolutionTepmlate = 'задача %s практикум %s;'#10#10'используется %s;'#10#10'начало'#10#10'окончание.';
 
 { tKlausPracticum }
 
@@ -493,7 +494,8 @@ begin
       raise eKlausError.createFmt(ercCannotCreateDirectory, zeroSrcPt, [dir]);
   result := includeTrailingPathDelimiter(dir) + format(strTaskFileName, [name]);
   if not fileExists(result) then begin
-    src := format(strDefaultSolutionTepmlate, [name, owner.name]);
+    if doer <> nil then src := format(strDoerSolutionTepmlate, [name, owner.name, doer.stdUnitName])
+    else src := format(strDefaultSolutionTepmlate, [name, owner.name]);
     stream := tFileStream.create(result, fmCreate or fmShareDenyWrite);
     try stream.writeBuffer(pChar(src)^, length(src));
     finally freeAndNil(stream); end;

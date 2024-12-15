@@ -58,6 +58,7 @@ type
     fSizingPoint: tPoint;
     fDoerFrame: tTaskDoerInfoFrame;
 
+    function  getSelectedSetting: tKlausDoerSetting;
     function  getSelectedTask: tKlausTask;
     procedure updateTree(course: tKlausCourse);
     procedure updateSelection;
@@ -67,6 +68,7 @@ type
     property activeCourse: string read fActiveCourse;
     property activeTask: string read fActiveTask;
     property selectedTask: tKlausTask read getSelectedTask;
+    property selectedSetting: tKlausDoerSetting read getSelectedSetting;
 
     procedure updateContent(courseName, taskName: string; force: boolean = false);
   end;
@@ -207,6 +209,12 @@ begin
   if (activeCourse = '') or (activeTask = '') then exit;
   course := klausPracticum.course[activeCourse];
   if course <> nil then result := course.task[activeTask];
+end;
+
+function tCourseInfoFrame.getSelectedSetting: tKlausDoerSetting;
+begin
+  if fDoerFrame = nil then exit(nil);
+  result := fDoerFrame.selectedSetting;
 end;
 
 procedure tCourseInfoFrame.updateSelection;
