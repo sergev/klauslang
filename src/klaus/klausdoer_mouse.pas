@@ -1283,9 +1283,13 @@ begin
       r.left := r.left + 1;
       r.top := r.top + 1;
       if fCellSize < 20 then w := 1 else w := 2;
+      {$ifdef windows}
+      drawFocusRect(r);
+      {$else}
       with pen do begin color := self.colors.wallSet; width := w; style := psDot; end;
       brush.style := bsClear;
       rectangle(r);
+      {$endif}
     end;
   end;
 end;
@@ -1321,6 +1325,7 @@ var
   cell: tPoint;
   mouseHere: boolean;
 begin
+  if canFocus then setFocus;
   inherited mouseDown(button, shift, x, y);
   shift := shift * [ssShift, ssCtrl, ssAlt, ssDouble];
   if (setting <> nil) and not readOnly then begin
