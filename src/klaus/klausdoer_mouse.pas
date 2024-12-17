@@ -498,6 +498,7 @@ begin
     kmdRight: result := (horz >= owner.width-1) or (idx in fWalls);
     kmdDown: result := (vert >= owner.height-1) or (idx in fWalls);
   else
+    result := false;
     assert(false, 'Invalid mouse direction');
   end;
 end;
@@ -527,7 +528,7 @@ var
   w: tKlausMouseDirection;
 begin
   result := [];
-  for w := low(w) to high(w) do
+  for w := low(result) to high(result) do
     if wall[w] then include(result, w);
 end;
 
@@ -1065,7 +1066,8 @@ end;
 procedure tKlausMouseImageCache.draw(canvas: tCanvas; cell: tRect; dir: tKlausMouseDirection; idx: integer);
 var
   r: tRect;
-  x, y: integer;
+  x: integer = 0;
+  y: integer = 0;
 begin
   if dir < kmdLeft then dir := kmdLeft;
   rebuild(cell.width - (cell.width div 10)*2);

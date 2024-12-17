@@ -145,7 +145,7 @@ procedure klausEnumDoers(sl: tStrings);
 implementation
 
 uses
-  Math, KlausPract, KlausUnitSystem;
+  KlausPract, KlausUnitSystem;
 
 { Globals }
 

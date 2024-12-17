@@ -22,11 +22,10 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="2"/>
-      <MinorVersionNr Value="3"/>
-      <RevisionNr Value="3"/>
+      <MinorVersionNr Value="5"/>
       <BuildNr Value="1"/>
       <Language Value="0419"/>
-      <StringTable Comments="С благодарностью Дмитрию Тарасевичу и Анне Михеевой" CompanyName="Константин Захаров" FileDescription="Среда разработки Клаус" InternalName="klauside" LegalCopyright="Программа распространяется бесплатно по Стандартной общественной лицензии GNU GPLv3 или более поздней версии: https://www.gnu.org/licenses/gpl-3.0.html" LegalTrademarks="Репозиторий проекта: https://gitflic.ru/project/czaerlag/klauslang" OriginalFilename="klaus-ide" ProductName="Клаус" ProductVersion="2.3.3"/>
+      <StringTable Comments="С благодарностью Дмитрию Тарасевичу и Анне Михеевой" CompanyName="Константин Захаров" FileDescription="Среда разработки Клаус" InternalName="klauside" LegalCopyright="Программа распространяется бесплатно по Стандартной общественной лицензии GNU GPLv3 или более поздней версии: https://www.gnu.org/licenses/gpl-3.0.html" LegalTrademarks="Репозиторий проекта: https://gitflic.ru/project/czaerlag/klauslang" OriginalFilename="klaus-ide" ProductName="Клаус" ProductVersion="2.5.0b"/>
     </VersionInfo>
     <BuildModes>
       <Item Name="Default" Default="True"/>
@@ -87,7 +86,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="../lib;../klaus;../lib/edit;../lib/console"/>
+            <OtherUnitFiles Value="../lib;../lib/bgrabitmap;../klaus;../lib/edit;../lib/console"/>
             <UnitOutputDirectory Value="../../compiled/$NameOnly($(ProjFile))/$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -131,7 +130,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="../lib;../klaus;../lib/edit;../lib/console"/>
+            <OtherUnitFiles Value="../lib;../lib/bgrabitmap;../klaus;../lib/edit;../lib/console"/>
             <UnitOutputDirectory Value="../../compiled/$NameOnly($(ProjFile))/$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
