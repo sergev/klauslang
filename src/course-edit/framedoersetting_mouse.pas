@@ -308,7 +308,7 @@ end;
 constructor tDoerSettingFrame_Mouse.create(aOwner: tComponent);
 begin
   inherited create(aOwner);
-  fView := tKlausDoerMouse.createView(self) as tKlausMouseView;
+  fView := tKlausDoerMouse.createView(self, dvmEdit) as tKlausMouseView;
   fView.parent := self;
   fView.align := alClient;
   fView.borderStyle := bsSingle;

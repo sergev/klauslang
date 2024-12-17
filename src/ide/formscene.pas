@@ -86,6 +86,8 @@ type
     procedure outStreamWrite(const s: string);
     function  createGraphTab(const cap: string; link: tKlausCanvasLink): tObject;
     procedure destroyGraphTab(const win: tObject);
+    function  createDoerTab(const cap: string): tWinControl;
+    procedure destroyDoerTab(tab: tWinControl);
   public
     property source: tKlausSource read fSource;
     property fileName: string read fFileName;
@@ -115,7 +117,7 @@ implementation
 {$R *.lfm}
 
 uses
-  LCLIntf, LazFileUtils, FormMain;
+  LCLIntf, LazFileUtils, FormMain, KlausDoer;
 
 resourcestring
   strExecuting = 'Выполняется: %s';
@@ -132,6 +134,8 @@ begin
   inherited create(aOwner);
   tKlausPaintBoxLink.createWindowMethod := @createGraphTab;
   tKlausPaintBoxLink.destroyWindowMethod := @destroyGraphTab;
+  tKlausDoer.createWindowMethod := @createDoerTab;
+  tKlausDoer.destroyWindowMethod := @destroyDoerTab;
   fRunOptions := tKlausRunOptions.create;
   assert(mainForm.scene = nil, 'Cannot open multiple execution scenes');
   mainForm.scene := self;
@@ -176,6 +180,8 @@ begin
   freeAndNil(fRunOptions);
   tKlausPaintBoxLink.createWindowMethod := nil;
   tKlausPaintBoxLink.destroyWindowMethod := nil;
+  tKlausDoer.createWindowMethod := nil;
+  tKlausDoer.destroyWindowMethod := nil;
   inherited destroy;
 end;
 
@@ -427,6 +433,21 @@ begin
     w := w.parent;
   end;
   w.free;
+end;
+
+function tSceneForm.createDoerTab(const cap: string): tWinControl;
+var
+  ts: tTabSheet;
+begin
+  ts := pageControl.addTabSheet;
+  ts.caption := cap;
+  pageControl.activePage := ts;
+  result := ts;
+end;
+
+procedure tSceneForm.destroyDoerTab(tab: tWinControl);
+begin
+  freeAndNil(tab);
 end;
 
 function tSceneForm.getActionState: tSceneActionState;

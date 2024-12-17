@@ -145,6 +145,8 @@ const
   ercCannotCreateDirectory  = 95;
   ercInvalidCellIndex       = 96;
   ercDoerNotFound           = 97;
+  ercDuplicateDoer          = 98;
+  ercDoerWindowNotAvailable = 99;
 
 const
   // Классификация кодов eKlausError для трансляции в исключения языка
@@ -192,7 +194,7 @@ const
     [ercStackTooBig, ercInaccurateCleanup, ercInvalidKlausHandle, ercTooManyHandles,
     ercUnexpectedObjectClass, ercCallsNotAllowed, ercCanvasUnavailable, ercGraphicOperationNA,
     ercEventQueueEmpty, ercInvalidCourseName, ercDuplicateCourseName, ercInvalidTaskName,
-    ercDuplicateTaskName],
+    ercDuplicateTaskName, ercDuplicateDoer, ercDoerWindowNotAvailable],
 
     //ksxBadNumber
     [ercArgumentIsNaN, ercArgumentIsNotFinite],
@@ -329,6 +331,8 @@ resourcestring
   errCannotCreateDirectory = 'Ошибка при создании каталога: "%s".';
   errInvalidCellIndex = 'Неверные координаты ячейки: %d, %d.';
   errDoerNotFound = 'Модуль исполнителя не найден: "%s". Неверное имя исполнителя или устаревшая версия Клауса.';
+  errDuplicateDoer = 'Модуль "%s" конфликтует с модулем "%s". В программе допускается использовать не более одного исполнителя.';
+  errDoerWindowNotAvailable = 'Невозможно создать окно исполнителя.';
 
 { Globals }
 
@@ -463,6 +467,8 @@ begin
     ercCannotCreateDirectory: result := errCannotCreateDirectory;
     ercInvalidCellIndex: result := errInvalidCellIndex;
     ercDoerNotFound: result := errDoerNotFound;
+    ercDuplicateDoer: result := errDuplicateDoer;
+    ercDoerWindowNotAvailable: result := errDoerWindowNotAvailable;
   end;
 end;
 

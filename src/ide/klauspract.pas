@@ -34,6 +34,7 @@ type
       procedure clear;
       procedure beforeDestruction; override;
       procedure loadCourses(searchPath: string; out errMsg: string);
+      function  findTask(courseName, taskName: string): tKlausTask;
   end;
 
 type
@@ -97,8 +98,11 @@ type
       fCategory: string;
       fDescription: string;
       fDoerSettings: tKlausDoerSettings;
+      fActiveSetting: integer;
 
+      function  getActiveSetting: tKlausDoerSetting;
       function  getDoer: tKlausDoerClass;
+      procedure setActiveSetting(val: tKlausDoerSetting);
       procedure setCategory(val: string);
       procedure setDoer(val: tKlausDoerClass);
       procedure setName(val: string);
@@ -113,6 +117,7 @@ type
       property description: string read fDescription write fDescription;
       property doer: tKlausDoerClass read getDoer write setDoer;
       property doerSettings: tKlausDoerSettings read fDoerSettings;
+      property activeSetting: tKlausDoerSetting read getActiveSetting write setActiveSetting;
 
       constructor create(aOwner: tKlausCourse; data: tJsonData = nil);
       destructor  destroy; override;
@@ -134,7 +139,7 @@ var
 implementation
 
 uses
-  U8, KlausLex, KlausErr, KlausUtils, KlausUnitSystem;
+  Math, U8, KlausLex, KlausErr, KlausUtils, KlausUnitSystem;
 
 resourcestring
   strNewCourseName = 'НовыйКурс%d';
@@ -206,6 +211,15 @@ begin
   finally
     freeAndNil(fn);
   end;
+end;
+
+function tKlausPracticum.findTask(courseName, taskName: string): tKlausTask;
+var
+  c: tKlausCourse;
+begin
+  c := course[courseName];
+  if c = nil then result := nil
+  else result := c.task[taskName];
 end;
 
 
@@ -514,6 +528,21 @@ function tKlausTask.getDoer: tKlausDoerClass;
 begin
   if fDoerSettings = nil then result := nil
   else result := fDoerSettings.doerClass;
+end;
+
+function tKlausTask.getActiveSetting: tKlausDoerSetting;
+var
+  idx: integer;
+begin
+  if fDoerSettings = nil then exit(nil);
+  idx := min(fDoerSettings.count-1, max(0, fActiveSetting));
+  if idx < 0 then result := nil else result := fDoerSettings[idx];
+end;
+
+procedure tKlausTask.setActiveSetting(val: tKlausDoerSetting);
+begin
+  if fDoerSettings = nil then fActiveSetting := -1
+  else fActiveSetting := fDoerSettings.indexOf(val);
 end;
 
 procedure tKlausTask.setDoer(val: tKlausDoerClass);

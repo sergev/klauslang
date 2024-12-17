@@ -425,8 +425,8 @@ type
       fDoneBody: tKlausStmtCompound;
     protected
       function  getDisplayName: string; override;
-      procedure beforeInit(stack: tKlausStackFrame); virtual;
-      procedure afterDone(stack: tKlausStackFrame); virtual;
+      procedure beforeInit(frame: tKlausStackFrame); virtual;
+      procedure afterDone(frame: tKlausStackFrame); virtual;
     public
       property next: tKlausModule read fNext;
       property initBody: tKlausStmtCompound read fBody;
@@ -5987,11 +5987,11 @@ begin
   end;
 end;
 
-procedure tKlausUnit.beforeInit(stack: tKlausStackFrame);
+procedure tKlausUnit.beforeInit(frame: tKlausStackFrame);
 begin
 end;
 
-procedure tKlausUnit.afterDone(stack: tKlausStackFrame);
+procedure tKlausUnit.afterDone(frame: tKlausStackFrame);
 begin
 end;
 

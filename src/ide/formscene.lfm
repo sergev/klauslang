@@ -13,7 +13,7 @@ object SceneForm: TSceneForm
   OnCloseQuery = FormCloseQuery
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '3.2.0.0'
+  LCLVersion = '3.4.0.0'
   object PageControl: TPageControl
     Left = 0
     Height = 642

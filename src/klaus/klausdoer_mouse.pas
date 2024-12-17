@@ -119,7 +119,7 @@ type
     public
       class function stdUnitName: string; override;
       class function createSetting: tKlausDoerSetting; override;
-      class function createView(aOwner: tComponent): tKlausDoerView; override;
+      class function createView(aOwner: tComponent; mode: tKlausDoerViewMode): tKlausDoerView; override;
   end;
 
 type
@@ -176,6 +176,9 @@ type
       procedure rebuild(aSize: integer);
       procedure draw(canvas: tCanvas; cell: tRect; dir: tKlausMouseDirection; idx: integer);
   end;
+
+const
+  klausMouseMinCellSize = 5;
 
 type
   tKlausMouseView = class(tKlausDoerView)
@@ -599,7 +602,7 @@ begin
       height := self.height;
       for i := 0 to width - 1 do
         for j := 0 to height - 1 do
-          cells[j, i].assign(self.cells[j, i]);
+          cells[i, j].assign(self.cells[i, j]);
       mouseX := self.mouseX;
       mouseY := self.mouseY;
       mouseDir := self.mouseDir;
@@ -615,9 +618,14 @@ begin
   result := tKlausMouseSetting.create(10, 10);
 end;
 
-class function tKlausDoerMouse.createView(aOwner: tComponent): tKlausDoerView;
+class function tKlausDoerMouse.createView(aOwner: tComponent; mode: tKlausDoerViewMode): tKlausDoerView;
 begin
   result := tKlausMouseView.create(aOwner);
+  if mode <> dvmEdit then begin
+    result.readOnly := true;
+    result.enabled := false;
+    result.tabStop := false;
+  end;
 end;
 
 class function tKlausDoerMouse.stdUnitName: string;
@@ -827,6 +835,7 @@ end;
 constructor tKlausMouseView.create(aOwner: tComponent);
 begin
   inherited create(aOwner);
+  fCellSize := klausMouseMinCellSize;
   doubleBuffered := true;
   borderSpacing.innerBorder := 3;
   tabStop := true;
@@ -914,7 +923,7 @@ begin
     fillRect(r);
   end;
   if setting = nil then exit;
-  fCellSize := max(5, min(r.width div setting.width, r.height div setting.height));
+  fCellSize := max(klausMouseMinCellSize, min(r.width div setting.width, r.height div setting.height));
   w := fCellSize * setting.width;
   h := fCellSize * setting.height;
   fOrigin.x := r.left + (r.width - w) div 2;
@@ -1020,7 +1029,7 @@ var
 begin
   inherited mouseDown(button, shift, x, y);
   shift := shift * [ssShift, ssCtrl, ssAlt, ssDouble];
-  if not readOnly then begin
+  if (setting <> nil) and not readOnly then begin
     cell := cellFromPoint(x, y);
     focusX := cell.x;
     focusY := cell.y;
@@ -1056,7 +1065,7 @@ var
 begin
   x := focusX;
   y := focusY;
-  if readOnly or (x < 0) or (y < 0) then begin
+  if (setting = nil) or readOnly or (x < 0) or (y < 0) then begin
     inherited;
     exit;
   end;
@@ -1142,7 +1151,7 @@ procedure tKlausMouseView.UTF8KeyPress(var key: tUTF8Char);
 var
   x, y: integer;
 begin
-  if not readOnly then begin
+  if (setting <> nil) and not readOnly then begin
     x := focusX;
     y := focusY;
     if (x < 0) or (y < 0) then exit;

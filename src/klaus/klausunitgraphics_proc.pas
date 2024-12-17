@@ -28,7 +28,7 @@ uses
   KlausUnitSystem, KlausUnitGraphics;
 
 type
-  // функция грОткрытьОкно(вх заголовок: строка): объект;
+  // функция грОкно(вх заголовок: строка): объект;
   tKlausSysProc_GrWindowOpen = class(tKlausSysProcDecl)
     private
       fCaption: tKlausProcParam;
@@ -280,7 +280,7 @@ type
   end;
 
 type
-  // функция изоСоздать(вх источник: объект; вх г1, в1, г2, в2: целое): объект;
+  // функция грИзоСоздать(вх источник: объект; вх г1, в1, г2, в2: целое): объект;
   tKlausSysProc_GrImgCreate = class(tKlausSysProcDecl)
     private
       fSource: tKlausProcParam;

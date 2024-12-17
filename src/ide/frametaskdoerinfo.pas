@@ -5,7 +5,7 @@ unit FrameTaskDoerInfo;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, ComCtrls, Buttons, KlausDoer;
+  Classes, SysUtils, Forms, Controls, ComCtrls, Buttons, KlausDoer, KlausPract;
 
 type
   tDoerSettingTabSheet = class(tTabSheet)
@@ -18,13 +18,20 @@ type
 type
   tTaskDoerInfoFrame = class(tFrame)
     pageControl: tPageControl;
+    procedure pageControlChange(sender: tObject);
   private
-    fSettings: tKlausDoerSettings;
+    fTask: tKlausTask;
+    fRefreshCount: integer;
 
+    function  getRefreshing: boolean;
     function  getSelectedSetting: tKlausDoerSetting;
-    procedure setSettings(val: tKlausDoerSettings);
+    procedure setTask(val: tKlausTask);
+  protected
+    procedure beginRefresh;
+    procedure endRefresh;
   public
-    property settings: tKlausDoerSettings read fSettings write setSettings;
+    property task: tKlausTask read fTask write setTask;
+    property refreshing: boolean read getRefreshing;
     property selectedSetting: tKlausDoerSetting read getSelectedSetting;
 
     procedure refreshWindow;
@@ -36,11 +43,30 @@ implementation
 
 { tTaskDoerInfoFrame }
 
-procedure tTaskDoerInfoFrame.setSettings(val: tKlausDoerSettings);
+procedure tTaskDoerInfoFrame.setTask(val: tKlausTask);
 begin
-  if fSettings <> val then begin
-    fSettings := val;
+  if fTask <> val then begin
+    fTask := val;
     refreshWindow;
+  end;
+end;
+
+procedure tTaskDoerInfoFrame.beginRefresh;
+begin
+  inc(fRefreshCount);
+end;
+
+procedure tTaskDoerInfoFrame.endRefresh;
+begin
+  if fRefreshCount > 0 then dec(fRefreshCount);
+end;
+
+procedure tTaskDoerInfoFrame.pageControlChange(sender: tObject);
+begin
+  if not refreshing then begin
+    if task = nil then exit;
+    if task.doer = nil then exit;
+    task.activeSetting := selectedSetting;
   end;
 end;
 
@@ -50,31 +76,43 @@ begin
   result := (pageControl.activePage as tDoerSettingTabSheet).setting;
 end;
 
+function tTaskDoerInfoFrame.getRefreshing: boolean;
+begin
+  result := fRefreshCount > 0;
+end;
+
 procedure tTaskDoerInfoFrame.refreshWindow;
 var
   s: string;
   i: integer;
-  page: tDoerSettingTabSheet;
+  page, p: tDoerSettingTabSheet;
   ds: tKlausDoerSetting;
   view: tKlausDoerView;
 begin
-  with pageControl do
-    while pageCount > 0 do pages[pageCount-1].free;
-  if settings = nil then exit;
-  for i := 0 to settings.count-1 do begin
-    ds := settings[i];
-    s := ds.caption;
-    if s = '' then s := format('%.2d', [i]);
-    page := tDoerSettingTabSheet.create(pageControl);
-    page.pageControl := pageControl;
-    page.caption := s;
-    page.setting := ds;
-    view := settings.doerClass.createView(self);
-    view.readOnly := true;
-    view.parent := page;
-    view.align := alClient;
-    view.enabled := false;
-    view.setting := ds;
+  beginRefresh;
+  try
+    with pageControl do
+      while pageCount > 0 do pages[pageCount-1].free;
+    if task = nil then exit;
+    if (task.doer = nil) or (task.doerSettings = nil) then exit;
+    p := nil;
+    for i := 0 to task.doerSettings.count-1 do begin
+      ds := task.doerSettings[i];
+      s := ds.caption;
+      if s = '' then s := format('%.2d', [i]);
+      page := tDoerSettingTabSheet.create(pageControl);
+      page.pageControl := pageControl;
+      page.caption := s;
+      page.setting := ds;
+      view := task.doer.createView(self, dvmView);
+      view.parent := page;
+      view.align := alClient;
+      view.setting := ds;
+      if task.activeSetting = ds then p := page;
+    end;
+    if p <> nil then pageControl.activePage := p;
+  finally
+    endRefresh;
   end;
 end;
 

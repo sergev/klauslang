@@ -35,11 +35,33 @@ type
   tKlausDoerClass = class of tKlausDoer;
 
 type
+  tKlausDoerCreateTabMethod = function(const cap: string): tWinControl of object;
+  tKlausDoerDestroyTabMethod = procedure(ctl: tWinControl) of object;
+
+type
+  tKlausDoerViewMode = (dvmView, dvmEdit, dvmExecute);
+
+type
   tKlausDoer = class(tKlausStdUnit)
     private
+      fWindow: tWinControl;
+      fView: tKlausDoerView;
+      fSetting: tKlausDoerSetting;
+
+      procedure syncCreateWindow;
+      procedure syncDestroyWindow;
+    protected
+      procedure beforeInit(frame: tKlausStackFrame); override;
+      procedure afterDone(frame: tKlausStackFrame); override;
     public
+      class var createWindowMethod: tKlausDoerCreateTabMethod;
+      class var destroyWindowMethod: tKlausDoerDestroyTabMethod;
       class function createSetting: tKlausDoerSetting; virtual; abstract;
-      class function createView(aOwner: tComponent): tKlausDoerView; virtual; abstract;
+      class function createView(aOwner: tComponent; mode: tKlausDoerViewMode): tKlausDoerView; virtual; abstract;
+    public
+      property window: tWinControl read fWindow;
+      property view: tKlausDoerView read fView;
+      property setting: tKlausDoerSetting read fSetting;
   end;
 
 type
@@ -112,9 +134,12 @@ procedure klausEnumDoers(sl: tStrings);
 implementation
 
 uses
-  klausUnitSystem;
+  Math, KlausPract, KlausUnitSystem;
 
 { Globals }
+
+var
+  theDoer: tKlausDoer = nil;
 
 function klausFindDoer(const name: string): tKlausDoerClass;
 var
@@ -282,6 +307,56 @@ end;
 procedure tKlausDoerView.change;
 begin
   if assigned(fOnChange) then fOnChange(self);
+end;
+
+procedure tKlausDoer.syncCreateWindow;
+begin
+  fWindow := createWindowMethod(stdUnitName);
+  fView := createView(fWindow, dvmExecute);
+  fView.parent := fWindow;
+  fView.align := alClient;
+  fView.borderSpacing.around := 2;
+  fView.setting := fSetting;
+end;
+
+procedure tKlausDoer.syncDestroyWindow;
+begin
+  destroyWindowMethod(fWindow);
+end;
+
+procedure tKlausDoer.beforeInit(frame: tKlausStackFrame);
+var
+  tn, cn: string;
+  t: tKlausTask;
+  ds: tKlausDoerSetting;
+begin
+  if theDoer <> nil then raise eKlausError.createFmt(ercDuplicateDoer, zeroSrcPt, [self.stdUnitName, theDoer.stdUnitName]);
+  if not assigned(createWindowMethod) then raise eKlausError.create(ercDoerWindowNotAvailable, zeroSrcPt);
+  inherited beforeInit(frame);
+  theDoer := self;
+  fSetting := createSetting;
+  if (klausPracticum = nil)
+  or not (source.module is tKlausProgram) then
+    t := nil
+  else begin
+    tn := source.module.name;
+    cn := (source.module as tKlausProgram).courseName;
+    t := klausPracticum.findTask(cn, tn);
+  end;
+  if t <> nil then
+    if t.doer = self.classType then begin
+      ds := t.activeSetting;
+      if ds <> nil then fSetting.assign(ds);
+    end;
+  frame.owner.synchronize(@syncCreateWindow);
+end;
+
+procedure tKlausDoer.afterDone(frame: tKlausStackFrame);
+begin
+  frame.owner.synchronize(@syncDestroyWindow);
+  freeAndNil(fSetting);
+  theDoer := nil;
+  inherited afterDone(frame);
 end;
 
 end.

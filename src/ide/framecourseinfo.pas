@@ -294,7 +294,7 @@ begin
       fDoerFrame.parent := pnDoer;
       fDoerFrame.align := alClient;
     end;
-    fDoerFrame.settings := task.doerSettings;
+    fDoerFrame.task := task;
   end;
 end;
 
