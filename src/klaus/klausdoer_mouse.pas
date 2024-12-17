@@ -816,10 +816,8 @@ var
   md: tKlausMouseDirection;
 begin
   md := setting.turn(dir);
-  if setting.here.wall[md] then begin
-    errorMessage(frame, errMoveThroughWall);
+  if setting.here.wall[md] then
     raise eKlausError.createFmt(ercDoerFailure, at, [errMoveThroughWall]);
-  end;
   fIntParam[0] := integer(md);
   repeat
     frame.owner.synchronize(@syncNextStep);
