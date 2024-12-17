@@ -286,6 +286,7 @@ const
   klausProcName_MousePaint = 'закрасить';
   klausProcName_MouseClear = 'очистить';
   klausProcName_MouseWall = 'стена';
+  klausProcName_MouseOpening = 'проход';
   klausProcName_MousePainted = 'закрашено';
   klausProcName_MouseLabel = 'метка';
   klausProcName_MouseArrow = 'стрелка';
@@ -328,6 +329,15 @@ type
 
 type
   tKlausSysProc_MouseWall = class(tKlausSysProcDecl)
+    private
+      fDir: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  tKlausSysProc_MouseOpening = class(tKlausSysProcDecl)
     private
       fDir: tKlausProcParam;
     public
@@ -879,6 +889,7 @@ begin
   tKlausSysProc_MousePaint.create(self, zeroSrcPt);
   tKlausSysProc_MouseClear.create(self, zeroSrcPt);
   tKlausSysProc_MouseWall.create(self, zeroSrcPt);
+  tKlausSysProc_MouseOpening.create(self, zeroSrcPt);
   tKlausSysProc_MousePainted.create(self, zeroSrcPt);
   tKlausSysProc_MouseLabel.create(self, zeroSrcPt);
   tKlausSysProc_MouseArrow.create(self, zeroSrcPt);
@@ -1568,6 +1579,28 @@ begin
   with (owner as tKlausDoerMouse).setting do begin
     md := turn(dir);
     returnSimple(frame, klausSimpleB(here.wall[md]));
+  end;
+end;
+
+{ tKlausSysProc_MouseOpening }
+
+constructor tKlausSysProc_MouseOpening.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausProcName_MouseOpening, aPoint);
+  fDir := tKlausProcParam.create(self, 'где', aPoint, kpmInput, source.simpleTypes[kdtInteger]);
+  addParam(fDir);
+  declareRetValue(kdtBoolean);
+end;
+
+procedure tKlausSysProc_MouseOpening.run(frame: tKlausStackFrame; const at: tSrcPoint);
+var
+  dir: tKlausInteger;
+  md: tKlausMouseDirection;
+begin
+  dir := getSimpleInt(frame, fDir, at);
+  with (owner as tKlausDoerMouse).setting do begin
+    md := turn(dir);
+    returnSimple(frame, klausSimpleB(not here.wall[md]));
   end;
 end;
 
