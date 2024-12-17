@@ -125,7 +125,6 @@ type
       procedure createSystemVariables;
       procedure createSystemRoutines;
     protected
-      function  getHidden: boolean; override;
       procedure beforeInit(frame: tKlausStackFrame); override;
     public
       property fileName: string read fFileName write fFileName;
@@ -465,11 +464,6 @@ procedure tKlausUnitSystem.setArgs(val: tStrings);
 begin
   if val = nil then fArgs.clear
   else fArgs.assign(val);
-end;
-
-function tKlausUnitSystem.getHidden: boolean;
-begin
-  result := true;
 end;
 
 procedure tKlausUnitSystem.beforeInit(frame: tKlausStackFrame);

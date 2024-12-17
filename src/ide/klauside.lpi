@@ -396,6 +396,14 @@
         <ResourceBaseClass Value="Frame"/>
         <UnitName Value="FrameTaskDoerInfo"/>
       </Unit>
+      <Unit>
+        <Filename Value="framedoererror.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="DoerErrorFrame"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="FrameDoerError"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

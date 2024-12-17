@@ -88,8 +88,6 @@ type
       procedure createTypes;
       procedure createVariables;
       procedure createRoutines;
-    protected
-      function  getHidden: boolean; override;
     public
       constructor create(aSource: tKlausSource); override;
       class function stdUnitName: string; override;
@@ -178,11 +176,6 @@ end;
 class function tKlausUnitGraphics.stdUnitName: string;
 begin
   result := klausUnitName_Graphics;
-end;
-
-function tKlausUnitGraphics.getHidden: boolean;
-begin
-  result := true;
 end;
 
 initialization

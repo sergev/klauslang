@@ -25,7 +25,8 @@ interface
 
 uses
   Classes, SysUtils, KlausLex, KlausDef, KlausSyn, KlausErr, Controls, Forms,
-  Graphics, LCLType, KlausDoer, FpJson, BGRABitmap, BGRABitmapTypes, BGRASVG;
+  Graphics, LCLType, KlausDoer, FpJson, BGRABitmap, BGRABitmapTypes, BGRASVG,
+  KlausSrc, KlausUnitSystem;
 
 const
   klausDoerName_Mouse = 'Мышка';
@@ -93,6 +94,7 @@ type
       fMouseDir: tKlausMouseDirection;
 
       function  getCells(x, y: integer): tKlausMouseCell;
+      function  getHere: tKlausMouseCell;
       procedure setHeight(val: integer);
       procedure setMouseDir(val: tKlausMouseDirection);
       procedure setMouseX(val: integer);
@@ -104,6 +106,7 @@ type
       property width: integer read fWidth write setWidth;
       property height: integer read fHeight write setHeight;
       property cells[x, y: integer]: tKlausMouseCell read getCells; default;
+      property here: tKlausMouseCell read getHere;
       property mouseX: integer read fMouseX write setMouseX;
       property mouseY: integer read fMouseY write setMouseY;
       property mouseDir: tKlausMouseDirection read fMouseDir write setMouseDir;
@@ -112,14 +115,35 @@ type
       destructor  destroy; override;
       function  toJson: tJsonData; override;
       procedure fromJson(data: tJsonData); override;
+      function  turn(dir: integer): tKlausMouseDirection;
   end;
 
 type
   tKlausDoerMouse = class(tKlausDoer)
+    private
+      fIntParam: array[0..9] of integer;
+
+      procedure createVariables;
+      procedure createRoutines;
+      function  getSetting: tKlausMouseSetting;
+      function  getView: tKlausMouseView;
+    private
+      procedure syncNextStep;
+      procedure syncTurn;
+      procedure syncPaint;
     public
       class function stdUnitName: string; override;
       class function createSetting: tKlausDoerSetting; override;
       class function createView(aOwner: tComponent; mode: tKlausDoerViewMode): tKlausDoerView; override;
+    public
+      property view: tKlausMouseView read getView;
+      property setting: tKlausMouseSetting read getSetting;
+
+      constructor create(aSource: tKlausSource); override;
+      procedure runStep(frame: tKlausStackFrame; dir: tKlausInteger; at: tSrcPoint);
+      procedure runTurn(frame: tKlausStackFrame; dir: tKlausInteger; at: tSrcPoint);
+      procedure runPaint(frame: tKlausStackFrame; at: tSrcPoint);
+      procedure runClear(frame: tKlausStackFrame; at: tSrcPoint);
   end;
 
 type
@@ -187,6 +211,9 @@ type
       fCellSize: integer;
       fFocusX: integer;
       fFocusY: integer;
+      fShiftX: integer;
+      fShiftY: integer;
+      fPhase: integer;
       fColors: tKlausMouseViewColors;
       fImg: tKlausMouseImageCache;
 
@@ -213,12 +240,120 @@ type
 
       constructor create(aOwner: tComponent); override;
       destructor  destroy; override;
-      function cellRect(x, y: integer): tRect;
-      function cellFromPoint(x, y: integer): tPoint;
+      function  cellRect(x, y: integer): tRect;
+      function  cellFromPoint(x, y: integer): tPoint;
+      function  nextStep: boolean;
     published
       property color;
       property colors: tKlausMouseViewColors read fColors write setColors;
       property tabStop default true;
+  end;
+
+const
+  klausConstName_MouseHere = 'здесь';
+  klausConstName_MouseLeft = 'влево';
+  klausConstName_MouseLeft2 = 'слева';
+  klausConstName_MouseRight = 'вправо';
+  klausConstName_MouseRight2 = 'справа';
+  klausConstName_MouseFwd = 'вперед';
+  klausConstName_MouseFwd2 = 'вперёд';
+  klausConstName_MouseFwd3 = 'впереди';
+  klausConstName_MouseBack = 'назад';
+  klausConstName_MouseBack2 = 'сзади';
+  klausConstName_MouseWest = 'наЗапад';
+  klausConstName_MouseWest2 = 'наЗападе';
+  klausConstName_MouseNorth = 'наСевер';
+  klausConstName_MouseNorth2 = 'наСевере';
+  klausConstName_MouseEast = 'наВосток';
+  klausConstName_MouseEast2 = 'наВостоке';
+  klausConstName_MouseSouth = 'наЮг';
+  klausConstName_MouseSouth2 = 'наЮге';
+
+const
+  klausConst_MouseHere = 0;
+  klausConst_MouseLeft = 1;
+  klausConst_MouseRight = 2;
+  klausConst_MouseFwd = 3;
+  klausConst_MouseBack = 4;
+  klausConst_MouseWest = 5;
+  klausConst_MouseNorth = 6;
+  klausConst_MouseEast = 7;
+  klausConst_MouseSouth = 8;
+
+const
+  klausProcName_MouseStep = 'шаг';
+  klausProcName_MouseTurn = 'повернуть';
+  klausProcName_MousePaint = 'закрасить';
+  klausProcName_MouseClear = 'очистить';
+  klausProcName_MouseWall = 'стена';
+  klausProcName_MousePainted = 'закрашено';
+  klausProcName_MouseLabel = 'метка';
+  klausProcName_MouseArrow = 'стрелка';
+
+const
+  mouseDoerMovementDelay = 50;
+
+type
+  tKlausSysProc_MouseStep = class(tKlausSysProcDecl)
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      function  isCustomParamHandler: boolean; override;
+      procedure checkCallParamTypes(expr: array of tKlausExpression; at: tSrcPoint); override;
+      procedure getCustomParamModes(types: array of tKlausTypeDef; out modes: tKlausProcParamModes; const at: tSrcPoint); override;
+      procedure customRun(frame: tKlausStackFrame; values: array of tKlausVarValueAt; const at: tSrcPoint); override;
+  end;
+
+type
+  tKlausSysProc_MouseTurn = class(tKlausSysProcDecl)
+    private
+      fDir: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  tKlausSysProc_MousePaint = class(tKlausSysProcDecl)
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  tKlausSysProc_MouseClear = class(tKlausSysProcDecl)
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  tKlausSysProc_MouseWall = class(tKlausSysProcDecl)
+    private
+      fDir: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  tKlausSysProc_MousePainted = class(tKlausSysProcDecl)
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  tKlausSysProc_MouseLabel = class(tKlausSysProcDecl)
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  tKlausSysProc_MouseArrow = class(tKlausSysProcDecl)
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
   end;
 
 implementation
@@ -226,7 +361,7 @@ implementation
 {$R *.rc}
 
 uses
-  Types, Math, Clipbrd, U8, KlausUnitSystem;
+  Types, Math, Clipbrd, U8, Dialogs;
 
 const
   mouseImageInfo: record
@@ -243,6 +378,10 @@ const
 
 var
   mouseSVG: array of tBGRASVG = nil;
+
+resourcestring
+  strNumOrNum = '%d или %d';
+  errMoveThroughWall = 'Мышка не может двигаться сквозь стену.';
 
 { Globals }
 
@@ -440,7 +579,7 @@ var
   x, y: integer;
 begin
   inherited create;
-  fMouseDir := kmdLeft;
+  fMouseDir := kmdRight;
   fWidth := max(aWidth, 1);
   fHeight := max(aHeight, 1);
   setLength(fCells, fHeight, fWidth);
@@ -511,10 +650,34 @@ begin
   end;
 end;
 
+function tKlausMouseSetting.turn(dir: integer): tKlausMouseDirection;
+const
+  turnLeft: array[tKlausMouseDirection] of tKlausMouseDirection = (kmdDown, kmdDown, kmdLeft, kmdUp, kmdRight);
+  turnRight: array[tKlausMouseDirection] of tKlausMouseDirection = (kmdUp, kmdUp, kmdRight, kmdDown, kmdLeft);
+  turnBack: array[tKlausMouseDirection] of tKlausMouseDirection = (kmdRight, kmdRight, kmdDown, kmdLeft, kmdUp);
+begin
+  case dir of
+    klausConst_MouseLeft:  result := turnLeft[mouseDir];
+    klausConst_MouseRight: result := turnRight[mouseDir];
+    klausConst_MouseBack:  result := turnBack[mouseDir];
+    klausConst_MouseWest:  result := kmdLeft;
+    klausConst_MouseNorth: result := kmdUp;
+    klausConst_MouseEast:  result := kmdRight;
+    klausConst_MouseSouth: result := kmdDown;
+  else
+    result := mouseDir;
+  end;
+end;
+
 function tKlausMouseSetting.getCells(x, y: integer): tKlausMouseCell;
 begin
   if (x < 0) or (x >= width) or (y < 0) or (y >= height) then raise eKlausError.createFmt(ercInvalidCellIndex, zeroSrcPt, [x, y]);
   result := fCells[y, x];
+end;
+
+function tKlausMouseSetting.getHere: tKlausMouseCell;
+begin
+  result := cells[mouseX, mouseY];
 end;
 
 procedure tKlausMouseSetting.setHeight(val: integer);
@@ -565,6 +728,7 @@ end;
 
 procedure tKlausMouseSetting.setMouseDir(val: tKlausMouseDirection);
 begin
+  if val = kmdHere then val := fMouseDir;
   if fMouseDir <> val then begin
     updating;
     try fMouseDir := val;
@@ -626,6 +790,107 @@ begin
     result.enabled := false;
     result.tabStop := false;
   end;
+end;
+
+constructor tKlausDoerMouse.create(aSource: tKlausSource);
+begin
+  inherited create(aSource);
+  createVariables;
+  createRoutines;
+end;
+
+procedure tKlausDoerMouse.runStep(frame: tKlausStackFrame; dir: tKlausInteger; at: tSrcPoint);
+var
+  b: boolean;
+  md: tKlausMouseDirection;
+begin
+  md := setting.turn(dir);
+  if setting.here.wall[md] then begin
+    errorMessage(frame, errMoveThroughWall);
+    raise eKlausError.createFmt(ercDoerFailure, at, [errMoveThroughWall]);
+  end;
+  fIntParam[0] := integer(md);
+  repeat
+    frame.owner.synchronize(@syncNextStep);
+    b := boolean(fIntParam[1]);
+    sleep(mouseDoerMovementDelay);
+    if klausDebugThread <> nil then
+      klausDebugThread.checkTerminated;
+  until not b;
+end;
+
+procedure tKlausDoerMouse.syncNextStep;
+var
+  md: tKlausMouseDirection;
+begin
+  md := tKlausMouseDirection(fIntParam[0]);
+  with setting do begin
+    mouseDir := md;
+    fIntParam[1] := integer(view.nextStep);
+  end;
+end;
+
+procedure tKlausDoerMouse.runTurn(frame: tKlausStackFrame; dir: tKlausInteger; at: tSrcPoint);
+begin
+  fIntParam[0] := integer(setting.turn(dir));
+  frame.owner.synchronize(@syncTurn);
+end;
+
+procedure tKlausDoerMouse.syncTurn;
+begin
+  setting.mouseDir := tKlausMouseDirection(fIntParam[0]);
+end;
+
+procedure tKlausDoerMouse.runPaint(frame: tKlausStackFrame; at: tSrcPoint);
+begin
+  fIntParam[0] := integer(true);
+  frame.owner.synchronize(@syncPaint);
+end;
+
+procedure tKlausDoerMouse.runClear(frame: tKlausStackFrame; at: tSrcPoint);
+begin
+  fIntParam[0] := integer(false);
+  frame.owner.synchronize(@syncPaint);
+end;
+
+procedure tKlausDoerMouse.syncPaint;
+begin
+  setting.here.painted := boolean(fIntParam[0]);
+end;
+
+procedure tKlausDoerMouse.createVariables;
+begin
+  tKlausConstDecl.create(self, [klausConstName_MouseHere], zeroSrcPt, klausSimpleI(klausConst_MouseHere));
+  tKlausConstDecl.create(self, [klausConstName_MouseLeft, klausConstName_MouseLeft2], zeroSrcPt, klausSimpleI(klausConst_MouseLeft));
+  tKlausConstDecl.create(self, [klausConstName_MouseRight, klausConstName_MouseRight2], zeroSrcPt, klausSimpleI(klausConst_MouseRight));
+  tKlausConstDecl.create(self, [klausConstName_MouseFwd, klausConstName_MouseFwd2, klausConstName_MouseFwd3], zeroSrcPt, klausSimpleI(klausConst_MouseFwd));
+  tKlausConstDecl.create(self, [klausConstName_MouseBack, klausConstName_MouseBack2], zeroSrcPt, klausSimpleI(klausConst_MouseBack));
+  tKlausConstDecl.create(self, [klausConstName_MouseWest, klausConstName_MouseWest2], zeroSrcPt, klausSimpleI(klausConst_MouseWest));
+  tKlausConstDecl.create(self, [klausConstName_MouseNorth, klausConstName_MouseNorth2], zeroSrcPt, klausSimpleI(klausConst_MouseNorth));
+  tKlausConstDecl.create(self, [klausConstName_MouseEast, klausConstName_MouseEast2], zeroSrcPt, klausSimpleI(klausConst_MouseEast));
+  tKlausConstDecl.create(self, [klausConstName_MouseSouth, klausConstName_MouseSouth2], zeroSrcPt, klausSimpleI(klausConst_MouseSouth));
+end;
+
+procedure tKlausDoerMouse.createRoutines;
+begin
+  tKlausSysProc_MouseStep.create(self, zeroSrcPt);
+  tKlausSysProc_MouseTurn.create(self, zeroSrcPt);
+  tKlausSysProc_MousePaint.create(self, zeroSrcPt);
+  tKlausSysProc_MouseClear.create(self, zeroSrcPt);
+  tKlausSysProc_MouseWall.create(self, zeroSrcPt);
+  tKlausSysProc_MousePainted.create(self, zeroSrcPt);
+  tKlausSysProc_MouseLabel.create(self, zeroSrcPt);
+  tKlausSysProc_MouseArrow.create(self, zeroSrcPt);
+end;
+
+function tKlausDoerMouse.getSetting: tKlausMouseSetting;
+begin
+  result := inherited setting as tklausMouseSetting;
+end;
+
+function tKlausDoerMouse.getView: tKlausMouseView;
+begin
+  result := inherited view as tKlausMouseView;
 end;
 
 class function tKlausDoerMouse.stdUnitName: string;
@@ -864,6 +1129,34 @@ begin
   result.y := (y-fOrigin.y) div fCellSize;
 end;
 
+function tKlausMouseView.nextStep: boolean;
+const
+  dx: array[tKlausMouseDirection] of integer = (0, -1, 0, 1, 0);
+  dy: array[tKlausMouseDirection] of integer = (0, 0, -1, 0, 1);
+var
+  shx, shy: integer;
+begin
+  if setting = nil then exit(false);
+  shx := dx[setting.mouseDir] * (fCellSize div mouseImageInfo.count);
+  shy := dy[setting.mouseDir] * (fCellSize div mouseImageInfo.count);
+  inc(fPhase);
+  if fPhase < mouseImageInfo.count then begin
+    fShiftX += shx;
+    fShiftY += shy;
+    result := true;
+  end else begin
+    fPhase := 0;
+    fShiftX := 0;
+    fShiftY := 0;
+    with setting do begin
+      mouseX := mouseX + dx[mouseDir];
+      mouseY := mouseY + dy[mouseDir];
+    end;
+    result := false;
+  end;
+  invalidate;
+end;
+
 procedure tKlausMouseView.setColors(val: tKlausMouseViewColors);
 begin
   fColors.assign(val);
@@ -982,7 +1275,8 @@ begin
     line(fOrigin.x, fOrigin.y, fOrigin.x, fOrigin.y+h);
     line(fOrigin.x+w, fOrigin.y, fOrigin.x+w, fOrigin.y+h);
     r := cellRect(setting.mouseX, setting.mouseY);
-    fImg.draw(canvas, r, setting.mouseDir, 0);
+    r.offset(fShiftX, fShiftY);
+    fImg.draw(canvas, r, setting.mouseDir, fPhase);
     if focused and not readOnly and (focusX >= 0) and (focusY >= 0) then begin
       r := cellRect(focusX, focusY);
       r.inflate(-fCellSize div 10, -fCellSize div 10);
@@ -1162,6 +1456,157 @@ end;
 class function tKlausMouseView.doerClass: tKlausDoerClass;
 begin
   result := tKlausDoerMouse;
+end;
+
+{ tKlausSysProc_MouseStep }
+
+constructor tKlausSysProc_MouseStep.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausProcName_MouseStep, aPoint);
+end;
+
+function tKlausSysProc_MouseStep.isCustomParamHandler: boolean;
+begin
+  result := true;
+end;
+
+procedure tKlausSysProc_MouseStep.checkCallParamTypes(expr: array of tKlausExpression; at: tSrcPoint);
+var
+  cnt: integer;
+begin
+  cnt := length(expr);
+  if (cnt <> 0) and (cnt <> 1) then
+    raise eKlausError.createFmt(ercWrongNumberOfParams, at, [cnt, format(strNumOrNum, [0, 1])]);
+  if cnt > 0 then checkCanAssign(kdtInteger, expr[0].resultTypeDef, expr[0].point);
+end;
+
+procedure tKlausSysProc_MouseStep.getCustomParamModes(types: array of tKlausTypeDef; out modes: tKlausProcParamModes; const at: tSrcPoint);
+var
+  i: integer;
+begin
+  modes := nil;
+  setLength(modes, length(types));
+  for i := 0 to length(modes)-1 do modes[i] := kpmInput;
+end;
+
+procedure tKlausSysProc_MouseStep.customRun(frame: tKlausStackFrame; values: array of tKlausVarValueAt; const at: tSrcPoint);
+var
+  cnt: integer;
+  dir: tKlausInteger;
+begin
+  cnt := length(values);
+  if (cnt <> 0) and (cnt <> 1) then
+    raise eKlausError.createFmt(ercWrongNumberOfParams, at, [cnt, format(strNumOrNum, [0, 1])]);
+  if cnt > 0 then dir := getSimpleInt(values[0]) else dir := klausConst_MouseHere;
+  (owner as tKlausDoerMouse).runStep(frame, dir, at);
+end;
+
+{ tKlausSysProc_MouseTurn }
+
+constructor tKlausSysProc_MouseTurn.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausProcName_MouseTurn, aPoint);
+  fDir := tKlausProcParam.create(self, 'куда', aPoint, kpmInput, source.simpleTypes[kdtInteger]);
+  addParam(fDir);
+end;
+
+procedure tKlausSysProc_MouseTurn.run(frame: tKlausStackFrame; const at: tSrcPoint);
+var
+  dir: tKlausInteger;
+begin
+  dir := getSimpleInt(frame, fDir, at);
+  (owner as tKlausDoerMouse).runTurn(frame, dir, at);
+end;
+
+{ tKlausSysProc_MousePaint }
+
+constructor tKlausSysProc_MousePaint.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausProcName_MousePaint, aPoint);
+end;
+
+procedure tKlausSysProc_MousePaint.run(frame: tKlausStackFrame; const at: tSrcPoint);
+begin
+  (owner as tKlausDoerMouse).runPaint(frame, at);
+end;
+
+{ tKlausSysProc_MouseClear }
+
+constructor tKlausSysProc_MouseClear.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausProcName_MouseClear, aPoint);
+end;
+
+procedure tKlausSysProc_MouseClear.run(frame: tKlausStackFrame; const at: tSrcPoint);
+begin
+  (owner as tKlausDoerMouse).runClear(frame, at);
+end;
+
+{ tKlausSysProc_MouseWall }
+
+constructor tKlausSysProc_MouseWall.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausProcName_MouseWall, aPoint);
+  fDir := tKlausProcParam.create(self, 'где', aPoint, kpmInput, source.simpleTypes[kdtInteger]);
+  addParam(fDir);
+  declareRetValue(kdtBoolean);
+end;
+
+procedure tKlausSysProc_MouseWall.run(frame: tKlausStackFrame; const at: tSrcPoint);
+var
+  dir: tKlausInteger;
+  md: tKlausMouseDirection;
+begin
+  dir := getSimpleInt(frame, fDir, at);
+  with (owner as tKlausDoerMouse).setting do begin
+    md := turn(dir);
+    returnSimple(frame, klausSimpleB(here.wall[md]));
+  end;
+end;
+
+{ tKlausSysProc_MousePainted }
+
+constructor tKlausSysProc_MousePainted.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausProcName_MousePainted, aPoint);
+  declareRetValue(kdtBoolean);
+end;
+
+procedure tKlausSysProc_MousePainted.run(frame: tKlausStackFrame; const at: tSrcPoint);
+begin
+  returnSimple(frame, klausSimpleB((owner as tKlausDoerMouse).setting.here.painted));
+end;
+
+{ tKlausSysProc_MouseLabel }
+
+constructor tKlausSysProc_MouseLabel.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausProcName_MouseLabel, aPoint);
+  declareRetValue(kdtString);
+end;
+
+procedure tKlausSysProc_MouseLabel.run(frame: tKlausStackFrame; const at: tSrcPoint);
+begin
+  returnSimple(frame, klausSimpleS((owner as tKlausDoerMouse).setting.here.text));
+end;
+
+{ tKlausSysProc_MouseArrow }
+
+constructor tKlausSysProc_MouseArrow.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausProcName_MouseArrow, aPoint);
+  declareRetValue(kdtInteger);
+end;
+
+procedure tKlausSysProc_MouseArrow.run(frame: tKlausStackFrame; const at: tSrcPoint);
+const
+  dir: array[tKlausMouseDirection] of tKlausInteger = (
+    klausConst_MouseHere, klausConst_MouseWest, klausConst_MouseNorth, klausConst_MouseEast, klausConst_MouseSouth);
+var
+  md: tKlausMouseDirection;
+begin
+  md := (owner as tKlausDoerMouse).setting.here.arrow;
+  returnSimple(frame, klausSimpleI(dir[md]));
 end;
 
 var

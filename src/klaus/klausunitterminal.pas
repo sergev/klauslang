@@ -66,8 +66,6 @@ type
     private
       procedure createVariables;
       procedure createRoutines;
-    protected
-      function  getHidden: boolean; override;
     public
       constructor create(aSource: tKlausSource); override;
       class function stdUnitName: string; override;
@@ -125,11 +123,6 @@ end;
 class function tKlausUnitTerminal.stdUnitName: string;
 begin
   result := klausUnitName_Terminal;
-end;
-
-function tKlausUnitTerminal.getHidden: boolean;
-begin
-  result := true;
 end;
 
 initialization

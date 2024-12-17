@@ -443,6 +443,9 @@ procedure tMainForm.createCourse;
 begin
   if fCourse <> nil then freeAndNil(fCourse);
   fCourse := tKlausCourse.create(klausPracticum);
+  fCourseProps.data := nil;
+  fCategoryProps.data := nil;
+  fTaskProps.data := nil;
   refreshWindow;
 end;
 
@@ -506,6 +509,9 @@ end;
 procedure tMainForm.openCourse(fileName: string);
 begin
   if fCourse <> nil then freeAndNil(fCourse);
+  fCourseProps.data := nil;
+  fCategoryProps.data := nil;
+  fTaskProps.data := nil;
   fCourse := tKlausCourse.create(klausPracticum, fileName);
   refreshWindow;
 end;

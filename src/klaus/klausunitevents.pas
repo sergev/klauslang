@@ -65,8 +65,6 @@ type
       procedure createTypes;
       procedure createVariables;
       procedure createRoutines;
-    protected
-      function  getHidden: boolean; override;
     public
       constructor create(aSource: tKlausSource); override;
       class function stdUnitName: string; override;
@@ -133,11 +131,6 @@ end;
 class function tKlausUnitEvents.stdUnitName: string;
 begin
   result := klausUnitName_Events;
-end;
-
-function tKlausUnitEvents.getHidden: boolean;
-begin
-  result := true;
 end;
 
 initialization

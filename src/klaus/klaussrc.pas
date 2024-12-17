@@ -440,6 +440,8 @@ type
 type
   // Встроенный модуль
   tKlausStdUnit = class(tKlausUnit)
+    protected
+      function  getHidden: boolean; override;
     public
       constructor create(aSource: tKlausSource); virtual;
       class function stdUnitName: string; virtual; abstract;
@@ -5996,6 +5998,11 @@ begin
 end;
 
 { tKlausStdUnit }
+
+function tKlausStdUnit.getHidden: boolean;
+begin
+  result := true;
+end;
 
 constructor tKlausStdUnit.create(aSource: tKlausSource);
 begin

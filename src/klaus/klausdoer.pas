@@ -25,7 +25,7 @@ interface
 
 uses
   Classes, SysUtils, KlausLex, KlausDef, KlausSyn, KlausErr, KlausSrc, Controls, Forms,
-  FpJson;
+  FpJson, FrameDoerError;
 
 type
   tKlausDoer = class;
@@ -46,10 +46,13 @@ type
     private
       fWindow: tWinControl;
       fView: tKlausDoerView;
+      fError: tDoerErrorFrame;
       fSetting: tKlausDoerSetting;
+      fStrParam: string;
 
       procedure syncCreateWindow;
       procedure syncDestroyWindow;
+      procedure syncErrorMessage;
     protected
       procedure beforeInit(frame: tKlausStackFrame); override;
       procedure afterDone(frame: tKlausStackFrame); override;
@@ -62,6 +65,10 @@ type
       property window: tWinControl read fWindow;
       property view: tKlausDoerView read fView;
       property setting: tKlausDoerSetting read fSetting;
+      property error: tDoerErrorFrame read fError;
+
+      procedure errorMessage(frame: tKlausStackFrame; msg: string);
+      procedure errorMessage(frame: tKlausStackFrame; msg: string; args: array of const);
   end;
 
 type
@@ -113,6 +120,7 @@ type
 type
   tKlausDoerView = class(tCustomControl)
     private
+      fOwnSetting: boolean;
       fReadOnly: boolean;
       fOnChange: tNotifyEvent;
       fSetting: tKlausDoerSetting;
@@ -125,7 +133,10 @@ type
 
       property readOnly: boolean read fReadOnly write setReadOnly;
       property setting: tKlausDoerSetting read fSetting write setSetting;
+      property ownSetting: boolean read fOwnSetting write fOwnSetting;
       property onChange: tNotifyEvent read fOnChange write fOnChange;
+
+      destructor destroy; override;
   end;
 
 function  klausFindDoer(const name: string): tKlausDoerClass;
@@ -294,6 +305,7 @@ end;
 procedure tKlausDoerView.setSetting(aSetting: tKlausDoerSetting);
 begin
   if fSetting <> aSetting then begin
+    if ownSetting then freeAndNil(fSetting);
     fSetting := aSetting;
     if handleAllocated then invalidate;
   end;
@@ -309,6 +321,12 @@ begin
   if assigned(fOnChange) then fOnChange(self);
 end;
 
+destructor tKlausDoerView.destroy;
+begin
+  if ownSetting then freeAndNil(fSetting);
+  inherited destroy;
+end;
+
 procedure tKlausDoer.syncCreateWindow;
 begin
   fWindow := createWindowMethod(stdUnitName);
@@ -317,11 +335,16 @@ begin
   fView.align := alClient;
   fView.borderSpacing.around := 2;
   fView.setting := fSetting;
+  fView.ownSetting := true;
+  fError := tDoerErrorFrame.create(fWindow);
+  fError.parent := fWindow;
+  fError.align := alBottom;
+  fError.visible := false;
 end;
 
 procedure tKlausDoer.syncDestroyWindow;
 begin
-  destroyWindowMethod(fWindow);
+  //destroyWindowMethod(fWindow);
 end;
 
 procedure tKlausDoer.beforeInit(frame: tKlausStackFrame);
@@ -354,9 +377,26 @@ end;
 procedure tKlausDoer.afterDone(frame: tKlausStackFrame);
 begin
   frame.owner.synchronize(@syncDestroyWindow);
-  freeAndNil(fSetting);
+  fSetting := nil;
   theDoer := nil;
   inherited afterDone(frame);
+end;
+
+procedure tKlausDoer.syncErrorMessage;
+begin
+  fError.message := fStrParam;
+end;
+
+procedure tKlausDoer.errorMessage(frame: tKlausStackFrame; msg: string);
+begin
+  fStrParam := msg;
+  frame.owner.synchronize(@syncErrorMessage);
+end;
+
+procedure tKlausDoer.errorMessage(frame: tKlausStackFrame; msg: string; args: array of const);
+begin
+  fStrParam := format(msg, args);
+  frame.owner.synchronize(@syncErrorMessage);
 end;
 
 end.
