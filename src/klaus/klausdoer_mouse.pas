@@ -771,6 +771,7 @@ procedure tKlausMouseSetting.assignTo(dest: tPersistent);
 var
   i, j: integer;
 begin
+  inherited;
   if dest is tKlausMouseSetting then
     with dest as tKlausMouseSetting do begin
       width := self.width;
@@ -781,9 +782,7 @@ begin
       mouseX := self.mouseX;
       mouseY := self.mouseY;
       mouseDir := self.mouseDir;
-    end
-  else
-    inherited assignTo(dest);
+    end;
 end;
 
 { tKlausDoerMouse }

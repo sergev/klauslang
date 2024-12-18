@@ -80,6 +80,7 @@ type
 
       procedure setCaption(val: string);
     protected
+      procedure assignTo(dest: tPersistent); override;
       procedure modified; virtual;
     public
       property caption: string read fCaption write setCaption;
@@ -99,6 +100,8 @@ type
 
       function getCount: integer;
       function getItems(idx: integer): tKlausDoerSetting;
+    protected
+      procedure assignTo(dest: tPersistent); override;
     public
       property doerClass: tKlausDoerClass read fDoerClass;
       property count: integer read getCount;
@@ -204,6 +207,14 @@ begin
   end;
 end;
 
+procedure tKlausDoerSetting.assignTo(dest: tPersistent);
+begin
+  if dest is tKlausDoerSetting then
+    (dest as tKlausDoerSetting).caption := self.caption
+  else
+    inherited assignTo(dest);
+end;
+
 procedure tKlausDoerSetting.modified;
 begin
   if assigned(fOnChange) then fOnChange(self);
@@ -241,6 +252,24 @@ end;
 function tKlausDoerSettings.getItems(idx: integer): tKlausDoerSetting;
 begin
   result := tKlausDoerSetting(fItems[idx]);
+end;
+
+procedure tKlausDoerSettings.assignTo(dest: tPersistent);
+var
+  i: integer;
+  s: tklausDoerSetting;
+begin
+  if dest is tKlausDoerSettings then
+    with dest as tKlausDoerSettings do begin
+      if doerClass <> self.doerClass then inherited;
+      clear;
+      for i := 0 to self.count-1 do begin
+        s := add;
+        s.assign(self[i]);
+      end;
+    end
+  else
+    inherited;
 end;
 
 function tKlausDoerSettings.add: tKlausDoerSetting;

@@ -10,12 +10,16 @@ uses
   FrameTaskProps, LMessages;
 
 type
+
+  { tMainForm }
+
   tMainForm = class(tForm)
     actFileOpen: tAction;
     actFileNew: tAction;
     actFileSave: tAction;
     actFileSaveAs: tAction;
     actFileExit: tAction;
+    actTaskCopy: TAction;
     actTaskDelete: tAction;
     actTaskAdd: tAction;
     actionImages: tImageList;
@@ -42,6 +46,7 @@ type
     tbFileNew: tToolButton;
     tbFileOpen: tToolButton;
     tbFileSave: tToolButton;
+    tbTaskCopy: TToolButton;
     ToolButton4: tToolButton;
     tbTaskAdd: tToolButton;
     tbTaskDelete: tToolButton;
@@ -52,6 +57,7 @@ type
     procedure actFileSaveAsExecute(Sender: TObject);
     procedure actFileSaveExecute(Sender: TObject);
     procedure actTaskAddExecute(sender: tObject);
+    procedure actTaskCopyExecute(sender: tObject);
     procedure actTaskDeleteExecute(sender: tObject);
     procedure applicationPropertiesHint(Sender: TObject);
     procedure bvTreeSizerMouseDown(sender: tObject; button: tMouseButton; shift: tShiftState; x, y: integer);
@@ -419,6 +425,7 @@ begin
   fTaskProps.enabled := obj is tKlausTask;
   fTaskProps.visible := obj is tKlausTask;
   actTaskDelete.enabled := obj is tKlausTask;
+  actTaskCopy.enabled := obj is tKlausTask;
 end;
 
 function tMainForm.promptToSave: boolean;
@@ -480,6 +487,23 @@ begin
   task.category := cat;
   refreshTree(task);
   modified := true;
+end;
+
+procedure tMainForm.actTaskCopyExecute(sender: tObject);
+var
+  n: tTreeNode;
+  t, nt: tKlausTask;
+begin
+  n := tree.selected;
+  if n <> nil then
+    if tObject(n.data) is tKlausTask then begin
+      t := tObject(n.data) as tKlausTask;
+      nt := tKlausTask.create(t.owner);
+      nt.name := t.owner.uniqueTaskName(t.name);
+      nt.copyFrom(t);
+      refreshTree(nt);
+      modified := true;
+    end;
 end;
 
 procedure tMainForm.actTaskDeleteExecute(sender: tObject);

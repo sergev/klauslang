@@ -84,6 +84,7 @@ type
 
       constructor create(aOwner: tKlausPracticum; aFileName: string = '');
       destructor  destroy; override;
+      function  uniqueTaskName(prefix: string): string;
       procedure beforeDestruction; override;
       procedure renameCategory(old, new: string);
       procedure saveToFile(newFileName: string = '');
@@ -121,6 +122,7 @@ type
 
       constructor create(aOwner: tKlausCourse; data: tJsonData = nil);
       destructor  destroy; override;
+      procedure copyFrom(src: tKlausTask);
       function  createSolution(dir: string): string;
   end;
 
@@ -144,7 +146,7 @@ uses
 resourcestring
   strNewCourseName = 'НовыйКурс%d';
   strNewCourseCaption = 'Новый курс %d';
-  strNewTaskName = 'НоваяЗадача%d';
+  strNewTaskName = 'НоваяЗадача_';
   strNewTaskCaption = 'Новая задача %d';
   strTaskFileName = '%s.klaus';
   strDefaultSolutionTepmlate = 'задача %s практикум %s;'#10'начало'#10#10'окончание.';
@@ -300,6 +302,18 @@ begin
   freeAndNil(fTasks);
   freeAndNil(fCategories);
   inherited destroy;
+end;
+
+function tKlausCourse.uniqueTaskName(prefix: string): string;
+var
+  idx: integer;
+begin
+  idx := 1;
+  result := prefix + intToStr(idx);
+  while task[result] <> nil do begin
+    idx += 1;
+    result := prefix + intToStr(idx);
+  end;
 end;
 
 procedure tKlausCourse.beforeDestruction;
@@ -480,12 +494,7 @@ var
 begin
   inherited create;
   fOwner := aOwner;
-  idx := 1;
-  fName := format(strNewTaskName, [idx]);
-  while fOwner.task[fName] <> nil do begin
-    idx += 1;
-    fName := format(strNewTaskName, [idx]);
-  end;
+  fName := fOwner.uniqueTaskName(strNewTaskName);
   fCaption := format(strNewTaskCaption, [idx]);
   if data <> nil then fromJson(data);
   fOwner.addTask(self);
@@ -495,6 +504,15 @@ destructor tKlausTask.destroy;
 begin
   fOwner.removeTask(self);
   inherited destroy;
+end;
+
+procedure tKlausTask.copyFrom(src: tKlausTask);
+begin
+  caption := src.caption;
+  category := src.category;
+  description := src.description;
+  doer := src.doer;
+  if doer <> nil then doerSettings.assign(src.doerSettings);
 end;
 
 function tKlausTask.createSolution(dir: string): string;
