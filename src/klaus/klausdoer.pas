@@ -407,11 +407,12 @@ procedure tKlausDoer.afterDone(frame: tKlausStackFrame);
 var
   s: string;
 begin
-  if exceptObject <> nil then begin
-    if not (exceptObject is exception) then s := exceptObject.className
-    else s := (exceptObject as exception).message;
-    errorMessage(frame, s);
-  end;
+  if exceptObject <> nil then
+    if not klausSilentException(exceptObject) then begin
+      if not (exceptObject is exception) then s := exceptObject.className
+      else s := (exceptObject as exception).message;
+      errorMessage(frame, s);
+    end;
   frame.owner.synchronize(@syncDestroyWindow);
   fSetting := nil;
   theDoer := nil;

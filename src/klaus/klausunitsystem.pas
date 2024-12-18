@@ -185,7 +185,6 @@ type
 function  klausStdError(frame: tKlausStackFrame; ksx: tKlausStdException; pt: tSrcPoint): eKlausLangException;
 function  klausStdError(frame: tKlausStackFrame; ksx: tKlausStdException; msg: string; pt: tSrcPoint): eKlausLangException;
 function  klausStdError(frame: tKlausStackFrame; ksx: tKlausStdexception; msg: string; const args: array of const; pt: tSrcPoint): eKlausLangException;
-procedure klausTranslateException(frame: tKlausStackFrame; const at: tSrcPoint);
 
 const
   klausConst_StdOut = 1;
@@ -267,49 +266,6 @@ begin
   if msg = '' then msg := d.name;
   msg := format(msg, args);
   result := eKlausLangException.create(msg, d, nil, pt);
-end;
-
-procedure klausTranslateException(frame: tKlausStackFrame; const at: tSrcPoint);
-var
-  obj: tObject;
-  pt: tSrcPoint;
-  ksx: tKlausStdException;
-begin
-  obj := exceptObject;
-  if obj = nil then exit;
-  if obj is eKlausLangException then begin
-    acquireExceptionObject;
-    raise obj at get_caller_addr(get_frame)
-  end else if obj is eKlausError then begin
-    pt := (obj as eKlausError).point;
-    if srcPointEmpty(pt) then pt := at;
-    for ksx := low(ksx) to high(ksx) do
-      if (obj as eKlausError).code in klausCodeToStdErr[ksx] then
-        raise klausStdError(frame, ksx, (obj as exception).message, pt) at get_caller_addr(get_frame);
-    raise klausStdError(frame, ksxInternalError, (obj as exception).message, pt) at get_caller_addr(get_frame);
-  end else if obj is eControlC then
-    raise eKlausHalt.create(-1) at get_caller_addr(get_frame)
-  else if (obj is eExternal)
-  or (obj is EHeapMemoryError)
-  or (obj is eOSError) then
-    raise klausStdError(frame, ksxRuntimeError, (obj as exception).message, at) at get_caller_addr(get_frame)
-  else if obj is eAssertionFailed then
-    raise klausStdError(frame, ksxInternalError, (obj as exception).message, at) at get_caller_addr(get_frame)
-  else if obj is eConvertError then
-    raise klausStdError(frame, ksxConvertError, (obj as exception).message, at) at get_caller_addr(get_frame)
-  else if (obj is eDirectoryNotFoundException)
-  or (obj is eFileNotFoundException)
-  or (obj is ePathNotFoundException)
-  or (obj is ePathTooLongException)
-  or (obj is eInOutError)
-  or (obj is eStreamError) then
-    raise klausStdError(frame, ksxInOutError, (obj as exception).message, at) at get_caller_addr(get_frame)
-  else if obj is eFormatError then
-    raise klausStdError(frame, ksxConvertError, (obj as exception).message, at) at get_caller_addr(get_frame)
-  else begin
-    acquireExceptionObject;
-    raise obj at get_caller_addr(get_frame);
-  end;
 end;
 
 procedure klausRegisterStdUnit(unitClass: tKlausStdUnitClass);

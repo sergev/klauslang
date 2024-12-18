@@ -147,7 +147,7 @@ resourcestring
   strNewCourseName = 'НовыйКурс%d';
   strNewCourseCaption = 'Новый курс %d';
   strNewTaskName = 'НоваяЗадача_';
-  strNewTaskCaption = 'Новая задача %d';
+  strNewTaskCaption = 'Новая задача';
   strTaskFileName = '%s.klaus';
   strDefaultSolutionTepmlate = 'задача %s практикум %s;'#10'начало'#10#10'окончание.';
   strDoerSolutionTepmlate = 'задача %s практикум %s;'#10#10'используется %s;'#10#10'начало'#10#10'окончание.';
@@ -489,13 +489,11 @@ end;
 { tKlausTask }
 
 constructor tKlausTask.create(aOwner: tKlausCourse; data: tJsonData = nil);
-var
-  idx: integer;
 begin
   inherited create;
   fOwner := aOwner;
   fName := fOwner.uniqueTaskName(strNewTaskName);
-  fCaption := format(strNewTaskCaption, [idx]);
+  fCaption := strNewTaskCaption;
   if data <> nil then fromJson(data);
   fOwner.addTask(self);
 end;
