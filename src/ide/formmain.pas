@@ -1755,7 +1755,9 @@ var
   frm: tDebugViewContent = nil;
   cfrm: tCourseInfoFrame = nil;
 begin
-  handled := false;
+  fActionLists.clear;
+  handled := actionList.isShortCut(msg);
+  if handled then exit;
   ctl := screen.activeControl;
   while ctl <> nil do begin
     if ctl is tDebugViewContent then begin

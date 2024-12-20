@@ -5,6 +5,7 @@ object DoerFrame: TDoerFrame
   Width = 906
   ClientHeight = 515
   ClientWidth = 906
+  LCLVersion = '3.4.0.0'
   TabOrder = 0
   DesignLeft = 600
   DesignTop = 238

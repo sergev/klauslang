@@ -9,15 +9,13 @@ uses
   KlausDoer_Mouse, FrameDoer, Dialogs;
 
 type
-
-  { tDoerSettingFrame_Mouse }
-
   tDoerSettingFrame_Mouse = class(tDoerSettingFrame)
     actArrowDown: tAction;
     actArrowLeft: tAction;
     actArrowRight: tAction;
     actArrowUp: tAction;
-    actFieldSize: tAction;
+    actSettingSize: tAction;
+    actSettingClear: TAction;
     actionImages: tImageList;
     actMousePos: tAction;
     actMouseRotate: tAction;
@@ -32,6 +30,7 @@ type
     actWallUp: tAction;
     actions: tActionList;
     toolBar: tToolBar;
+    ToolButton1: TToolButton;
     ToolButton10: tToolButton;
     ToolButton11: tToolButton;
     ToolButton12: tToolButton;
@@ -57,7 +56,8 @@ type
     procedure actArrowLeftExecute(sender: tObject);
     procedure actArrowRightExecute(sender: tObject);
     procedure actArrowUpExecute(sender: tObject);
-    procedure actFieldSizeExecute(sender: tObject);
+    procedure actSettingClearExecute(sender: tObject);
+    procedure actSettingSizeExecute(sender: tObject);
     procedure actMousePosExecute(sender: tObject);
     procedure actMouseRotateExecute(Sender: TObject);
     procedure actPaintExecute(sender: tObject);
@@ -97,10 +97,11 @@ resourcestring
   strHeight = 'Высота:';
   strCellSymbol = 'Символ в ячейке';
   strSymbol = 'Символ';
+  strConfirmSettingClear = 'Все стены, метки и стрелки будут удалены. Продолжить?';
 
 { tDoerSettingFrame_Mouse }
 
-procedure tDoerSettingFrame_Mouse.actFieldSizeExecute(sender: tObject);
+procedure tDoerSettingFrame_Mouse.actSettingSizeExecute(sender: tObject);
 var
   val: array of string = nil;
   w, h: integer;
@@ -240,6 +241,28 @@ begin
   with setting[p.x, p.y] do
     if arrow = kmdUp then arrow := kmdNone
     else arrow := kmdUp;
+end;
+
+procedure tDoerSettingFrame_Mouse.actSettingClearExecute(sender: tObject);
+var
+  i, j: integer;
+begin
+  if setting = nil then exit;
+  if messageDlg(strConfirmSettingClear, mtConfirmation, [mbYes, mbCancel], 0) <> mrYes then exit;
+  with setting do begin
+    updating;
+    try
+      for i := 0 to width-1 do
+        for j := 0 to height-1 do
+          with cells[i, j] do begin
+            walls := [];
+            text := '';
+            arrow := kmdNone;
+          end;
+    finally
+      updated;
+    end;
+  end;
 end;
 
 procedure tDoerSettingFrame_Mouse.actWallDownExecute(sender: tObject);

@@ -1092,6 +1092,7 @@ object MainForm: TMainForm
       Hint = 'Справочное руководство|Открыть справочное руководство по языку Клаус'
       ImageIndex = 33
       OnExecute = actHelpReferenceGuideExecute
+      ShortCut = 112
     end
   end
   object actionImages: TImageList

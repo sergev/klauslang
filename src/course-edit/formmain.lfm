@@ -254,6 +254,9 @@ object MainForm: TMainForm
       object miTaskAdd: TMenuItem
         Action = actTaskAdd
       end
+      object MenuItem3: TMenuItem
+        Action = actTaskCopy
+      end
       object miTaskDelete: TMenuItem
         Action = actTaskDelete
       end

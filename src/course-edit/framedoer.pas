@@ -243,10 +243,20 @@ begin
 end;
 
 function tDoerFrame.isShortcut(var msg: tLMKey): boolean;
+var
+  ctl: tWinControl;
 begin
   result := false;
-  if screen.activeControl = lbSetting then result := listActions.isShortCut(msg)
-  else if fSettingFrame <> nil then result := fSettingFrame.isShortCut(msg);
+  ctl := screen.activeControl;
+  if ctl = lbSetting then
+    result := listActions.isShortCut(msg)
+  else while ctl <> nil do begin
+    if ctl = fSettingFrame then begin
+      result := fSettingFrame.isShortCut(msg);
+      exit;
+    end;
+    ctl := ctl.parent;
+  end;
 end;
 
 procedure tDoerFrame.bvListSizerMouseDown(sender: tObject; button: tMouseButton; shift: tShiftState; x, y: integer);

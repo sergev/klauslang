@@ -250,7 +250,6 @@ type
   end;
 
 const
-  klausConstName_MouseHere = 'здесь';
   klausConstName_MouseLeft = 'влево';
   klausConstName_MouseLeft2 = 'слева';
   klausConstName_MouseRight = 'вправо';
@@ -868,7 +867,6 @@ end;
 
 procedure tKlausDoerMouse.createVariables;
 begin
-  tKlausConstDecl.create(self, [klausConstName_MouseHere], zeroSrcPt, klausSimpleI(klausConst_MouseHere));
   tKlausConstDecl.create(self, [klausConstName_MouseLeft, klausConstName_MouseLeft2], zeroSrcPt, klausSimpleI(klausConst_MouseLeft));
   tKlausConstDecl.create(self, [klausConstName_MouseRight, klausConstName_MouseRight2], zeroSrcPt, klausSimpleI(klausConst_MouseRight));
   tKlausConstDecl.create(self, [klausConstName_MouseFwd, klausConstName_MouseFwd2, klausConstName_MouseFwd3], zeroSrcPt, klausSimpleI(klausConst_MouseFwd));
@@ -1292,11 +1290,10 @@ begin
       r.inflate(-fCellSize div 10, -fCellSize div 10);
       r.left := r.left + 1;
       r.top := r.top + 1;
-      if fCellSize < 20 then w := 1 else w := 2;
       {$ifdef windows}
       drawFocusRect(r);
       {$else}
-      with pen do begin color := self.colors.wallSet; width := w; style := psDot; end;
+      with pen do begin color := self.colors.wallSet; width := 1; style := psDot; end;
       brush.style := bsClear;
       rectangle(r);
       {$endif}

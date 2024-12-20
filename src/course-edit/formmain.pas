@@ -29,6 +29,7 @@ type
     mainMenu: tMainMenu;
     MenuItem1: tMenuItem;
     MenuItem2: tMenuItem;
+    MenuItem3: TMenuItem;
     miTaskDelete: tMenuItem;
     miTaskAdd: tMenuItem;
     miFileExit: tMenuItem;
@@ -258,7 +259,9 @@ var
   ctl: tWinControl;
   frm: tDoerFrame = nil;
 begin
-  handled := false;
+  fActionLists.clear;
+  handled := actionList.isShortCut(msg);
+  if handled then exit;
   ctl := screen.activeControl;
   while ctl <> nil do begin
     if ctl is tDoerFrame then begin
