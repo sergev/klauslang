@@ -1,18 +1,20 @@
 object DoerSettingFrame_Mouse: TDoerSettingFrame_Mouse
   Left = 0
-  Height = 532
+  Height = 665
   Top = 0
-  Width = 824
-  ClientHeight = 532
-  ClientWidth = 824
+  Width = 1030
+  ClientHeight = 665
+  ClientWidth = 1030
+  DesignTimePPI = 120
+  ParentFont = False
   TabOrder = 0
   DesignLeft = 640
   DesignTop = 240
   object toolBar: TToolBar
-    Left = 800
-    Height = 532
+    Left = 1000
+    Height = 665
     Top = 0
-    Width = 24
+    Width = 30
     Align = alRight
     AutoSize = True
     BorderSpacing.Left = 2
@@ -27,125 +29,125 @@ object DoerSettingFrame_Mouse: TDoerSettingFrame_Mouse
     end
     object ToolButton3: TToolButton
       Left = 1
-      Top = 44
-      Width = 23
+      Top = 56
+      Width = 29
       Caption = 'ToolButton3'
-      Style = tbsSeparator
+      Style = tbsDivider
     end
     object ToolButton4: TToolButton
       Left = 1
-      Top = 52
+      Top = 61
       Action = actWallLeft
     end
     object ToolButton6: TToolButton
       Left = 1
-      Top = 74
+      Top = 89
       Action = actWallUp
     end
     object ToolButton7: TToolButton
       Left = 1
-      Top = 96
+      Top = 117
       Action = actWallRight
     end
     object ToolButton8: TToolButton
       Left = 1
-      Top = 118
+      Top = 145
       Action = actWallDown
     end
     object ToolButton9: TToolButton
       Left = 1
-      Top = 140
-      Width = 23
+      Top = 173
+      Width = 29
       Caption = 'ToolButton9'
-      Style = tbsSeparator
+      Style = tbsDivider
     end
     object ToolButton10: TToolButton
       Left = 1
-      Top = 148
+      Top = 178
       Action = actArrowLeft
     end
     object ToolButton11: TToolButton
       Left = 1
-      Top = 170
+      Top = 206
       Action = actArrowUp
     end
     object ToolButton12: TToolButton
       Left = 1
-      Top = 192
+      Top = 234
       Action = actArrowRight
     end
     object ToolButton13: TToolButton
       Left = 1
-      Top = 214
+      Top = 262
       Action = actArrowDown
     end
     object ToolButton14: TToolButton
       Left = 1
-      Top = 236
-      Width = 23
+      Top = 290
+      Width = 29
       Caption = 'ToolButton14'
-      Style = tbsSeparator
+      Style = tbsDivider
     end
     object ToolButton15: TToolButton
       Left = 1
-      Top = 244
+      Top = 295
       Action = actPaint
     end
     object ToolButton16: TToolButton
       Left = 1
-      Top = 266
-      Width = 23
+      Top = 323
+      Width = 29
       Caption = 'ToolButton16'
-      Style = tbsSeparator
+      Style = tbsDivider
     end
     object ToolButton17: TToolButton
       Left = 1
-      Top = 274
+      Top = 328
       Action = actSymbolA
     end
     object ToolButton18: TToolButton
       Left = 1
-      Top = 296
+      Top = 356
       Action = actSymbolB
     end
     object ToolButton19: TToolButton
       Left = 1
-      Top = 318
+      Top = 384
       Action = actSymbolBullet
     end
     object ToolButton20: TToolButton
       Left = 1
-      Top = 340
+      Top = 412
       Action = actSymbolOther
     end
     object ToolButton21: TToolButton
       Left = 1
-      Top = 362
-      Width = 23
+      Top = 440
+      Width = 29
       Caption = 'ToolButton21'
-      Style = tbsSeparator
+      Style = tbsDivider
     end
     object ToolButton22: TToolButton
       Left = 1
-      Top = 370
+      Top = 445
       Action = actMousePos
     end
     object ToolButton23: TToolButton
       Left = 1
-      Top = 392
+      Top = 473
       Action = actMouseRotate
     end
     object ToolButton1: TToolButton
       Left = 1
-      Top = 22
+      Top = 28
       Action = actSettingClear
     end
   end
   object actionImages: TImageList
     Height = 18
     Width = 18
-    Left = 164
-    Top = 176
+    Left = 205
+    Top = 220
     Bitmap = {
       4C7A110000001200000012000000670300000000000078DAED9C4B92D3301086
       35AC286A8A2A2E0C66D6EC2960D87107160C542EC0994C9C8C3CED1EB5D4DDFA
@@ -179,8 +181,8 @@ object DoerSettingFrame_Mouse: TDoerSettingFrame_Mouse
   end
   object actions: TActionList
     Images = actionImages
-    Left = 304
-    Top = 176
+    Left = 380
+    Top = 220
     object actSettingSize: TAction
       Caption = 'Размер поля...'
       Hint = 'Размер поля...|Установить размеры поля'
