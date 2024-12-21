@@ -95,7 +95,7 @@ resourcestring
   strFieldSize = 'Размеры поля';
   strWidth = 'Ширина:';
   strHeight = 'Высота:';
-  strCellSymbol = 'Символ в ячейке';
+  strCellSymbol = 'Символ в клетке';
   strSymbol = 'Символ';
   strConfirmSettingClear = 'Все стены, метки и стрелки будут удалены. Продолжить?';
 
