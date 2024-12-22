@@ -1,0 +1,175 @@
+object DoerMouseCellPropsDlg: TDoerMouseCellPropsDlg
+  Left = 720
+  Height = 225
+  Top = 288
+  Width = 457
+  BorderStyle = bsDialog
+  Caption = 'Свойства клетки'
+  ClientHeight = 225
+  ClientWidth = 457
+  Position = poScreenCenter
+  LCLVersion = '3.4.0.0'
+  object pbCancel: TButton
+    Left = 236
+    Height = 25
+    Top = 188
+    Width = 99
+    Anchors = [akRight, akBottom]
+    Cancel = True
+    Caption = 'Отменить'
+    ModalResult = 2
+    TabOrder = 12
+  end
+  object pbOk: TButton
+    Left = 344
+    Height = 25
+    Top = 188
+    Width = 99
+    Anchors = [akRight, akBottom]
+    Caption = 'Применить'
+    Default = True
+    ModalResult = 1
+    TabOrder = 13
+  end
+  object Label1: TLabel
+    Left = 16
+    Height = 17
+    Top = 16
+    Width = 102
+    Caption = 'Верхний текст:'
+  end
+  object Label2: TLabel
+    Left = 16
+    Height = 17
+    Top = 56
+    Width = 100
+    Caption = 'Нижний текст:'
+  end
+  object Label3: TLabel
+    Left = 16
+    Height = 17
+    Top = 136
+    Width = 94
+    Caption = 'Температура:'
+  end
+  object chMark: TCheckBox
+    Left = 188
+    Height = 23
+    Top = 53
+    Width = 106
+    Caption = 'Отметка "•"'
+    TabOrder = 4
+  end
+  object edText1: TEdit
+    Left = 124
+    Height = 34
+    Top = 8
+    Width = 44
+    MaxLength = 1
+    TabOrder = 0
+  end
+  object edText2: TEdit
+    Left = 124
+    Height = 34
+    Top = 48
+    Width = 44
+    MaxLength = 1
+    TabOrder = 1
+  end
+  object seNumber: TSpinEdit
+    Left = 272
+    Height = 34
+    Top = 8
+    Width = 70
+    MaxValue = 99
+    MinValue = -99
+    TabOrder = 3
+  end
+  object Label5: TLabel
+    Left = 256
+    Height = 17
+    Top = 136
+    Width = 73
+    Caption = 'Радиация:'
+  end
+  object seTemperature: TFloatSpinEdit
+    Left = 124
+    Height = 34
+    Top = 128
+    Width = 100
+    TabOrder = 10
+  end
+  object seRadiation: TFloatSpinEdit
+    Left = 343
+    Height = 34
+    Top = 128
+    Width = 100
+    TabOrder = 11
+  end
+  object Label6: TLabel
+    Left = 16
+    Height = 17
+    Top = 96
+    Width = 62
+    Caption = 'Стрелка:'
+  end
+  object rbArrowLeft: TRadioButton
+    Left = 148
+    Height = 23
+    Top = 93
+    Width = 68
+    Caption = 'влево'
+    TabOrder = 6
+  end
+  object rbArrowRight: TRadioButton
+    Left = 224
+    Height = 23
+    Top = 93
+    Width = 76
+    Caption = 'вправо'
+    TabOrder = 7
+  end
+  object rbArrowUp: TRadioButton
+    Left = 308
+    Height = 23
+    Top = 93
+    Width = 65
+    Caption = 'вверх'
+    TabOrder = 8
+  end
+  object rbArrowDown: TRadioButton
+    Left = 384
+    Height = 23
+    Top = 93
+    Width = 59
+    Caption = 'вниз'
+    Checked = True
+    TabOrder = 9
+    TabStop = True
+  end
+  object Bevel1: TBevel
+    Left = 16
+    Height = 14
+    Top = 164
+    Width = 427
+    Anchors = [akLeft, akRight, akBottom]
+    Shape = bsBottomLine
+  end
+  object rbArrowNone: TRadioButton
+    Left = 88
+    Height = 23
+    Top = 93
+    Width = 50
+    Caption = 'нет'
+    TabOrder = 5
+  end
+  object chHasNumber: TCheckBox
+    Left = 188
+    Height = 23
+    Top = 13
+    Width = 72
+    Caption = 'Число:'
+    TabOrder = 2
+    OnChange = chHasNumberChange
+  end
+end

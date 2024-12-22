@@ -14,6 +14,8 @@ type
     actArrowLeft: tAction;
     actArrowRight: tAction;
     actArrowUp: tAction;
+    actRadiation: TAction;
+    actTemperature: TAction;
     actSettingSize: tAction;
     actSettingClear: TAction;
     actionImages: tImageList;
@@ -23,7 +25,7 @@ type
     actSymbolA: tAction;
     actSymbolB: tAction;
     actSymbolBullet: tAction;
-    actSymbolOther: tAction;
+    actCellProps: tAction;
     actWallDown: tAction;
     actWallLeft: tAction;
     actWallRight: tAction;
@@ -46,8 +48,12 @@ type
     ToolButton21: tToolButton;
     ToolButton22: tToolButton;
     ToolButton23: tToolButton;
+    ToolButton24: TToolButton;
+    tbTemperature: TToolButton;
+    tbRadiation: TToolButton;
     ToolButton3: tToolButton;
     ToolButton4: tToolButton;
+    ToolButton5: TToolButton;
     ToolButton6: tToolButton;
     ToolButton7: tToolButton;
     ToolButton8: tToolButton;
@@ -56,15 +62,17 @@ type
     procedure actArrowLeftExecute(sender: tObject);
     procedure actArrowRightExecute(sender: tObject);
     procedure actArrowUpExecute(sender: tObject);
+    procedure actRadiationExecute(sender: tObject);
     procedure actSettingClearExecute(sender: tObject);
     procedure actSettingSizeExecute(sender: tObject);
     procedure actMousePosExecute(sender: tObject);
-    procedure actMouseRotateExecute(Sender: TObject);
+    procedure actMouseRotateExecute(sender: tObject);
     procedure actPaintExecute(sender: tObject);
     procedure actSymbolAExecute(sender: tObject);
     procedure actSymbolBExecute(sender: tObject);
     procedure actSymbolBulletExecute(sender: tObject);
-    procedure actSymbolOtherExecute(sender: tObject);
+    procedure actCellPropsExecute(sender: tObject);
+    procedure actTemperatureExecute(sender: tObject);
     procedure actWallDownExecute(sender: tObject);
     procedure actWallLeftExecute(sender: tObject);
     procedure actWallRightExecute(sender: tObject);
@@ -73,6 +81,7 @@ type
     fView: tKlausMouseView;
 
     procedure doerViewChange(sender: tObject);
+    procedure doerViewDblClick(sender: tObject);
     function  getSetting: tKlausMouseSetting;
     procedure setSetting(val: tKlausMouseSetting);
   protected
@@ -89,15 +98,15 @@ type
 
 implementation
 
+uses DlgDoerMouseCellProps;
+
 {$R *.lfm}
 
 resourcestring
   strFieldSize = 'Размеры поля';
   strWidth = 'Ширина:';
   strHeight = 'Высота:';
-  strCellSymbol = 'Символ в клетке';
-  strSymbol = 'Символ';
-  strConfirmSettingClear = 'Все стены, метки и стрелки будут удалены. Продолжить?';
+  strConfirmSettingClear = 'Все стены и все свойства клеток будут удалены. Продолжить?';
 
 { tDoerSettingFrame_Mouse }
 
@@ -141,7 +150,7 @@ begin
   end;
 end;
 
-procedure tDoerSettingFrame_Mouse.actMouseRotateExecute(Sender: TObject);
+procedure tDoerSettingFrame_Mouse.actMouseRotateExecute(sender: tObject);
 const
   nextDir: array[tKlausMouseDirection] of tKlausMouseDirection = (kmdLeft, kmdUp, kmdRight, kmdDown, kmdLeft);
 begin
@@ -165,7 +174,7 @@ begin
   if setting = nil then exit;
   p := focusedCell;
   with setting[p.x, p.y] do
-    if text = 'А' then text := '' else text := 'А';
+    if text2 = 'А' then text2 := '' else text2 := 'А';
 end;
 
 procedure tDoerSettingFrame_Mouse.actSymbolBExecute(sender: tObject);
@@ -175,7 +184,7 @@ begin
   if setting = nil then exit;
   p := focusedCell;
   with setting[p.x, p.y] do
-    if text = 'Б' then text := '' else text := 'Б';
+    if text1 = 'Б' then text1 := '' else text1 := 'Б';
 end;
 
 procedure tDoerSettingFrame_Mouse.actSymbolBulletExecute(sender: tObject);
@@ -184,19 +193,49 @@ var
 begin
   if setting = nil then exit;
   p := focusedCell;
-  with setting[p.x, p.y] do
-    if text = '•' then text := '' else text := '•';
+  with setting[p.x, p.y] do mark := not mark;
 end;
 
-procedure tDoerSettingFrame_Mouse.actSymbolOtherExecute(sender: tObject);
+procedure tDoerSettingFrame_Mouse.actCellPropsExecute(sender: tObject);
 var
-  p: tPoint;
-  val: string;
+  cell: tKlausMouseCell;
 begin
   if setting = nil then exit;
-  p := focusedCell;
-  val := setting[p.x, p.y].text;
-  if inputQuery(strCellSymbol, strSymbol, val) then setting[p.x, p.y].text := val;
+  with focusedCell do cell := setting[x, y];
+  with tDoerMouseCellPropsDlg.create(application) do try
+    text1 := cell.text1;
+    text2 := cell.text2;
+    number := cell.number;
+    hasNumber := cell.hasNumber;
+    mark := cell.mark;
+    arrow := cell.arrow;
+    temperature := cell.temperature;
+    radiation := cell.radiation;
+    if showModal = mrOk then begin
+      setting.updating;
+      try
+        cell.text1 := text1;
+        cell.text2 := text2;
+        cell.number := number;
+        cell.hasNumber := hasNumber;
+        cell.mark := mark;
+        cell.arrow := arrow;
+        cell.temperature := temperature;
+        cell.radiation := radiation;
+      finally
+        setting.updated;
+      end;
+    end;
+  finally
+    free;
+  end;
+end;
+
+procedure tDoerSettingFrame_Mouse.actTemperatureExecute(sender: tObject);
+begin
+  if setting = nil then exit;
+  if fView.mode = mvmTemperature then fView.mode := mvmNormal
+  else fView.mode := mvmTemperature;
 end;
 
 procedure tDoerSettingFrame_Mouse.actArrowLeftExecute(sender: tObject);
@@ -243,6 +282,13 @@ begin
     else arrow := kmdUp;
 end;
 
+procedure tDoerSettingFrame_Mouse.actRadiationExecute(sender: tObject);
+begin
+  if setting = nil then exit;
+  if fView.mode = mvmRadiation then fView.mode := mvmNormal
+  else fView.mode := mvmRadiation;
+end;
+
 procedure tDoerSettingFrame_Mouse.actSettingClearExecute(sender: tObject);
 var
   i, j: integer;
@@ -256,7 +302,12 @@ begin
         for j := 0 to height-1 do
           with cells[i, j] do begin
             walls := [];
-            text := '';
+            text1 := '';
+            text2 := '';
+            mark := false;
+            hasNumber := false;
+            temperature := 0;
+            radiation := 0;
             arrow := kmdNone;
           end;
     finally
@@ -306,6 +357,11 @@ begin
   change;
 end;
 
+procedure tDoerSettingFrame_Mouse.doerViewDblClick(sender: tObject);
+begin
+  actCellProps.execute;
+end;
+
 function tDoerSettingFrame_Mouse.getSetting: tKlausMouseSetting;
 begin
   result := inherited setting as tKlausMouseSetting;
@@ -336,6 +392,7 @@ begin
   fView.align := alClient;
   fView.borderStyle := bsSingle;
   fView.onChange := @doerViewChange;
+  fView.OnDblClick := @doerViewDblClick;
 end;
 
 class function tDoerSettingFrame_Mouse.doerClass: tKlausDoerClass;

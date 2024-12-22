@@ -231,6 +231,14 @@
         <ResourceBaseClass Value="Frame"/>
         <UnitName Value="FrameDoerSetting_Mouse"/>
       </Unit>
+      <Unit>
+        <Filename Value="dlgdoermousecellprops.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="DoerMouseCellPropsDlg"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="DlgDoerMouseCellProps"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

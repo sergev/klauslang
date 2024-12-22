@@ -24,9 +24,9 @@ unit KlausDoer_Mouse;
 interface
 
 uses
-  Classes, SysUtils, KlausLex, KlausDef, KlausSyn, KlausErr, Controls, Forms,
-  Graphics, LCLType, KlausDoer, FpJson, BGRABitmap, BGRABitmapTypes, BGRASVG,
-  KlausSrc, KlausUnitSystem;
+  Classes, SysUtils, Messages, LMessages, KlausLex, KlausDef, KlausSyn, KlausErr,
+  Controls, Forms, Graphics, LCLType, KlausDoer, FpJson, BGRABitmap, BGRABitmapTypes,
+  BGRASVG, KlausSrc, KlausUnitSystem;
 
 const
   klausDoerName_Mouse = 'Мышка';
@@ -54,13 +54,25 @@ type
       fWalls: tKlausMouseDirections;
       fPainted: boolean;
       fArrow: tKlausMouseDirection;
-      fText: string;
+      fText1: string;
+      fText2: string;
+      fMark: boolean;
+      fHasNumber: boolean;
+      fNumber: integer;
+      fTemperature: double;
+      fRadiation: double;
 
       function  getWall(idx: tKlausMouseDirection): boolean;
       function  getWalls: tKlausMouseDirections;
       procedure setArrow(val: tKlausMouseDirection);
+      procedure setHasNumber(val: boolean);
+      procedure setNumber(val: integer);
+      procedure setMark(val: boolean);
       procedure setPainted(val: boolean);
-      procedure setText(val: string);
+      procedure setRadiation(val: double);
+      procedure setTemperature(val: double);
+      procedure setText1(val: string);
+      procedure setText2(val: string);
       procedure setWall(idx: tKlausMouseDirection; val: boolean);
       procedure setWalls(val: tKlausMouseDirections);
     protected
@@ -74,8 +86,14 @@ type
       property wall[idx: tKlausMouseDirection]: boolean read getWall write setWall;
       property walls: tKlausMouseDirections read getWalls write setWalls;
       property painted: boolean read fPainted write setPainted;
-      property text: string read fText write setText;
+      property text1: string read fText1 write setText1;
+      property text2: string read fText2 write setText2;
+      property hasNumber: boolean read fHasNumber write setHasNumber;
+      property number: integer read fNumber write setNumber;
+      property mark: boolean read fMark write setMark;
       property arrow: tKlausMouseDirection read fArrow write setArrow;
+      property temperature: double read fTemperature write setTemperature;
+      property radiation: double read fRadiation write setRadiation;
 
       constructor create(aOwner: tKlausMouseSetting; aHorz, aVert: integer);
       function  toJson: tJsonData;
@@ -157,6 +175,8 @@ type
       fWallUnset: tColor;
       fCellArrow: tColor;
       fCellText: tColor;
+      fTemperature: tColor;
+      fRadiation: tColor;
 
       procedure setCell(val: tColor);
       procedure setCellArrow(val: tColor);
@@ -164,6 +184,8 @@ type
       procedure setCellText(val: tColor);
       procedure setWallSet(val: tColor);
       procedure setWallUnset(val: tColor);
+      procedure setTemperature(val: tColor);
+      procedure setRadiation(val: tColor);
     protected
       procedure assignTo(dest: tPersistent); override;
       procedure setDefaults; virtual;
@@ -180,6 +202,8 @@ type
       property wallUnset: tColor read fWallUnset write setWallUnset default $9fc787;
       property cellArrow: tColor read fCellArrow write setCellArrow default clWhite;
       property cellText: tColor read fCellText write setCellText default clWhite;
+      property temperature: tColor read fTemperature write setTemperature default clRed;
+      property radiation: tColor read fRadiation write setRadiation default clBlue;
   end;
 
 type
@@ -205,6 +229,12 @@ const
   klausMouseMinCellSize = 5;
 
 type
+  tKlausMouseViewMode = (mvmNormal, mvmTemperature, mvmRadiation);
+
+type
+  tNumKeyPressed = (kpNone, kpMinus, kpDigit);
+
+type
   tKlausMouseView = class(tKlausDoerView)
     private
       fOrigin: tPoint;
@@ -216,13 +246,20 @@ type
       fPhase: integer;
       fColors: tKlausMouseViewColors;
       fImg: tKlausMouseImageCache;
+      fKeyPressed: tNumKeyPressed;
+      fInputText: string;
+      fMode: tKlausMouseViewMode;
 
       function  getSetting: tKlausMouseSetting;
       procedure setColors(val: tKlausMouseViewColors);
       procedure setFocusX(val: integer);
       procedure setFocusY(val: integer);
+      procedure setMode(val: tKlausMouseViewMode);
       procedure setSetting(val: tKlausMouseSetting);
+      procedure resetNumericInput;
     protected
+      procedure doExit; override;
+      procedure WMKillFocus(var Msg: tMessage); message LM_KillFocus;
       procedure paint; override;
       procedure setSetting(aSetting: tKlausDoerSetting); override;
       procedure setReadOnly(val: boolean); override;
@@ -235,6 +272,7 @@ type
       property focusX: integer read fFocusX write setFocusX;
       property focusY: integer read fFocusY write setFocusY;
       property setting: tKlausMouseSetting read getSetting write setSetting;
+      property mode: tKlausMouseViewMode read fMode write setMode;
 
       class function doerClass: tKlausDoerClass; override;
 
@@ -247,6 +285,7 @@ type
       property color;
       property colors: tKlausMouseViewColors read fColors write setColors;
       property tabStop default true;
+      property onDblClick;
   end;
 
 const
@@ -441,24 +480,40 @@ begin
 end;
 
 function tKlausMouseCell.toJson: tJsonData;
+var
+  s: string = '';
 begin
   result := tJsonObject.create;
   with result as tJsonObject do begin
     add('walls', mouseDirsToInt(walls));
     add('painted', painted);
-    add('text', text);
+    add('text1', text1);
+    add('text2', text2);
+    if hasNumber then s := intToStr(number);
+    add('number', s);
+    add('mark', mark);
+    add('temperature', temperature);
+    add('radiation', radiation);
     add('arrow', mouseDirToInt(arrow));
   end;
 end;
 
 procedure tKlausMouseCell.fromJson(data: tJsonData);
+var
+  s: string;
 begin
   if not (data is tJsonObject) then raise eKlausError.create(ercInvalidFileFormat, zeroSrcPt);
   updating;
   with data as tJsonObject do try
     walls := intToMouseDirs(get('walls', 0));
     painted := get('painted', false);
-    text := get('text', '');
+    text1 := get('text1', '');
+    text2 := get('text2', '');
+    s := get('number', '');
+    if s <> '' then number := strToInt(s) else hasNumber := false;
+    mark := get('mark', false);
+    temperature := get('temperature', tJsonFloat(0));
+    radiation := get('radiation', tJsonFloat(0));
     arrow := intToMouseDir(get('arrow', 0));
   finally
     updated;
@@ -488,7 +543,13 @@ begin
       try
         walls := self.walls;
         painted := self.painted;
-        text := self.text;
+        text1 := self.text1;
+        text2 := self.text2;
+        number := self.number;
+        hasNumber := self.hasNumber;
+        mark := self.mark;
+        temperature := self.temperature;
+        radiation := self.radiation;
         arrow := self.arrow;
       finally
         updated;
@@ -564,11 +625,38 @@ begin
   end;
 end;
 
-procedure tKlausMouseCell.setText(val: string);
+procedure tKlausMouseCell.setRadiation(val: double);
 begin
-  if fText <> val then begin
+  if fRadiation <> val then begin
     updating;
-    try fText := trim(u8Upper(u8Copy(val, 0, 1)));
+    try fRadiation := val;
+    finally updated; end;
+  end;
+end;
+
+procedure tKlausMouseCell.setTemperature(val: double);
+begin
+  if fTemperature <> val then begin
+    updating;
+    try fTemperature := val;
+    finally updated; end;
+  end;
+end;
+
+procedure tKlausMouseCell.setText1(val: string);
+begin
+  if fText1 <> val then begin
+    updating;
+    try fText1 := trim(u8Upper(u8Copy(val, 0, 1)));
+    finally updated; end;
+  end;
+end;
+
+procedure tKlausMouseCell.setText2(val: string);
+begin
+  if fText2 <> val then begin
+    updating;
+    try fText2 := trim(u8Upper(u8Copy(val, 0, 1)));
     finally updated; end;
   end;
 end;
@@ -579,6 +667,42 @@ begin
     updating;
     try fArrow := val;
     finally updated; end;
+  end;
+end;
+
+procedure tKlausMouseCell.setHasNumber(val: boolean);
+begin
+  if fHasNumber <> val then begin
+    updating;
+    try
+      if not val then number := 0;
+      fHasNumber := val;
+    finally
+      updated;
+    end;
+  end;
+end;
+
+procedure tKlausMouseCell.setMark(val: boolean);
+begin
+  if fMark <> val then begin
+    updating;
+    try fMark := val;
+    finally updated; end;
+  end;
+end;
+
+procedure tKlausMouseCell.setNumber(val: integer);
+begin
+  val := max(-99, min(99, val));
+  if not hasNumber or (fNumber <> val) then begin
+    updating;
+    try
+      hasNumber := true;
+      fNumber := val;
+    finally
+      updated;
+    end;
   end;
 end;
 
@@ -980,6 +1104,24 @@ begin
   end;
 end;
 
+procedure tKlausMouseViewColors.setTemperature(val: tColor);
+begin
+  if fTemperature <> val then begin
+    updating;
+    try fTemperature := val;
+    finally updated; end;
+  end;
+end;
+
+procedure tKlausMouseViewColors.setRadiation(val: tColor);
+begin
+  if fRadiation <> val then begin
+    updating;
+    try fRadiation := val;
+    finally updated; end;
+  end;
+end;
+
 procedure tKlausMouseViewColors.assignTo(dest: tPersistent);
 begin
   if dest is tKlausMouseViewColors then
@@ -992,6 +1134,8 @@ begin
         wallUnset := self.wallUnset;
         cellArrow := self.cellArrow;
         cellText := self.cellText;
+        temperature := self.temperature;
+        radiation := self.radiation;
       finally
         updated;
       end;
@@ -1007,6 +1151,8 @@ begin
   fWallUnset := $9fc787;
   fCellArrow := clWhite;
   fCellText := clWhite;
+  fTemperature := clRed;
+  fRadiation := clBlue;
 end;
 
 { tKlausMouseImageCache }
@@ -1076,7 +1222,7 @@ var
   y: integer = 0;
 begin
   if dir < kmdLeft then dir := kmdLeft;
-  rebuild(cell.width - (cell.width div 10)*2);
+  rebuild(cell.width - (cell.width div 10)*3);
   with fFit do
     case dir of
       kmdLeft: begin
@@ -1181,6 +1327,7 @@ begin
   else val := min(setting.width-1, max(val, 0));
   if fFocusX <> val then begin
     fFocusX := val;
+    resetNumericInput;
     invalidate;
   end;
 end;
@@ -1191,6 +1338,16 @@ begin
   else val := min(setting.height-1, max(val, 0));
   if fFocusY <> val then begin
     fFocusY := val;
+    resetNumericInput;
+    invalidate;
+  end;
+end;
+
+procedure tKlausMouseView.setMode(val: tKlausMouseViewMode);
+begin
+  if fMode <> val then begin
+    fMode := val;
+    resetNumericInput;
     invalidate;
   end;
 end;
@@ -1208,14 +1365,34 @@ begin
   setSetting(tKlausDoerSetting(val));
 end;
 
+procedure tKlausMouseView.resetNumericInput;
+begin
+  fKeyPressed := kpNone;
+  fInputText := '';
+end;
+
+procedure tKlausMouseView.doExit;
+begin
+  resetNumericInput;
+  inherited
+end;
+
+procedure tKlausMouseView.WMKillFocus(var Msg: tMessage);
+begin
+  resetNumericInput;
+  inherited;
+end;
+
 procedure tKlausMouseView.paint;
 const
+  bullet = ' • ';
   arrows: array[tKlausMouseDirection] of u8Char = ('', '←', '↑', '→', '↓');
 var
   r: tRect;
   sz: tSize;
   s: string;
   x, y, w, h: integer;
+  n: double;
 begin
   r := clientRect;
   r.inflate(-3, -3);
@@ -1251,8 +1428,7 @@ begin
       end;
     pen.color := self.colors.wallSet;
     font.color := self.colors.cellText;
-    font.size := fCellSize div 3;
-    font.style := [fsBold];
+    font.style := [];
     brush.style := bsClear;
     for x := 0 to setting.width-1 do
       for y := 0 to setting.height-1 do begin
@@ -1265,16 +1441,56 @@ begin
     for x := 0 to setting.width-1 do
       for y := 0 to setting.height-1 do begin
         r := cellRect(x, y);
-        sz := textExtent(setting[x, y].text);
-        textOut(r.left+(r.width-sz.cx) div 2, r.top+(r.height-sz.cy) div 2, setting[x, y].text);
-        s := arrows[setting[x, y].arrow];
-        if s <> '' then begin
-          sz := textExtent(s);
-          case setting[x, y].arrow of
-            kmdLeft: textOut(r.left - fCellSize div 10, r.top + (r.height-sz.cy) div 2, s);
-            kmdUp: textOut(r.left + (r.width-sz.cx) div 2, r.top - fCellSize div 10, s);
-            kmdRight: textOut(r.right - sz.cx + fCellSize div 10 + 1, r.top + (r.height-sz.cy) div 2, s);
-            kmdDown: textOut(r.left + (r.width-sz.cx) div 2, r.bottom - sz.cy + fCellSize div 10 + 1, s);
+        font.color := self.colors.cellText;
+        with setting[x, y] do begin
+          if (text1 <> '') or (text2 <> '') or mark then begin
+            font.height := round(fCellSize / 2.2);
+            if text1 <> '' then
+              textOut(r.left + fCellSize div 10, r.top, setting[x, y].text1);
+            if text2 <> '' then begin
+              sz := textExtent(text2);
+              textOut(r.left + fCellSize div 10, r.bottom - sz.cy, setting[x, y].text2);
+            end;
+            if mark then begin
+              sz := textExtent(bullet);
+              textOut(r.right - sz.cx - fCellSize div 10, r.bottom - sz.cy, bullet);
+            end;
+          end;
+          if hasNumber then begin
+            s := intToStr(number);
+            if length(s) > 2 then font.height := round(fCellSize / 3)
+            else font.height := round(fCellSize / 2.5);
+            sz := textExtent(s);
+            textOut(r.right - sz.cx - fCellSize div 10, r.top, s);
+          end;
+          s := arrows[arrow];
+          if s <> '' then begin
+            font.height := fCellSize div 2;
+            sz := textExtent(s);
+            case arrow of
+              kmdLeft: textOut(r.left - fCellSize div 10, r.top + (r.height-sz.cy) div 2, s);
+              kmdUp: textOut(r.left + (r.width-sz.cx) div 2, r.top - fCellSize div 10, s);
+              kmdRight: textOut(r.right - sz.cx + fCellSize div 10 + 1, r.top + (r.height-sz.cy) div 2, s);
+              kmdDown: textOut(r.left + (r.width-sz.cx) div 2, r.bottom - sz.cy + fCellSize div 10 + 1, s);
+            end;
+          end;
+          if mode <> mvmNormal then begin
+            case mode of
+              mvmTemperature: begin
+                n := temperature;
+                font.color := self.colors.temperature;
+              end;
+              mvmRadiation: begin
+                n := radiation;
+                font.color := self.colors.radiation;
+              end;
+            else
+              n := 0;
+            end;
+            s := format('%.4g', [n]);
+            font.height := round(fCellSize / max(3, length(s)/2));
+            sz := textExtent(s);
+            textOut(r.left + (r.width-sz.cx) div 2, r.top + (r.height-sz.cy) div 2, s);
           end;
         end;
       end;
@@ -1303,6 +1519,7 @@ end;
 
 procedure tKlausMouseView.setSetting(aSetting: tKlausDoerSetting);
 begin
+  resetNumericInput;
   if aSetting <> nil then assert(aSetting is tKlausMouseSetting, 'Invalid doer setting class');
   if setting <> nil then setting.onChange := nil;
   inherited setSetting(aSetting);
@@ -1332,6 +1549,7 @@ var
   cell: tPoint;
   mouseHere: boolean;
 begin
+  resetNumericInput;
   if canFocus then setFocus;
   inherited mouseDown(button, shift, x, y);
   shift := shift * [ssShift, ssCtrl, ssAlt, ssDouble];
@@ -1339,29 +1557,28 @@ begin
     cell := cellFromPoint(x, y);
     focusX := cell.x;
     focusY := cell.y;
-    with setting do mouseHere := (mouseX = cell.x) and (mouseY = cell.y);
-    r := cellRect(focusX, focusY);
-    with setting[focusX, focusY] do
-      if ssDouble in shift then begin
-        setting.mouseX := cell.x;
-        setting.mouseY := cell.y;
-      end else if abs(r.left-x) <= fCellSize div 5 then begin
-        if shift = [] then wall[kmdLeft] := not wall[kmdLeft]
-        else if shift = [ssCtrl] then toggleArrow(kmdLeft)
-        else if (shift = [ssAlt]) and mouseHere then setting.mouseDir := kmdLeft;
-      end else if abs(r.right-x) <= fCellSize div 5 then begin
-        if shift = [] then wall[kmdRight] := not wall[kmdRight]
-        else if shift = [ssCtrl] then toggleArrow(kmdRight)
-        else if (shift = [ssAlt]) and mouseHere then setting.mouseDir := kmdRight;
-      end else if abs(r.top-y) <= fCellSize div 5 then begin
-        if shift = [] then wall[kmdUp] := not wall[kmdUp]
-        else if shift = [ssCtrl] then toggleArrow(kmdUp)
-        else if (shift = [ssAlt]) and mouseHere then setting.mouseDir := kmdUp;
-      end else if abs(r.bottom-y) <= fCellSize div 5 then begin
-        if shift = [] then wall[kmdDown] := not wall[kmdDown]
-        else if shift = [ssCtrl] then toggleArrow(kmdDown)
-        else if (shift = [ssAlt]) and mouseHere then setting.mouseDir := kmdDown;
-      end;
+    if mode = mvmNormal then begin
+      with setting do mouseHere := (mouseX = cell.x) and (mouseY = cell.y);
+      r := cellRect(focusX, focusY);
+      with setting[focusX, focusY] do
+        if abs(r.left-x) <= fCellSize div 5 then begin
+          if shift = [] then wall[kmdLeft] := not wall[kmdLeft]
+          else if shift = [ssCtrl] then toggleArrow(kmdLeft)
+          else if (shift = [ssAlt]) and mouseHere then setting.mouseDir := kmdLeft;
+        end else if abs(r.right-x) <= fCellSize div 5 then begin
+          if shift = [] then wall[kmdRight] := not wall[kmdRight]
+          else if shift = [ssCtrl] then toggleArrow(kmdRight)
+          else if (shift = [ssAlt]) and mouseHere then setting.mouseDir := kmdRight;
+        end else if abs(r.top-y) <= fCellSize div 5 then begin
+          if shift = [] then wall[kmdUp] := not wall[kmdUp]
+          else if shift = [ssCtrl] then toggleArrow(kmdUp)
+          else if (shift = [ssAlt]) and mouseHere then setting.mouseDir := kmdUp;
+        end else if abs(r.bottom-y) <= fCellSize div 5 then begin
+          if shift = [] then wall[kmdDown] := not wall[kmdDown]
+          else if shift = [ssCtrl] then toggleArrow(kmdDown)
+          else if (shift = [ssAlt]) and mouseHere then setting.mouseDir := kmdDown;
+        end;
+    end;
   end;
 end;
 
@@ -1379,89 +1596,162 @@ begin
     VK_LEFT: if shift = [] then begin
       focusX := x - 1;
       key := 0;
-    end else if shift = [ssShift] then begin
-      wall[kmdLeft] := not wall[kmdLeft];
-      key := 0;
-    end else if shift = [ssCtrl] then begin
-      toggleArrow(kmdLeft);
-      key := 0;
-    end else if shift = [ssAlt] then begin
-      setting.mouseDir := kmdLeft;
-      key := 0;
+    end else if mode = mvmNormal then begin
+      if shift = [ssShift] then begin
+        wall[kmdLeft] := not wall[kmdLeft];
+        key := 0;
+      end else if shift = [ssCtrl] then begin
+        toggleArrow(kmdLeft);
+        key := 0;
+      end else if shift = [ssAlt] then begin
+        setting.mouseDir := kmdLeft;
+        key := 0;
+      end;
     end;
     VK_RIGHT: if shift = [] then begin
       focusX := x + 1;
       key := 0;
-    end else if shift = [ssShift] then begin
-      wall[kmdRight] := not wall[kmdRight];
-      key := 0;
-    end else if shift = [ssCtrl] then begin
-      toggleArrow(kmdRight);
-      key := 0;
-    end else if shift = [ssAlt] then begin
-      setting.mouseDir := kmdRight;
-      key := 0;
+    end else if mode = mvmNormal then begin
+      if shift = [ssShift] then begin
+        wall[kmdRight] := not wall[kmdRight];
+        key := 0;
+      end else if shift = [ssCtrl] then begin
+        toggleArrow(kmdRight);
+        key := 0;
+      end else if shift = [ssAlt] then begin
+        setting.mouseDir := kmdRight;
+        key := 0;
+      end;
     end;
     VK_UP: if shift = [] then begin
       focusY := y - 1;
       key := 0;
-    end else if shift = [ssShift] then begin
-      wall[kmdUp] := not wall[kmdUp];
-      key := 0;
-    end else if shift = [ssCtrl] then begin
-      toggleArrow(kmdUp);
-      key := 0;
-    end else if shift = [ssAlt] then begin
-      setting.mouseDir := kmdUp;
-      key := 0;
+    end else if mode = mvmNormal then begin
+      if shift = [ssShift] then begin
+        wall[kmdUp] := not wall[kmdUp];
+        key := 0;
+      end else if shift = [ssCtrl] then begin
+        toggleArrow(kmdUp);
+        key := 0;
+      end else if shift = [ssAlt] then begin
+        setting.mouseDir := kmdUp;
+        key := 0;
+      end;
     end;
     VK_DOWN: if shift = [] then begin
       focusY := y + 1;
       key := 0;
-    end else if shift = [ssShift] then begin
-      wall[kmdDown] := not wall[kmdDown];
-      key := 0;
-    end else if shift = [ssCtrl] then begin
-      toggleArrow(kmdDown);
-      key := 0;
-    end else if shift = [ssAlt] then begin
-      setting.mouseDir := kmdDown;
-      key := 0;
+    end else if mode = mvmNormal then begin
+      if shift = [ssShift] then begin
+        wall[kmdDown] := not wall[kmdDown];
+        key := 0;
+      end else if shift = [ssCtrl] then begin
+        toggleArrow(kmdDown);
+        key := 0;
+      end else if shift = [ssAlt] then begin
+        setting.mouseDir := kmdDown;
+        key := 0;
+      end;
     end;
-    VK_DELETE: if shift = [] then begin
-      text := '';
-      key := 0;
+    VK_DELETE, VK_BACK: if shift = [] then begin
+      if mode = mvmNormal then begin
+        text1 := '';
+        text2 := '';
+        hasNumber := false;
+        key := 0;
+      end else if key = VK_DELETE then begin
+        case mode of
+          mvmTemperature: temperature := 0;
+          mvmRadiation: radiation := 0;
+        end;
+        resetNumericInput;
+      end;
     end;
-    VK_C: if shift = [ssCtrl] then begin
-      if text <> '' then clipboard.asText := text;
-      key := 0;
-    end;
-    VK_V: if shift = [ssCtrl] then begin
-      if clipboard.hasFormat(CF_TEXT) then text := clipboard.asText;
-      key := 0;
-    end;
-    VK_SPACE: if shift = [] then begin
+    VK_SPACE: if (shift = []) and (mode = mvmNormal) then begin
       painted := not painted;
       key := 0;
     end;
-    VK_RETURN: if shift = [] then begin
+    VK_RETURN: if (shift = [ssAlt]) and (mode = mvmNormal) then begin
       setting.mouseX := x;
       setting.mouseY := y;
       key := 0;
     end;
   end;
-  if key <> 0 then inherited;
+  if key = 0 then resetNumericInput else inherited;
 end;
 
 procedure tKlausMouseView.UTF8KeyPress(var key: tUTF8Char);
+const
+  validChars = '-0123456789.,';
 var
-  x, y: integer;
+  c: char;
+  f: double;
+  b: boolean;
+  x, y, n: integer;
 begin
   if (setting <> nil) and not readOnly then begin
     x := focusX;
     y := focusY;
     if (x < 0) or (y < 0) then exit;
-    setting[x, y].text := key;
+    if mode <> mvmNormal then begin
+      if key = #13 then
+        resetNumericInput
+      else if (pos(key, validChars) > 0) or (key = #8) then begin
+        if key = #8 then begin
+          if fInputText <> '' then
+            fInputText := copy(fInputText, 1, length(fInputText)-1);
+        end else begin
+          c := key[1];
+          case c of
+            '-': if fInputText = '' then fInputText += '-';
+            '.', ',': if pos('.', fInputText) = 0 then fInputText += '.';
+            else fInputText += key;
+          end;
+        end;
+        b := true;
+        if fInputText = '' then f := 0
+        else b := tryStrToFloat(fInputText, f);
+        if b then
+          case mode of
+            mvmTemperature: setting[x, y].temperature := f;
+            mvmRadiation: setting[x, y].radiation := f;
+          end;
+      end;
+    end else if key > ' ' then begin
+      if key = '.' then begin
+        resetNumericInput;
+        with setting[x, y] do mark := not mark;
+      end else if ((key >= 'A') and (key <= 'Z'))
+      or ((key >= 'А') and (key <= 'Я')) then begin
+        resetNumericInput;
+        with setting[x, y] do
+          if u8Upper(text1) = u8Upper(key) then text1 := '' else text1 := key;
+      end else if ((key >= 'a') and (key <= 'z'))
+      or ((key >= 'а') and (key <= 'я')) then begin
+        resetNumericInput;
+        with setting[x, y] do
+          if u8Upper(text2) = u8Upper(key) then text2 := '' else text2 := key;
+      end else if key = '-' then begin
+        fKeyPressed := kpMinus;
+        setting[x, y].hasNumber := false;
+      end else if ((key >= '0') and (key <= '9')) then begin
+        if not setting[x, y].hasNumber then begin
+          n := strToInt(key);
+          if fKeyPressed = kpMinus then n := -n;
+          fKeyPressed := kpDigit;
+        end else begin
+          n := setting[x, y].number;
+          if (n < -9) or (n > 9) or (fKeyPressed <> kpDigit) then begin
+            n := strToInt(key);
+            fKeyPressed := kpDigit;
+          end else begin
+            n := n * 10 + sign(n)*strToInt(key);
+            resetNumericInput;
+          end;
+        end;
+        setting[x, y].number := n;
+      end;
+    end;
   end;
 end;
 
@@ -1621,7 +1911,7 @@ end;
 
 procedure tKlausSysProc_MouseLabel.run(frame: tKlausStackFrame; const at: tSrcPoint);
 begin
-  returnSimple(frame, klausSimpleS((owner as tKlausDoerMouse).setting.here.text));
+  returnSimple(frame, klausSimpleS((owner as tKlausDoerMouse).setting.here.text1)); //!!!
 end;
 
 { tKlausSysProc_MouseArrow }
