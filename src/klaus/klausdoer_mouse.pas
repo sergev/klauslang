@@ -298,8 +298,10 @@ type
 const
   klausConstName_MouseLeft = 'влево';
   klausConstName_MouseLeft2 = 'слева';
+  klausConstName_MouseLeft3 = 'налево';
   klausConstName_MouseRight = 'вправо';
   klausConstName_MouseRight2 = 'справа';
+  klausConstName_MouseRight3 = 'направо';
   klausConstName_MouseFwd = 'вперед';
   klausConstName_MouseFwd2 = 'вперёд';
   klausConstName_MouseFwd3 = 'впереди';
@@ -380,7 +382,10 @@ type
       fDir: tKlausProcParam;
     public
       constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
-      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+      function  isCustomParamHandler: boolean; override;
+      procedure checkCallParamTypes(expr: array of tKlausExpression; at: tSrcPoint); override;
+      procedure getCustomParamModes(types: array of tKlausTypeDef; out modes: tKlausProcParamModes; const at: tSrcPoint); override;
+      procedure customRun(frame: tKlausStackFrame; values: array of tKlausVarValueAt; const at: tSrcPoint); override;
   end;
 
 type
@@ -1124,8 +1129,8 @@ end;
 
 procedure tKlausDoerMouse.createVariables;
 begin
-  tKlausConstDecl.create(self, [klausConstName_MouseLeft, klausConstName_MouseLeft2], zeroSrcPt, klausSimpleI(klausConst_MouseLeft));
-  tKlausConstDecl.create(self, [klausConstName_MouseRight, klausConstName_MouseRight2], zeroSrcPt, klausSimpleI(klausConst_MouseRight));
+  tKlausConstDecl.create(self, [klausConstName_MouseLeft, klausConstName_MouseLeft2, klausConstName_MouseLeft3], zeroSrcPt, klausSimpleI(klausConst_MouseLeft));
+  tKlausConstDecl.create(self, [klausConstName_MouseRight, klausConstName_MouseRight2, klausConstName_MouseRight3], zeroSrcPt, klausSimpleI(klausConst_MouseRight));
   tKlausConstDecl.create(self, [klausConstName_MouseFwd, klausConstName_MouseFwd2, klausConstName_MouseFwd3], zeroSrcPt, klausSimpleI(klausConst_MouseFwd));
   tKlausConstDecl.create(self, [klausConstName_MouseBack, klausConstName_MouseBack2], zeroSrcPt, klausSimpleI(klausConst_MouseBack));
   tKlausConstDecl.create(self, [klausConstName_MouseWest, klausConstName_MouseWest2], zeroSrcPt, klausSimpleI(klausConst_MouseWest));
@@ -1998,17 +2003,43 @@ end;
 constructor tKlausSysProc_MouseWall.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
 begin
   inherited create(aOwner, klausProcName_MouseWall, aPoint);
-  fDir := tKlausProcParam.create(self, 'где', aPoint, kpmInput, source.simpleTypes[kdtInteger]);
-  addParam(fDir);
   declareRetValue(kdtBoolean);
 end;
 
-procedure tKlausSysProc_MouseWall.run(frame: tKlausStackFrame; const at: tSrcPoint);
+function tKlausSysProc_MouseWall.isCustomParamHandler: boolean;
+begin
+  result := true;
+end;
+
+procedure tKlausSysProc_MouseWall.checkCallParamTypes(expr: array of tKlausExpression; at: tSrcPoint);
 var
+  cnt: integer;
+begin
+  cnt := length(expr);
+  if (cnt <> 0) and (cnt <> 1) then
+    raise eKlausError.createFmt(ercWrongNumberOfParams, at, [cnt, format(strNumOrNum, [0, 1])]);
+  if cnt > 0 then checkCanAssign(kdtInteger, expr[0].resultTypeDef, expr[0].point);
+end;
+
+procedure tKlausSysProc_MouseWall.getCustomParamModes(types: array of tKlausTypeDef; out modes: tKlausProcParamModes; const at: tSrcPoint);
+var
+  i: integer;
+begin
+  modes := nil;
+  setLength(modes, length(types));
+  for i := 0 to length(modes)-1 do modes[i] := kpmInput;
+end;
+
+procedure tKlausSysProc_MouseWall.customRun(frame: tKlausStackFrame; values: array of tKlausVarValueAt; const at: tSrcPoint);
+var
+  cnt: integer;
   dir: tKlausInteger;
   md: tKlausMouseDirection;
 begin
-  dir := getSimpleInt(frame, fDir, at);
+  cnt := length(values);
+  if (cnt <> 0) and (cnt <> 1) then
+    raise eKlausError.createFmt(ercWrongNumberOfParams, at, [cnt, format(strNumOrNum, [0, 1])]);
+  if cnt > 0 then dir := getSimpleInt(values[0]) else dir := klausConst_MouseFwd;
   with (owner as tKlausDoerMouse).setting do begin
     md := turn(dir);
     returnSimple(frame, klausSimpleB(here.wall[md]));
