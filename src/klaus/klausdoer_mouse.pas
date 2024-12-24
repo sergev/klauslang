@@ -264,6 +264,7 @@ type
       procedure resetNumericInput;
     protected
       procedure doExit; override;
+      procedure WMSetFocus(var Msg: tMessage); message LM_SetFocus;
       procedure WMKillFocus(var Msg: tMessage); message LM_KillFocus;
       procedure paint; override;
       procedure setSetting(aSetting: tKlausDoerSetting); override;
@@ -1494,9 +1495,17 @@ begin
   inherited
 end;
 
+procedure tKlausMouseView.WMSetFocus(var Msg: tMessage);
+begin
+  resetNumericInput;
+  invalidate;
+  inherited;
+end;
+
 procedure tKlausMouseView.WMKillFocus(var Msg: tMessage);
 begin
   resetNumericInput;
+  invalidate;
   inherited;
 end;
 
@@ -1504,6 +1513,11 @@ procedure tKlausMouseView.paint;
 const
   bullet = ' • ';
   arrows: array[tKlausMouseDirection] of u8Char = ('', '←', '↑', '→', '↓');
+  {$ifdef windows}
+  scale = 1.3;
+  {$else}
+  scale = 1;
+  {$endif}
 var
   r: tRect;
   sz: tSize;
@@ -1561,7 +1575,7 @@ begin
         font.color := self.colors.cellText;
         with setting[x, y] do begin
           if (text1 <> '') or (text2 <> '') or mark then begin
-            font.height := round(fCellSize / 2.2);
+            font.height := round(scale * fCellSize / 2.2);
             if text1 <> '' then
               textOut(r.left + fCellSize div 10, r.top, setting[x, y].text1);
             if text2 <> '' then begin
@@ -1575,14 +1589,14 @@ begin
           end;
           if hasNumber then begin
             s := intToStr(number);
-            if length(s) > 2 then font.height := round(fCellSize / 3)
-            else font.height := round(fCellSize / 2.5);
+            if length(s) > 2 then font.height := round(scale * fCellSize / 3)
+            else font.height := round(scale * fCellSize / 2.5);
             sz := textExtent(s);
             textOut(r.right - sz.cx - fCellSize div 10, r.top, s);
           end;
           s := arrows[arrow];
           if s <> '' then begin
-            font.height := fCellSize div 2;
+            font.height := round(scale * fCellSize / 2);
             sz := textExtent(s);
             case arrow of
               kmdLeft: textOut(r.left - fCellSize div 10, r.top + (r.height-sz.cy) div 2, s);
@@ -1605,7 +1619,7 @@ begin
               n := 0;
             end;
             s := format('%.4g', [n]);
-            font.height := round(fCellSize / max(3, length(s)/2));
+            font.height := round(scale * fCellSize / max(3, length(s)/2));
             sz := textExtent(s);
             textOut(r.left + (r.width-sz.cx) div 2, r.top + (r.height-sz.cy) div 2, s);
           end;

@@ -99,7 +99,7 @@ begin
     for i := 0 to task.doerSettings.count-1 do begin
       ds := task.doerSettings[i];
       s := ds.caption;
-      if s = '' then s := format('%.2d', [i]);
+      if s = '' then s := format('%.2d', [i+1]);
       page := tDoerSettingTabSheet.create(pageControl);
       page.pageControl := pageControl;
       page.caption := s;
