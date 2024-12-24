@@ -378,8 +378,6 @@ type
 
 type
   tKlausSysProc_MouseWall = class(tKlausSysProcDecl)
-    private
-      fDir: tKlausProcParam;
     public
       constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
       function  isCustomParamHandler: boolean; override;
@@ -432,7 +430,7 @@ type
 
 implementation
 
-{$R *.rc}
+{$R *.res}
 
 uses
   Types, Math, Clipbrd, U8;
