@@ -331,10 +331,12 @@ const
   klausProcName_MousePaint = 'закрасить';
   klausProcName_MouseClear = 'очистить';
   klausProcName_MouseWall = 'стена';
-  klausProcName_MouseOpening = 'проход';
   klausProcName_MousePainted = 'закрашено';
-  klausProcName_MouseLabel = 'метка';
   klausProcName_MouseArrow = 'стрелка';
+  klausProcName_MouseHasNumber = 'естьЧисло';
+  klausProcName_MouseNumber = 'число';
+  klausProcName_MouseTemperature = 'температура';
+  klausProcName_MouseRadiation = 'радиация';
 
 const
   mouseDoerMovementDelay = 50;
@@ -382,15 +384,6 @@ type
   end;
 
 type
-  tKlausSysProc_MouseOpening = class(tKlausSysProcDecl)
-    private
-      fDir: tKlausProcParam;
-    public
-      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
-      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
-  end;
-
-type
   tKlausSysProc_MousePainted = class(tKlausSysProcDecl)
     public
       constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
@@ -398,14 +391,35 @@ type
   end;
 
 type
-  tKlausSysProc_MouseLabel = class(tKlausSysProcDecl)
+  tKlausSysProc_MouseArrow = class(tKlausSysProcDecl)
     public
       constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
       procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
   end;
 
 type
-  tKlausSysProc_MouseArrow = class(tKlausSysProcDecl)
+  tKlausSysProc_MouseHasNumber = class(tKlausSysProcDecl)
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  tKlausSysProc_MouseNumber = class(tKlausSysProcDecl)
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  tKlausSysProc_MouseTemperature = class(tKlausSysProcDecl)
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
+
+type
+  tKlausSysProc_MouseRadiation = class(tKlausSysProcDecl)
     public
       constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
       procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
@@ -1127,10 +1141,12 @@ begin
   tKlausSysProc_MousePaint.create(self, zeroSrcPt);
   tKlausSysProc_MouseClear.create(self, zeroSrcPt);
   tKlausSysProc_MouseWall.create(self, zeroSrcPt);
-  tKlausSysProc_MouseOpening.create(self, zeroSrcPt);
   tKlausSysProc_MousePainted.create(self, zeroSrcPt);
-  tKlausSysProc_MouseLabel.create(self, zeroSrcPt);
   tKlausSysProc_MouseArrow.create(self, zeroSrcPt);
+  tKlausSysProc_MouseHasNumber.create(self, zeroSrcPt);
+  tKlausSysProc_MouseNumber.create(self, zeroSrcPt);
+  tKlausSysProc_MouseTemperature.create(self, zeroSrcPt);
+  tKlausSysProc_MouseRadiation.create(self, zeroSrcPt);
 end;
 
 function tKlausDoerMouse.getSetting: tKlausMouseSetting;
@@ -1999,28 +2015,6 @@ begin
   end;
 end;
 
-{ tKlausSysProc_MouseOpening }
-
-constructor tKlausSysProc_MouseOpening.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
-begin
-  inherited create(aOwner, klausProcName_MouseOpening, aPoint);
-  fDir := tKlausProcParam.create(self, 'где', aPoint, kpmInput, source.simpleTypes[kdtInteger]);
-  addParam(fDir);
-  declareRetValue(kdtBoolean);
-end;
-
-procedure tKlausSysProc_MouseOpening.run(frame: tKlausStackFrame; const at: tSrcPoint);
-var
-  dir: tKlausInteger;
-  md: tKlausMouseDirection;
-begin
-  dir := getSimpleInt(frame, fDir, at);
-  with (owner as tKlausDoerMouse).setting do begin
-    md := turn(dir);
-    returnSimple(frame, klausSimpleB(not here.wall[md]));
-  end;
-end;
-
 { tKlausSysProc_MousePainted }
 
 constructor tKlausSysProc_MousePainted.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
@@ -2032,19 +2026,6 @@ end;
 procedure tKlausSysProc_MousePainted.run(frame: tKlausStackFrame; const at: tSrcPoint);
 begin
   returnSimple(frame, klausSimpleB((owner as tKlausDoerMouse).setting.here.painted));
-end;
-
-{ tKlausSysProc_MouseLabel }
-
-constructor tKlausSysProc_MouseLabel.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
-begin
-  inherited create(aOwner, klausProcName_MouseLabel, aPoint);
-  declareRetValue(kdtString);
-end;
-
-procedure tKlausSysProc_MouseLabel.run(frame: tKlausStackFrame; const at: tSrcPoint);
-begin
-  returnSimple(frame, klausSimpleS((owner as tKlausDoerMouse).setting.here.text1)); //!!!
 end;
 
 { tKlausSysProc_MouseArrow }
@@ -2064,6 +2045,58 @@ var
 begin
   md := (owner as tKlausDoerMouse).setting.here.arrow;
   returnSimple(frame, klausSimpleI(dir[md]));
+end;
+
+{ tKlausSysProc_MouseHasNumber }
+
+constructor tKlausSysProc_MouseHasNumber.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausProcName_MouseHasNumber, aPoint);
+  declareRetValue(kdtBoolean);
+end;
+
+procedure tKlausSysProc_MouseHasNumber.run(frame: tKlausStackFrame; const at: tSrcPoint);
+begin
+  returnSimple(frame, klausSimpleB((owner as tKlausDoerMouse).setting.here.hasNumber));
+end;
+
+{ tKlausSysProc_MouseNumber }
+
+constructor tKlausSysProc_MouseNumber.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausProcName_MouseNumber, aPoint);
+  declareRetValue(kdtInteger);
+end;
+
+procedure tKlausSysProc_MouseNumber.run(frame: tKlausStackFrame; const at: tSrcPoint);
+begin
+  returnSimple(frame, klausSimpleI((owner as tKlausDoerMouse).setting.here.number));
+end;
+
+{ tKlausSysProc_MouseTemperature }
+
+constructor tKlausSysProc_MouseTemperature.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausProcName_MouseTemperature, aPoint);
+  declareRetValue(kdtFloat);
+end;
+
+procedure tKlausSysProc_MouseTemperature.run(frame: tKlausStackFrame; const at: tSrcPoint);
+begin
+  returnSimple(frame, klausSimpleF((owner as tKlausDoerMouse).setting.here.temperature));
+end;
+
+{ tKlausSysProc_MouseRadiation }
+
+constructor tKlausSysProc_MouseRadiation.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausProcName_MouseRadiation, aPoint);
+  declareRetValue(kdtFloat);
+end;
+
+procedure tKlausSysProc_MouseRadiation.run(frame: tKlausStackFrame; const at: tSrcPoint);
+begin
+  returnSimple(frame, klausSimpleF((owner as tKlausDoerMouse).setting.here.radiation));
 end;
 
 var
