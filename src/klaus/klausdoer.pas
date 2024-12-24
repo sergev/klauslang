@@ -25,10 +25,11 @@ interface
 
 uses
   Classes, SysUtils, KlausLex, KlausDef, KlausSyn, KlausErr, KlausSrc, Controls, Forms,
-  FpJson, FrameDoerError;
+  Dialogs, FpJson, FrameDoerError;
 
 type
   tKlausDoer = class;
+  tKlausDoerSettings = class;
   tKlausDoerSetting = class;
   tKlausDoerView = class;
 
@@ -39,7 +40,14 @@ type
   tKlausDoerDestroyTabMethod = procedure(ctl: tWinControl) of object;
 
 type
-  tKlausDoerViewMode = (dvmView, dvmEdit, dvmExecute);
+  tKlausDoerViewMode = (kdvmView, kdvmEdit, kdvmExecute);
+
+type
+  tKlausDoerCapability = (kdcImportSettings, kdcExportSettings);
+  tKlausDoerCapabilities = set of tKlausDoerCapability;
+
+resourcestring
+  strKlausDoerSettingFileExt = '.klaus-setting';
 
 type
   tKlausDoer = class(tKlausStdUnit)
@@ -59,8 +67,13 @@ type
     public
       class var createWindowMethod: tKlausDoerCreateTabMethod;
       class var destroyWindowMethod: tKlausDoerDestroyTabMethod;
-      class function createSetting: tKlausDoerSetting; virtual; abstract;
-      class function createView(aOwner: tComponent; mode: tKlausDoerViewMode): tKlausDoerView; virtual; abstract;
+      class function  createSetting: tKlausDoerSetting; virtual; abstract;
+      class function  createView(aOwner: tComponent; mode: tKlausDoerViewMode): tKlausDoerView; virtual; abstract;
+      class function  capabilities: tKlausDoerCapabilities; virtual;
+      class procedure importSettingsDlgSetup(dlg: tOpenDialog); virtual;
+      class procedure importSettings(settings: tKlausDoerSettings; fileName: string); virtual;
+      class procedure exportSettingsDlgSetup(dlg: tSaveDialog); virtual;
+      class procedure exportSettings(settings: tKlausDoerSettings; fileName: string); virtual;
     public
       property window: tWinControl read fWindow;
       property view: tKlausDoerView read fView;
@@ -359,7 +372,7 @@ end;
 procedure tKlausDoer.syncCreateWindow;
 begin
   fWindow := createWindowMethod(stdUnitName);
-  fView := createView(fWindow, dvmExecute);
+  fView := createView(fWindow, kdvmExecute);
   fView.parent := fWindow;
   fView.align := alClient;
   fView.borderSpacing.around := 2;
@@ -417,6 +430,27 @@ begin
   fSetting := nil;
   theDoer := nil;
   inherited afterDone(frame);
+end;
+
+class function tKlausDoer.capabilities: tKlausDoerCapabilities;
+begin
+  result := [];
+end;
+
+class procedure tKlausDoer.importSettingsDlgSetup(dlg: tOpenDialog);
+begin
+end;
+
+class procedure tKlausDoer.importSettings(settings: tKlausDoerSettings; fileName: string);
+begin
+end;
+
+class procedure tKlausDoer.exportSettingsDlgSetup(dlg: tSaveDialog);
+begin
+end;
+
+class procedure tKlausDoer.exportSettings(settings: tKlausDoerSettings; fileName: string);
+begin
 end;
 
 procedure tKlausDoer.syncErrorMessage;

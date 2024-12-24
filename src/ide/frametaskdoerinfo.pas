@@ -104,7 +104,7 @@ begin
       page.pageControl := pageControl;
       page.caption := s;
       page.setting := ds;
-      view := task.doer.createView(self, dvmView);
+      view := task.doer.createView(self, kdvmView);
       view.parent := page;
       view.align := alClient;
       view.setting := ds;

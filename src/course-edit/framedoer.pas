@@ -63,6 +63,7 @@ type
     Label10: tLabel;
     Label9: tLabel;
     lbSetting: tListBox;
+    importDialog: TOpenDialog;
     pnDoer: tPanel;
     Panel13: tPanel;
     Panel14: tPanel;
@@ -81,6 +82,7 @@ type
     tbSave: TToolButton;
     procedure actSettingAddExecute(sender: tObject);
     procedure actSettingDeleteExecute(sender: tObject);
+    procedure actSettingLoadExecute(sender: tObject);
     procedure actSettingMoveDownExecute(sender: tObject);
     procedure actSettingMoveUpExecute(sender: tObject);
     procedure actSettingRenameExecute(sender: tObject);
@@ -129,6 +131,8 @@ resourcestring
   strDeleteSetting = 'Удалить обстановку "%s"?';
   strCaption = 'Название: ';
   strConfirmChangeDoer = 'При смене исполнителя все существующие обстановки будут удалены. Продолжить?';
+  strImportError = #13#10'  %s: %s';
+  strImportErrors = 'При импорте возникли ошибки: %s';
 
 var
   doerFrameClass: tStringList = nil;
@@ -238,6 +242,8 @@ begin
     actSettingDelete.enabled := sel <> nil;
     actSettingMoveDown.enabled := sel <> nil;
     actSettingMoveUp.enabled := sel <> nil;
+    actSettingLoad.enabled := kdcImportSettings in task.doer.capabilities;
+    actSettingSave.enabled := kdcExportSettings in task.doer.capabilities;
   end;
   if fSettingFrame <> nil then fSettingFrame.enableDisable;
 end;
@@ -311,6 +317,27 @@ begin
     end;
   finally
     enableDisable;
+  end;
+end;
+
+procedure tDoerFrame.actSettingLoadExecute(sender: tObject);
+var
+  i: integer;
+  err: string = '';
+begin
+  if task = nil then exit;
+  if not (kdcImportSettings in task.doer.capabilities) then exit;
+  task.doer.importSettingsDlgSetup(importDialog);
+  if importDialog.execute then try
+    for i := 0 to importDialog.files.count-1 do try
+      task.doer.importSettings(task.doerSettings, importDialog.files[i]);
+    except
+      on e:exception do
+        err += format(strImportError, [extractFileName(importDialog.files[i]), e.message]);
+    end;
+    if err <> '' then messageDlg(format(strImportErrors, [err]), mtError, [mbOk], 0);
+  finally
+    refreshSettingList;
   end;
 end;
 

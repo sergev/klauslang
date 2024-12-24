@@ -148,13 +148,15 @@ const
   ercDuplicateDoer          =  98;
   ercDoerWindowNotAvailable =  99;
   ercDoerFailure            = 100;
+  ercInvalidSettingFileType = 101;
+  ercInvalidSettingFileFmt  = 102;
 
 const
   // Классификация кодов eKlausError для трансляции в исключения языка
   klausCodeToStdErr: array[tKlausStdException] of set of byte = (
     //ksxInOutError
     [ercStreamError, ercInvalidFileType, ercStreamNotOpen, ercInvalidFileFormat, ercFileReadError,
-    ercCannotCreateDirectory],
+    ercCannotCreateDirectory, ercInvalidSettingFileType, ercInvalidSettingFileFmt],
 
     //ksxConvertError
     [ercInvalidLiteralValue, ercInvalidFormatSpecifier, ercInvalidFormatArgIdx,
@@ -335,6 +337,8 @@ resourcestring
   errDuplicateDoer = 'Модуль "%s" конфликтует с модулем "%s". В программе допускается использовать не более одного исполнителя.';
   errDoerWindowNotAvailable = 'Невозможно создать окно исполнителя.';
   errDoerFailure = 'Сбой в работе исполнителя. %s';
+  errInvalidSettingFileType = 'Неизвестный тип файла: "%s"';
+  errInvalidSettingFileFmt = 'Неверный формат файла файла.';
 
 { Globals }
 
@@ -472,6 +476,8 @@ begin
     ercDuplicateDoer: result := errDuplicateDoer;
     ercDoerWindowNotAvailable: result := errDoerWindowNotAvailable;
     ercDoerFailure: result := errDoerFailure;
+    ercInvalidSettingFileType: result := errInvalidSettingFileType;
+    ercInvalidSettingFileFmt: result := errInvalidSettingFileFmt;
   end;
 end;
 

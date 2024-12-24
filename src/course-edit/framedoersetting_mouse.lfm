@@ -1,11 +1,10 @@
 object DoerSettingFrame_Mouse: TDoerSettingFrame_Mouse
   Left = 0
-  Height = 532
+  Height = 426
   Top = 0
-  Width = 1030
-  ClientHeight = 665
-  ClientWidth = 1030
-  DesignTimePPI = 120
+  Width = 824
+  ClientHeight = 426
+  ClientWidth = 824
   ParentFont = False
   TabOrder = 0
   DesignLeft = 640
@@ -34,106 +33,106 @@ object DoerSettingFrame_Mouse: TDoerSettingFrame_Mouse
       Style = tbsDivider
     end
     object ToolButton4: TToolButton
-      Left = 55
+      Left = 51
       Top = 0
       Action = actWallLeft
     end
     object ToolButton6: TToolButton
-      Left = 78
+      Left = 74
       Top = 0
       Action = actWallUp
     end
     object ToolButton7: TToolButton
-      Left = 101
+      Left = 97
       Top = 0
       Action = actWallRight
     end
     object ToolButton8: TToolButton
-      Left = 124
+      Left = 120
       Top = 0
       Action = actWallDown
     end
     object ToolButton9: TToolButton
-      Left = 147
+      Left = 143
       Height = 22
       Top = 0
       Caption = 'ToolButton9'
       Style = tbsDivider
     end
     object ToolButton10: TToolButton
-      Left = 155
+      Left = 147
       Top = 0
       Action = actArrowLeft
     end
     object ToolButton11: TToolButton
-      Left = 178
+      Left = 170
       Top = 0
       Action = actArrowUp
     end
     object ToolButton12: TToolButton
-      Left = 201
+      Left = 193
       Top = 0
       Action = actArrowRight
     end
     object ToolButton13: TToolButton
-      Left = 224
+      Left = 216
       Top = 0
       Action = actArrowDown
     end
     object ToolButton14: TToolButton
-      Left = 247
+      Left = 239
       Height = 22
       Top = 0
       Caption = 'ToolButton14'
       Style = tbsDivider
     end
     object ToolButton15: TToolButton
-      Left = 255
+      Left = 243
       Top = 0
       Action = actPaint
     end
     object ToolButton16: TToolButton
-      Left = 278
+      Left = 266
       Height = 22
       Top = 0
       Caption = 'ToolButton16'
       Style = tbsDivider
     end
     object ToolButton17: TToolButton
-      Left = 286
+      Left = 270
       Top = 0
       Action = actSymbolA
     end
     object ToolButton18: TToolButton
-      Left = 309
+      Left = 293
       Top = 0
       Action = actSymbolB
     end
     object ToolButton19: TToolButton
-      Left = 332
+      Left = 316
       Hint = 'Символ "•"|Обозначить текущую клетку символом "•". Нажмите точку, чтобы установить или снять отметку.'
       Top = 0
       Action = actSymbolBullet
     end
     object ToolButton20: TToolButton
-      Left = 363
+      Left = 345
       Top = 0
       Action = actCellProps
     end
     object ToolButton21: TToolButton
-      Left = 386
+      Left = 368
       Height = 22
       Top = 0
       Caption = 'ToolButton21'
       Style = tbsDivider
     end
     object ToolButton22: TToolButton
-      Left = 394
+      Left = 372
       Top = 0
       Action = actMousePos
     end
     object ToolButton23: TToolButton
-      Left = 417
+      Left = 395
       Top = 0
       Action = actMouseRotate
     end
@@ -143,26 +142,26 @@ object DoerSettingFrame_Mouse: TDoerSettingFrame_Mouse
       Action = actSettingClear
     end
     object ToolButton5: TToolButton
-      Left = 355
+      Left = 339
       Height = 22
       Top = 0
       Caption = 'ToolButton5'
       Style = tbsSeparator
     end
     object ToolButton24: TToolButton
-      Left = 440
+      Left = 418
       Height = 22
       Top = 0
       Caption = 'ToolButton24'
       Style = tbsSeparator
     end
     object tbTemperature: TToolButton
-      Left = 448
+      Left = 424
       Top = 0
       Action = actTemperature
     end
     object tbRadiation: TToolButton
-      Left = 471
+      Left = 447
       Top = 0
       Action = actRadiation
     end
@@ -170,8 +169,8 @@ object DoerSettingFrame_Mouse: TDoerSettingFrame_Mouse
   object actionImages: TImageList
     Height = 18
     Width = 18
-    Left = 205
-    Top = 220
+    Left = 164
+    Top = 176
     Bitmap = {
       4C7A130000001200000012000000650400000000000078DAED9CDB92D3300C86
       B35C31CC0E33BC3084BDE69E590E77BC03172C4C5F80670A4D5B075991645956
@@ -213,8 +212,8 @@ object DoerSettingFrame_Mouse: TDoerSettingFrame_Mouse
   end
   object actions: TActionList
     Images = actionImages
-    Left = 380
-    Top = 220
+    Left = 304
+    Top = 176
     object actSettingSize: TAction
       Caption = 'Размер поля...'
       Hint = 'Размер поля...|Установить размеры поля'

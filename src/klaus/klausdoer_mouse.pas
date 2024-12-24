@@ -25,8 +25,8 @@ interface
 
 uses
   Classes, SysUtils, Messages, LMessages, KlausLex, KlausDef, KlausSyn, KlausErr,
-  Controls, Forms, Graphics, LCLType, KlausDoer, FpJson, BGRABitmap, BGRABitmapTypes,
-  BGRASVG, KlausSrc, KlausUnitSystem;
+  Controls, Forms, Dialogs, Graphics, LCLType, KlausDoer, FpJson, BGRABitmap,
+  BGRABitmapTypes, BGRASVG, KlausSrc, KlausUnitSystem;
 
 const
   klausDoerName_Mouse = 'Мышка';
@@ -145,14 +145,19 @@ type
       procedure createRoutines;
       function  getSetting: tKlausMouseSetting;
       function  getView: tKlausMouseView;
-    private
       procedure syncNextStep;
       procedure syncTurn;
       procedure syncPaint;
+    private
+      class procedure importKlausMouseSettings(settings: tKlausDoerSettings; fileName: string);
+      class procedure importKumirRobotSetting(settings: tKlausDoerSettings; fileName: string);
     public
-      class function stdUnitName: string; override;
-      class function createSetting: tKlausDoerSetting; override;
-      class function createView(aOwner: tComponent; mode: tKlausDoerViewMode): tKlausDoerView; override;
+      class function  stdUnitName: string; override;
+      class function  createSetting: tKlausDoerSetting; override;
+      class function  createView(aOwner: tComponent; mode: tKlausDoerViewMode): tKlausDoerView; override;
+      class function  capabilities: tKlausDoerCapabilities; override;
+      class procedure importSettingsDlgSetup(dlg: tOpenDialog); override;
+      class procedure importSettings(settings: tKlausDoerSettings; fileName: string); override;
     public
       property view: tKlausMouseView read getView;
       property setting: tKlausMouseSetting read getSetting;
@@ -409,7 +414,12 @@ implementation
 {$R *.rc}
 
 uses
-  Types, Math, Clipbrd, U8, Dialogs;
+  Types, Math, Clipbrd, U8;
+
+resourcestring
+  strMouseSettingsImportFilter = 'Все файлы обстановок|*.klaus-setting;*.fil|Клаус - обстановки исполнителей|*.klaus-setting|КуМир - обстановки Робота|*.fil|Все файлы|*';
+  strKumirRobotSettingFileExt = '.fil';
+  strAtLine = 'Строка %d: %s';
 
 const
   mouseImageInfo: record
@@ -918,11 +928,33 @@ end;
 class function tKlausDoerMouse.createView(aOwner: tComponent; mode: tKlausDoerViewMode): tKlausDoerView;
 begin
   result := tKlausMouseView.create(aOwner);
-  if mode <> dvmEdit then begin
+  if mode <> kdvmEdit then begin
     result.readOnly := true;
     result.enabled := false;
     result.tabStop := false;
   end;
+end;
+
+class function tKlausDoerMouse.capabilities: tKlausDoerCapabilities;
+begin
+  result := [kdcImportSettings]; //!!! kdcExportSettings
+end;
+
+class procedure tKlausDoerMouse.importSettingsDlgSetup(dlg: tOpenDialog);
+begin
+  dlg.filter := strMouseSettingsImportFilter;
+  dlg.defaultExt := strKlausDoerSettingFileExt;
+end;
+
+class procedure tKlausDoerMouse.importSettings(settings: tKlausDoerSettings; fileName: string);
+var
+  ext: string;
+begin
+  assert(settings.doerClass = self.classType, 'Cannot import settigns of this doer class.');
+  ext := u8Lower(extractFileExt(fileName));
+  if ext = u8Lower(strKlausDoerSettingFileExt) then importKlausMouseSettings(settings, fileName)
+  else if ext = u8Lower(strKumirRobotSettingFileExt) then importKumirRobotSetting(settings, fileName)
+  else raise eKlausError.createFmt(ercInvalidSettingFileType, zeroSrcPt, [ext]);
 end;
 
 constructor tKlausDoerMouse.create(aSource: tKlausSource);
@@ -987,6 +1019,91 @@ end;
 procedure tKlausDoerMouse.syncPaint;
 begin
   setting.here.painted := boolean(fIntParam[0]);
+end;
+
+class procedure tKlausDoerMouse.importKlausMouseSettings(settings: tKlausDoerSettings; fileName: string);
+begin
+  //!!!
+  raise exception.create('Not implemented yet...');
+end;
+
+class procedure tKlausDoerMouse.importKumirRobotSetting(settings: tKlausDoerSettings; fileName: string);
+var
+  i, n: integer;
+  idx: integer = 0;
+  sl: tStringList;
+  s: string;
+  sa: tStringArray;
+  p: tPoint;
+  ms: tKlausMouseSetting;
+begin
+  assert(settings.doerClass = self.classType, 'Invalid setting class');
+  ms := settings.add as tKlausMouseSetting;
+  try
+    ms.updating;
+    sl := tStringList.create;
+    try
+      sl.loadFromFile(fileName);
+      for i := 0 to sl.count-1 do begin
+        s := trim(sl[i]);
+        if s = '' then continue;
+        if s[1] = ';' then continue;
+        try
+          case idx of
+            0: begin // размеры поля
+              sa := s.split(' ');
+              if length(sa) < 2 then raise eKlausError.create(ercInvalidFileFormat, zeroSrcPt);
+              ms.width := strToInt(sa[0]);
+              ms.height := strToInt(sa[1]);
+              inc(idx);
+            end;
+            1: begin // положение Мышки
+              sa := s.split(' ');
+              if length(sa) < 2 then raise eKlausError.create(ercInvalidFileFormat, zeroSrcPt);
+              ms.mouseX := strToInt(sa[0]);
+              ms.mouseY := strToInt(sa[1]);
+              inc(idx);
+            end;
+            else begin // свойства клеток
+              sa := s.split(' ');
+              if length(sa) < 8 then raise eKlausError.create(ercInvalidFileFormat, zeroSrcPt);
+              p.x := strToInt(sa[0]);
+              p.y := strToInt(sa[1]);
+              with ms[p.x, p.y] do begin
+                n := strToint(sa[2]);
+                if (n and 1) > 0 then wall[kmdLeft] := true;
+                if (n and 2) > 0 then wall[kmdRight] := true;
+                if (n and 4) > 0 then wall[kmdDown] := true;
+                if (n and 8) > 0 then wall[kmdUp] := true;
+                n := strToint(sa[3]);
+                painted := n > 0;
+                radiation := strToFloat(sa[4].replace(',', '.'));
+                temperature := strToFloat(sa[5].replace(',', '.'));
+                text1 := sa[6].replace('$', '');
+                text2 := sa[7].replace('$', '');
+                if length(sa) > 8 then begin
+                  n := strToInt(sa[8]);
+                  mark := n > 0;
+                end;
+              end;
+              inc(idx);
+            end;
+          end;
+        except
+          on e: exception do begin
+            e.message := format(strAtLine, [e.message]);
+            raise;
+          end;
+        end;
+      end;
+    finally
+      freeAndNil(sl);
+      ms.updated;
+    end;
+  except
+    settings.remove(ms);
+    raise;
+  end;
 end;
 
 procedure tKlausDoerMouse.createVariables;

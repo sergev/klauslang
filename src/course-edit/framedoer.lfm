@@ -5,7 +5,6 @@ object DoerFrame: TDoerFrame
   Width = 906
   ClientHeight = 515
   ClientWidth = 906
-  LCLVersion = '3.4.0.0'
   TabOrder = 0
   DesignLeft = 600
   DesignTop = 238
@@ -227,8 +226,8 @@ object DoerFrame: TDoerFrame
   object actionImages: TImageList
     Height = 18
     Width = 18
-    Left = 122
-    Top = 240
+    Left = 132
+    Top = 180
     Bitmap = {
       4C7A070000001200000012000000DC0100000000000078DAED9901B284200886
       3DBA47EB66EEAB091F4BF00B6A3BDBAC394C6DD1178260B9A594546E946DDB8A
@@ -250,8 +249,8 @@ object DoerFrame: TDoerFrame
   end
   object listActions: TActionList
     Images = actionImages
-    Left = 124
-    Top = 312
+    Left = 134
+    Top = 252
     object actSettingAdd: TAction
       Caption = 'Добавить обстановку'
       Hint = 'Добавить|Добавить новую обстановку для выбранного исполнителя'
@@ -291,6 +290,7 @@ object DoerFrame: TDoerFrame
       Caption = 'Добавить из файла'
       Hint = 'Добавить из файла...|Загрузить обстановки из файла и добавить в список'
       ImageIndex = 5
+      OnExecute = actSettingLoadExecute
       ShortCut = 24655
     end
     object actSettingSave: TAction
@@ -299,5 +299,12 @@ object DoerFrame: TDoerFrame
       ImageIndex = 6
       ShortCut = 24659
     end
+  end
+  object importDialog: TOpenDialog
+    Title = 'Импорт обстановок'
+    DefaultExt = '.klaus-setting'
+    Options = [ofAllowMultiSelect, ofPathMustExist, ofFileMustExist, ofEnableSizing, ofViewDetail]
+    Left = 137
+    Top = 322
   end
 end

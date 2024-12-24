@@ -265,7 +265,7 @@ object MainForm: TMainForm
   object openDialog: TOpenDialog
     Title = 'Открыть учебный курс'
     DefaultExt = '.klaus-course'
-    Filter = 'Файлы курсов|*.klaus-course|Все файлы|*.*'
+    Filter = 'Файлы курсов|*.klaus-course|Все файлы|*'
     Options = [ofPathMustExist, ofFileMustExist, ofEnableSizing, ofViewDetail]
     Left = 400
     Top = 307
