@@ -232,6 +232,7 @@ type
 
 const
   klausMouseMinCellSize = 5;
+  klausMouseMaxCellSize = 80;
 
 type
   tKlausMouseViewMode = (mvmNormal, mvmTemperature, mvmRadiation);
@@ -1532,7 +1533,8 @@ begin
     fillRect(r);
   end;
   if setting = nil then exit;
-  fCellSize := max(klausMouseMinCellSize, min(r.width div setting.width, r.height div setting.height));
+  fCellSize := min(klausMouseMaxCellSize, max(klausMouseMinCellSize,
+    min(r.width div setting.width, r.height div setting.height)));
   w := fCellSize * setting.width;
   h := fCellSize * setting.height;
   fOrigin.x := r.left + (r.width - w) div 2;
