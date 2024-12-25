@@ -25,8 +25,8 @@ interface
 
 uses
   Classes, SysUtils, Messages, LMessages, KlausLex, KlausDef, KlausSyn, KlausErr,
-  Controls, Forms, Dialogs, Graphics, LCLType, KlausDoer, FpJson, BGRABitmap,
-  BGRABitmapTypes, BGRASVG, KlausSrc, KlausUnitSystem;
+  Controls, Forms, Dialogs, Graphics, LCLType, KlausDoer, FpJson, KlausSrc,
+  KlausUnitSystem;
 
 const
   klausDoerName_Mouse = 'Мышка';
@@ -217,11 +217,11 @@ type
       fSize: integer;
       fFit: tRect;
       fWidth, fHeight: integer;
-      fImg: array[kmdLeft..kmdDown] of array of tBGRABitmap;
+      fImg: array[kmdLeft..kmdDown] of array of tPortableNetworkGraphic;
 
-      function getImg(dir: tKlausMouseDirection; idx: integer): tBGRABitmap;
+      function getImg(dir: tKlausMouseDirection; idx: integer): tGraphic;
     public
-      property img[dir: tKlausMouseDirection; idx: integer]: tBGRABitmap read getImg; default;
+      property img[dir: tKlausMouseDirection; idx: integer]: tGraphic read getImg; default;
 
       constructor create;
       destructor  destroy; override;
@@ -448,13 +448,13 @@ const
     resName: string;
   end = (
     count: 6;
-    size: (cx: 185; cy: 514);
-    fit: (left: 0; top: 0; right: 186; bottom: 301);
-    resName: 'klaus_doer_mouse%.2d_svg';
+    size: (cx: 173; cy: 482); // размеры изображения (для направления на север)
+    fit: (left: 0; top: 0; right: 174; bottom: 282); // прямоугольник, который должен влезть в клетку
+    resName: 'klaus_doer_mouse%.2d%s_png';
   );
 
 var
-  mouseSVG: array of tBGRASVG = nil;
+  mousePNG: array[kmdLeft..kmdDown] of array of tPortableNetworkGraphic = (nil, nil, nil, nil);
 
 resourcestring
   strNumOrNum = '%d или %d';
@@ -1295,7 +1295,7 @@ end;
 
 { tKlausMouseImageCache }
 
-function tKlausMouseImageCache.getImg(dir: tKlausMouseDirection; idx: integer): tBGRABitmap;
+function tKlausMouseImageCache.getImg(dir: tKlausMouseDirection; idx: integer): tGraphic;
 begin
   assert((idx >= 0) and (idx < mouseImageInfo.count), 'Invalid mouse image index.');
   if dir = kmdNone then dir := kmdLeft;
@@ -1331,7 +1331,6 @@ end;
 
 procedure tKlausMouseImageCache.rebuild(aSize: integer);
 var
-  i: integer;
   scale: double;
 begin
   if fSize <> aSize then begin
@@ -1342,13 +1341,10 @@ begin
       fFit := rect(round(fit.left*scale), round(fit.top*scale), round(fit.right*scale), round(fit.bottom*scale));
       fWidth := round(size.cx*scale);
       fHeight := round(size.cy*scale);
-      for i := 0 to count-1 do begin
-        fImg[kmdUp, i] := tBGRABitmap.create(fWidth, fHeight, bgra(0, 0, 0, 0));
-        mouseSVG[i].stretchDraw(fImg[kmdUp, i].canvas2D, rectf(0, 0, fWidth, fHeight));
-        fImg[kmdLeft, i] := fImg[kmdUp, i].rotateCCW;
-        fImg[kmdRight, i] := fImg[kmdUp, i].rotateCW;
-        fImg[kmdDown, i] := fImg[kmdUp, i].rotateUD;
-      end;
+      // Здесь можно было бы закешировать набор картинок нужного размера,
+      // но средствами стандартной библиотеки это сделать невозможно,
+      // а BGRABitmap не собирается под Alt Linux.
+      // Поэтому только canvas.stretchDraw(), только хардкор!
     end;
   end;
 end;
@@ -1367,24 +1363,27 @@ begin
         r := rect(top, fWidth - right, bottom, fWidth - left);
         x := cell.left - r.left + cell.width div 10;
         y := cell.top - r.top + cell.height div 2 - r.height div 2;
+        canvas.stretchDraw(rect(x, y, x+fHeight, y+fWidth), mousePNG[dir, idx]);
       end;
       kmdUp: begin
         r := rect(left, top, right, bottom);
         x := cell.left - r.left + cell.width div 2 - r.width div 2;
         y := cell.top - r.top + cell.height div 10;
+        canvas.stretchDraw(rect(x, y, x+fWidth, y+fHeight), mousePNG[dir, idx]);
       end;
       kmdRight: begin
         r := rect(fHeight - bottom, left, fHeight - top, right);
         x := cell.right - r.width - r.left - cell.Width div 10;
         y := cell.top - r.top + cell.height div 2 - r.height div 2;
+        canvas.stretchDraw(rect(x, y, x+fHeight, y+fWidth), mousePNG[dir, idx]);
       end;
       kmdDown: begin
         r := rect(fWidth - right, fHeight - bottom, fWidth - left, fHeight - top);
         x := cell.left - r.left + cell.width div 2 - r.width div 2;
         y := cell.bottom - r.height - r.top - cell.height div 10;
+        canvas.stretchDraw(rect(x, y, x+fWidth, y+fHeight), mousePNG[dir, idx]);
       end;
     end;
-  fImg[dir, idx].draw(canvas, x, y, false);
 end;
 
 { tKlausMouseView }
@@ -2128,18 +2127,44 @@ begin
   returnSimple(frame, klausSimpleF((owner as tKlausDoerMouse).setting.here.radiation));
 end;
 
+{ Locals }
+
+procedure loadMousePNG;
+const
+  dir: array[tKlausMouseDirection] of string = ('', 'w', 'n', 'e', 's');
 var
   i: integer;
+  d: tKlausMouseDirection;
   stream: tResourceStream;
+begin
+  for d := kmdLeft to kmdDown do begin
+    setLength(mousePNG[d], mouseImageInfo.count);
+    for i := 0 to mouseImageInfo.count-1 do begin
+      stream := tResourceStream.create(hInstance, format(mouseImageInfo.resName, [i, dir[d]]), RT_RCDATA);
+      try
+        mousePNG[d, i] := tPortableNetworkGraphic.create;
+        mousePNG[d, i].loadFromStream(stream);
+      finally
+        freeAndNil(stream);
+      end;
+    end;
+  end;
+end;
+
+procedure freeMousePNG;
+var
+  i: integer;
+  d: tKlausMouseDirection;
+begin
+  for d := kmdLeft to kmdDown do
+    for i := 0 to mouseImageInfo.count-1 do
+      freeAndNIL(mousePNG[d, i]);
+end;
+
 initialization
   klausRegisterStdUnit(tKlausDoerMouse);
-  setLength(mouseSVG, mouseImageInfo.count);
-  for i := 0 to mouseImageInfo.count-1 do begin
-    stream := tResourceStream.create(hInstance, format(mouseImageInfo.resName, [i]), RT_RCDATA);
-    try mouseSVG[i] := tBGRASVG.create(stream);
-    finally freeAndNil(stream); end;
-  end;
+  loadMousePNG;
 finalization
-  for i := 0 to mouseImageInfo.count-1 do freeAndNil(mouseSVG[i]);
+  freeMousePNG
 end.
 
