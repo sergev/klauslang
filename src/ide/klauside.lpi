@@ -38,7 +38,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="../lib;../lib/bgrabitmap;../klaus;../lib/edit;../lib/console"/>
+            <OtherUnitFiles Value="../lib;../klaus;../lib/edit;../lib/console"/>
             <UnitOutputDirectory Value="../../compiled/$NameOnly($(ProjFile))/$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -87,7 +87,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="../lib;../lib/bgrabitmap;../klaus;../lib/edit;../lib/console"/>
+            <OtherUnitFiles Value="../lib;../klaus;../lib/edit;../lib/console"/>
             <UnitOutputDirectory Value="../../compiled/$NameOnly($(ProjFile))/$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -131,7 +131,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="../lib;../lib/bgrabitmap;../klaus;../lib/edit;../lib/console"/>
+            <OtherUnitFiles Value="../lib;../klaus;../lib/edit;../lib/console"/>
             <UnitOutputDirectory Value="../../compiled/$NameOnly($(ProjFile))/$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
