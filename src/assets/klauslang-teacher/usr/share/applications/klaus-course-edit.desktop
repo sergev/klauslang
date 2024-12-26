@@ -5,5 +5,5 @@ Comment=Редактор учебных курсов Клаус
 MimeType=application/klauslang-training-course
 Exec=klaus-course-edit %U
 Terminal=false
-Categories=Development
+Categories=Development;Education;
 Icon=klaus-course-edit

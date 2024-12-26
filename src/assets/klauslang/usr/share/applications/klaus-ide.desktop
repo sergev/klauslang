@@ -5,5 +5,5 @@ Comment=Отладочная среда Клаус
 MimeType=text/klauslang-source-code
 Exec=klaus-ide %U
 Terminal=false
-Categories=Development
+Categories=Development;Education;
 Icon=klaus-ide

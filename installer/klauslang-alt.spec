@@ -55,11 +55,11 @@ cp %_pwd/../installer/what-s-new.txt %buildroot/opt/klauslang/
 /opt/klauslang/test/*
 /opt/klauslang/doc/*
 /opt/klauslang/practicum/*
-%ghost /usr/bin/klaus
-%ghost /usr/bin/klaus-ide
 /usr/*
 /opt/klauslang/what-s-new.txt
+%ghost /usr/bin/klaus
+%ghost /usr/bin/klaus-ide
 
 %post
-ln -sf %buildroot/opt/klauslang/amd64/klaus %buildroot/usr/bin/klaus
-ln -sf %buildroot/opt/klauslang/amd64/klaus-ide %buildroot/usr/bin/klaus-ide
+ln -sf /opt/klauslang/amd64/klaus /usr/bin/klaus
+ln -sf /opt/klauslang/amd64/klaus-ide /usr/bin/klaus-ide
