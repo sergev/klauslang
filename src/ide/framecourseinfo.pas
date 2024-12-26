@@ -11,43 +11,43 @@ uses
 
 type
   tCourseInfoFrame = class(tFrame)
-    actSolve: TAction;
-    actSettings: TAction;
-    actionImages: TImageList;
-    actionList: TActionList;
-    actRefresh: TAction;
-    buttonImages: TImageList;
-    bvTreeSizer: TBevel;
-    bvDoerSizer: TBevel;
-    htmlInfo: TIpHtmlPanel;
-    lblCaption: TLabel;
-    pnDescription: TPanel;
-    pnTree: TPanel;
-    pnContent: TPanel;
-    pnHeader: TPanel;
-    pnDoer: TPanel;
-    sbClose: TSpeedButton;
-    Shape1: TShape;
-    tbAdd: TToolButton;
-    tbEdit: TToolButton;
-    toolBar: TToolBar;
-    ToolButton1: TToolButton;
-    ToolButton2: TToolButton;
-    tree: TTreeView;
-    procedure actRefreshExecute(Sender: TObject);
-    procedure actSettingsExecute(Sender: TObject);
-    procedure actSolveExecute(Sender: TObject);
-    procedure htmlInfoHotClick(Sender: TObject);
-    procedure htmlInfoHotURL(Sender: TObject; const URL: String);
-    procedure sbCloseClick(Sender: TObject);
-    procedure treeChange(Sender: TObject; Node: TTreeNode);
+    actSolve: tAction;
+    actSettings: tAction;
+    actionImages: tImageList;
+    actionList: tActionList;
+    actRefresh: tAction;
+    buttonImages: tImageList;
+    bvTreeSizer: tBevel;
+    bvDoerSizer: tBevel;
+    htmlInfo: tIpHtmlPanel;
+    lblCaption: tLabel;
+    pnDescription: tPanel;
+    pnTree: tPanel;
+    pnContent: tPanel;
+    pnHeader: tPanel;
+    pnDoer: tPanel;
+    sbClose: tSpeedButton;
+    Shape1: tShape;
+    tbAdd: tToolButton;
+    tbEdit: tToolButton;
+    toolBar: tToolBar;
+    ToolButton1: tToolButton;
+    ToolButton2: tToolButton;
+    tree: tTreeView;
+    procedure actRefreshExecute(sender: tObject);
+    procedure actSettingsExecute(sender: tObject);
+    procedure actSolveExecute(sender: tObject);
+    procedure htmlInfoHotClick(sender: tObject);
+    procedure htmlInfoHotURL(sender: tObject; const URL: String);
+    procedure sbCloseClick(sender: tObject);
+    procedure treeChange(sender: tObject; Node: tTreeNode);
     procedure bvTreeSizerMouseDown(sender: tObject; button: tMouseButton; shift: tShiftState; x, y: integer);
-    procedure bvTreeSizerMouseMove(sender: TObject; shift: TShiftState; x, y: integer);
+    procedure bvTreeSizerMouseMove(sender: tObject; shift: tShiftState; x, y: integer);
     procedure bvTreeSizerMouseUp(sender: tObject; button: tMouseButton; shift: tShiftState; x, y: integer);
     procedure bvDoerSizerMouseDown(sender: tObject; button: tMouseButton; shift: tShiftState; x, y: integer);
-    procedure bvDoerSizerMouseMove(sender: TObject; shift: TShiftState; x, y: integer);
+    procedure bvDoerSizerMouseMove(sender: tObject; shift: tShiftState; x, y: integer);
     procedure bvDoerSizerMouseUp(sender: tObject; button: tMouseButton; shift: tShiftState; x, y: integer);
-    procedure treeDblClick(Sender: TObject);
+    procedure treeDblClick(sender: tObject);
   private
     fActiveCourse: string;
     fActiveTask: string;
@@ -64,6 +64,7 @@ type
     procedure updateSelection;
     procedure updateActiveTaskInfo;
     procedure updateTaskDoerSettings;
+    procedure updateHeights;
   public
     property activeCourse: string read fActiveCourse;
     property activeTask: string read fActiveTask;
@@ -88,33 +89,33 @@ resourcestring
 
 { tCourseInfoFrame }
 
-procedure tCourseInfoFrame.sbCloseClick(Sender: TObject);
+procedure tCourseInfoFrame.sbCloseClick(sender: tObject);
 begin
   mainForm.showCourseInfo('', '');
 end;
 
-procedure tCourseInfoFrame.treeChange(Sender: TObject; Node: TTreeNode);
+procedure tCourseInfoFrame.treeChange(sender: tObject; Node: tTreeNode);
 begin
   fTaskNotFound := false;
   updateActiveTaskInfo;
 end;
 
-procedure tCourseInfoFrame.htmlInfoHotURL(Sender: TObject; const URL: String);
+procedure tCourseInfoFrame.htmlInfoHotURL(sender: tObject; const URL: String);
 begin
   fHotURL := URL;
 end;
 
-procedure tCourseInfoFrame.htmlInfoHotClick(Sender: TObject);
+procedure tCourseInfoFrame.htmlInfoHotClick(sender: tObject);
 begin
   if fHotURL <> '' then openURL(fHotURL);
 end;
 
-procedure tCourseInfoFrame.actSettingsExecute(Sender: TObject);
+procedure tCourseInfoFrame.actSettingsExecute(sender: tObject);
 begin
   mainForm.showOptionsDlg('tsPracticum');
 end;
 
-procedure tCourseInfoFrame.actSolveExecute(Sender: TObject);
+procedure tCourseInfoFrame.actSolveExecute(sender: tObject);
 var
   task: tKlausTask;
 begin
@@ -122,7 +123,7 @@ begin
   if task <> nil then mainForm.openTaskSolution(task);
 end;
 
-procedure tCourseInfoFrame.actRefreshExecute(Sender: TObject);
+procedure tCourseInfoFrame.actRefreshExecute(sender: tObject);
 begin
   mainForm.loadPracticum;
 end;
@@ -275,6 +276,7 @@ begin
   end;
   updateTaskDoerSettings;
   actSolve.enabled := selectedTask <> nil;
+  updateHeights;
 end;
 
 procedure tCourseInfoFrame.updateTaskDoerSettings;
@@ -298,6 +300,24 @@ begin
   end;
 end;
 
+procedure tCourseInfoFrame.updateHeights;
+var
+  h, h1, h3: integer;
+begin
+  h := pnContent.height;
+  h1 := pnTree.height;
+  with pnDoer do if visible then h3 := height else h3 := 0;
+  if h-h1-h3 < 100 then begin
+    h1 := max(100, h-h3-100);
+    if pnDoer.visible and (h-h1-h3 < 100) then begin
+      h3 := max(100, h-h1-100);
+      pnDoer.height := h3;
+    end;
+    pnTree.height := h1;
+    tree.makeSelectionVisible;
+  end;
+end;
+
 procedure tCourseInfoFrame.bvTreeSizerMouseDown(sender: tObject; button: tMouseButton; shift: tShiftState; x, y: integer);
 begin
   if (button = mbLeft) then begin
@@ -306,7 +326,7 @@ begin
   end;
 end;
 
-procedure tCourseInfoFrame.bvTreeSizerMouseMove(sender: TObject; shift: TShiftState; x, y: integer);
+procedure tCourseInfoFrame.bvTreeSizerMouseMove(sender: tObject; shift: tShiftState; x, y: integer);
 var
   p: tPoint;
   dh: integer;
@@ -333,7 +353,7 @@ begin
   end;
 end;
 
-procedure tCourseInfoFrame.bvDoerSizerMouseMove(sender: TObject; shift: TShiftState; x, y: integer);
+procedure tCourseInfoFrame.bvDoerSizerMouseMove(sender: tObject; shift: tShiftState; x, y: integer);
 var
   p: tPoint;
   dh: integer;
@@ -352,7 +372,7 @@ begin
   if (button = mbLeft) then fDoerPanelSizing := false;
 end;
 
-procedure tCourseInfoFrame.treeDblClick(Sender: TObject);
+procedure tCourseInfoFrame.treeDblClick(sender: tObject);
 begin
   with actSolve do if enabled then execute;
 end;

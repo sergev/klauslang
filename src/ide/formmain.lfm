@@ -296,6 +296,7 @@ object MainForm: TMainForm
     ClientHeight = 504
     ClientWidth = 274
     TabOrder = 3
+    Visible = False
     object bvDebugSizer: TBevel
       Cursor = crHSplit
       Left = 0
@@ -336,6 +337,7 @@ object MainForm: TMainForm
     ClientHeight = 504
     ClientWidth = 274
     TabOrder = 4
+    Visible = False
     object bvCourseSizer: TBevel
       Cursor = crHSplit
       Left = 269
