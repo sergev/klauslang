@@ -24,9 +24,9 @@ for schoolchildren and students.
 rm -rf %buildroot
 mkdir %buildroot
 
-mkdir -p %buildroot/opt/klauslang/x86_64
-cp %_pwd/../compiled/klaus %buildroot/opt/klauslang/x86_64/
-cp %_pwd/../compiled/klaus-ide %buildroot/opt/klauslang/x86_64/
+mkdir -p %buildroot/opt/klauslang/amd64
+cp %_pwd/../compiled/klaus %buildroot/opt/klauslang/amd64/
+cp %_pwd/../compiled/klaus-ide %buildroot/opt/klauslang/amd64/
 
 mkdir -p %buildroot/opt/klauslang/samples
 cp -r %_pwd/../samples/* %buildroot/opt/klauslang/samples/
@@ -50,7 +50,7 @@ touch %buildroot/usr/bin/klaus-ide
 cp %_pwd/../installer/what-s-new.txt %buildroot/opt/klauslang/
 
 %files
-/opt/klauslang/x86_64/*
+/opt/klauslang/amd64/*
 /opt/klauslang/samples/*
 /opt/klauslang/test/*
 /opt/klauslang/doc/*
