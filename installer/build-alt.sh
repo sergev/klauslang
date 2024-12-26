@@ -9,3 +9,4 @@ set -u
 VER="$1"
 
 rpmbuild -bb --define "_ver $VER" --define "_pwd $(pwd)" klauslang-alt.spec
+rpmbuild -bb --define "_ver $VER" --define "_pwd $(pwd)" klauslang-teacher-alt.spec
