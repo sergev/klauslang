@@ -1,6 +1,6 @@
 Последнюю версию можно скачать здесь:
 - Debian:   [https://czaerlag.ru/klauslang/klauslang_2.5.2_amd64-debian.zip](https://czaerlag.ru/klauslang/klauslang_2.5.2_amd64-debian.zip).<br>
-- Alt: [https://czaerlag.ru/klauslang/klauslang_2.5.2-1.x86_64-alt.zip](https://czaerlag.ru/klauslang/klauslang_2.5.2-1.x86_64-alt.zip).<br>
+- Alt: [https://czaerlag.ru/klauslang/klauslang-2.5.2-1.x86_64-alt.zip](https://czaerlag.ru/klauslang/klauslang-2.5.2-1.x86_64-alt.zip).<br>
 - Windows: [https://czaerlag.ru/klauslang/klauslang_2.5.2_x64-windows.zip](https://czaerlag.ru/klauslang/klauslang_2.5.2_x64-windows.zip).<br>
 
 (или в разделе "Релизы", но это требует регистрации).
