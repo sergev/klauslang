@@ -129,5 +129,5 @@ rm version.nsi
 # ZIP them...
 
 cd ../build/v$VER
-zip klauslang_${VER}_amd64-linux.zip klauslang_${VER}_amd64.deb klauslang-teacher_${VER}_amd64.deb
+zip klauslang_${VER}_amd64-debian.zip klauslang_${VER}_amd64.deb klauslang-teacher_${VER}_amd64.deb
 zip klauslang_${VER}_x64-windows.zip klauslang_${VER}_x64.exe
