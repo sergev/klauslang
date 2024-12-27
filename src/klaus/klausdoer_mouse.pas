@@ -64,6 +64,12 @@ type
 
       function  getWall(idx: tKlausMouseDirection): boolean;
       function  getWalls: tKlausMouseDirections;
+      function  isNumberStored: Boolean;
+      function  isRadiationStored: Boolean;
+      function  isTemperatureStored: Boolean;
+      function  isText1Stored: Boolean;
+      function  isText2Stored: Boolean;
+      function  isWallsStored: Boolean;
       procedure setArrow(val: tKlausMouseDirection);
       procedure setHasNumber(val: boolean);
       procedure setNumber(val: integer);
@@ -84,21 +90,22 @@ type
       property horz: integer read fHorz;
       property vert: integer read fVert;
       property wall[idx: tKlausMouseDirection]: boolean read getWall write setWall;
-      property walls: tKlausMouseDirections read getWalls write setWalls;
-      property painted: boolean read fPainted write setPainted;
-      property text1: string read fText1 write setText1;
-      property text2: string read fText2 write setText2;
-      property hasNumber: boolean read fHasNumber write setHasNumber;
-      property number: integer read fNumber write setNumber;
-      property mark: boolean read fMark write setMark;
-      property arrow: tKlausMouseDirection read fArrow write setArrow;
-      property temperature: double read fTemperature write setTemperature;
-      property radiation: double read fRadiation write setRadiation;
 
       constructor create(aOwner: tKlausMouseSetting; aHorz, aVert: integer);
-      function  toJson: tJsonData;
+      function  toJson: tJsonObject;
       procedure fromJson(data: tJsonData);
       procedure toggleArrow(dir: tKlausMouseDirection);
+    published
+      property walls: tKlausMouseDirections read getWalls write setWalls stored isWallsStored;
+      property painted: boolean read fPainted write setPainted default false;
+      property text1: string read fText1 write setText1 stored isText1Stored;
+      property text2: string read fText2 write setText2 stored isText2Stored;
+      property hasNumber: boolean read fHasNumber write setHasNumber stored false;
+      property number: integer read fNumber write setNumber stored isNumberStored;
+      property mark: boolean read fMark write setMark default false;
+      property arrow: tKlausMouseDirection read fArrow write setArrow default kmdNone;
+      property temperature: double read fTemperature write setTemperature stored isTemperatureStored;
+      property radiation: double read fRadiation write setRadiation stored isRadiationStored;
   end;
 
 type
@@ -433,7 +440,7 @@ implementation
 {$R *.res}
 
 uses
-  Types, Math, Clipbrd, U8;
+  Types, TypInfo, Math, Clipbrd, U8;
 
 resourcestring
   strMouseSettingsImportFilter = 'Все файлы обстановок|*.klaus-setting;*.fil|Клаус - обстановки исполнителей|*.klaus-setting|КуМир - обстановки Робота|*.fil|Все файлы|*';
@@ -508,11 +515,50 @@ begin
   fVert := aVert;
 end;
 
-function tKlausMouseCell.toJson: tJsonData;
+function tKlausMouseCell.toJson: tJsonObject;
 var
-  s: string = '';
+  data: tJsonObject = nil;
+
+  function rslt: tJsonObject;
+  begin
+    if data = nil then data := tJsonObject.create;
+    result := data;
+  end;
+
+  function stored(pi: pPropInfo): boolean;
+  const
+    ordinal = [tkInteger, tkChar, tkEnumeration, tkBool, tkInt64, tkQWord];
+  var
+    v: int64;
+  begin
+    result := isStoredProp(self, pi);
+    if result and (pi^.propType^.kind in ordinal)
+    and ((pi^.propProcs shr 4) and 3 = ptConst) then begin
+      v := getOrdProp(self, pi);
+      result := pi^.default <> v;
+    end;
+  end;
+
+var
+  n: string;
+  pl: pPropList;
+  i, cnt: integer;
 begin
-  result := tJsonObject.create;
+  cnt := getPropList(self, pl);
+  for i := 0 to cnt-1 do
+    if stored(pl^[i]) then begin
+      n := lowerCase(pl^[i]^.name);
+      if n = 'walls' then rslt.add('walls', mouseDirsToInt(walls))
+      else if n = 'painted' then rslt.add('painted', painted)
+      else if n = 'text1' then rslt.add('text1', text1)
+      else if n = 'text2' then rslt.add('text2', text2)
+      else if n = 'number' then rslt.add('number', intToStr(number))
+      else if n = 'mark' then rslt.add('mark', mark)
+      else if n = 'temperature' then rslt.add('temperature', temperature)
+      else if n = 'radiation' then rslt.add('radiation', radiation)
+      else if n = 'arrow' then rslt.add('arrow', mouseDirToInt(arrow));
+    end;
+  {result := tJsonObject.create;
   with result as tJsonObject do begin
     add('walls', mouseDirsToInt(walls));
     add('painted', painted);
@@ -524,7 +570,8 @@ begin
     add('temperature', temperature);
     add('radiation', radiation);
     add('arrow', mouseDirToInt(arrow));
-  end;
+  end;}
+  result := data;
 end;
 
 procedure tKlausMouseCell.fromJson(data: tJsonData);
@@ -629,6 +676,43 @@ begin
   result := [];
   for w := low(result) to high(result) do
     if wall[w] then include(result, w);
+end;
+
+function tKlausMouseCell.isNumberStored: Boolean;
+begin
+  result := hasNumber;
+end;
+
+function tKlausMouseCell.isRadiationStored: Boolean;
+begin
+  result := radiation <> 0;
+end;
+
+function tKlausMouseCell.isTemperatureStored: Boolean;
+begin
+  result := temperature <> 0;
+end;
+
+function tKlausMouseCell.isText1Stored: Boolean;
+begin
+  result := text1 <> '';
+end;
+
+function tKlausMouseCell.isText2Stored: Boolean;
+begin
+  result := text2 <> '';
+end;
+
+function tKlausMouseCell.isWallsStored: Boolean;
+var
+  w: tKlausMouseDirections;
+begin
+  w := walls;
+  if horz <= 0 then exclude(w, kmdLeft);
+  if horz >= owner.width-1 then exclude(w, kmdRight);
+  if vert <= 0 then exclude(w, kmdUp);
+  if vert >= owner.height-1 then exclude(w, kmdDown);
+  result := w <> [];
 end;
 
 procedure tKlausMouseCell.setWalls(val: tKlausMouseDirections);
@@ -764,50 +848,72 @@ end;
 function tKlausMouseSetting.toJson: tJsonData;
 var
   x, y: integer;
-  rws, cls: tJsonArray;
+  cls: tJsonArray;
+  obj: tJsonObject;
 begin
   result := inherited toJson;
   with result as tJsonObject do begin
+    add('ver', 2);
     add('width', width);
     add('height', height);
     add('mouseX', mouseX);
     add('mouseY', mouseY);
     add('mouseDir', mouseDirToInt(mouseDir));
-    rws := tJsonArray.create;
-    for y := 0 to height-1 do begin
+    cls := tJsonArray.create;
+    for y := 0 to height-1 do
+      for x := 0 to width-1 do begin
+        obj := cells[x, y].toJson;
+        if obj <> nil then begin
+          obj.add('x', cells[x, y].horz);
+          obj.add('y', cells[x, y].vert);
+          cls.add(obj);
+        end;
+      end;
+    {for y := 0 to height-1 do begin
       cls := tJsonArray.create;
       for x := 0 to width-1 do
         cls.add(cells[x, y].toJson);
       rws.add(cls);
-    end;
-    add('cells', rws);
+    end;}
+    add('cells', cls);
   end;
 end;
 
 procedure tKlausMouseSetting.fromJson(data: tJsonData);
 var
-  x, y: integer;
+  i, x, y, ver: integer;
   rws, cls: tJsonArray;
 begin
   if not (data is tJsonObject) then raise eKlausError.create(ercInvalidFileFormat, zeroSrcPt);
   updating;
   with data as tJsonObject do try
     inherited fromJson(data);
+    ver := get('ver', 1);
     width := get('width', 1);
     height := get('height', 1);
     mouseX := get('mouseX', 0);
     mouseY := get('mouseY', 0);
     mouseDir := intToMouseDir(get('mouseDir', 0));
-    rws := get('cells', tJsonArray(nil));
-    if rws <> nil then
-      for y := 0 to rws.count-1 do begin
-        if y >= height then break;
-        cls := rws.arrays[y];
-        for x := 0 to cls.count-1 do begin
-          if x >= width then break;
-          cells[x, y].fromJson(cls.objects[x]);
+    if ver >= 2 then begin
+      cls := get('cells', tJsonArray(nil));
+      for i := 0 to cls.count-1 do
+        with cls.objects[i] do begin
+          x := get('x', 0);
+          y := get('y', 0);
+          cells[x, y].fromJson(cls.objects[i]);
         end;
-      end;
+    end else begin
+      rws := get('cells', tJsonArray(nil));
+      if rws <> nil then
+        for y := 0 to rws.count-1 do begin
+          if y >= height then break;
+          cls := rws.arrays[y];
+          for x := 0 to cls.count-1 do begin
+            if x >= width then break;
+            cells[x, y].fromJson(cls.objects[x]);
+          end;
+        end;
+    end
   finally
     updated;
   end;
