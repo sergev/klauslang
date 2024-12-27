@@ -1,6 +1,8 @@
 Name: klauslang
 Version: %_ver
 Release: 1
+Packager: Konstantin Zakharoff <mail@czaerlag.ru>
+Vendor: Konstantin Zakharoff
 Summary: Klaus programming language and environment
 Summary(ru_RU.UTF-8): Клаус - язык программирования и среда разработки
 
@@ -17,8 +19,8 @@ development environment and a set of training courses
 for schoolchildren and students.
 
 %description -l ru_RU.UTF-8
-Клаус -- русскоязычный язык программирования, среда
-разработки и набор учебных курсов для школьников и студентов.
+Клаус - язык программирования по-русски, среда разработки
+и набор учебных курсов для школьников и студентов.
 
 %prep
 rm -rf %buildroot

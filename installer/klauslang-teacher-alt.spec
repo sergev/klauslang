@@ -1,6 +1,8 @@
 Name: klauslang-teacher
 Version: %_ver
 Release: 1
+Packager: Konstantin Zakharoff <mail@czaerlag.ru>
+Vendor: Konstantin Zakharoff
 Summary: Klaus training course editor
 Summary(ru_RU.UTF-8): Клаус - редактор учебных курсов
 
