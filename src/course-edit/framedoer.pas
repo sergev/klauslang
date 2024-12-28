@@ -30,12 +30,16 @@ type
   tDoerSettingFrameClass = class of tDoerSettingFrame;
 
 type
+
+  { tDoerFrame }
+
   tDoerFrame = class(tFrame)
     actFieldSize: TAction;
     actArrowLeft: TAction;
     actArrowUp: TAction;
     actArrowRight: TAction;
     actArrowDown: TAction;
+    actSettingCopy: TAction;
     actSymbolBullet: TAction;
     actMouseRotate: TAction;
     actMousePos: TAction;
@@ -77,10 +81,12 @@ type
     tbAdd: TToolButton;
     tbMoveDown: TToolButton;
     tbMoveUp: TToolButton;
+    ToolButton2: TToolButton;
     ToolButton5: tToolButton;
     tbLoad: TToolButton;
     tbSave: TToolButton;
     procedure actSettingAddExecute(sender: tObject);
+    procedure actSettingCopyExecute(Sender: TObject);
     procedure actSettingDeleteExecute(sender: tObject);
     procedure actSettingLoadExecute(sender: tObject);
     procedure actSettingMoveDownExecute(sender: tObject);
@@ -254,12 +260,19 @@ var
 begin
   result := false;
   ctl := screen.activeControl;
-  if ctl = lbSetting then
-    result := listActions.isShortCut(msg)
-  else while ctl <> nil do begin
+  while ctl <> nil do begin
     if ctl = fSettingFrame then begin
       result := fSettingFrame.isShortCut(msg);
-      exit;
+      break;
+    end;
+    ctl := ctl.parent;
+  end;
+  if result then exit;
+  ctl := screen.activeControl;
+  while ctl <> nil do begin
+    if ctl = self then begin
+      result := listActions.isShortCut(msg);
+      break;
     end;
     ctl := ctl.parent;
   end;
@@ -287,6 +300,30 @@ begin
     mainForm.modified := true;
     with lbSetting do begin
       itemIndex := items.indexOfObject(ds);
+      setFocus;
+    end;
+  finally
+    enableDisable;
+  end;
+end;
+
+procedure tDoerFrame.actSettingCopyExecute(Sender: TObject);
+var
+  idx: integer;
+  ds, nds: tKlausDoerSetting;
+begin
+  if task = nil then exit;
+  if task.doer = nil then exit;
+  idx := lbSetting.itemIndex;
+  if idx < 0 then exit;
+  with lbSetting do ds := items.objects[idx] as tKlausDoerSetting;
+  try
+    nds := task.doerSettings.add;
+    nds.assign(ds);
+    refreshSettingList;
+    mainForm.modified := true;
+    with lbSetting do begin
+      itemIndex := items.indexOfObject(nds);
       setFocus;
     end;
   finally

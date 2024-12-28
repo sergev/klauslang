@@ -33,106 +33,108 @@ object DoerSettingFrame_Mouse: TDoerSettingFrame_Mouse
       Style = tbsDivider
     end
     object ToolButton4: TToolButton
-      Left = 51
+      Left = 52
       Top = 0
       Action = actWallLeft
     end
     object ToolButton6: TToolButton
-      Left = 74
+      Left = 75
       Top = 0
       Action = actWallUp
     end
     object ToolButton7: TToolButton
-      Left = 97
+      Left = 98
       Top = 0
       Action = actWallRight
     end
     object ToolButton8: TToolButton
-      Left = 120
+      Left = 121
       Top = 0
       Action = actWallDown
     end
     object ToolButton9: TToolButton
-      Left = 143
+      Left = 144
       Height = 22
       Top = 0
       Caption = 'ToolButton9'
       Style = tbsDivider
     end
     object ToolButton10: TToolButton
-      Left = 147
+      Left = 149
       Top = 0
       Action = actArrowLeft
     end
     object ToolButton11: TToolButton
-      Left = 170
+      Left = 172
       Top = 0
       Action = actArrowUp
     end
     object ToolButton12: TToolButton
-      Left = 193
+      Left = 195
       Top = 0
       Action = actArrowRight
     end
     object ToolButton13: TToolButton
-      Left = 216
+      Left = 218
       Top = 0
       Action = actArrowDown
     end
     object ToolButton14: TToolButton
-      Left = 239
+      Left = 241
       Height = 22
       Top = 0
       Caption = 'ToolButton14'
       Style = tbsDivider
     end
     object ToolButton15: TToolButton
-      Left = 243
+      Left = 246
       Top = 0
       Action = actPaint
     end
     object ToolButton16: TToolButton
-      Left = 266
+      Left = 269
       Height = 22
       Top = 0
       Caption = 'ToolButton16'
       Style = tbsDivider
     end
     object ToolButton17: TToolButton
-      Left = 270
+      Left = 274
+      Hint = 'Буква "А"|Поставить букву "А" в нижний угол текущей клетки. Нажмите букву, чтобы поставить её в нижний угол клетки.'
       Top = 0
       Action = actSymbolA
     end
     object ToolButton18: TToolButton
-      Left = 293
+      Left = 297
+      Hint = 'Буква "Б"|Поставить букву "Б" в верхний угол текущей клетки. Нажмите Shift+букву, чтобы поставить её в верхний угол клетки.'
       Top = 0
       Action = actSymbolB
     end
     object ToolButton19: TToolButton
-      Left = 316
+      Left = 320
       Hint = 'Символ "•"|Обозначить текущую клетку символом "•". Нажмите точку, чтобы установить или снять отметку.'
       Top = 0
       Action = actSymbolBullet
     end
     object ToolButton20: TToolButton
-      Left = 345
+      Left = 351
       Top = 0
       Action = actCellProps
     end
     object ToolButton21: TToolButton
-      Left = 368
+      Left = 374
       Height = 22
       Top = 0
       Caption = 'ToolButton21'
       Style = tbsDivider
     end
     object ToolButton22: TToolButton
-      Left = 372
+      Left = 379
       Top = 0
       Action = actMousePos
     end
     object ToolButton23: TToolButton
-      Left = 395
+      Left = 402
       Top = 0
       Action = actMouseRotate
     end
@@ -142,28 +144,66 @@ object DoerSettingFrame_Mouse: TDoerSettingFrame_Mouse
       Action = actSettingClear
     end
     object ToolButton5: TToolButton
-      Left = 339
+      Left = 343
       Height = 22
       Top = 0
       Caption = 'ToolButton5'
       Style = tbsSeparator
     end
     object ToolButton24: TToolButton
-      Left = 418
+      Left = 425
       Height = 22
       Top = 0
       Caption = 'ToolButton24'
       Style = tbsSeparator
     end
     object tbTemperature: TToolButton
-      Left = 424
+      Left = 433
       Top = 0
       Action = actTemperature
     end
     object tbRadiation: TToolButton
-      Left = 447
+      Left = 456
       Top = 0
       Action = actRadiation
+    end
+    object ToolButton25: TToolButton
+      Left = 479
+      Height = 22
+      Top = 0
+      Caption = 'ToolButton25'
+      Style = tbsSeparator
+    end
+    object ToolButton26: TToolButton
+      Left = 487
+      Top = 0
+      Action = actShowHelp
+    end
+  end
+  object sbKeyboardInfo: TScrollBox
+    Left = 0
+    Height = 404
+    Top = 22
+    Width = 824
+    HorzScrollBar.Page = 1
+    HorzScrollBar.Visible = False
+    VertScrollBar.Page = 33
+    Align = alClient
+    BorderStyle = bsNone
+    ClientHeight = 404
+    ClientWidth = 824
+    TabOrder = 1
+    Visible = False
+    object lblKeyboardInfo: TLabel
+      Left = 4
+      Height = 388
+      Top = 12
+      Width = 816
+      Align = alClient
+      BorderSpacing.Top = 8
+      BorderSpacing.Around = 4
+      Caption = 'lblKeyboardInfo'
+      WordWrap = True
     end
   end
   object actionImages: TImageList
@@ -172,42 +212,44 @@ object DoerSettingFrame_Mouse: TDoerSettingFrame_Mouse
     Left = 164
     Top = 176
     Bitmap = {
-      4C7A130000001200000012000000650400000000000078DAED9CDB92D3300C86
-      B35C31CC0E33BC3084BDE69E590E77BC03172C4C5F80670A4D5B075991645956
-      7368D58CA79B8DF3F5970F8A23271EBAA13B1C0E034C4357BF8DE7755D97250B
-      6BE20CC3395D389AC472801EAC914A90C5E919BF7FFCFDC4269183F49839A167
-      153D1EEDA72671FDAB3641564A998DCA6FB1AF6993C431DA85599672F6DE7059
-      D77C53E552AB733CC783137A424FE859460FF41BB53E03EAD9E266F1CB5ED709
-      C9AFB6702CD774CAB6966B10ACF79636107A42CF16F5587DE1B5C6751E9BD51E
-      CA1F5AEFD5B11FF3E0849ED0137AAEABC7E233B6EC0BAD7651E3DEB89E869ED0
-      43EBB126EE3E770BF75F5EF795B1ADE7F73DAF1DAD8C160E6ED3B710DFF0B2CB
-      B39C3DEBDDB31DC6B66E5CD1A32D79F67F6B2CB866AEAB96616165F3858DF714
-      5EFD3F38C1F1E8F3E1F763ECE83916915835F75BDAB1D89EEEBF5A9F0FBB861F
-      89B1638C0FE37A1A9CAD733CC6E1DEF705AD0CEFE787637CB8FC333C5646DFF7
-      437FACA3533AFE6DED133DE8075616E474174D9D819538A9ED253D90A5E16563
-      93E32769CBCAACD0BE3103DA35692BB03063FCE079C592268E01D389A1B06D9A
-      8B1018D8BE521C526268DBD4D46E921D8001DB7B4DDD638665AC1963DC65C787
-      9A7EB90447DBBF97E0607BACF66D8943312C2CAA7C6BCB5BC3D05E2F389B6A6C
-      2BE5D3FAE6A57EAB4693B64EF7E62B3DE6CAB5EDD0AB3DD770BCECF2F4EB7B29
-      E73DF98D3D703CCAC7ABBE5ADA8F97DF882DE201DEE3CC16D6AD723CEF0BBCEA
-      3DB6FBF41152BB91FE6F99DBE4E251D407C7D5533EEA9D75781CC67D1207F226
-      C618D3216243253D2443E0402D301E35BDA7CF304A7A66B6310CA97CB2B81651
-      EE52CC8FD3A29D7BE7CAA766EE81D3936276705FCBC1ED07B7258B1E4A9F8663
-      5D73C1F23CC0AD8E754ACFF7E236A7F177307E9C180FAF1ED8983317974EE724
-      6D69FFE3D73F53C231F0C4C079C67321071E4F79A0AD691FE7C39CA7EF2FA49E
-      B44FE979FAF69271A83C8945FD4DD99ECAF0EDBB47563B67F39BC7D7AC4F1C8F
-      BFFFFC73C684FB5CFC9F9B2780E50BF7B5FD1EFF3EDED770603D7D78FEF59FF3
-      E577566FA5181BD4CFD58FF43E2CB5660FB68BCA535A87819BA796DECF85EFF1
-      68C628A5399BDA31D31EE752F09C6CABAF5EF39E72A918BF257628958F78FD22
-      7E97AA2F2E6F89A3FDCDD2318DFD35C7AD79A479A29AB990ADB423584F9C9DF7
-      164FF078F7D0F24CAE347694D6BC93D6BFDB12875A074F3EB73F25C8399F77FE
-      3FBC5E6B38E7D4658C1ACE9C95336ACB8763ACC1F1B0CBAB9CBDEABDA61DB6F6
-      532FBF713FEFD50D97647B078DE258B4DDAB1ECDF8B0A487BA6F2ABFEB2273A4
-      7BB939832E23E9B96A9E91B3B4B1E735395E76D596B334CED1BCE3A4F19F4B8D
-      2B5B7D33174B90E21AE2585158675713439AE604384E3A565AFF37E9A158780E
-      828B87E0783C6313CC3B6B83444C3FD3C41DC7FE85C937E569E070FD49E41075
-      33E308EB2D97D66A9EF214D66D1639D056AE4D517526D533735C5C6B5BAA67ED
-      5AD49C16AC49D3C7A8B937D0AF6AE6555AFC468B1FFB07B13903BD
+      4C7A1400000012000000120000009F0400000000000078DAED9CCD92D3300C80
+      B39C186687195E18CA9EB933FCDD78070E2C4C5F80670A4D5B6715459225594D
+      9356CD78BAD9385F255B561C2971DFF5DD7EBFEF61E93BFB369CD775DDA47858
+      23A7EF4FE5CCD1149603E4C1325205B2387986EF9FFF3EB145E42079DC9C94E7
+      2AF244D88FA570E3CB5A20AB94898ECA6F71AC698BC471EA85599E768EDE705B
+      5BBEA976B1CA399C13C14979529E94671979A0DFB0FA0C28CF1A378F5F8EBA4E
+      487EB585E3B9A653BAB55C8360BFB7D840CA93F2AC511EAF2FBCD4BC2E62F3EA
+      43F943EFBD3AF663119C9427E549792E2B8FC767ACD9177AF5A2E6BD793D4D79
+      521E5A1E6FE1EE73D770FF15755F99DBF5FC7EE4B5A395D1C2C1367D0BF18D28
+      BD22DB39B2DF23ED30B7EBC615236C2972FC7B63C1965C9795E1614DF2858DF7
+      1451E33F39C98918F3E9F773EE183917915896FB2DED5C6C4BF75FADCF875DC2
+      8FE4DC31E787793D4DCEDA3911F3F0E8FB825646F4F3C3393F5CFE191E2F63B7
+      DBF5BB431F1DCBE16FEF98D88171E065414E7796A973B00AA7D85E9107B234BC
+      C9DCE4F029B24DDAAC62DF9801F51A65ABB03063F8E0BC624D268E01CB91A1D0
+      6DCC45080CAC5F2D0E2931B43635DA4DD10330A0BD5BFA1E333C73CD9CE32E3B
+      3FD48CCB2538DAF1BD0407EBE3D56F4D1C8AE16151ED6B6D6F0D437BBDE074B2
+      E856ABA7F5CD4BFD9645266D9F6ECD5746E4CAB5761865CF164E945E917E7D2B
+      EDBC25BFB1054E44FB44F5578BFD44F98DDC321E103DCF6C61DD2A27F2BE20AA
+      DF73BB4F1F21D98DF47F4F6E938B47511F1C572FF5A877D6E17118F7291CC81B
+      19434C87880DD5E421190207CA02E351E37BFA0CA326CF4C378621B5CF24AE45
+      B4BB14F3E364D1E6DEB9F6B1E41E38794ACC0EEE6B39D87EB02D79E4A1E4D370
+      BC6B2E789E07B8D5B94EEDF95E6C731A7F07E3C785F1F0EA818D397371E9724E
+      91ADEC7FFCF6772C38065E18B8CE702EE4C0E3A50ED4B5ECE37A98F3F4E39994
+      A7EC53F23C7D7F9E70A83A8545FD4DE95EDAF0EDBB4756764EE7378FAF599F38
+      1C7FFFF9D78C09F7B9F83F972780ED0BF7B5E31EFF3EDED770603F7DF8F2FB85
+      F3F5CFA4DF6A3136283FD73FD2FBB0D49A3D582FAA4E6D1D062E4F2DBD9F0BDF
+      E3D1CC516A391BEB9C698BB9149C936DF5D5D7BCA75C2AC6EF891D4AED235EBF
+      88DFA5FA8BAB5BE3687FB3764CA3BFE5B8B78E9427B2E442D66247B09F383DEF
+      2D9E10F1EEA1E7995C69EE28AD7927AD7FB7260EB50E9E7CEEEE5820E774DEE9
+      FFF07AADE19C4A3761583873D694616D1F8E710D4E845E51ED1CD5EF163B6C1D
+      A7517EE37EDEABEBCFC5F70E1AC5F1C876AFF268E6873579A8FBA6FABB2E3247
+      BA979B33E836929EABE619539636F67C4D4E945ED67696E6399A779C34FE73A9
+      7965AB6FE66209525C439C2B0AEBEC6A6248634E80E39463B5F57F8B3C140BE7
+      20B878088EC7333AC1BA331B2462FA1399B8E3D8BF30F5C63A0D1C6E3C891CA2
+      6F661C61BDE5DA5ACD639DCABACD2207EACAD914D567523F33C7C5B5B6A57ED6
+      AE45CDC98265D28C312AF706C69525AFD2E23722FDD85AFD21774153E7087179
+      49A2CD786CDED3C0E98538706F2C644ED85966B9704927462F35A7D23EF7C059
+      C47EE689E1369B56C8123D4ED7E20FFF03C67BC385
     }
   end
   object actions: TActionList
@@ -314,14 +356,14 @@ object DoerSettingFrame_Mouse: TDoerSettingFrame_Mouse
       Hint = 'Свойства клетки...|Редактировать все свойства текущей клетки'
       ImageIndex = 13
       OnExecute = actCellPropsExecute
-      ShortCut = 13
+      ShortCut = 32781
     end
     object actMousePos: TAction
       Caption = 'Установить мышку'
       Hint = 'Установить мышку|Установить начальное положение мышки в текущую клетку'
       ImageIndex = 14
       OnExecute = actMousePosExecute
-      ShortCut = 32781
+      ShortCut = 13
     end
     object actMouseRotate: TAction
       Caption = 'Повернуть мышку'
@@ -343,6 +385,19 @@ object DoerSettingFrame_Mouse: TDoerSettingFrame_Mouse
       ImageIndex = 18
       OnExecute = actRadiationExecute
       ShortCut = 24658
+    end
+    object actShowHelp: TAction
+      Caption = 'Сочетания клавиш'
+      Hint = 'Сочетания клавиш|Показать сочетания клавиш, используемые в редакторе обстановки'
+      ImageIndex = 19
+      OnExecute = actShowHelpExecute
+      ShortCut = 8304
+    end
+    object actHideHelp: TAction
+      Caption = 'Скрыть подсказку'
+      Enabled = False
+      OnExecute = actHideHelpExecute
+      ShortCut = 27
     end
   end
 end

@@ -1928,7 +1928,7 @@ begin
       painted := not painted;
       key := 0;
     end;
-    VK_RETURN: if (shift = [ssAlt]) and (mode = mvmNormal) then begin
+    VK_RETURN: if (shift = []) and (mode = mvmNormal) then begin
       setting.mouseX := x;
       setting.mouseY := y;
       key := 0;

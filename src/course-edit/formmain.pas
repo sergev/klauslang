@@ -259,9 +259,7 @@ var
   ctl: tWinControl;
   frm: tDoerFrame = nil;
 begin
-  fActionLists.clear;
-  handled := actionList.isShortCut(msg);
-  if handled then exit;
+  if assigned(fActionLists) then fActionLists.clear;
   ctl := screen.activeControl;
   while ctl <> nil do begin
     if ctl is tDoerFrame then begin
@@ -271,6 +269,7 @@ begin
     end;
     ctl := ctl.parent;
   end;
+  handled := actionList.isShortCut(msg);
 end;
 
 procedure tMainForm.formShow(sender: tObject);

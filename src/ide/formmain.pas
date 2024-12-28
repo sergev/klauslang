@@ -1755,7 +1755,7 @@ var
   frm: tDebugViewContent = nil;
   cfrm: tCourseInfoFrame = nil;
 begin
-  fActionLists.clear;
+  if assigned(fActionLists) then fActionLists.clear;
   handled := actionList.isShortCut(msg);
   if handled then exit;
   ctl := screen.activeControl;

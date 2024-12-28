@@ -210,7 +210,7 @@ object MainForm: TMainForm
     object actTaskCopy: TAction
       Category = 'Задача'
       Caption = 'Дублировать задачу'
-      Hint = 'Дублировать|Создать копию выбранной задачи'
+      Hint = 'Дублировать задачу|Создать копию выбранной задачи'
       ImageIndex = 8
       OnExecute = actTaskCopyExecute
       ShortCut = 16452

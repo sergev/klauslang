@@ -6,14 +6,19 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, ActnList, ComCtrls, LMessages, KlausDoer,
-  KlausDoer_Mouse, FrameDoer, Dialogs;
+  KlausDoer_Mouse, FrameDoer, Dialogs, ExtCtrls, StdCtrls;
 
 type
+
+  { tDoerSettingFrame_Mouse }
+
   tDoerSettingFrame_Mouse = class(tDoerSettingFrame)
     actArrowDown: tAction;
     actArrowLeft: tAction;
     actArrowRight: tAction;
     actArrowUp: tAction;
+    actHideHelp: TAction;
+    actShowHelp: TAction;
     actRadiation: TAction;
     actTemperature: TAction;
     actSettingSize: tAction;
@@ -31,6 +36,8 @@ type
     actWallRight: tAction;
     actWallUp: tAction;
     actions: tActionList;
+    lblKeyboardInfo: TLabel;
+    sbKeyboardInfo: TScrollBox;
     toolBar: tToolBar;
     ToolButton1: TToolButton;
     ToolButton10: tToolButton;
@@ -51,6 +58,8 @@ type
     ToolButton24: TToolButton;
     tbTemperature: TToolButton;
     tbRadiation: TToolButton;
+    ToolButton25: TToolButton;
+    ToolButton26: TToolButton;
     ToolButton3: tToolButton;
     ToolButton4: tToolButton;
     ToolButton5: TToolButton;
@@ -62,6 +71,8 @@ type
     procedure actArrowLeftExecute(sender: tObject);
     procedure actArrowRightExecute(sender: tObject);
     procedure actArrowUpExecute(sender: tObject);
+    procedure actHideHelpExecute(Sender: TObject);
+    procedure actShowHelpExecute(Sender: TObject);
     procedure actRadiationExecute(sender: tObject);
     procedure actSettingClearExecute(sender: tObject);
     procedure actSettingSizeExecute(sender: tObject);
@@ -107,6 +118,29 @@ resourcestring
   strWidth = 'Ширина:';
   strHeight = 'Высота:';
   strConfirmSettingClear = 'Все стены и все свойства клеток будут удалены. Продолжить?';
+  strKeyboardInfo =
+    'Управление редактором обстановки:'#13#10+
+    ' '#13#10+
+    '- ЛКМ по краю клетки -- снять/поставить стену'#13#10+
+    '- Ctrl+ЛКМ по краю клетки -- снять/поставить стрелку'#13#10+
+    '- Alt+ЛКМ по краю клетки -- повернуть Мышку'#13#10+
+    '- Двойной щелчок -- окно свойств клетки'#13#10+
+    ' '#13#10+
+    '- Shift+Стрелки -- снять/поставить стену'#13#10+
+    '- Ctrl+Стрелки -- снять/поставить стрелку'#13#10+
+    '- Alt+Стрелки -- повернуть Мышку'#13#10+
+    '- Буквы -- поставить букву в нижний угол'#13#10+
+    '- Shift+Буквы -- поставить букву в верхний угол'#13#10+
+    '- Цифры, Минус -- набрать число'#13#10+
+    '- Delete, Backspace -- удалить буквы и число'#13#10+
+    '- Точка -- снять/поставить метку'#13#10+
+    '- Пробел -- закрасить/очистить'#13#10+
+    '- Enter -- поставить Мышку в текущую клетку'#13#10+
+    '- Alt+Enter -- окно свойств клетки'#13#10+
+    ' '#13#10+
+    'В режиме редактирования температуры и радиации: '#13#10+
+    '- Цифры, Минус, Точка и Запятая, Backspace -- набрать число'#13#10+
+    '- Delete - обнулить значение';
 
 { tDoerSettingFrame_Mouse }
 
@@ -280,6 +314,29 @@ begin
   with setting[p.x, p.y] do
     if arrow = kmdUp then arrow := kmdNone
     else arrow := kmdUp;
+end;
+
+procedure tDoerSettingFrame_Mouse.actHideHelpExecute(Sender: TObject);
+begin
+  sbKeyboardInfo.visible := false;
+  if fView <> nil then begin
+    fView.visible := true;
+    fView.setFocus;
+  end;
+  actHideHelp.enabled := false;
+end;
+
+procedure tDoerSettingFrame_Mouse.actShowHelpExecute(Sender: TObject);
+begin
+  if sbKeyboardInfo.visible then
+    actHideHelp.execute
+  else begin
+    if fView <> nil then fView.visible := false;
+    lblKeyboardInfo.caption := strKeyboardInfo;
+    sbKeyboardInfo.visible := true;
+    sbKeyboardInfo.setFocus;
+    actHideHelp.enabled := true;
+  end;
 end;
 
 procedure tDoerSettingFrame_Mouse.actRadiationExecute(sender: tObject);

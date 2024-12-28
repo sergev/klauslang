@@ -3,7 +3,7 @@
   "author" : "Д.П.Кириенко",
   "license" : "Creative Commons BY-NC-SA",
   "url" : "https://server.179.ru/wacko43/?page=DenisKirienko/Kumir&v=444",
-  "description" : "Курс обучения основам программирования с использованием исполнителя Мышка.\r\n\r\nКурс был создан Д.П.Кириенко для исполнителя \"Робот\" в обучающей среде КуМир.\r\n\r\nВ следующих выпусках курс будет дополнен.\r\n\n[Страница Д.П.Кириенко](https://server.179.ru/wacko43/?page=DenisKirienko/Kumir&v=444)\n\r\n[Репозиторий Клаус](https://gitflic.ru/project/czaerlag/klauslang)",
+  "description" : "Курс обучения основам программирования с использованием исполнителя Мышка.\r\n\r\nКурс был создан Д.П.Кириенко для исполнителя \"Робот\" в обучающей среде КуМир и портирован для использования в среде Клаус с минимальными изменениями.\r\n\r\nВ следующих выпусках курс будет дополнен.\r\n\n[Страница Д.П.Кириенко](https://server.179.ru/wacko43/?page=DenisKirienko/Kumir&v=444)\n\r\n[Репозиторий Клаус](https://gitflic.ru/project/czaerlag/klauslang)",
   "tasks" : [
     {
       "name" : "t1a",
