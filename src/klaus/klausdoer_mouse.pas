@@ -165,6 +165,8 @@ type
       class function  capabilities: tKlausDoerCapabilities; override;
       class procedure importSettingsDlgSetup(dlg: tOpenDialog); override;
       class procedure importSettings(settings: tKlausDoerSettings; fileName: string); override;
+      class procedure exportSettingsDlgSetup(dlg: tSaveDialog); override;
+      class procedure exportSettings(settings: tKlausDoerSettings; fileName: string); override;
     public
       property view: tKlausMouseView read getView;
       property setting: tKlausMouseSetting read getSetting;
@@ -440,10 +442,11 @@ implementation
 {$R *.res}
 
 uses
-  Types, TypInfo, Math, Clipbrd, U8;
+  Types, TypInfo, Math, Clipbrd, U8, KlausUtils;
 
 resourcestring
   strMouseSettingsImportFilter = 'Все файлы обстановок|*.klaus-setting;*.fil|Клаус - обстановки исполнителей|*.klaus-setting|КуМир - обстановки Робота|*.fil|Все файлы|*';
+  strMouseSettingsExportFilter = 'Клаус - обстановки исполнителей|*.klaus-setting|Все файлы|*';
   strKumirRobotSettingFileExt = '.fil';
   strAtLine = 'Строка %d: %s';
 
@@ -1045,6 +1048,13 @@ end;
 
 { tKlausDoerMouse }
 
+constructor tKlausDoerMouse.create(aSource: tKlausSource);
+begin
+  inherited create(aSource);
+  createVariables;
+  createRoutines;
+end;
+
 class function tKlausDoerMouse.createSetting: tKlausDoerSetting;
 begin
   result := tKlausMouseSetting.create(10, 10);
@@ -1062,7 +1072,7 @@ end;
 
 class function tKlausDoerMouse.capabilities: tKlausDoerCapabilities;
 begin
-  result := [kdcImportSettings]; //!!! kdcExportSettings
+  result := [kdcImportSettings, kdcExportSettings];
 end;
 
 class procedure tKlausDoerMouse.importSettingsDlgSetup(dlg: tOpenDialog);
@@ -1082,11 +1092,25 @@ begin
   else raise eKlausError.createFmt(ercInvalidSettingFileType, zeroSrcPt, [ext]);
 end;
 
-constructor tKlausDoerMouse.create(aSource: tKlausSource);
+class procedure tKlausDoerMouse.exportSettingsDlgSetup(dlg: tSaveDialog);
 begin
-  inherited create(aSource);
-  createVariables;
-  createRoutines;
+  dlg.filter := strMouseSettingsExportFilter;
+  dlg.defaultExt := strKlausDoerSettingFileExt;
+end;
+
+class procedure tKlausDoerMouse.exportSettings(settings: tKlausDoerSettings; fileName: string);
+var
+  obj: tJsonObject;
+begin
+  assert(settings.doerClass = self.classType, 'Cannot export settigns of this doer class.');
+  obj := tJsonObject.create;
+  try
+    obj.add('doer', settings.doerClass.stdUnitName);
+    obj.add('settigns', settings.toJson);
+    saveJsonData(fileName, obj);
+  finally
+    freeAndNil(obj);
+  end;
 end;
 
 procedure tKlausDoerMouse.runStep(frame: tKlausStackFrame; dir: tKlausInteger; at: tSrcPoint);
@@ -1147,9 +1171,23 @@ begin
 end;
 
 class procedure tKlausDoerMouse.importKlausMouseSettings(settings: tKlausDoerSettings; fileName: string);
+var
+  arr: tJsonArray;
+  obj: tJsonData;
+  s: string;
 begin
-  //!!!
-  raise exception.create('Not implemented yet...');
+  obj := loadJsonData(fileName);
+  try
+    if not (obj is tJsonObject) then raise eKlausError.create(ercInvalidSettingFileFmt, zeroSrcPt);
+    s := (obj as tJsonObject).get('doer', '');
+    if s = '' then raise eKlausError.create(ercInvalidSettingFileFmt, zeroSrcPt);
+    if u8Lower(s) <> u8Lower(settings.doerClass.stdUnitName) then raise eKlausError.createFmt(ercWrongDoerSettingClass, zeroSrcPt, [s]);
+    arr := (obj as tJsonObject).find('settigns', jtArray) as tJsonArray;
+    if arr = nil then raise eKlausError.create(ercInvalidSettingFileFmt, zeroSrcPt);
+    settings.fromJson(arr);
+  finally
+    freeAndNil(obj);
+  end;
 end;
 
 class procedure tKlausDoerMouse.importKumirRobotSetting(settings: tKlausDoerSettings; fileName: string);

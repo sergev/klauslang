@@ -150,13 +150,14 @@ const
   ercDoerFailure            = 100;
   ercInvalidSettingFileType = 101;
   ercInvalidSettingFileFmt  = 102;
+  ercWrongDoerSettingClass  = 103;
 
 const
   // Классификация кодов eKlausError для трансляции в исключения языка
   klausCodeToStdErr: array[tKlausStdException] of set of byte = (
     //ksxInOutError
     [ercStreamError, ercInvalidFileType, ercStreamNotOpen, ercInvalidFileFormat, ercFileReadError,
-    ercCannotCreateDirectory, ercInvalidSettingFileType, ercInvalidSettingFileFmt],
+    ercCannotCreateDirectory, ercInvalidSettingFileType, ercInvalidSettingFileFmt, ercWrongDoerSettingClass],
 
     //ksxConvertError
     [ercInvalidLiteralValue, ercInvalidFormatSpecifier, ercInvalidFormatArgIdx,
@@ -338,7 +339,8 @@ resourcestring
   errDoerWindowNotAvailable = 'Невозможно создать окно исполнителя.';
   errDoerFailure = 'Сбой в работе исполнителя. %s';
   errInvalidSettingFileType = 'Неизвестный тип файла: "%s"';
-  errInvalidSettingFileFmt = 'Неверный формат файла файла.';
+  errInvalidSettingFileFmt = 'Неверный формат файла.';
+  errWrongDoerSettingClass = 'Неверный класс исполнителя. Обстановка предназначена для исполнителя "%s".';
 
 { Globals }
 
@@ -478,6 +480,7 @@ begin
     ercDoerFailure: result := errDoerFailure;
     ercInvalidSettingFileType: result := errInvalidSettingFileType;
     ercInvalidSettingFileFmt: result := errInvalidSettingFileFmt;
+    ercWrongDoerSettingClass: result := errWrongDoerSettingClass;
   end;
 end;
 

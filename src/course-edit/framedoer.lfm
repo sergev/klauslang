@@ -5,7 +5,6 @@ object DoerFrame: TDoerFrame
   Width = 906
   ClientHeight = 515
   ClientWidth = 906
-  LCLVersion = '3.4.0.0'
   TabOrder = 0
   DesignLeft = 600
   DesignTop = 238
@@ -306,6 +305,7 @@ object DoerFrame: TDoerFrame
       Caption = 'Сохранить в файле'
       Hint = 'Сохранить в файле...|Сохранить все обстановки в файле'
       ImageIndex = 6
+      OnExecute = actSettingSaveExecute
       ShortCut = 24659
     end
     object actSettingCopy: TAction
@@ -322,5 +322,10 @@ object DoerFrame: TDoerFrame
     Options = [ofAllowMultiSelect, ofPathMustExist, ofFileMustExist, ofEnableSizing, ofViewDetail]
     Left = 137
     Top = 322
+  end
+  object exportDialog: TSaveDialog
+    Options = [ofOverwritePrompt, ofPathMustExist, ofEnableSizing, ofViewDetail]
+    Left = 137
+    Top = 400
   end
 end

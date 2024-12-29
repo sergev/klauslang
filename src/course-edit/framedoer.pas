@@ -74,6 +74,7 @@ type
     pnList: tPanel;
     pnListContent: tPanel;
     pnSetting: tPanel;
+    exportDialog: TSaveDialog;
     tbRename: TToolButton;
     tbDelete: TToolButton;
     toolBar: tToolBar;
@@ -92,6 +93,7 @@ type
     procedure actSettingMoveDownExecute(sender: tObject);
     procedure actSettingMoveUpExecute(sender: tObject);
     procedure actSettingRenameExecute(sender: tObject);
+    procedure actSettingSaveExecute(Sender: TObject);
     procedure bvListSizerMouseDown(sender: tObject; button: tMouseButton; shift: tShiftState; x, y: integer);
     procedure bvListSizerMouseMove(sender: tObject; shift: tShiftState; x, y: integer);
     procedure bvListSizerMouseUp(sender: tObject; button: tMouseButton; shift: tShiftState; x, y: integer);
@@ -409,6 +411,16 @@ begin
   finally
     enableDisable;
   end;
+end;
+
+procedure tDoerFrame.actSettingSaveExecute(Sender: TObject);
+begin
+  if task = nil then exit;
+  if task.doer = nil then exit;
+  if not (kdcExportSettings in task.doer.capabilities) then exit;
+  task.doer.exportSettingsDlgSetup(exportDialog);
+  if exportDialog.execute then
+    task.doer.exportSettings(task.doerSettings, exportDialog.fileName);
 end;
 
 procedure tDoerFrame.bvListSizerMouseMove(sender: tObject; shift: tShiftState; x, y: integer);
