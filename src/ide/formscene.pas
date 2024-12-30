@@ -74,7 +74,8 @@ type
     procedure setFileName(val: string);
     procedure consoleInput(sender: tObject; var input: string; aborted: boolean);
     procedure setPreviewShortCuts(val: boolean);
-    procedure startDebugThread(args: tStrings);
+    procedure startDebugThread;
+    procedure destroyDebugThread;
     procedure threadTerminate(sender: tObject);
     procedure threadStateChange(sender: tObject);
     procedure threadAssignStdIO(sender: tObject; var io: tKlausInOutMethods);
@@ -172,9 +173,7 @@ destructor tSceneForm.destroy;
 begin
   invalidateControlState;
   mainForm.removeControlStateClient(self);
-  if fThread <> nil then freeAndNil(fThread);
-  if assigned(fInStream) then freeAndNil(fInStream);
-  if assigned(fOutStream) then freeAndNil(fOutStream);
+  destroyDebugThread;
   if fSource <> nil then freeAndNil(fSource);
   if mainForm.scene = self then mainForm.scene := nil;
   freeAndNil(fRunOptions);
@@ -183,6 +182,13 @@ begin
   tKlausDoer.createWindowMethod := nil;
   tKlausDoer.destroyWindowMethod := nil;
   inherited destroy;
+end;
+
+procedure tSceneForm.destroyDebugThread;
+begin
+  freeAndNil(fThread);
+  freeAndNil(fInStream);
+  freeAndNil(fOutStream);
 end;
 
 procedure tSceneForm.invalidateControlState;
@@ -259,19 +265,8 @@ begin
 end;
 
 procedure tSceneForm.formShow(sender: tObject);
-var
-  sl: tStringList = nil;
 begin
-  try
-    if runOptions.cmdLine <> '' then begin
-      sl := tStringList.create;
-      splitCmdLineParams(runOptions.cmdLine, sl, true);
-    end;
-    startDebugThread(sl);
-  except
-    freeAndNil(sl);
-    raise;
-  end;
+  startDebugThread;
 end;
 
 procedure tSceneForm.setFileName(val: string);
@@ -293,23 +288,34 @@ begin
   fConsole.previewShortCuts := val;
 end;
 
-procedure tSceneForm.startDebugThread(args: tStrings);
+procedure tSceneForm.startDebugThread;
 const
   outStreamMode: array[boolean] of word = (fmCreate, fmOpenWrite);
+var
+  sl: tStringList = nil;
 begin
   try
-    if (fFileName = '') or not assigned(source) then abort;
-    if runOptions.stdIn <> '' then
-      fInStream := tFileStream.create(runOptions.stdIn, fmOpenRead or fmShareDenyNone);
-    if runOptions.stdOut <> '' then begin
-      fOutStream := tFileStream.create(runOptions.stdOut, outStreamMode[runOptions.appendStdOut] or fmShareDenyWrite);
-      fOutStream.seek(0, soFromEnd);
+    if runOptions.cmdLine <> '' then begin
+      sl := tStringList.create;
+      splitCmdLineParams(runOptions.cmdLine, sl, true);
     end;
+    try
+      if (fFileName = '') or not assigned(source) then abort;
+      if runOptions.stdIn <> '' then
+        fInStream := tFileStream.create(runOptions.stdIn, fmOpenRead or fmShareDenyNone);
+      if runOptions.stdOut <> '' then begin
+        fOutStream := tFileStream.create(runOptions.stdOut, outStreamMode[runOptions.appendStdOut] or fmShareDenyWrite);
+        fOutStream.seek(0, soFromEnd);
+      end;
+    except
+      fExitCode := -1;
+      raise;
+    end;
+    fThread := tKlausDebugThread.create(source, fileName, sl);
   except
-    fExitCode := -1;
+    freeAndNil(sl);
     raise;
   end;
-  fThread := tKlausDebugThread.create(source, fileName, args);
   fThread.onTerminate := @threadTerminate;
   fThread.onStateChange := @threadStateChange;
   fThread.onAssignStdIO := @threadAssignStdIO;
