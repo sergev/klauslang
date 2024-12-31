@@ -802,8 +802,8 @@ object MainForm: TMainForm
     end
     object actRunStart: TAction
       Category = 'Запуск'
-      Caption = 'Запуск'
-      Hint = 'Запуск|Запустить программу'
+      Caption = 'Выполнить'
+      Hint = 'Выполнить|Запустить выполнение программы'
       ImageIndex = 15
       OnExecute = actRunStartExecute
       ShortCut = 120
