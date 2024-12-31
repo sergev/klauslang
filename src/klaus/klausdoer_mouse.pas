@@ -350,7 +350,7 @@ const
   klausProcName_MouseRadiation = 'радиация';
 
 const
-  mouseDoerMovementDelay = 50;
+  mouseMovementDelay: array[tKlausDoerSpeed] of integer = (100, 50, 25, 10, 0);
 
 type
   tKlausSysProc_MouseStep = class(tKlausSysProcDecl)
@@ -1116,6 +1116,7 @@ end;
 procedure tKlausDoerMouse.runStep(frame: tKlausStackFrame; dir: tKlausInteger; at: tSrcPoint);
 var
   b: boolean;
+  ds: tKlausDoerSpeed;
   md: tKlausMouseDirection;
 begin
   md := setting.turn(dir);
@@ -1125,7 +1126,8 @@ begin
   repeat
     frame.owner.synchronize(@syncNextStep);
     b := boolean(fIntParam[1]);
-    sleep(mouseDoerMovementDelay);
+    ds := tKlausDoerSpeed(fIntParam[2]);
+    sleep(mouseMovementDelay[ds]);
     if klausDebugThread <> nil then
       klausDebugThread.checkTerminated;
   until not b;
@@ -1140,6 +1142,7 @@ begin
     mouseDir := md;
     fIntParam[1] := integer(view.nextStep);
   end;
+  fIntParam[2] := integer(klausDoerSpeed);
 end;
 
 procedure tKlausDoerMouse.runTurn(frame: tKlausStackFrame; dir: tKlausInteger; at: tSrcPoint);

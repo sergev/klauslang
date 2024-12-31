@@ -1867,6 +1867,8 @@ type
       fLatch: tRTLCriticalSection;
       fStepEvt: pRtlEvent;
       fInputEvt: pRtlEvent;
+      fPauseEvt: pRtlEvent;
+      fPaused: boolean;
       fStepMode: boolean;
       fStep: boolean;
       fState: tKlausDebugState;
@@ -1889,6 +1891,8 @@ type
       procedure unlock;
       function  getState: tKlausDebugState;
       procedure setState(val: tKlausDebugState);
+      function  getPaused: boolean;
+      procedure setPaused(val: boolean);
       function  getStepMode: boolean;
       procedure setStepMode(val: boolean);
       function  getWaitForInput: boolean;
@@ -1923,6 +1927,7 @@ type
       property waitForInput: boolean read getWaitForInput write setWaitForInput;
       property onAssignStdIO: tKlausAssignIOEvent read fOnAssignStdIO write fOnAssignStdIO;
       property onStateChange: tNotifyEvent read fOnStateChange write fOnStateChange;
+      property paused: boolean read getPaused write setPaused;
 
       constructor create(aSource: tKlausSource; aFileName: string; aArgs: tStrings);
       destructor  destroy; override;
@@ -8050,6 +8055,8 @@ begin
   inherited create(true);
   freeOnTerminate := false;
   initCriticalSection(fLatch);
+  fPauseEvt := rtlEventCreate;
+  rtlEventSetEvent(fPauseEvt);
   fStepEvt := rtlEventCreate;
   rtlEventSetEvent(fStepEvt);
   fInputEvt := rtlEventCreate;
@@ -8066,6 +8073,7 @@ destructor tKlausDebugThread.destroy;
 begin
   rtlEventDestroy(fStepEvt);
   rtlEventDestroy(fInputEvt);
+  rtlEventDestroy(fPauseEvt);
   doneCriticalSection(fLatch);
   freeAndNil(fArgs);
   inherited destroy;
@@ -8074,6 +8082,7 @@ end;
 procedure tKlausDebugThread.checkTerminated;
 begin
   if terminated then raise eKlausDebugTerminated.create;
+  if paused then rtlEventWaitFor(fPauseEvt);
 end;
 
 procedure tKlausDebugThread.setBreakpoints(bp: tKlausBreakpoints);
@@ -8197,6 +8206,27 @@ end;
 procedure tKlausDebugThread.lock;
 begin
   enterCriticalSection(fLatch);
+end;
+
+function tKlausDebugThread.getPaused: boolean;
+begin
+  lock;
+  try result := fPaused;
+  finally unlock; end;
+end;
+
+procedure tKlausDebugThread.setPaused(val: boolean);
+begin
+  lock;
+  try
+    if fPaused <> val then begin
+      fPaused := val;
+      if fPaused then rtlEventResetEvent(fPauseEvt)
+      else rtlEventSetEvent(fPauseEvt);
+    end;
+  finally
+    unlock;
+  end;
 end;
 
 procedure tKlausDebugThread.unlock;

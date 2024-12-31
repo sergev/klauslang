@@ -5,7 +5,7 @@ unit KlausPract;
 interface
 
 uses
-  Classes, SysUtils, FpJson, ComCtrls, KlausDoer;
+  Classes, SysUtils, FpJson, ComCtrls, KlausSrc, KlausDoer;
 
 type
   tKlausPracticum = class;
@@ -35,6 +35,7 @@ type
       procedure beforeDestruction; override;
       procedure loadCourses(searchPath: string; out errMsg: string);
       function  findTask(courseName, taskName: string): tKlausTask;
+      function  findTask(module: tKlausModule): tKlausTask;
   end;
 
 type
@@ -100,10 +101,13 @@ type
       fDescription: string;
       fDoerSettings: tKlausDoerSettings;
       fActiveSetting: integer;
+      fRunningSetting: integer;
 
       function  getActiveSetting: tKlausDoerSetting;
+      function  getRunningSetting: integer;
       function  getDoer: tKlausDoerClass;
       procedure setActiveSetting(val: tKlausDoerSetting);
+      procedure setRunningSetting(val: integer);
       procedure setCategory(val: string);
       procedure setDoer(val: tKlausDoerClass);
       procedure setName(val: string);
@@ -119,6 +123,7 @@ type
       property doer: tKlausDoerClass read getDoer write setDoer;
       property doerSettings: tKlausDoerSettings read fDoerSettings;
       property activeSetting: tKlausDoerSetting read getActiveSetting write setActiveSetting;
+      property runningSetting: integer read getRunningSetting write setRunningSetting;
 
       constructor create(aOwner: tKlausCourse; data: tJsonData = nil);
       destructor  destroy; override;
@@ -222,6 +227,20 @@ begin
   c := course[courseName];
   if c = nil then result := nil
   else result := c.task[taskName];
+end;
+
+function tKlausPracticum.findTask(module: tKlausModule): tKlausTask;
+var
+  tn, cn: string;
+begin
+  if (klausPracticum = nil)
+  or not (module is tKlausProgram) then
+    result := nil
+  else begin
+    tn := module.name;
+    cn := (module as tKlausProgram).courseName;
+    result := findTask(cn, tn);
+  end;
 end;
 
 
@@ -492,6 +511,7 @@ constructor tKlausTask.create(aOwner: tKlausCourse; data: tJsonData = nil);
 begin
   inherited create;
   fOwner := aOwner;
+  fRunningSetting := -1;
   fName := fOwner.uniqueTaskName(strNewTaskName);
   fCaption := strNewTaskCaption;
   if data <> nil then fromJson(data);
@@ -550,8 +570,8 @@ function tKlausTask.getActiveSetting: tKlausDoerSetting;
 var
   idx: integer;
 begin
-  if fDoerSettings = nil then exit(nil);
-  idx := min(fDoerSettings.count-1, max(0, fActiveSetting));
+  if fDoerSettings = nil then idx := -1
+  else idx := min(fDoerSettings.count-1, max(0, fActiveSetting));
   if idx < 0 then result := nil else result := fDoerSettings[idx];
 end;
 
@@ -559,6 +579,18 @@ procedure tKlausTask.setActiveSetting(val: tKlausDoerSetting);
 begin
   if fDoerSettings = nil then fActiveSetting := -1
   else fActiveSetting := fDoerSettings.indexOf(val);
+end;
+
+function tKlausTask.getRunningSetting: integer;
+begin
+  if fDoerSettings = nil then result := -1
+  else result := min(fDoerSettings.count-1, max(-1, fRunningSetting));
+end;
+
+procedure tKlausTask.setRunningSetting(val: integer);
+begin
+  if fDoerSettings = nil then fRunningSetting := -1
+  else fRunningSetting := min(fDoerSettings.count-1, max(-1, val));
 end;
 
 procedure tKlausTask.setDoer(val: tKlausDoerClass);

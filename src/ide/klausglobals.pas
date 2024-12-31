@@ -33,6 +33,7 @@ const
   APPM_FocusEditor           = $9803;
   APPM_UpdateCourseInfo      = $9804;
   APPM_FocusControl          = $9805;
+  APPM_RunNextSetting        = $9806;
 
 type
   tKlausEditorOptions = class(tKlausEditStyleSheet)

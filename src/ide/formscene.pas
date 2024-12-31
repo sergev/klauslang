@@ -27,7 +27,8 @@ interface
 uses
   Classes, SysUtils, Messages, LMessages, Forms, Controls, Graphics, Dialogs,
   ActnList, ComCtrls, ExtCtrls, Buttons, StdCtrls, U8, KlausGlobals,
-  KlausConsole, KlausPaintBox, KlausSrc, KlausLex, KlausSyn, KlausErr;
+  KlausConsole, KlausPaintBox, KlausSrc, KlausLex, KlausSyn, KlausErr,
+  KlausPract;
 
 type
   tSceneActionStateFlag = (
@@ -41,16 +42,16 @@ type
 
 type
   tSceneForm = class(tForm)
-    actCloseFinished: TAction;
-    actNextTab: TAction;
-    actPrevTab: TAction;
-    actionList: TActionList;
-    PageControl: TPageControl;
-    ScrollBox: TScrollBox;
-    tsConsole: TTabSheet;
-    procedure actCloseFinishedExecute(Sender: TObject);
-    procedure actNextTabExecute(Sender: TObject);
-    procedure actPrevTabExecute(Sender: TObject);
+    actCloseFinished: tAction;
+    actNextTab: tAction;
+    actPrevTab: tAction;
+    actionList: tActionList;
+    PageControl: tPageControl;
+    ScrollBox: tScrollBox;
+    tsConsole: tTabSheet;
+    procedure actCloseFinishedExecute(sender: tObject);
+    procedure actNextTabExecute(sender: tObject);
+    procedure actPrevTabExecute(sender: tObject);
     procedure formClose(sender: tObject; var closeAction: tCloseAction);
     procedure formCloseQuery(sender: tObject; var canClose: boolean);
     procedure formShow(sender: tObject);
@@ -65,6 +66,8 @@ type
     fInStream: tFileStream;
     fOutStream: tFileStream;
     fAutoClose: boolean;
+    fTask: tKlausTask;
+    fAllSettings: boolean;
 
     function  getActionState: tSceneActionState;
     function  getFinished: boolean;
@@ -89,6 +92,7 @@ type
     procedure destroyGraphTab(const win: tObject);
     function  createDoerTab(const cap: string): tWinControl;
     procedure destroyDoerTab(tab: tWinControl);
+    procedure runNextSetting(var msg: tMessage); message APPM_RunNextSetting;
   public
     property source: tKlausSource read fSource;
     property fileName: string read fFileName;
@@ -101,6 +105,7 @@ type
     property exitCode: integer read fExitCode;
     property previewShortCuts: boolean read getPreviewShortCuts write setPreviewShortCuts;
     property autoClose: boolean read fAutoClose write fAutoClose;
+    property allSettings: boolean read fAllSettings write fAllSettings;
 
     constructor create(aOwner: tComponent); override;
     constructor create(aSource: tKlausSource; aFileName: string; aRunOptions: tKlausRunOptions; aStepMode: boolean);
@@ -118,7 +123,7 @@ implementation
 {$R *.lfm}
 
 uses
-  LCLIntf, LazFileUtils, FormMain, KlausDoer;
+  LCLIntf, LazFileUtils, Math, FormMain, KlausDoer;
 
 resourcestring
   strExecuting = 'Выполняется: %s';
@@ -164,6 +169,7 @@ constructor tSceneForm.create(aSource: tKlausSource; aFileName: string; aRunOpti
 begin
   create(application);
   fSource := aSource;
+  fTask := klausPracticum.findTask(source.module);
   setFileName(aFileName);
   fRunOptions.assign(aRunOptions);
   fStepMode := aStepMode;
@@ -171,6 +177,7 @@ end;
 
 destructor tSceneForm.destroy;
 begin
+  if fTask <> nil then fTask.runningSetting := -1;
   invalidateControlState;
   mainForm.removeControlStateClient(self);
   destroyDebugThread;
@@ -236,17 +243,17 @@ begin
   closeAction := caFree;
 end;
 
-procedure tSceneForm.actCloseFinishedExecute(Sender: TObject);
+procedure tSceneForm.actCloseFinishedExecute(sender: tObject);
 begin
   if finished then close;
 end;
 
-procedure tSceneForm.actNextTabExecute(Sender: TObject);
+procedure tSceneForm.actNextTabExecute(sender: tObject);
 begin
   pageControl.selectNextPage(true);
 end;
 
-procedure tSceneForm.actPrevTabExecute(Sender: TObject);
+procedure tSceneForm.actPrevTabExecute(sender: tObject);
 begin
   pageControl.selectNextPage(false);
 end;
@@ -256,16 +263,20 @@ begin
   if not running and not fConsole.inputMode then
     canClose := true
   else begin
+    fThread.paused := true;
     canClose := messageDlg(strConfirmAbort, mtConfirmation, [mbYes, mbNo], 0) = mrYes;
     if canClose and running then begin
       fThread.terminate;
+      fThread.paused := false;
       fThread.waitFor;
-    end;
+    end else
+      fThread.paused := false;
   end;
 end;
 
 procedure tSceneForm.formShow(sender: tObject);
 begin
+  if allSettings and (fTask <> nil) then fTask.runningSetting := 0;
   startDebugThread;
 end;
 
@@ -335,6 +346,7 @@ begin
   fExitCode := fThread.returnValue;
   invalidateControlState;
   if canFocus then setFocus;
+  if allSettings and (fExitCode = 0) then postMessage(handle, APPM_RunNextSetting, 0, 0);
 end;
 
 procedure tSceneForm.threadStateChange(sender: tObject);
@@ -454,6 +466,19 @@ end;
 procedure tSceneForm.destroyDoerTab(tab: tWinControl);
 begin
   freeAndNil(tab);
+end;
+
+procedure tSceneForm.runNextSetting(var msg: tMessage);
+var
+  idx: integer;
+begin
+  if (fTask <> nil) and (fTask.doerSettings <> nil) then begin
+    idx := max(0, fTask.runningSetting);
+    if idx >= fTask.doerSettings.count-1 then exit;
+    fTask.runningSetting := idx + 1;
+    destroyDebugThread;
+    startDebugThread;
+  end;
 end;
 
 function tSceneForm.getActionState: tSceneActionState;

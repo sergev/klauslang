@@ -90,6 +90,12 @@ type
     actDebugWatches: TAction;
     actDebugEvaluateWatch: TAction;
     actHelpReferenceGuide: TAction;
+    actRunAllSettings: TAction;
+    actRunFast: TAction;
+    actRunFastest: TAction;
+    actRunMedium: TAction;
+    actRunSlow: TAction;
+    actRunSlowest: TAction;
     actRunInterceptKeyboard: TAction;
     actDebugRunToCursor: TAction;
     actDebugToggleBreakpoint: TAction;
@@ -138,6 +144,13 @@ type
     MenuItem1: TMenuItem;
     MenuItem2: TMenuItem;
     MenuItem3: TMenuItem;
+    miRunAllSettings: TMenuItem;
+    miRunFastest: TMenuItem;
+    miRunFast: TMenuItem;
+    miRunMedium: TMenuItem;
+    miRunSlow: TMenuItem;
+    miRunSlowest: TMenuItem;
+    miRunDoerSpeed: TMenuItem;
     miPracticum: TMenuItem;
     miDebug: TMenuItem;
     miDebugBreakpoints: TMenuItem;
@@ -226,6 +239,7 @@ type
     Separator10: TMenuItem;
     Separator11: TMenuItem;
     Separator12: TMenuItem;
+    Separator13: TMenuItem;
     Separator14: TMenuItem;
     Separator2: TMenuItem;
     Separator3: TMenuItem;
@@ -260,6 +274,7 @@ type
     ToolButton14: TToolButton;
     ToolButton15: TToolButton;
     ToolButton16: TToolButton;
+    ToolButton17: TToolButton;
     ToolButton2: TToolButton;
     tbRunCheckSyntax: TToolButton;
     tbRunStart: TToolButton;
@@ -299,11 +314,17 @@ type
     procedure actFileSaveExecute(sender: TObject);
     procedure actHelpAboutExecute(Sender: TObject);
     procedure actHelpReferenceGuideExecute(Sender: TObject);
+    procedure actRunAllSettingsExecute(Sender: TObject);
     procedure actRunCheckSyntaxExecute(Sender: TObject);
+    procedure actRunFastestExecute(Sender: TObject);
+    procedure actRunFastExecute(Sender: TObject);
     procedure actRunInterceptKeyboardExecute(Sender: TObject);
+    procedure actRunMediumExecute(Sender: TObject);
     procedure actRunPauseExecute(Sender: TObject);
     procedure actDebugShowExecPointExecute(Sender: TObject);
     procedure actRunShowSceneExecute(Sender: TObject);
+    procedure actRunSlowestExecute(Sender: TObject);
+    procedure actRunSlowExecute(Sender: TObject);
     procedure actRunStartArgsExecute(Sender: TObject);
     procedure actRunStartExecute(Sender: TObject);
     procedure actDebugStepIntoExecute(Sender: TObject);
@@ -367,6 +388,7 @@ type
     function  getDebugViews: tDebugViewTypes;
     function  getDbgWgtStoredWidth: integer;
     function  getCourseStoredWidth: integer;
+    function  getDoerSpeed: tKlausDoerSpeed;
     function  getFormStoredHeight: integer;
     function  getFormStoredWidth: integer;
     function  getIsRunning: boolean;
@@ -381,6 +403,7 @@ type
     procedure setActiveFrame(val: tEditFrame; focus: boolean = true);
     procedure setDbgWgtStoredWidth(val: integer);
     procedure setCourseStoredWidth(val: integer);
+    procedure setDoerSpeed(val: tKlausDoerSpeed);
     procedure setFormStoredHeight(val: integer);
     procedure setFormStoredWidth(val: integer);
     procedure setStackFrameIdx(value: integer);
@@ -438,11 +461,11 @@ type
     procedure destroyEditFrame(fr: tEditFrame);
     function  saveEditFrame(fr: tEditFrame; saveAs: boolean = false): boolean;
     function  promptToSaveEditFrame(fr: tEditFrame): boolean;
-    procedure createScene(fr: tEditFrame; stepMode: boolean);
+    procedure createScene(fr: tEditFrame; stepMode, allSettings: boolean);
     procedure updateDebugInfo;
     procedure showExecPoint;
     procedure showErrorInfo(const msg: string; pt: tSrcPoint; focus: boolean = true);
-    procedure run(mode: tRunMode);
+    procedure run(mode: tRunMode; allSettings: boolean);
     procedure invalidateBreakpointList;
     procedure updateBreakpointList;
     function  getBreakpoints: tKlausBreakpoints;
@@ -466,6 +489,7 @@ type
     property courseStoredWidth: integer read getCourseStoredWidth write setCourseStoredWidth;
     property formStoredWidth: integer read getFormStoredWidth write setFormStoredWidth;
     property formStoredHeight: integer read getFormStoredHeight write setFormStoredHeight;
+    property doerSpeed: tKlausDoerSpeed read getDoerSpeed write setDoerSpeed;
   end;
 
 var
@@ -639,6 +663,7 @@ begin
     sas := scene.actionState;
     actRunStartArgs.enabled := false;
     actRunStart.enabled := sasCanRun in sas;
+    actRunAllSettings.enabled := false;
     actDebugRunToCursor.enabled := sasCanRun in sas;
     actRunStop.enabled := sasCanStop in sas;
     actRunPause.enabled := sasCanPause in sas;
@@ -650,6 +675,7 @@ begin
     caption := strKlaus;
     actRunStartArgs.enabled := fr <> nil;
     actRunStart.enabled := fr <> nil;
+    actRunAllSettings.enabled := fr <> nil;
     actDebugRunToCursor.enabled := fr <> nil;
     actRunStop.enabled := false;
     actRunPause.enabled := false;
@@ -722,6 +748,11 @@ begin
     debugView[dvt].enableDisable;
   end;
   sbDebug.visible := b;
+  actRunSlowest.checked := klausDoerSpeed = kdsSlowest;
+  actRunSlow.checked := klausDoerSpeed = kdsSlow;
+  actRunMedium.checked := klausDoerSpeed = kdsMedium;
+  actRunFast.checked := klausDoerSpeed = kdsFast;
+  actRunFastest.checked := klausDoerSpeed = kdsFastest;
 end;
 
 procedure tMainForm.updateDebugInfo;
@@ -1003,6 +1034,11 @@ begin
   openDocument(fn);
 end;
 
+procedure tMainForm.actRunAllSettingsExecute(Sender: TObject);
+begin
+  run(rmNonStop, true);
+end;
+
 procedure tMainForm.actRunCheckSyntaxExecute(Sender: TObject);
 var
   fr: tEditFrame;
@@ -1017,9 +1053,27 @@ begin
   end;
 end;
 
+procedure tMainForm.actRunFastestExecute(Sender: TObject);
+begin
+  klausDoerSpeed := kdsFastest;
+  invalidateControlState;
+end;
+
+procedure tMainForm.actRunFastExecute(Sender: TObject);
+begin
+  klausDoerSpeed := kdsFast;
+  invalidateControlState;
+end;
+
 procedure tMainForm.actRunInterceptKeyboardExecute(Sender: TObject);
 begin
   if scene <> nil then scene.previewShortCuts := actRunInterceptKeyboard.checked;
+end;
+
+procedure tMainForm.actRunMediumExecute(Sender: TObject);
+begin
+  klausDoerSpeed := kdsMedium;
+  invalidateControlState;
 end;
 
 procedure tMainForm.actRunPauseExecute(Sender: TObject);
@@ -1035,6 +1089,18 @@ end;
 procedure tMainForm.actRunShowSceneExecute(Sender: TObject);
 begin
   if scene <> nil then scene.setFocus;
+end;
+
+procedure tMainForm.actRunSlowestExecute(Sender: TObject);
+begin
+  klausDoerSpeed := kdsSlowest;
+  invalidateControlState;
+end;
+
+procedure tMainForm.actRunSlowExecute(Sender: TObject);
+begin
+  klausDoerSpeed := kdsSlow;
+  invalidateControlState;
 end;
 
 procedure tMainForm.actRunStartArgsExecute(Sender: TObject);
@@ -1062,7 +1128,7 @@ begin
   end;
 end;
 
-procedure tMainForm.createScene(fr: tEditFrame; stepMode: boolean);
+procedure tMainForm.createScene(fr: tEditFrame; stepMode, allSettings: boolean);
 var
   f: tSceneForm;
   src: tKlausSource;
@@ -1073,12 +1139,13 @@ begin
   if src <> nil then begin
     consoleOptions.updateConsoleDefaults;
     f := tSceneForm.create(src, fr.fileName, fr.runOptions, stepMode);
+    if stepMode then f.allSettings := false else f.allSettings := allSettings;
     f.previewShortcuts := actRunInterceptKeyboard.checked;
     f.show;
   end;
 end;
 
-procedure tMainForm.run(mode: tRunMode);
+procedure tMainForm.run(mode: tRunMode; allSettings: boolean);
 begin
   if mode = rmToCursor then begin
     if activeFrame = nil then exit;
@@ -1093,7 +1160,7 @@ begin
     rmStepInto: scene.step(false);
     else scene.resume
   end else
-    createScene(activeFrame, mode in [rmStepOver, rmStepInto]);
+    createScene(activeFrame, mode in [rmStepOver, rmStepInto], allSettings);
 end;
 
 procedure tMainForm.invalidateBreakpointList;
@@ -1242,22 +1309,22 @@ end;
 
 procedure tMainForm.actRunStartExecute(Sender: TObject);
 begin
-  run(rmNonStop);
+  run(rmNonStop, false);
 end;
 
 procedure tMainForm.actDebugRunToCursorExecute(Sender: TObject);
 begin
-  run(rmToCursor);
+  run(rmToCursor, false);
 end;
 
 procedure tMainForm.actDebugStepIntoExecute(Sender: TObject);
 begin
-  run(rmStepInto);
+  run(rmStepInto, false);
 end;
 
 procedure tMainForm.actDebugStepOverExecute(Sender: TObject);
 begin
-  run(rmStepOver);
+  run(rmStepOver, false);
 end;
 
 procedure tMainForm.actDebugToggleBreakpointExecute(Sender: TObject);
@@ -1510,11 +1577,21 @@ begin
   result := mulDiv(sbCourse.width, designTimePPI, screenInfo.pixelsPerInchX);
 end;
 
+function tMainForm.getDoerSpeed: tKlausDoerSpeed;
+begin
+  result := klausDoerSpeed;
+end;
+
 procedure tMainForm.setCourseStoredWidth(val: integer);
 begin
   // здесь не масштабируем, иначе при высоких разрешениях экрана
   // размер растёт при каждом запуске среды
   sbCourse.width := min(val, self.width div 3);
+end;
+
+procedure tMainForm.setDoerSpeed(val: tKlausDoerSpeed);
+begin
+  klausDoerSpeed := val;
 end;
 
 function tMainForm.getFormStoredWidth: integer;
@@ -1874,7 +1951,7 @@ var
 begin
   result :=
     'FormStoredHeight;Left;Top;FormStoredWidth;WindowState;recentFiles;debugViews;'+
-    'actRunInterceptKeyboard.checked;dbgWgtStoredWidth;courseStoredWidth';
+    'actRunInterceptKeyboard.checked;dbgWgtStoredWidth;courseStoredWidth;doerSpeed';
   for dvt := low(dvt) to high(dvt) do begin
     if debugView[dvt] = nil then continue;
     n := debugView[dvt].name;

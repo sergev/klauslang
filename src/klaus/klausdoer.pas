@@ -46,6 +46,12 @@ type
   tKlausDoerCapability = (kdcImportSettings, kdcExportSettings);
   tKlausDoerCapabilities = set of tKlausDoerCapability;
 
+type
+  tKlausDoerSpeed = (kdsSlowest, kdsSlow, kdsMedium, kdsFast, kdsFastest);
+
+var
+  klausDoerSpeed: tKlausDoerSpeed = kdsSlow;
+
 resourcestring
   strKlausDoerSettingFileExt = '.klaus-setting';
 
@@ -56,6 +62,7 @@ type
       fView: tKlausDoerView;
       fError: tDoerErrorFrame;
       fSetting: tKlausDoerSetting;
+      fSettingCaption: string;
       fStrParam: string;
 
       procedure syncCreateWindow;
@@ -370,8 +377,12 @@ begin
 end;
 
 procedure tKlausDoer.syncCreateWindow;
+var
+  s: string;
 begin
-  fWindow := createWindowMethod(stdUnitName);
+  if fSettingCaption = '' then s := stdUnitName
+  else s := format('%s - %s', [stdUnitName, fSettingCaption]);
+  fWindow := createWindowMethod(s);
   fView := createView(fWindow, kdvmExecute);
   fView.parent := fWindow;
   fView.align := alClient;
@@ -391,7 +402,7 @@ end;
 
 procedure tKlausDoer.beforeInit(frame: tKlausStackFrame);
 var
-  tn, cn: string;
+  idx: integer;
   t: tKlausTask;
   ds: tKlausDoerSetting;
 begin
@@ -400,18 +411,22 @@ begin
   inherited beforeInit(frame);
   theDoer := self;
   fSetting := createSetting;
-  if (klausPracticum = nil)
-  or not (source.module is tKlausProgram) then
-    t := nil
-  else begin
-    tn := source.module.name;
-    cn := (source.module as tKlausProgram).courseName;
-    t := klausPracticum.findTask(cn, tn);
-  end;
+  if klausPracticum = nil then t := nil
+  else t := klausPracticum.findTask(source.module);
   if t <> nil then
     if t.doer = self.classType then begin
-      ds := t.activeSetting;
-      if ds <> nil then fSetting.assign(ds);
+      idx := t.runningSetting;
+      if idx >= 0 then
+        ds := t.doerSettings[idx]
+      else begin
+        ds := t.activeSetting;
+        idx := t.doerSettings.indexOf(ds);
+      end;
+      if ds <> nil then begin
+        fSetting.assign(ds);
+        if fSetting.caption <> '' then fSettingCaption := fSetting.caption
+        else fSettingCaption := format('%.2d', [idx + 1])
+      end;
     end;
   frame.owner.synchronize(@syncCreateWindow);
 end;
