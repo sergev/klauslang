@@ -397,7 +397,9 @@ end;
 
 procedure tKlausDoer.syncDestroyWindow;
 begin
-  //destroyWindowMethod(fWindow);
+  // не нужно уничтожать окно, чтобы можно было
+  // увидеть и проверить результаты выполнения программы
+  // destroyWindowMethod(fWindow);
 end;
 
 procedure tKlausDoer.beforeInit(frame: tKlausStackFrame);

@@ -337,6 +337,7 @@ const
   klausConst_MouseSouth = 8;
 
 const
+  klausProcName_MouseLoadSetting = 'загрузитьОбстановку';
   klausProcName_MouseStep = 'шаг';
   klausProcName_MouseTurn = 'повернуть';
   klausProcName_MousePaint = 'закрасить';
@@ -351,6 +352,16 @@ const
 
 const
   mouseMovementDelay: array[tKlausDoerSpeed] of integer = (100, 50, 25, 10, 0);
+
+type
+  tKlausSysProc_MouseLoadSetting = class(tKlausSysProcDecl)
+    private
+      fName: tKlausProcParam;
+      fIdx: tKlausProcParam;
+    public
+      constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+  end;
 
 type
   tKlausSysProc_MouseStep = class(tKlausSysProcDecl)
@@ -1286,6 +1297,7 @@ end;
 
 procedure tKlausDoerMouse.createRoutines;
 begin
+  tKlausSysProc_MouseLoadSetting.create(self, zeroSrcPt);
   tKlausSysProc_MouseStep.create(self, zeroSrcPt);
   tKlausSysProc_MouseTurn.create(self, zeroSrcPt);
   tKlausSysProc_MousePaint.create(self, zeroSrcPt);
@@ -2056,6 +2068,33 @@ end;
 class function tKlausMouseView.doerClass: tKlausDoerClass;
 begin
   result := tKlausDoerMouse;
+end;
+
+{ tKlausSysProc_MouseLoadSetting }
+
+constructor tKlausSysProc_MouseLoadSetting.create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
+begin
+  inherited create(aOwner, klausProcName_MouseLoadSetting, aPoint);
+  fName := tKlausProcParam.create(self, 'файл', aPoint, kpmInput, source.simpleTypes[kdtString]);
+  addParam(fName);
+  fIdx := tKlausProcParam.create(self, 'индекс', aPoint, kpmInput, source.simpleTypes[kdtInteger]);
+  addParam(fIdx);
+end;
+
+procedure tKlausSysProc_MouseLoadSetting.run(frame: tKlausStackFrame; const at: tSrcPoint);
+var
+  idx: tKlausInteger;
+  stng: tKlausDoerSettings;
+begin
+  idx := getSimpleInt(frame, fIdx, at);
+  stng := tKlausDoerSettings.create(tKlausDoerClass(owner.classType));
+  try
+    (owner as tKlausDoerMouse).importSettings(stng, getSimpleStr(frame, fName, at));
+    if (idx < 0) or (idx >= stng.count) then raise eKlausError.createFmt(ercInvalidListIndex, at, [idx]);
+    (owner as tKlausDoerMouse).setting.assign(stng[idx]);
+  finally
+    freeAndNil(stng);
+  end;
 end;
 
 { tKlausSysProc_MouseStep }

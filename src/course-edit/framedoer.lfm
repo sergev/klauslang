@@ -296,14 +296,14 @@ object DoerFrame: TDoerFrame
     end
     object actSettingLoad: TAction
       Caption = 'Добавить из файла'
-      Hint = 'Добавить из файла...|Загрузить обстановки из файла и добавить в список'
+      Hint = 'Импортировать...|Загрузить обстановки из файла и добавить в список'
       ImageIndex = 5
       OnExecute = actSettingLoadExecute
       ShortCut = 24655
     end
     object actSettingSave: TAction
       Caption = 'Сохранить в файле'
-      Hint = 'Сохранить в файле...|Сохранить все обстановки в файле'
+      Hint = 'Экспортировать...|Сохранить все обстановки в файле'
       ImageIndex = 6
       OnExecute = actSettingSaveExecute
       ShortCut = 24659
