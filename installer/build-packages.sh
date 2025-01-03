@@ -123,7 +123,7 @@ cd ../installer
 
 echo "!define PRODUCT_VERSION \"$VER\"" > version.nsi
 
-wine "$(wine cmd /c echo %ProgramFiles% | tr -d \\r)\NSIS\makensis" klaus.nsi
+wine "$(wine cmd /c echo %ProgramFiles% | tr -d \\r)\NSIS\makensis.exe" klaus.nsi
 
 rm version.nsi
 
