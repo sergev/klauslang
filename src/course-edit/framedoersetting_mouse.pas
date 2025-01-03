@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, ActnList, ComCtrls, LMessages, KlausDoer,
-  KlausDoer_Mouse, FrameDoer, Dialogs, ExtCtrls, StdCtrls;
+  KlausDoer_Mouse, FrameDoer, Dialogs, ExtCtrls, StdCtrls, Menus;
 
 type
 
@@ -21,7 +21,7 @@ type
     actShowHelp: TAction;
     actRadiation: TAction;
     actTemperature: TAction;
-    actSettingSize: tAction;
+    actSettingMoveRight: tAction;
     actSettingClear: TAction;
     actionImages: tImageList;
     actMousePos: tAction;
@@ -37,6 +37,11 @@ type
     actWallUp: tAction;
     actions: tActionList;
     lblKeyboardInfo: TLabel;
+    miSettingMoveDown: TMenuItem;
+    miSettingMoveUp: TMenuItem;
+    miSettingMoveLeft: TMenuItem;
+    miSettingMoveRight: TMenuItem;
+    pmSettingMove: TPopupMenu;
     sbKeyboardInfo: TScrollBox;
     toolBar: tToolBar;
     ToolButton1: TToolButton;
@@ -60,6 +65,7 @@ type
     tbRadiation: TToolButton;
     ToolButton25: TToolButton;
     ToolButton26: TToolButton;
+    tbSettingMove: TToolButton;
     ToolButton3: tToolButton;
     ToolButton4: tToolButton;
     ToolButton5: TToolButton;
@@ -72,6 +78,10 @@ type
     procedure actArrowRightExecute(sender: tObject);
     procedure actArrowUpExecute(sender: tObject);
     procedure actHideHelpExecute(Sender: TObject);
+    procedure actSettingMoveDownExecute(Sender: TObject);
+    procedure actSettingMoveLeftExecute(Sender: TObject);
+    procedure actSettingMoveRightExecute(Sender: TObject);
+    procedure actSettingMoveUpExecute(Sender: TObject);
     procedure actShowHelpExecute(Sender: TObject);
     procedure actRadiationExecute(sender: tObject);
     procedure actSettingClearExecute(sender: tObject);
@@ -88,6 +98,7 @@ type
     procedure actWallLeftExecute(sender: tObject);
     procedure actWallRightExecute(sender: tObject);
     procedure actWallUpExecute(sender: tObject);
+    procedure tbSettingMoveClick(Sender: TObject);
   private
     fView: tKlausMouseView;
 
@@ -129,6 +140,7 @@ resourcestring
     '- Shift+Стрелки -- снять/поставить стену'#13#10+
     '- Ctrl+Стрелки -- снять/поставить стрелку'#13#10+
     '- Alt+Стрелки -- повернуть Мышку'#13#10+
+    '- Shift+Ctrl+Стрелки -- подвинуть обстановку'#13#10+
     '- Буквы -- поставить букву в нижний угол'#13#10+
     '- Shift+Буквы -- поставить букву в верхний угол'#13#10+
     '- Цифры, Минус -- набрать число'#13#10+
@@ -326,6 +338,30 @@ begin
   actHideHelp.enabled := false;
 end;
 
+procedure tDoerSettingFrame_Mouse.actSettingMoveDownExecute(Sender: TObject);
+begin
+  if setting = nil then exit;
+  setting.move(kmdDown);
+end;
+
+procedure tDoerSettingFrame_Mouse.actSettingMoveLeftExecute(Sender: TObject);
+begin
+  if setting = nil then exit;
+  setting.move(kmdLeft);
+end;
+
+procedure tDoerSettingFrame_Mouse.actSettingMoveRightExecute(Sender: TObject);
+begin
+  if setting = nil then exit;
+  setting.move(kmdRight);
+end;
+
+procedure tDoerSettingFrame_Mouse.actSettingMoveUpExecute(Sender: TObject);
+begin
+  if setting = nil then exit;
+  setting.move(kmdUp);
+end;
+
 procedure tDoerSettingFrame_Mouse.actShowHelpExecute(Sender: TObject);
 begin
   if sbKeyboardInfo.visible then
@@ -407,6 +443,11 @@ begin
   if setting = nil then exit;
   p := focusedCell;
   with setting[p.x, p.y] do wall[kmdUp] := not wall[kmdUp];
+end;
+
+procedure tDoerSettingFrame_Mouse.tbSettingMoveClick(Sender: TObject);
+begin
+  tbSettingMove.checkMenuDropdown;
 end;
 
 procedure tDoerSettingFrame_Mouse.doerViewChange(sender: tObject);

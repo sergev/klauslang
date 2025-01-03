@@ -26,115 +26,115 @@ object DoerSettingFrame_Mouse: TDoerSettingFrame_Mouse
       Action = actSettingSize
     end
     object ToolButton3: TToolButton
-      Left = 47
+      Left = 82
       Height = 22
       Top = 0
       Caption = 'ToolButton3'
       Style = tbsDivider
     end
     object ToolButton4: TToolButton
-      Left = 52
+      Left = 87
       Top = 0
       Action = actWallLeft
     end
     object ToolButton6: TToolButton
-      Left = 75
+      Left = 110
       Top = 0
       Action = actWallUp
     end
     object ToolButton7: TToolButton
-      Left = 98
+      Left = 133
       Top = 0
       Action = actWallRight
     end
     object ToolButton8: TToolButton
-      Left = 121
+      Left = 156
       Top = 0
       Action = actWallDown
     end
     object ToolButton9: TToolButton
-      Left = 144
+      Left = 179
       Height = 22
       Top = 0
       Caption = 'ToolButton9'
       Style = tbsDivider
     end
     object ToolButton10: TToolButton
-      Left = 149
+      Left = 184
       Top = 0
       Action = actArrowLeft
     end
     object ToolButton11: TToolButton
-      Left = 172
+      Left = 207
       Top = 0
       Action = actArrowUp
     end
     object ToolButton12: TToolButton
-      Left = 195
+      Left = 230
       Top = 0
       Action = actArrowRight
     end
     object ToolButton13: TToolButton
-      Left = 218
+      Left = 253
       Top = 0
       Action = actArrowDown
     end
     object ToolButton14: TToolButton
-      Left = 241
+      Left = 276
       Height = 22
       Top = 0
       Caption = 'ToolButton14'
       Style = tbsDivider
     end
     object ToolButton15: TToolButton
-      Left = 246
+      Left = 281
       Top = 0
       Action = actPaint
     end
     object ToolButton16: TToolButton
-      Left = 269
+      Left = 304
       Height = 22
       Top = 0
       Caption = 'ToolButton16'
       Style = tbsDivider
     end
     object ToolButton17: TToolButton
-      Left = 274
+      Left = 309
       Hint = 'Буква "А"|Поставить букву "А" в нижний угол текущей клетки. Нажмите букву, чтобы поставить её в нижний угол клетки.'
       Top = 0
       Action = actSymbolA
     end
     object ToolButton18: TToolButton
-      Left = 297
+      Left = 332
       Hint = 'Буква "Б"|Поставить букву "Б" в верхний угол текущей клетки. Нажмите Shift+букву, чтобы поставить её в верхний угол клетки.'
       Top = 0
       Action = actSymbolB
     end
     object ToolButton19: TToolButton
-      Left = 320
+      Left = 355
       Hint = 'Символ "•"|Обозначить текущую клетку символом "•". Нажмите точку, чтобы установить или снять отметку.'
       Top = 0
       Action = actSymbolBullet
     end
     object ToolButton20: TToolButton
-      Left = 351
+      Left = 386
       Top = 0
       Action = actCellProps
     end
     object ToolButton21: TToolButton
-      Left = 374
+      Left = 409
       Height = 22
       Top = 0
       Caption = 'ToolButton21'
       Style = tbsDivider
     end
     object ToolButton22: TToolButton
-      Left = 379
+      Left = 414
       Top = 0
       Action = actMousePos
     end
     object ToolButton23: TToolButton
-      Left = 402
+      Left = 437
       Top = 0
       Action = actMouseRotate
     end
@@ -144,40 +144,49 @@ object DoerSettingFrame_Mouse: TDoerSettingFrame_Mouse
       Action = actSettingClear
     end
     object ToolButton5: TToolButton
-      Left = 343
+      Left = 378
       Height = 22
       Top = 0
       Caption = 'ToolButton5'
       Style = tbsSeparator
     end
     object ToolButton24: TToolButton
-      Left = 425
+      Left = 460
       Height = 22
       Top = 0
       Caption = 'ToolButton24'
       Style = tbsSeparator
     end
     object tbTemperature: TToolButton
-      Left = 433
+      Left = 468
       Top = 0
       Action = actTemperature
     end
     object tbRadiation: TToolButton
-      Left = 456
+      Left = 491
       Top = 0
       Action = actRadiation
     end
     object ToolButton25: TToolButton
-      Left = 479
+      Left = 514
       Height = 22
       Top = 0
       Caption = 'ToolButton25'
       Style = tbsSeparator
     end
     object ToolButton26: TToolButton
-      Left = 487
+      Left = 522
       Top = 0
       Action = actShowHelp
+    end
+    object tbSettingMove: TToolButton
+      Left = 47
+      Hint = 'Подвинуть|Переместить все клетки поля'
+      Top = 0
+      DropdownMenu = pmSettingMove
+      ImageIndex = 20
+      OnClick = tbSettingMoveClick
+      Style = tbsDropDown
     end
   end
   object sbKeyboardInfo: TScrollBox
@@ -212,49 +221,56 @@ object DoerSettingFrame_Mouse: TDoerSettingFrame_Mouse
     Left = 164
     Top = 176
     Bitmap = {
-      4C7A1400000012000000120000009F0400000000000078DAED9CCD92D3300C80
-      B39C186687195E18CA9EB933FCDD78070E2C4C5F80670A4D5B6715459225594D
-      9356CD78BAD9385F255B561C2971DFF5DD7EBFEF61E93BFB369CD775DDA47858
-      23A7EF4FE5CCD1149603E4C1325205B2387986EF9FFF3EB145E42079DC9C94E7
-      2AF244D88FA570E3CB5A20AB94898ECA6F71AC698BC471EA85599E768EDE705B
-      5BBEA976B1CA399C13C14979529E94671979A0DFB0FA0C28CF1A378F5F8EBA4E
-      487EB585E3B9A653BAB55C8360BFB7D840CA93F2AC511EAF2FBCD4BC2E62F3EA
-      43F943EFBD3AF663119C9427E549792E2B8FC767ACD9177AF5A2E6BD793D4D79
-      521E5A1E6FE1EE73D770FF15755F99DBF5FC7EE4B5A395D1C2C1367D0BF18D28
-      BD22DB39B2DF23ED30B7EBC615236C2972FC7B63C1965C9795E1614DF2858DF7
-      1451E33F39C98918F3E9F773EE183917915896FB2DED5C6C4BF75FADCF875DC2
-      8FE4DC31E787793D4DCEDA3911F3F0E8FB825646F4F3C3393F5CFE191E2F63B7
-      DBF5BB431F1DCBE16FEF98D88171E065414E7796A973B00AA7D85E9107B234BC
-      C9DCE4F029B24DDAAC62DF9801F51A65ABB03063F8E0BC624D268E01CB91A1D0
-      6DCC45080CAC5F2D0E2931B43635DA4DD10330A0BD5BFA1E333C73CD9CE32E3B
-      3FD48CCB2538DAF1BD0407EBE3D56F4D1C8AE16151ED6B6D6F0D437BBDE074B2
-      E856ABA7F5CD4BFD9645266D9F6ECD5746E4CAB5761865CF164E945E917E7D2B
-      EDBC25BFB1054E44FB44F5578BFD44F98DDC321E103DCF6C61DD2A27F2BE20AA
-      DF73BB4F1F21D98DF47F4F6E938B47511F1C572FF5A877D6E17118F7291CC81B
-      19434C87880DD5E421190207CA02E351E37BFA0CA326CF4C378621B5CF24AE45
-      B4BB14F3E364D1E6DEB9F6B1E41E38794ACC0EEE6B39D87EB02D79E4A1E4D370
-      BC6B2E789E07B8D5B94EEDF95E6C731A7F07E3C785F1F0EA818D397371E9724E
-      91ADEC7FFCF6772C38065E18B8CE702EE4C0E3A50ED4B5ECE37A98F3F4E39994
-      A7EC53F23C7D7F9E70A83A8545FD4DE95EDAF0EDBB4756764EE7378FAF599F38
-      1C7FFFF9D78C09F7B9F83F972780ED0BF7B5E31EFF3EDED770603F7DF8F2FB85
-      F3F5CFA4DF6A3136283FD73FD2FBB0D49A3D582FAA4E6D1D062E4F2DBD9F0BDF
-      E3D1CC516A391BEB9C698BB9149C936DF5D5D7BCA75C2AC6EF891D4AED235EBF
-      88DFA5FA8BAB5BE3687FB3764CA3BFE5B8B78E9427B2E442D66247B09F383DEF
-      2D9E10F1EEA1E7995C69EE28AD7927AD7FB7260EB50E9E7CEEEE5820E774DEE9
-      FFF07AADE19C4A3761583873D694616D1F8E710D4E845E51ED1CD5EF163B6C1D
-      A7517EE37EDEABEBCFC5F70E1AC5F1C876AFF268E6873579A8FBA6FABB2E3247
-      BA979B33E836929EABE619539636F67C4D4E945ED67696E6399A779C34FE73A9
-      7965AB6FE66209525C439C2B0AEBEC6A6248634E80E39463B5F57F8B3C140BE7
-      20B878088EC7333AC1BA331B2462FA1399B8E3D8BF30F5C63A0D1C6E3C891CA2
-      6F661C61BDE5DA5ACD639DCABACD2207EACAD914D567523F33C7C5B5B6A57ED6
-      AE45CDC98265D28C312AF706C69525AFD2E23722FDD85AFD21774153E7087179
-      49A2CD786CDED3C0E98538706F2C644ED85966B9704927462F35A7D23EF7C059
-      C47EE689E1369B56C8123D4ED7E20FFF03C67BC385
+      4C7A190000001200000012000000810500000000000078DAED5DCD92DB3008F6
+      F6D4E9EC74A62FDCA67BEEBDD3BF5BDFA1876E3B79813E931B6F565E8C010122
+      FE498847933896BF808410028BF45DDF1D8FC71E96BEB31FC37D5DD74D8A076B
+      C4E9FB7379C6D1141607D08369A40AC4E2E819DE7FFEFBC4161107D1E3C6497A
+      56A127427E2C851B5FD602B14A99F0A87C17C79AB648384EBE3096A79DA30FDC
+      D69677AA5DAC740EF744E0243D494FD2B30C3D506F587506A4678B87472F47CD
+      13925E6DC1F1CCE9146F2D7310ECF71619487A929E2DD2E3D58597B2EB220E2F
+      3F943EF4AED5B11E8BC0497A929EA4E7B2F47874C69675A1972FCAEECDF934E9
+      497A687ABC855BE76E61FD15B5AECC633DBD1F3977B462B4E06099BE06FF4614
+      5F91ED1CD9EF917298C7BA7EC508598A1CFF5E5FB025D665C5F0604DE2858D6B
+      8AA8F19F38891331E653EFA7ED18698B485896F596D616DBD3FAABF5F9B04BE8
+      91B41DD33ECCF93471B68E13618747AF0B5A31A29F1F4EFB70F96778BC1887C3
+      A13F9CFAE8A99C3E7BC7C4018C032F16C4E99E69EA1C5805A7C85EA1076269F0
+      26B6C9E955689BB45945BE3106E46BA4AD82853186178E2BD668E2306079C250
+      F036C622040CCC5FCD0F296168656A949BC207C080F26EE97B8CE1B135D3C65D
+      D63ED48CCB2570B4E37B091CCC8F97BF2DE150181E2CAA7DADEDADC1D0CE171C
+      4F16DE6AF5B4BA79A9DFB2D0A4EDD3BDE9CA8858B9560EA3E4D98213C557A45E
+      DF4B3BEF496FEC0127A27DA2FAAB457EA2F4461EE90F88B6335BB0AE1527725D
+      10D5EF79DCA68E90E446FADE13DBE4FC51D40BFBD54B3D6ACF3ABC0EFD3E0507
+      E28D18834F87F00DD5E82131041C480BF4478DFBF4198C1A3D33DE180CA97D26
+      7E2DA2DD259F1F478B36F6CEB58F25F6C0D1537C76F05C8B83E507CB92871E8A
+      3E0D8E37E782E779806BB5756ACFF76299D3E83BE83F2E1877AFEE589F33E797
+      2EF714DACAF9C76F7FC7827DE00503D719EE8538F07AA903792DE7B81EC679F8
+      F148D253CE297A1EBE3F4E70A83A058BFA4CF15EDAF0EDBB7B96768EE737F7AF
+      599D385C7FFFF9D70C139E73FE7F2E4E00DB179E6BC73DFE7D7CAEC181FDF4E1
+      CBEF179CAF7F26FD56F3B141FAB9FE91F6C352397B305F549D5A1E062E4E2DED
+      CF85FB7834364A2D6663B599F6184BC131D9565DBDE69A72291FBFC77728B58F
+      387F11BF4BF51757B786A3FDCDDA350DFF96EBDE3A529CC8120BD98A1CC17EE2
+      F8BC357F42C4DE43CF33B992ED28E5BC93F2DF6D0987CA8327DF7B782A10E77C
+      DFF97B385F6B70CEA59B605870E658530C6BFB70186BE044F015D5CE51FD6E91
+      C3D6711AA5376E675F5DFF5C7C7BD0281C0F6DB74A8FC63EACD143AD9BEA7B5D
+      641C692D37C7A0DB487AAE9AC79862697DCF6BE244F1656D67C9CED1EC71D2E8
+      CFA5ECCA56DDCCF91224BF86682B0A7976353EA43126C0E1946BB5FCBF851E0A
+      0BC720387F08F6C7333CC1BA3319247CFA139AB8EB58BF30F5C63A0D38DC7812
+      7188BE99E108F9966BB99AC73A95BCCD220EE4959329AACFA47E66AE8BB9B6A5
+      7ED6E6A2E668C13469C618157B03E3CA125769D11B917A6CABFA909BD0D43142
+      5C5E8268333C36EE69C0E9053F706F2C644CD85966B1708927862F354EA57D6E
+      016711F9990786DB645A414BF438DD923E6CC9AB16FDFF0E35FF46A95BF37748
+      38F8773D381C0F1E7A5AF8C2F75038B83EC6E1EE91BE93E2892DFD1E293F117C
+      45B6F325E439520E23C68597AFE8FF85B9A55C8A5BCC0DA1DDB759CBB5823FB7
+      E404A86151FB6935F960A4FDC22D586BE278F3F668DA39AADF23E5307331A40E
+      A3C64A4B2E10CD98B26258B0B4E3BE33E618F06049CF9D49CFA569F2C848FAC3
+      9AABC2DB5F89B37CBE9DDCABB73F9D1A319F6B7492568EBD79A4F76AD745DAAC
+      163BBAE5D992D67E8FB609D32E5CFF99446F5FB5CC3B39BF5F1627C2AE8BB233
+      A3ECDE283B3C725D10DDEF51EBA66BD0ADFF014052F3A7
     }
   end
   object actions: TActionList
     Images = actionImages
-    Left = 304
+    Left = 308
     Top = 176
     object actSettingSize: TAction
       Caption = 'Размер поля...'
@@ -262,6 +278,34 @@ object DoerSettingFrame_Mouse: TDoerSettingFrame_Mouse
       ImageIndex = 0
       OnExecute = actSettingSizeExecute
       ShortCut = 32836
+    end
+    object actSettingMoveRight: TAction
+      Caption = 'Вправо'
+      Hint = 'Вправо|Переместить все клетки поля на одну клетку вправо'
+      ImageIndex = 21
+      OnExecute = actSettingMoveRightExecute
+      ShortCut = 24615
+    end
+    object actSettingMoveLeft: TAction
+      Caption = 'Влево'
+      Hint = 'Влево|Переместить все клетки поля на одну клетку влево'
+      ImageIndex = 23
+      OnExecute = actSettingMoveLeftExecute
+      ShortCut = 24613
+    end
+    object actSettingMoveUp: TAction
+      Caption = 'Вверх'
+      Hint = 'Вверх|Переместить все клетки поля на одну клетку вверх'
+      ImageIndex = 22
+      OnExecute = actSettingMoveUpExecute
+      ShortCut = 24614
+    end
+    object actSettingMoveDown: TAction
+      Caption = 'Вниз'
+      Hint = 'Вниз|Переместить все клетки поля на одну клетку вниз'
+      ImageIndex = 24
+      OnExecute = actSettingMoveDownExecute
+      ShortCut = 24616
     end
     object actSettingClear: TAction
       Caption = 'Очистить поле...'
@@ -398,6 +442,23 @@ object DoerSettingFrame_Mouse: TDoerSettingFrame_Mouse
       Enabled = False
       OnExecute = actHideHelpExecute
       ShortCut = 27
+    end
+  end
+  object pmSettingMove: TPopupMenu
+    Images = actionImages
+    Left = 463
+    Top = 176
+    object miSettingMoveLeft: TMenuItem
+      Action = actSettingMoveLeft
+    end
+    object miSettingMoveUp: TMenuItem
+      Action = actSettingMoveUp
+    end
+    object miSettingMoveRight: TMenuItem
+      Action = actSettingMoveRight
+    end
+    object miSettingMoveDown: TMenuItem
+      Action = actSettingMoveDown
     end
   end
 end

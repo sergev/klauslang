@@ -92,6 +92,7 @@ type
       property wall[idx: tKlausMouseDirection]: boolean read getWall write setWall;
 
       constructor create(aOwner: tKlausMouseSetting; aHorz, aVert: integer);
+      procedure clear;
       function  toJson: tJsonObject;
       procedure fromJson(data: tJsonData);
       procedure toggleArrow(dir: tKlausMouseDirection);
@@ -120,11 +121,11 @@ type
 
       function  getCells(x, y: integer): tKlausMouseCell;
       function  getHere: tKlausMouseCell;
+      procedure setWidth(val: integer);
       procedure setHeight(val: integer);
       procedure setMouseDir(val: tKlausMouseDirection);
       procedure setMouseX(val: integer);
       procedure setMouseY(val: integer);
-      procedure setWidth(val: integer);
     protected
       procedure assignTo(dest: tPersistent); override;
     public
@@ -141,6 +142,7 @@ type
       function  toJson: tJsonData; override;
       procedure fromJson(data: tJsonData); override;
       function  turn(dir: integer): tKlausMouseDirection;
+      procedure move(dir: tKlausMouseDirection);
   end;
 
 type
@@ -529,6 +531,24 @@ begin
   fVert := aVert;
 end;
 
+procedure tKlausMouseCell.clear;
+begin
+  updating;
+  try
+    walls := [];
+    painted := false;
+    text1 := '';
+    text2 := '';
+    hasNumber := false;
+    mark := false;
+    temperature := 0;
+    radiation := 0;
+    arrow := kmdNone;
+  finally
+    updated;
+  end;
+end;
+
 function tKlausMouseCell.toJson: tJsonObject;
 var
   data: tJsonObject = nil;
@@ -665,6 +685,12 @@ end;
 
 procedure tKlausMouseCell.setWall(idx: tKlausMouseDirection; val: boolean);
 begin
+  case idx of
+    kmdLeft: if horz <= 0 then val := false;
+    kmdUp: if vert <= 0 then val := false;
+    kmdRight: if horz >= owner.width-1 then val := false;
+    kmdDown: if vert >= owner.height-1 then val := false;
+  end;
   if (idx <> kmdHere) and ((idx in fWalls) <> val) then begin
     updating;
     try
@@ -733,7 +759,7 @@ procedure tKlausMouseCell.setWalls(val: tKlausMouseDirections);
 var
   w: tKlausMouseDirection;
 begin
-  if fWalls <> val then begin
+  if walls <> val then begin
     updating;
     try
       for w := low(val) to high(val) do wall[w] := w in val;
@@ -949,6 +975,56 @@ begin
     klausConst_MouseSouth: result := kmdDown;
   else
     result := mouseDir;
+  end;
+end;
+
+procedure tKlausMouseSetting.move(dir: tKlausMouseDirection);
+var
+  x, y: integer;
+  ms: tKlausMouseSetting = nil;
+begin
+  if dir = kmdNone then exit;
+  updating;
+  try
+    ms := tKlausMouseSetting.create(width, height);
+    ms.assign(self);
+    case dir of
+      kmdLeft: begin
+        for y := 0 to height-1 do begin
+          for x := 1 to width-1 do
+            cells[x-1, y].assign(ms.cells[x, y]);
+          cells[width-1, y].clear;
+        end;
+        mouseX := mouseX-1;
+      end;
+      kmdRight: begin
+        for y := 0 to height-1 do begin
+          for x := 0 to width-2 do
+            cells[x+1, y].assign(ms.cells[x, y]);
+          cells[0, y].clear;
+        end;
+        mouseX := mouseX+1;
+      end;
+      kmdUp: begin
+        for x := 0 to width-1 do begin
+          for y := 1 to height-1 do
+            cells[x, y-1].assign(ms.cells[x, y]);
+          cells[x, height-1].clear;
+        end;
+        mouseY := mouseY-1;
+      end;
+      kmdDown: begin
+        for x := 0 to width-1 do begin
+          for y := 0 to height-2 do
+            cells[x, y+1].assign(ms.cells[x, y]);
+          cells[x, 0].clear;
+        end;
+        mouseY := mouseY+1;
+      end;
+    end;
+  finally
+    freeAndNil(ms);
+    updated;
   end;
 end;
 
