@@ -478,6 +478,9 @@ object MainForm: TMainForm
         object miRunFastest: TMenuItem
           Action = actRunFastest
         end
+        object miRunImmediate: TMenuItem
+          Action = actRunImmediate
+        end
       end
       object Separator13: TMenuItem
         Caption = '-'
@@ -1167,6 +1170,13 @@ object MainForm: TMainForm
       Hint = 'Очень быстро|Скорость работы исполнителя -- очень быстро'
       OnExecute = actRunFastestExecute
       ShortCut = 41013
+    end
+    object actRunImmediate: TAction
+      Category = 'Запуск'
+      Caption = 'Только результат'
+      Hint = 'Только результат|Выполнить программу полностью и показать в окне конечное состояние исполнителя -- максимально быстро'
+      OnExecute = actRunImmediateExecute
+      ShortCut = 41014
     end
   end
   object actionImages: TImageList

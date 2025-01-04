@@ -66,6 +66,9 @@ type
   end;
 
 type
+
+  { tMainForm }
+
   tMainForm = class(tForm)
     actFileNew: TAction;
     actFileOpen: TAction;
@@ -90,6 +93,7 @@ type
     actDebugWatches: TAction;
     actDebugEvaluateWatch: TAction;
     actHelpReferenceGuide: TAction;
+    actRunImmediate: TAction;
     actRunAllSettings: TAction;
     actRunFast: TAction;
     actRunFastest: TAction;
@@ -144,6 +148,7 @@ type
     MenuItem1: TMenuItem;
     MenuItem2: TMenuItem;
     MenuItem3: TMenuItem;
+    miRunImmediate: TMenuItem;
     miRunAllSettings: TMenuItem;
     miRunFastest: TMenuItem;
     miRunFast: TMenuItem;
@@ -318,6 +323,7 @@ type
     procedure actRunCheckSyntaxExecute(Sender: TObject);
     procedure actRunFastestExecute(Sender: TObject);
     procedure actRunFastExecute(Sender: TObject);
+    procedure actRunImmediateExecute(Sender: TObject);
     procedure actRunInterceptKeyboardExecute(Sender: TObject);
     procedure actRunMediumExecute(Sender: TObject);
     procedure actRunPauseExecute(Sender: TObject);
@@ -753,6 +759,7 @@ begin
   actRunMedium.checked := klausDoerSpeed = kdsMedium;
   actRunFast.checked := klausDoerSpeed = kdsFast;
   actRunFastest.checked := klausDoerSpeed = kdsFastest;
+  actRunImmediate.checked := klausDoerSpeed = kdsImmediate;
 end;
 
 procedure tMainForm.updateDebugInfo;
@@ -1062,6 +1069,12 @@ end;
 procedure tMainForm.actRunFastExecute(Sender: TObject);
 begin
   klausDoerSpeed := kdsFast;
+  invalidateControlState;
+end;
+
+procedure tMainForm.actRunImmediateExecute(Sender: TObject);
+begin
+  klausDoerSpeed := kdsImmediate;
   invalidateControlState;
 end;
 

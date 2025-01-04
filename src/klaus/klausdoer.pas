@@ -47,7 +47,7 @@ type
   tKlausDoerCapabilities = set of tKlausDoerCapability;
 
 type
-  tKlausDoerSpeed = (kdsSlowest, kdsSlow, kdsMedium, kdsFast, kdsFastest);
+  tKlausDoerSpeed = (kdsSlowest, kdsSlow, kdsMedium, kdsFast, kdsFastest, kdsImmediate);
 
 var
   klausDoerSpeed: tKlausDoerSpeed = kdsSlow;
@@ -147,9 +147,11 @@ type
       fReadOnly: boolean;
       fOnChange: tNotifyEvent;
       fSetting: tKlausDoerSetting;
+      fRunning: boolean;
     protected
       procedure setSetting(aSetting: tKlausDoerSetting); virtual;
       procedure setReadOnly(val: boolean); virtual;
+      procedure setRunning(val: boolean); virtual;
       procedure change; virtual;
     public
       class function doerClass: tKlausDoerClass; virtual; abstract;
@@ -157,6 +159,7 @@ type
       property readOnly: boolean read fReadOnly write setReadOnly;
       property setting: tKlausDoerSetting read fSetting write setSetting;
       property ownSetting: boolean read fOwnSetting write fOwnSetting;
+      property running: boolean read fRunning write setRunning;
       property onChange: tNotifyEvent read fOnChange write fOnChange;
 
       destructor destroy; override;
@@ -351,6 +354,14 @@ end;
 
 { tKlausDoerView }
 
+procedure tKlausDoerView.setRunning(val: boolean);
+begin
+  if fRunning <> val then begin
+    fRunning := val;
+    invalidate;
+  end;
+end;
+
 procedure tKlausDoerView.setSetting(aSetting: tKlausDoerSetting);
 begin
   if fSetting <> aSetting then begin
@@ -384,11 +395,12 @@ begin
   else s := format('%s - %s', [stdUnitName, fSettingCaption]);
   fWindow := createWindowMethod(s);
   fView := createView(fWindow, kdvmExecute);
-  fView.parent := fWindow;
+  fView.running := true;
   fView.align := alClient;
   fView.borderSpacing.around := 2;
   fView.setting := fSetting;
   fView.ownSetting := true;
+  fView.parent := fWindow;
   fError := tDoerErrorFrame.create(fWindow);
   fError.parent := fWindow;
   fError.align := alBottom;
@@ -397,6 +409,8 @@ end;
 
 procedure tKlausDoer.syncDestroyWindow;
 begin
+  fView.running := false;
+  fView.invalidate;
   // не нужно уничтожать окно, чтобы можно было
   // увидеть и проверить результаты выполнения программы
   // destroyWindowMethod(fWindow);

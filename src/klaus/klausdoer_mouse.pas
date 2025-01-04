@@ -266,6 +266,7 @@ type
       fKeyPressed: tNumKeyPressed;
       fInputText: string;
       fMode: tKlausMouseViewMode;
+      fLastSpeed: tKlausDoerSpeed;
 
       function  getSetting: tKlausMouseSetting;
       procedure setColors(val: tKlausMouseViewColors);
@@ -296,6 +297,7 @@ type
 
       constructor create(aOwner: tComponent); override;
       destructor  destroy; override;
+      procedure invalidate; override;
       function  cellRect(x, y: integer): tRect;
       function  cellFromPoint(x, y: integer): tPoint;
       function  nextStep: boolean;
@@ -353,7 +355,7 @@ const
   klausProcName_MouseRadiation = 'радиация';
 
 const
-  mouseMovementDelay: array[tKlausDoerSpeed] of integer = (100, 50, 25, 10, 0);
+  mouseMovementDelay: array[tKlausDoerSpeed] of integer = (100, 50, 25, 10, 0, 0);
 
 type
   tKlausSysProc_MouseLoadSetting = class(tKlausSysProcDecl)
@@ -462,6 +464,7 @@ resourcestring
   strMouseSettingsExportFilter = 'Клаус - обстановки исполнителей|*.klaus-setting|Все файлы|*';
   strKumirRobotSettingFileExt = '.fil';
   strAtLine = 'Строка %d: %s';
+  strProgramRunning = 'Программа выполняется...';
 
 const
   mouseImageInfo: record
@@ -1641,6 +1644,16 @@ begin
   inherited destroy;
 end;
 
+procedure tKlausMouseView.invalidate;
+begin
+  if not running
+  or (klausDoerSpeed <> kdsImmediate)
+  or (fLastSpeed <> klausDoerSpeed) then begin
+    fLastSpeed := klausDoerSpeed;
+    inherited;
+  end;
+end;
+
 function tKlausMouseView.cellRect(x, y: integer): tRect;
 begin
   result.left := fOrigin.x + x*fCellSize;
@@ -1786,6 +1799,13 @@ begin
     fillRect(r);
   end;
   if setting = nil then exit;
+  if running and (klausDoerSpeed = kdsImmediate) then
+    with canvas do begin
+      font := self.font;
+      sz := textExtent(strProgramRunning);
+      textOut(r.left+(r.width-sz.cx) div 2, r.top+(r.height-sz.cy) div 2, strProgramRunning);
+      exit;
+    end;
   fCellSize := min(klausMouseMaxCellSize, max(klausMouseMinCellSize,
     min(r.width div setting.width, r.height div setting.height)));
   w := fCellSize * setting.width;
