@@ -25884,6 +25884,5495 @@
       }
     },
     {
+      "name" : "t13a",
+      "title" : "Задача 13.A",
+      "category" : "Задание 13: Функции и выходные параметры",
+      "description" : "Мышка находится в горизонтальном кордиоре.\r\n\r\nНапишите функцию, которая вычисляет количество шагов до восточной стены коридора и перемещает Мышку в исходное положение. Выведите полученное число вызовом процедуры ``вывести()``.",
+      "doer" : {
+        "name" : "Мышка",
+        "settings" : [
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 10,
+            "height" : 1,
+            "mouseX" : 0,
+            "mouseY" : 0,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "text1" : "Б",
+                "text2" : "А",
+                "x" : 0,
+                "y" : 0
+              }
+            ]
+          },
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 14,
+            "height" : 1,
+            "mouseX" : 1,
+            "mouseY" : 0,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "text1" : "Б",
+                "text2" : "А",
+                "x" : 1,
+                "y" : 0
+              }
+            ]
+          },
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 6,
+            "height" : 1,
+            "mouseX" : 1,
+            "mouseY" : 0,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "text1" : "Б",
+                "text2" : "А",
+                "x" : 1,
+                "y" : 0
+              }
+            ]
+          },
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 3,
+            "height" : 1,
+            "mouseX" : 2,
+            "mouseY" : 0,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "text1" : "Б",
+                "text2" : "А",
+                "x" : 2,
+                "y" : 0
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name" : "t13b",
+      "title" : "Задача 13.B",
+      "category" : "Задание 13: Функции и выходные параметры",
+      "description" : "Мышка находится в горизонтальном кордиоре.\r\n\r\nНапишите функцию, которая вычисляет количество шагов до ближайшей стены коридора, перемещает Мышку в исходное положение и возвращает направление движения к ближайшей стене -- значение ``наЗапад`` или ``наВосток``. Переместите Мышку к ближайшей стене коридора, воспользовавшись написанной функцией.",
+      "doer" : {
+        "name" : "Мышка",
+        "settings" : [
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 10,
+            "height" : 1,
+            "mouseX" : 0,
+            "mouseY" : 0,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "text1" : "Б",
+                "text2" : "А",
+                "x" : 0,
+                "y" : 0
+              }
+            ]
+          },
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 14,
+            "height" : 1,
+            "mouseX" : 3,
+            "mouseY" : 0,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "text1" : "Б",
+                "x" : 0,
+                "y" : 0
+              },
+              {
+                "text2" : "А",
+                "x" : 3,
+                "y" : 0
+              }
+            ]
+          },
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 6,
+            "height" : 1,
+            "mouseX" : 1,
+            "mouseY" : 0,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "text1" : "Б",
+                "x" : 0,
+                "y" : 0
+              },
+              {
+                "text2" : "А",
+                "x" : 1,
+                "y" : 0
+              }
+            ]
+          },
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 3,
+            "height" : 1,
+            "mouseX" : 2,
+            "mouseY" : 0,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "text1" : "Б",
+                "text2" : "А",
+                "x" : 2,
+                "y" : 0
+              }
+            ]
+          },
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 10,
+            "height" : 1,
+            "mouseX" : 6,
+            "mouseY" : 0,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "text2" : "А",
+                "x" : 6,
+                "y" : 0
+              },
+              {
+                "text1" : "Б",
+                "x" : 9,
+                "y" : 0
+              }
+            ]
+          },
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 9,
+            "height" : 1,
+            "mouseX" : 4,
+            "mouseY" : 0,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "text1" : "Б",
+                "x" : 0,
+                "y" : 0
+              },
+              {
+                "text2" : "А",
+                "x" : 4,
+                "y" : 0
+              },
+              {
+                "text1" : "Б",
+                "x" : 8,
+                "y" : 0
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name" : "t13c",
+      "title" : "Задача 13.C",
+      "category" : "Задание 13: Функции и выходные параметры",
+      "description" : "Мышка находится в горизонтальном кордиоре, в котором есть закрашенные клетки.\r\n\r\nНапишите процедуру с двумя выходными параметрами, которая вычисляет количество закрашенных клеток к востоку и к западу от Мышки. Переместите Мышку в тот конец коридора, где больше закрашенных клеток.",
+      "doer" : {
+        "name" : "Мышка",
+        "settings" : [
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 10,
+            "height" : 1,
+            "mouseX" : 4,
+            "mouseY" : 0,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "painted" : true,
+                "x" : 1,
+                "y" : 0
+              },
+              {
+                "text2" : "А",
+                "x" : 4,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 6,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 8,
+                "y" : 0
+              },
+              {
+                "text1" : "Б",
+                "x" : 9,
+                "y" : 0
+              }
+            ]
+          },
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 14,
+            "height" : 1,
+            "mouseX" : 5,
+            "mouseY" : 0,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "text1" : "Б",
+                "x" : 0,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 1,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 2,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 3,
+                "y" : 0
+              },
+              {
+                "text2" : "А",
+                "x" : 5,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 9,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 13,
+                "y" : 0
+              }
+            ]
+          },
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 15,
+            "height" : 1,
+            "mouseX" : 7,
+            "mouseY" : 0,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "text1" : "Б",
+                "x" : 0,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 1,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 2,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 3,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 5,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "text1" : "А",
+                "x" : 7,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 9,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 11,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 13,
+                "y" : 0
+              }
+            ]
+          },
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 6,
+            "height" : 1,
+            "mouseX" : 1,
+            "mouseY" : 0,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "painted" : true,
+                "text1" : "Б",
+                "x" : 0,
+                "y" : 0
+              },
+              {
+                "text2" : "А",
+                "x" : 1,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 3,
+                "y" : 0
+              },
+              {
+                "text1" : "Б",
+                "x" : 5,
+                "y" : 0
+              }
+            ]
+          },
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 7,
+            "height" : 1,
+            "mouseX" : 3,
+            "mouseY" : 0,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "text1" : "Б",
+                "x" : 0,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "text2" : "А",
+                "x" : 3,
+                "y" : 0
+              },
+              {
+                "text1" : "Б",
+                "x" : 6,
+                "y" : 0
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name" : "t13d",
+      "title" : "Задача 13.D",
+      "category" : "Задание 13: Функции и выходные параметры",
+      "description" : "Мышка находится в одной из северных клеток прямоугольного поля, в котором есть закрашенные клетки.\r\n\r\nНапишите процедуру с двумя выходными параметрами, которая вычисляет количество закрашенных клеток в восточной и западной полуплоскости от Мышки. Переместите Мышку в один северных углов поля -- в ту сторону, где больше закрашенных клеток.",
+      "doer" : {
+        "name" : "Мышка",
+        "settings" : [
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 10,
+            "height" : 5,
+            "mouseX" : 4,
+            "mouseY" : 0,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "painted" : true,
+                "x" : 1,
+                "y" : 0
+              },
+              {
+                "text2" : "А",
+                "x" : 4,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 6,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 8,
+                "y" : 0
+              },
+              {
+                "text1" : "Б",
+                "x" : 9,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 2,
+                "y" : 2
+              },
+              {
+                "painted" : true,
+                "x" : 4,
+                "y" : 2
+              },
+              {
+                "painted" : true,
+                "x" : 7,
+                "y" : 2
+              },
+              {
+                "painted" : true,
+                "x" : 1,
+                "y" : 3
+              },
+              {
+                "painted" : true,
+                "x" : 6,
+                "y" : 3
+              },
+              {
+                "painted" : true,
+                "x" : 4,
+                "y" : 4
+              },
+              {
+                "painted" : true,
+                "x" : 9,
+                "y" : 4
+              }
+            ]
+          },
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 14,
+            "height" : 3,
+            "mouseX" : 5,
+            "mouseY" : 0,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "painted" : true,
+                "x" : 1,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 2,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 3,
+                "y" : 0
+              },
+              {
+                "text2" : "А",
+                "x" : 5,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 9,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 12,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "text1" : "Б",
+                "x" : 13,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 0,
+                "y" : 1
+              },
+              {
+                "painted" : true,
+                "x" : 4,
+                "y" : 1
+              },
+              {
+                "painted" : true,
+                "x" : 10,
+                "y" : 1
+              },
+              {
+                "painted" : true,
+                "x" : 7,
+                "y" : 2
+              },
+              {
+                "painted" : true,
+                "x" : 12,
+                "y" : 2
+              }
+            ]
+          },
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 15,
+            "height" : 4,
+            "mouseX" : 7,
+            "mouseY" : 0,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "text1" : "Б",
+                "x" : 0,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 1,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 2,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 3,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 5,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "text1" : "А",
+                "x" : 7,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 9,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 11,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 13,
+                "y" : 0
+              },
+              {
+                "text1" : "Б",
+                "x" : 14,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 3,
+                "y" : 2
+              },
+              {
+                "painted" : true,
+                "x" : 10,
+                "y" : 2
+              },
+              {
+                "painted" : true,
+                "x" : 11,
+                "y" : 2
+              },
+              {
+                "painted" : true,
+                "x" : 13,
+                "y" : 2
+              },
+              {
+                "painted" : true,
+                "x" : 1,
+                "y" : 3
+              },
+              {
+                "painted" : true,
+                "x" : 5,
+                "y" : 3
+              },
+              {
+                "painted" : true,
+                "x" : 13,
+                "y" : 3
+              }
+            ]
+          },
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 6,
+            "height" : 5,
+            "mouseX" : 1,
+            "mouseY" : 0,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "painted" : true,
+                "text1" : "Б",
+                "x" : 0,
+                "y" : 0
+              },
+              {
+                "text2" : "А",
+                "x" : 1,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 3,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 0,
+                "y" : 2
+              },
+              {
+                "painted" : true,
+                "x" : 1,
+                "y" : 2
+              },
+              {
+                "painted" : true,
+                "x" : 4,
+                "y" : 2
+              },
+              {
+                "painted" : true,
+                "x" : 0,
+                "y" : 4
+              },
+              {
+                "painted" : true,
+                "x" : 1,
+                "y" : 4
+              }
+            ]
+          },
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 7,
+            "height" : 1,
+            "mouseX" : 3,
+            "mouseY" : 0,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "painted" : true,
+                "x" : 1,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "text2" : "А",
+                "x" : 3,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 5,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "text1" : "Б",
+                "x" : 6,
+                "y" : 0
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name" : "t13e",
+      "title" : "Задача 13.E",
+      "category" : "Задание 13: Функции и выходные параметры",
+      "description" : "Мышка находится в горизонтальном кордиоре, в котором, возможно, есть закрашенные клетки.\r\n\r\nНапишите функцию, которая возвращает истинное значение, если в коридоре есть хотя бы одна закрашенная клетка, и перемещает Мышку в исходное положение. Выведите полученное значение вызовом процедуры ``вывести()``.",
+      "doer" : {
+        "name" : "Мышка",
+        "settings" : [
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 10,
+            "height" : 1,
+            "mouseX" : 0,
+            "mouseY" : 0,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "text1" : "Б",
+                "text2" : "А",
+                "x" : 0,
+                "y" : 0
+              }
+            ]
+          },
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 14,
+            "height" : 1,
+            "mouseX" : 7,
+            "mouseY" : 0,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "painted" : true,
+                "x" : 5,
+                "y" : 0
+              },
+              {
+                "text1" : "Б",
+                "text2" : "А",
+                "x" : 7,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 10,
+                "y" : 0
+              }
+            ]
+          },
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 6,
+            "height" : 1,
+            "mouseX" : 1,
+            "mouseY" : 0,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "painted" : true,
+                "x" : 0,
+                "y" : 0
+              },
+              {
+                "text1" : "Б",
+                "text2" : "А",
+                "x" : 1,
+                "y" : 0
+              }
+            ]
+          },
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 3,
+            "height" : 1,
+            "mouseX" : 2,
+            "mouseY" : 0,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "painted" : true,
+                "text1" : "Б",
+                "text2" : "А",
+                "x" : 2,
+                "y" : 0
+              }
+            ]
+          },
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 6,
+            "height" : 1,
+            "mouseX" : 3,
+            "mouseY" : 0,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "text1" : "Б",
+                "text2" : "А",
+                "x" : 3,
+                "y" : 0
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name" : "t13f",
+      "title" : "Задача 13.F",
+      "category" : "Задание 13: Функции и выходные параметры",
+      "description" : "Мышка находится в одной из северных клеток прямоугольного поля, в котором есть закрашенные клетки.\r\n\r\nНапишите функцию, которая возвращает количество горизонтальных рядов, содержащих хотя бы одну закрашенную клетку. Выведите полученное значение вызовом процедуры ``вывести()``.",
+      "doer" : {
+        "name" : "Мышка",
+        "settings" : [
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 10,
+            "height" : 5,
+            "mouseX" : 4,
+            "mouseY" : 0,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "painted" : true,
+                "x" : 1,
+                "y" : 0
+              },
+              {
+                "text2" : "А",
+                "x" : 4,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 6,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 8,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 2,
+                "y" : 2
+              },
+              {
+                "painted" : true,
+                "x" : 4,
+                "y" : 2
+              },
+              {
+                "painted" : true,
+                "x" : 7,
+                "y" : 2
+              },
+              {
+                "painted" : true,
+                "x" : 1,
+                "y" : 3
+              },
+              {
+                "painted" : true,
+                "x" : 6,
+                "y" : 3
+              },
+              {
+                "painted" : true,
+                "x" : 4,
+                "y" : 4
+              },
+              {
+                "painted" : true,
+                "x" : 9,
+                "y" : 4
+              }
+            ]
+          },
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 14,
+            "height" : 3,
+            "mouseX" : 5,
+            "mouseY" : 0,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "painted" : true,
+                "x" : 1,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 2,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 3,
+                "y" : 0
+              },
+              {
+                "text2" : "А",
+                "x" : 5,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 9,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 12,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 13,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 0,
+                "y" : 1
+              },
+              {
+                "painted" : true,
+                "x" : 4,
+                "y" : 1
+              },
+              {
+                "painted" : true,
+                "x" : 10,
+                "y" : 1
+              },
+              {
+                "painted" : true,
+                "x" : 7,
+                "y" : 2
+              },
+              {
+                "painted" : true,
+                "x" : 12,
+                "y" : 2
+              }
+            ]
+          },
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 15,
+            "height" : 4,
+            "mouseX" : 7,
+            "mouseY" : 0,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "text1" : "Б",
+                "x" : 0,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 1,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 2,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 3,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 5,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "text1" : "А",
+                "x" : 7,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 9,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 11,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 13,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 3,
+                "y" : 2
+              },
+              {
+                "painted" : true,
+                "x" : 10,
+                "y" : 2
+              },
+              {
+                "painted" : true,
+                "x" : 11,
+                "y" : 2
+              },
+              {
+                "painted" : true,
+                "x" : 13,
+                "y" : 2
+              },
+              {
+                "painted" : true,
+                "x" : 1,
+                "y" : 3
+              },
+              {
+                "painted" : true,
+                "x" : 5,
+                "y" : 3
+              },
+              {
+                "painted" : true,
+                "x" : 13,
+                "y" : 3
+              }
+            ]
+          },
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 6,
+            "height" : 5,
+            "mouseX" : 1,
+            "mouseY" : 0,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "painted" : true,
+                "x" : 0,
+                "y" : 0
+              },
+              {
+                "text2" : "А",
+                "x" : 1,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 3,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 0,
+                "y" : 2
+              },
+              {
+                "painted" : true,
+                "x" : 1,
+                "y" : 2
+              },
+              {
+                "painted" : true,
+                "x" : 4,
+                "y" : 2
+              },
+              {
+                "painted" : true,
+                "x" : 0,
+                "y" : 4
+              },
+              {
+                "painted" : true,
+                "x" : 1,
+                "y" : 4
+              }
+            ]
+          },
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 7,
+            "height" : 1,
+            "mouseX" : 3,
+            "mouseY" : 0,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "painted" : true,
+                "x" : 1,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "text2" : "А",
+                "x" : 3,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 5,
+                "y" : 0
+              },
+              {
+                "painted" : true,
+                "x" : 6,
+                "y" : 0
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name" : "t13g",
+      "title" : "Задача 13.G",
+      "category" : "Задание 13: Функции и выходные параметры",
+      "description" : "Мышка находится в горизонтальном коридоре, от которого на север отходят тупиковые вертикальные коридоры.\r\n\r\nНапишите программу, которая закрашивает каждую клетку горизонтального коридора, если к северу от неё есть тупик высотой не менее 3 клеток. Для проверки высоты тупика напишите функцию, возвращающую логическое значение.",
+      "doer" : {
+        "name" : "Мышка",
+        "settings" : [
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 16,
+            "height" : 10,
+            "mouseX" : 1,
+            "mouseY" : 6,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "walls" : 10,
+                "x" : 6,
+                "y" : 0
+              },
+              {
+                "walls" : 4,
+                "x" : 5,
+                "y" : 1
+              },
+              {
+                "walls" : 7,
+                "x" : 6,
+                "y" : 1
+              },
+              {
+                "walls" : 1,
+                "x" : 7,
+                "y" : 1
+              },
+              {
+                "walls" : 8,
+                "x" : 9,
+                "y" : 1
+              },
+              {
+                "walls" : 8,
+                "x" : 3,
+                "y" : 2
+              },
+              {
+                "walls" : 4,
+                "x" : 5,
+                "y" : 2
+              },
+              {
+                "walls" : 5,
+                "x" : 6,
+                "y" : 2
+              },
+              {
+                "walls" : 1,
+                "x" : 7,
+                "y" : 2
+              },
+              {
+                "walls" : 4,
+                "x" : 8,
+                "y" : 2
+              },
+              {
+                "walls" : 7,
+                "x" : 9,
+                "y" : 2
+              },
+              {
+                "walls" : 1,
+                "x" : 10,
+                "y" : 2
+              },
+              {
+                "walls" : 8,
+                "x" : 11,
+                "y" : 2
+              },
+              {
+                "walls" : 4,
+                "x" : 2,
+                "y" : 3
+              },
+              {
+                "walls" : 7,
+                "x" : 3,
+                "y" : 3
+              },
+              {
+                "walls" : 1,
+                "x" : 4,
+                "y" : 3
+              },
+              {
+                "walls" : 4,
+                "x" : 5,
+                "y" : 3
+              },
+              {
+                "walls" : 5,
+                "x" : 6,
+                "y" : 3
+              },
+              {
+                "walls" : 9,
+                "x" : 7,
+                "y" : 3
+              },
+              {
+                "walls" : 4,
+                "x" : 8,
+                "y" : 3
+              },
+              {
+                "walls" : 5,
+                "x" : 9,
+                "y" : 3
+              },
+              {
+                "walls" : 5,
+                "x" : 10,
+                "y" : 3
+              },
+              {
+                "walls" : 7,
+                "x" : 11,
+                "y" : 3
+              },
+              {
+                "walls" : 1,
+                "x" : 12,
+                "y" : 3
+              },
+              {
+                "walls" : 4,
+                "x" : 2,
+                "y" : 4
+              },
+              {
+                "walls" : 5,
+                "x" : 3,
+                "y" : 4
+              },
+              {
+                "walls" : 9,
+                "x" : 4,
+                "y" : 4
+              },
+              {
+                "walls" : 4,
+                "x" : 5,
+                "y" : 4
+              },
+              {
+                "walls" : 5,
+                "x" : 6,
+                "y" : 4
+              },
+              {
+                "walls" : 7,
+                "x" : 7,
+                "y" : 4
+              },
+              {
+                "walls" : 13,
+                "x" : 8,
+                "y" : 4
+              },
+              {
+                "walls" : 5,
+                "x" : 9,
+                "y" : 4
+              },
+              {
+                "walls" : 5,
+                "x" : 10,
+                "y" : 4
+              },
+              {
+                "walls" : 5,
+                "x" : 11,
+                "y" : 4
+              },
+              {
+                "walls" : 1,
+                "x" : 12,
+                "y" : 4
+              },
+              {
+                "walls" : 8,
+                "x" : 1,
+                "y" : 5
+              },
+              {
+                "walls" : 12,
+                "x" : 2,
+                "y" : 5
+              },
+              {
+                "walls" : 5,
+                "x" : 3,
+                "y" : 5
+              },
+              {
+                "walls" : 7,
+                "x" : 4,
+                "y" : 5
+              },
+              {
+                "walls" : 13,
+                "x" : 5,
+                "y" : 5
+              },
+              {
+                "walls" : 5,
+                "x" : 6,
+                "y" : 5
+              },
+              {
+                "walls" : 5,
+                "x" : 7,
+                "y" : 5
+              },
+              {
+                "walls" : 7,
+                "x" : 8,
+                "y" : 5
+              },
+              {
+                "walls" : 5,
+                "x" : 9,
+                "y" : 5
+              },
+              {
+                "walls" : 13,
+                "x" : 10,
+                "y" : 5
+              },
+              {
+                "walls" : 5,
+                "x" : 11,
+                "y" : 5
+              },
+              {
+                "walls" : 1,
+                "x" : 12,
+                "y" : 5
+              },
+              {
+                "walls" : 5,
+                "x" : 0,
+                "y" : 6
+              },
+              {
+                "walls" : 11,
+                "text2" : "А",
+                "x" : 1,
+                "y" : 6
+              },
+              {
+                "walls" : 10,
+                "x" : 2,
+                "y" : 6
+              },
+              {
+                "walls" : 8,
+                "mark" : true,
+                "x" : 3,
+                "y" : 6
+              },
+              {
+                "walls" : 8,
+                "x" : 4,
+                "y" : 6
+              },
+              {
+                "walls" : 10,
+                "x" : 5,
+                "y" : 6
+              },
+              {
+                "walls" : 8,
+                "mark" : true,
+                "x" : 6,
+                "y" : 6
+              },
+              {
+                "walls" : 8,
+                "x" : 7,
+                "y" : 6
+              },
+              {
+                "walls" : 8,
+                "x" : 8,
+                "y" : 6
+              },
+              {
+                "walls" : 8,
+                "mark" : true,
+                "x" : 9,
+                "y" : 6
+              },
+              {
+                "walls" : 10,
+                "x" : 10,
+                "y" : 6
+              },
+              {
+                "walls" : 8,
+                "mark" : true,
+                "x" : 11,
+                "y" : 6
+              },
+              {
+                "walls" : 2,
+                "x" : 1,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 2,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 3,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 4,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 5,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 6,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 7,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 8,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 9,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 10,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 11,
+                "y" : 7
+              }
+            ]
+          },
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 16,
+            "height" : 10,
+            "mouseX" : 1,
+            "mouseY" : 6,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "walls" : 10,
+                "x" : 2,
+                "y" : 0
+              },
+              {
+                "walls" : 10,
+                "x" : 12,
+                "y" : 0
+              },
+              {
+                "walls" : 4,
+                "x" : 1,
+                "y" : 1
+              },
+              {
+                "walls" : 7,
+                "x" : 2,
+                "y" : 1
+              },
+              {
+                "walls" : 9,
+                "x" : 3,
+                "y" : 1
+              },
+              {
+                "walls" : 12,
+                "x" : 11,
+                "y" : 1
+              },
+              {
+                "walls" : 7,
+                "x" : 12,
+                "y" : 1
+              },
+              {
+                "walls" : 1,
+                "x" : 13,
+                "y" : 1
+              },
+              {
+                "walls" : 4,
+                "x" : 1,
+                "y" : 2
+              },
+              {
+                "walls" : 5,
+                "x" : 2,
+                "y" : 2
+              },
+              {
+                "walls" : 7,
+                "x" : 3,
+                "y" : 2
+              },
+              {
+                "walls" : 9,
+                "x" : 4,
+                "y" : 2
+              },
+              {
+                "walls" : 12,
+                "x" : 10,
+                "y" : 2
+              },
+              {
+                "walls" : 7,
+                "x" : 11,
+                "y" : 2
+              },
+              {
+                "walls" : 5,
+                "x" : 12,
+                "y" : 2
+              },
+              {
+                "walls" : 1,
+                "x" : 13,
+                "y" : 2
+              },
+              {
+                "walls" : 4,
+                "x" : 1,
+                "y" : 3
+              },
+              {
+                "walls" : 5,
+                "x" : 2,
+                "y" : 3
+              },
+              {
+                "walls" : 5,
+                "x" : 3,
+                "y" : 3
+              },
+              {
+                "walls" : 7,
+                "x" : 4,
+                "y" : 3
+              },
+              {
+                "walls" : 9,
+                "x" : 5,
+                "y" : 3
+              },
+              {
+                "walls" : 12,
+                "x" : 9,
+                "y" : 3
+              },
+              {
+                "walls" : 7,
+                "x" : 10,
+                "y" : 3
+              },
+              {
+                "walls" : 5,
+                "x" : 11,
+                "y" : 3
+              },
+              {
+                "walls" : 5,
+                "x" : 12,
+                "y" : 3
+              },
+              {
+                "walls" : 1,
+                "x" : 13,
+                "y" : 3
+              },
+              {
+                "walls" : 4,
+                "x" : 1,
+                "y" : 4
+              },
+              {
+                "walls" : 5,
+                "x" : 2,
+                "y" : 4
+              },
+              {
+                "walls" : 5,
+                "x" : 3,
+                "y" : 4
+              },
+              {
+                "walls" : 5,
+                "x" : 4,
+                "y" : 4
+              },
+              {
+                "walls" : 7,
+                "x" : 5,
+                "y" : 4
+              },
+              {
+                "walls" : 9,
+                "x" : 6,
+                "y" : 4
+              },
+              {
+                "walls" : 12,
+                "x" : 8,
+                "y" : 4
+              },
+              {
+                "walls" : 7,
+                "x" : 9,
+                "y" : 4
+              },
+              {
+                "walls" : 5,
+                "x" : 10,
+                "y" : 4
+              },
+              {
+                "walls" : 5,
+                "x" : 11,
+                "y" : 4
+              },
+              {
+                "walls" : 5,
+                "x" : 12,
+                "y" : 4
+              },
+              {
+                "walls" : 1,
+                "x" : 13,
+                "y" : 4
+              },
+              {
+                "walls" : 12,
+                "x" : 1,
+                "y" : 5
+              },
+              {
+                "walls" : 5,
+                "x" : 2,
+                "y" : 5
+              },
+              {
+                "walls" : 5,
+                "x" : 3,
+                "y" : 5
+              },
+              {
+                "walls" : 5,
+                "x" : 4,
+                "y" : 5
+              },
+              {
+                "walls" : 5,
+                "x" : 5,
+                "y" : 5
+              },
+              {
+                "walls" : 7,
+                "x" : 6,
+                "y" : 5
+              },
+              {
+                "walls" : 13,
+                "x" : 7,
+                "y" : 5
+              },
+              {
+                "walls" : 7,
+                "x" : 8,
+                "y" : 5
+              },
+              {
+                "walls" : 5,
+                "x" : 9,
+                "y" : 5
+              },
+              {
+                "walls" : 5,
+                "x" : 10,
+                "y" : 5
+              },
+              {
+                "walls" : 5,
+                "x" : 11,
+                "y" : 5
+              },
+              {
+                "walls" : 5,
+                "x" : 12,
+                "y" : 5
+              },
+              {
+                "walls" : 1,
+                "x" : 13,
+                "y" : 5
+              },
+              {
+                "walls" : 5,
+                "x" : 0,
+                "y" : 6
+              },
+              {
+                "walls" : 11,
+                "text2" : "А",
+                "x" : 1,
+                "y" : 6
+              },
+              {
+                "walls" : 8,
+                "mark" : true,
+                "x" : 2,
+                "y" : 6
+              },
+              {
+                "walls" : 8,
+                "mark" : true,
+                "x" : 3,
+                "y" : 6
+              },
+              {
+                "walls" : 8,
+                "mark" : true,
+                "x" : 4,
+                "y" : 6
+              },
+              {
+                "walls" : 8,
+                "x" : 5,
+                "y" : 6
+              },
+              {
+                "walls" : 8,
+                "x" : 6,
+                "y" : 6
+              },
+              {
+                "walls" : 10,
+                "x" : 7,
+                "y" : 6
+              },
+              {
+                "walls" : 8,
+                "x" : 8,
+                "y" : 6
+              },
+              {
+                "walls" : 8,
+                "x" : 9,
+                "y" : 6
+              },
+              {
+                "walls" : 8,
+                "mark" : true,
+                "x" : 10,
+                "y" : 6
+              },
+              {
+                "walls" : 8,
+                "mark" : true,
+                "x" : 11,
+                "y" : 6
+              },
+              {
+                "walls" : 8,
+                "mark" : true,
+                "x" : 12,
+                "y" : 6
+              },
+              {
+                "walls" : 2,
+                "x" : 1,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 2,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 3,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 4,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 5,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 6,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 7,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 8,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 9,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 10,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 11,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 12,
+                "y" : 7
+              }
+            ]
+          },
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 16,
+            "height" : 10,
+            "mouseX" : 1,
+            "mouseY" : 6,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "walls" : 8,
+                "x" : 1,
+                "y" : 5
+              },
+              {
+                "walls" : 8,
+                "x" : 2,
+                "y" : 5
+              },
+              {
+                "walls" : 8,
+                "x" : 3,
+                "y" : 5
+              },
+              {
+                "walls" : 8,
+                "x" : 4,
+                "y" : 5
+              },
+              {
+                "walls" : 8,
+                "x" : 5,
+                "y" : 5
+              },
+              {
+                "walls" : 8,
+                "x" : 6,
+                "y" : 5
+              },
+              {
+                "walls" : 8,
+                "x" : 7,
+                "y" : 5
+              },
+              {
+                "walls" : 8,
+                "x" : 8,
+                "y" : 5
+              },
+              {
+                "walls" : 8,
+                "x" : 9,
+                "y" : 5
+              },
+              {
+                "walls" : 8,
+                "x" : 10,
+                "y" : 5
+              },
+              {
+                "walls" : 8,
+                "x" : 11,
+                "y" : 5
+              },
+              {
+                "walls" : 5,
+                "x" : 0,
+                "y" : 6
+              },
+              {
+                "walls" : 11,
+                "text2" : "А",
+                "x" : 1,
+                "y" : 6
+              },
+              {
+                "walls" : 10,
+                "x" : 2,
+                "y" : 6
+              },
+              {
+                "walls" : 10,
+                "x" : 3,
+                "y" : 6
+              },
+              {
+                "walls" : 10,
+                "x" : 4,
+                "y" : 6
+              },
+              {
+                "walls" : 10,
+                "x" : 5,
+                "y" : 6
+              },
+              {
+                "walls" : 10,
+                "x" : 6,
+                "y" : 6
+              },
+              {
+                "walls" : 10,
+                "x" : 7,
+                "y" : 6
+              },
+              {
+                "walls" : 10,
+                "x" : 8,
+                "y" : 6
+              },
+              {
+                "walls" : 10,
+                "x" : 9,
+                "y" : 6
+              },
+              {
+                "walls" : 10,
+                "x" : 10,
+                "y" : 6
+              },
+              {
+                "walls" : 10,
+                "x" : 11,
+                "y" : 6
+              },
+              {
+                "walls" : 2,
+                "x" : 1,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 2,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 3,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 4,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 5,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 6,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 7,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 8,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 9,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 10,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 11,
+                "y" : 7
+              }
+            ]
+          },
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 16,
+            "height" : 10,
+            "mouseX" : 1,
+            "mouseY" : 6,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "walls" : 10,
+                "x" : 8,
+                "y" : 0
+              },
+              {
+                "walls" : 4,
+                "x" : 7,
+                "y" : 1
+              },
+              {
+                "walls" : 7,
+                "x" : 8,
+                "y" : 1
+              },
+              {
+                "walls" : 9,
+                "x" : 9,
+                "y" : 1
+              },
+              {
+                "walls" : 8,
+                "x" : 6,
+                "y" : 2
+              },
+              {
+                "walls" : 4,
+                "x" : 7,
+                "y" : 2
+              },
+              {
+                "walls" : 5,
+                "x" : 8,
+                "y" : 2
+              },
+              {
+                "walls" : 7,
+                "x" : 9,
+                "y" : 2
+              },
+              {
+                "walls" : 1,
+                "x" : 10,
+                "y" : 2
+              },
+              {
+                "walls" : 8,
+                "x" : 11,
+                "y" : 2
+              },
+              {
+                "walls" : 4,
+                "x" : 5,
+                "y" : 3
+              },
+              {
+                "walls" : 7,
+                "x" : 6,
+                "y" : 3
+              },
+              {
+                "walls" : 5,
+                "x" : 7,
+                "y" : 3
+              },
+              {
+                "walls" : 5,
+                "x" : 8,
+                "y" : 3
+              },
+              {
+                "walls" : 5,
+                "x" : 9,
+                "y" : 3
+              },
+              {
+                "walls" : 5,
+                "x" : 10,
+                "y" : 3
+              },
+              {
+                "walls" : 7,
+                "x" : 11,
+                "y" : 3
+              },
+              {
+                "walls" : 1,
+                "x" : 12,
+                "y" : 3
+              },
+              {
+                "walls" : 8,
+                "x" : 2,
+                "y" : 4
+              },
+              {
+                "walls" : 8,
+                "x" : 4,
+                "y" : 4
+              },
+              {
+                "walls" : 4,
+                "x" : 5,
+                "y" : 4
+              },
+              {
+                "walls" : 5,
+                "x" : 6,
+                "y" : 4
+              },
+              {
+                "walls" : 5,
+                "x" : 7,
+                "y" : 4
+              },
+              {
+                "walls" : 5,
+                "x" : 8,
+                "y" : 4
+              },
+              {
+                "walls" : 5,
+                "x" : 9,
+                "y" : 4
+              },
+              {
+                "walls" : 5,
+                "x" : 10,
+                "y" : 4
+              },
+              {
+                "walls" : 5,
+                "x" : 11,
+                "y" : 4
+              },
+              {
+                "walls" : 1,
+                "x" : 12,
+                "y" : 4
+              },
+              {
+                "walls" : 12,
+                "x" : 1,
+                "y" : 5
+              },
+              {
+                "walls" : 7,
+                "x" : 2,
+                "y" : 5
+              },
+              {
+                "walls" : 13,
+                "x" : 3,
+                "y" : 5
+              },
+              {
+                "walls" : 7,
+                "x" : 4,
+                "y" : 5
+              },
+              {
+                "walls" : 13,
+                "x" : 5,
+                "y" : 5
+              },
+              {
+                "walls" : 5,
+                "x" : 6,
+                "y" : 5
+              },
+              {
+                "walls" : 13,
+                "x" : 7,
+                "y" : 5
+              },
+              {
+                "walls" : 5,
+                "x" : 8,
+                "y" : 5
+              },
+              {
+                "walls" : 5,
+                "x" : 9,
+                "y" : 5
+              },
+              {
+                "walls" : 13,
+                "x" : 10,
+                "y" : 5
+              },
+              {
+                "walls" : 5,
+                "x" : 11,
+                "y" : 5
+              },
+              {
+                "walls" : 1,
+                "x" : 12,
+                "y" : 5
+              },
+              {
+                "walls" : 5,
+                "x" : 0,
+                "y" : 6
+              },
+              {
+                "walls" : 11,
+                "text2" : "А",
+                "x" : 1,
+                "y" : 6
+              },
+              {
+                "walls" : 8,
+                "x" : 2,
+                "y" : 6
+              },
+              {
+                "walls" : 10,
+                "x" : 3,
+                "y" : 6
+              },
+              {
+                "walls" : 8,
+                "x" : 4,
+                "y" : 6
+              },
+              {
+                "walls" : 10,
+                "x" : 5,
+                "y" : 6
+              },
+              {
+                "walls" : 8,
+                "mark" : true,
+                "x" : 6,
+                "y" : 6
+              },
+              {
+                "walls" : 10,
+                "x" : 7,
+                "y" : 6
+              },
+              {
+                "walls" : 8,
+                "mark" : true,
+                "x" : 8,
+                "y" : 6
+              },
+              {
+                "walls" : 8,
+                "mark" : true,
+                "x" : 9,
+                "y" : 6
+              },
+              {
+                "walls" : 10,
+                "x" : 10,
+                "y" : 6
+              },
+              {
+                "walls" : 8,
+                "mark" : true,
+                "x" : 11,
+                "y" : 6
+              },
+              {
+                "walls" : 2,
+                "x" : 1,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 2,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 3,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 4,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 5,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 6,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 7,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 8,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 9,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 10,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 11,
+                "y" : 7
+              }
+            ]
+          },
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 16,
+            "height" : 10,
+            "mouseX" : 1,
+            "mouseY" : 6,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "walls" : 8,
+                "x" : 9,
+                "y" : 1
+              },
+              {
+                "walls" : 8,
+                "x" : 1,
+                "y" : 2
+              },
+              {
+                "walls" : 4,
+                "x" : 8,
+                "y" : 2
+              },
+              {
+                "walls" : 7,
+                "x" : 9,
+                "y" : 2
+              },
+              {
+                "walls" : 1,
+                "x" : 10,
+                "y" : 2
+              },
+              {
+                "walls" : 5,
+                "x" : 0,
+                "y" : 3
+              },
+              {
+                "walls" : 7,
+                "x" : 1,
+                "y" : 3
+              },
+              {
+                "walls" : 1,
+                "x" : 2,
+                "y" : 3
+              },
+              {
+                "walls" : 8,
+                "x" : 4,
+                "y" : 3
+              },
+              {
+                "walls" : 4,
+                "x" : 8,
+                "y" : 3
+              },
+              {
+                "walls" : 5,
+                "x" : 9,
+                "y" : 3
+              },
+              {
+                "walls" : 1,
+                "x" : 10,
+                "y" : 3
+              },
+              {
+                "walls" : 5,
+                "x" : 0,
+                "y" : 4
+              },
+              {
+                "walls" : 5,
+                "x" : 1,
+                "y" : 4
+              },
+              {
+                "walls" : 1,
+                "x" : 2,
+                "y" : 4
+              },
+              {
+                "walls" : 4,
+                "x" : 3,
+                "y" : 4
+              },
+              {
+                "walls" : 7,
+                "x" : 4,
+                "y" : 4
+              },
+              {
+                "walls" : 1,
+                "x" : 5,
+                "y" : 4
+              },
+              {
+                "walls" : 8,
+                "x" : 6,
+                "y" : 4
+              },
+              {
+                "walls" : 4,
+                "x" : 8,
+                "y" : 4
+              },
+              {
+                "walls" : 5,
+                "x" : 9,
+                "y" : 4
+              },
+              {
+                "walls" : 1,
+                "x" : 10,
+                "y" : 4
+              },
+              {
+                "walls" : 5,
+                "x" : 0,
+                "y" : 5
+              },
+              {
+                "walls" : 5,
+                "x" : 1,
+                "y" : 5
+              },
+              {
+                "walls" : 9,
+                "x" : 2,
+                "y" : 5
+              },
+              {
+                "walls" : 12,
+                "x" : 3,
+                "y" : 5
+              },
+              {
+                "walls" : 5,
+                "x" : 4,
+                "y" : 5
+              },
+              {
+                "walls" : 13,
+                "x" : 5,
+                "y" : 5
+              },
+              {
+                "walls" : 7,
+                "x" : 6,
+                "y" : 5
+              },
+              {
+                "walls" : 9,
+                "x" : 7,
+                "y" : 5
+              },
+              {
+                "walls" : 12,
+                "x" : 8,
+                "y" : 5
+              },
+              {
+                "walls" : 5,
+                "x" : 9,
+                "y" : 5
+              },
+              {
+                "walls" : 9,
+                "x" : 10,
+                "y" : 5
+              },
+              {
+                "walls" : 8,
+                "x" : 11,
+                "y" : 5
+              },
+              {
+                "walls" : 5,
+                "x" : 0,
+                "y" : 6
+              },
+              {
+                "walls" : 9,
+                "text2" : "А",
+                "mark" : true,
+                "x" : 1,
+                "y" : 6
+              },
+              {
+                "walls" : 10,
+                "x" : 2,
+                "y" : 6
+              },
+              {
+                "walls" : 10,
+                "x" : 3,
+                "y" : 6
+              },
+              {
+                "walls" : 8,
+                "x" : 4,
+                "y" : 6
+              },
+              {
+                "walls" : 10,
+                "x" : 5,
+                "y" : 6
+              },
+              {
+                "walls" : 8,
+                "x" : 6,
+                "y" : 6
+              },
+              {
+                "walls" : 10,
+                "x" : 7,
+                "y" : 6
+              },
+              {
+                "walls" : 10,
+                "x" : 8,
+                "y" : 6
+              },
+              {
+                "walls" : 8,
+                "mark" : true,
+                "x" : 9,
+                "y" : 6
+              },
+              {
+                "walls" : 10,
+                "x" : 10,
+                "y" : 6
+              },
+              {
+                "walls" : 10,
+                "x" : 11,
+                "y" : 6
+              },
+              {
+                "walls" : 2,
+                "x" : 1,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 2,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 3,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 4,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 5,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 6,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 7,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 8,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 9,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 10,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 11,
+                "y" : 7
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name" : "t13h",
+      "title" : "Задача 13.H",
+      "category" : "Задание 13: Функции и выходные параметры",
+      "description" : "Мышка находится в в северо-западном углу прямоугольника, состоящего из закрашенных клеток. В клетке, где находится Мышка, имеется число.\r\n\r\nНапишите процедуру с двумя выходными параметрами, которая вычисляет длину и ширину закрашенного прямоугольника. Далее, нарисуйте справа от исходного прямоугольника несколько его копий с интервалом в одну клетку. Количество новых прямоугольников должно равняться числу из исходной клетки.",
+      "doer" : {
+        "name" : "Мышка",
+        "settings" : [
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 16,
+            "height" : 7,
+            "mouseX" : 1,
+            "mouseY" : 1,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "painted" : true,
+                "text2" : "А",
+                "number" : "3",
+                "mark" : true,
+                "x" : 1,
+                "y" : 1
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 2,
+                "y" : 1
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 3,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 6,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 9,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 10,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 11,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 13,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 14,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 15,
+                "y" : 1
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 1,
+                "y" : 2
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 2,
+                "y" : 2
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 3,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 6,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 9,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 10,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 11,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 13,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 14,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 15,
+                "y" : 2
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 1,
+                "y" : 3
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 2,
+                "y" : 3
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 3,
+                "y" : 3
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 3
+              },
+              {
+                "mark" : true,
+                "x" : 6,
+                "y" : 3
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 3
+              },
+              {
+                "mark" : true,
+                "x" : 9,
+                "y" : 3
+              },
+              {
+                "mark" : true,
+                "x" : 10,
+                "y" : 3
+              },
+              {
+                "mark" : true,
+                "x" : 11,
+                "y" : 3
+              },
+              {
+                "mark" : true,
+                "x" : 13,
+                "y" : 3
+              },
+              {
+                "mark" : true,
+                "x" : 14,
+                "y" : 3
+              },
+              {
+                "mark" : true,
+                "x" : 15,
+                "y" : 3
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 1,
+                "y" : 4
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 2,
+                "y" : 4
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 3,
+                "y" : 4
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 4
+              },
+              {
+                "mark" : true,
+                "x" : 6,
+                "y" : 4
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 4
+              },
+              {
+                "mark" : true,
+                "x" : 9,
+                "y" : 4
+              },
+              {
+                "mark" : true,
+                "x" : 10,
+                "y" : 4
+              },
+              {
+                "mark" : true,
+                "x" : 11,
+                "y" : 4
+              },
+              {
+                "mark" : true,
+                "x" : 13,
+                "y" : 4
+              },
+              {
+                "mark" : true,
+                "x" : 14,
+                "y" : 4
+              },
+              {
+                "mark" : true,
+                "x" : 15,
+                "y" : 4
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 1,
+                "y" : 5
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 2,
+                "y" : 5
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 3,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 6,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 9,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 10,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 11,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 13,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 14,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 15,
+                "y" : 5
+              }
+            ]
+          },
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 20,
+            "height" : 8,
+            "mouseX" : 1,
+            "mouseY" : 1,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "painted" : true,
+                "text2" : "А",
+                "number" : "5",
+                "mark" : true,
+                "x" : 1,
+                "y" : 1
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 2,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 4,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 8,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 10,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 11,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 13,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 14,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 16,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 17,
+                "y" : 1
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 1,
+                "y" : 2
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 2,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 4,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 8,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 10,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 11,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 13,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 14,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 16,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 17,
+                "y" : 2
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 1,
+                "y" : 3
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 2,
+                "y" : 3
+              },
+              {
+                "mark" : true,
+                "x" : 4,
+                "y" : 3
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 3
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 3
+              },
+              {
+                "mark" : true,
+                "x" : 8,
+                "y" : 3
+              },
+              {
+                "mark" : true,
+                "x" : 10,
+                "y" : 3
+              },
+              {
+                "mark" : true,
+                "x" : 11,
+                "y" : 3
+              },
+              {
+                "mark" : true,
+                "x" : 13,
+                "y" : 3
+              },
+              {
+                "mark" : true,
+                "x" : 14,
+                "y" : 3
+              },
+              {
+                "mark" : true,
+                "x" : 16,
+                "y" : 3
+              },
+              {
+                "mark" : true,
+                "x" : 17,
+                "y" : 3
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 1,
+                "y" : 4
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 2,
+                "y" : 4
+              },
+              {
+                "mark" : true,
+                "x" : 4,
+                "y" : 4
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 4
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 4
+              },
+              {
+                "mark" : true,
+                "x" : 8,
+                "y" : 4
+              },
+              {
+                "mark" : true,
+                "x" : 10,
+                "y" : 4
+              },
+              {
+                "mark" : true,
+                "x" : 11,
+                "y" : 4
+              },
+              {
+                "mark" : true,
+                "x" : 13,
+                "y" : 4
+              },
+              {
+                "mark" : true,
+                "x" : 14,
+                "y" : 4
+              },
+              {
+                "mark" : true,
+                "x" : 16,
+                "y" : 4
+              },
+              {
+                "mark" : true,
+                "x" : 17,
+                "y" : 4
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 1,
+                "y" : 5
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 2,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 4,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 8,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 10,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 11,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 13,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 14,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 16,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 17,
+                "y" : 5
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 1,
+                "y" : 6
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 2,
+                "y" : 6
+              },
+              {
+                "mark" : true,
+                "x" : 4,
+                "y" : 6
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 6
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 6
+              },
+              {
+                "mark" : true,
+                "x" : 8,
+                "y" : 6
+              },
+              {
+                "mark" : true,
+                "x" : 10,
+                "y" : 6
+              },
+              {
+                "mark" : true,
+                "x" : 11,
+                "y" : 6
+              },
+              {
+                "mark" : true,
+                "x" : 13,
+                "y" : 6
+              },
+              {
+                "mark" : true,
+                "x" : 14,
+                "y" : 6
+              },
+              {
+                "mark" : true,
+                "x" : 16,
+                "y" : 6
+              },
+              {
+                "mark" : true,
+                "x" : 17,
+                "y" : 6
+              }
+            ]
+          },
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 16,
+            "height" : 3,
+            "mouseX" : 1,
+            "mouseY" : 1,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "painted" : true,
+                "text2" : "А",
+                "number" : "6",
+                "mark" : true,
+                "x" : 1,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 3,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 9,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 11,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 13,
+                "y" : 1
+              }
+            ]
+          },
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 16,
+            "height" : 3,
+            "mouseX" : 1,
+            "mouseY" : 1,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "painted" : true,
+                "text2" : "А",
+                "number" : "7",
+                "mark" : true,
+                "x" : 1,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 3,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 9,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 11,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 13,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 15,
+                "y" : 1
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 1,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 3,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 9,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 11,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 13,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 15,
+                "y" : 2
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name" : "t13i",
+      "title" : "Задача 13.I",
+      "category" : "Задание 13: Функции и выходные параметры",
+      "description" : "Решите задачу 13.H со следующим дополнительным условием: если требуемое количество прямоугольников не помещается в один ряд к востоку от исходного, то нужно начать новый ряд прямоугольников, расположенный на расстоянии одной клетки к югу от предыдущего ряда. Возможно, потребуется больше одного дополнительного ряда. Новые ряды должны начинаться на расстоянии одной клетки от западной стены поля.",
+      "doer" : {
+        "name" : "Мышка",
+        "settings" : [
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 16,
+            "height" : 7,
+            "mouseX" : 1,
+            "mouseY" : 1,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "painted" : true,
+                "text2" : "А",
+                "number" : "3",
+                "mark" : true,
+                "x" : 1,
+                "y" : 1
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 2,
+                "y" : 1
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 3,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 6,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 9,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 10,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 11,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 13,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 14,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 15,
+                "y" : 1
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 1,
+                "y" : 2
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 2,
+                "y" : 2
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 3,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 6,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 9,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 10,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 11,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 13,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 14,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 15,
+                "y" : 2
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 1,
+                "y" : 3
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 2,
+                "y" : 3
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 3,
+                "y" : 3
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 3
+              },
+              {
+                "mark" : true,
+                "x" : 6,
+                "y" : 3
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 3
+              },
+              {
+                "mark" : true,
+                "x" : 9,
+                "y" : 3
+              },
+              {
+                "mark" : true,
+                "x" : 10,
+                "y" : 3
+              },
+              {
+                "mark" : true,
+                "x" : 11,
+                "y" : 3
+              },
+              {
+                "mark" : true,
+                "x" : 13,
+                "y" : 3
+              },
+              {
+                "mark" : true,
+                "x" : 14,
+                "y" : 3
+              },
+              {
+                "mark" : true,
+                "x" : 15,
+                "y" : 3
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 1,
+                "y" : 4
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 2,
+                "y" : 4
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 3,
+                "y" : 4
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 4
+              },
+              {
+                "mark" : true,
+                "x" : 6,
+                "y" : 4
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 4
+              },
+              {
+                "mark" : true,
+                "x" : 9,
+                "y" : 4
+              },
+              {
+                "mark" : true,
+                "x" : 10,
+                "y" : 4
+              },
+              {
+                "mark" : true,
+                "x" : 11,
+                "y" : 4
+              },
+              {
+                "mark" : true,
+                "x" : 13,
+                "y" : 4
+              },
+              {
+                "mark" : true,
+                "x" : 14,
+                "y" : 4
+              },
+              {
+                "mark" : true,
+                "x" : 15,
+                "y" : 4
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 1,
+                "y" : 5
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 2,
+                "y" : 5
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 3,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 6,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 9,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 10,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 11,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 13,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 14,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 15,
+                "y" : 5
+              }
+            ]
+          },
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 9,
+            "height" : 13,
+            "mouseX" : 1,
+            "mouseY" : 1,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "painted" : true,
+                "text2" : "А",
+                "number" : "3",
+                "mark" : true,
+                "x" : 1,
+                "y" : 1
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 2,
+                "y" : 1
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 3,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 6,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 1
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 1,
+                "y" : 2
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 2,
+                "y" : 2
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 3,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 6,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 2
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 1,
+                "y" : 3
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 2,
+                "y" : 3
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 3,
+                "y" : 3
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 3
+              },
+              {
+                "mark" : true,
+                "x" : 6,
+                "y" : 3
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 3
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 1,
+                "y" : 4
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 2,
+                "y" : 4
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 3,
+                "y" : 4
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 4
+              },
+              {
+                "mark" : true,
+                "x" : 6,
+                "y" : 4
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 4
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 1,
+                "y" : 5
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 2,
+                "y" : 5
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 3,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 6,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 1,
+                "y" : 7
+              },
+              {
+                "mark" : true,
+                "x" : 2,
+                "y" : 7
+              },
+              {
+                "mark" : true,
+                "x" : 3,
+                "y" : 7
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 7
+              },
+              {
+                "mark" : true,
+                "x" : 6,
+                "y" : 7
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 7
+              },
+              {
+                "mark" : true,
+                "x" : 1,
+                "y" : 8
+              },
+              {
+                "mark" : true,
+                "x" : 2,
+                "y" : 8
+              },
+              {
+                "mark" : true,
+                "x" : 3,
+                "y" : 8
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 8
+              },
+              {
+                "mark" : true,
+                "x" : 6,
+                "y" : 8
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 8
+              },
+              {
+                "mark" : true,
+                "x" : 1,
+                "y" : 9
+              },
+              {
+                "mark" : true,
+                "x" : 2,
+                "y" : 9
+              },
+              {
+                "mark" : true,
+                "x" : 3,
+                "y" : 9
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 9
+              },
+              {
+                "mark" : true,
+                "x" : 6,
+                "y" : 9
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 9
+              },
+              {
+                "mark" : true,
+                "x" : 1,
+                "y" : 10
+              },
+              {
+                "mark" : true,
+                "x" : 2,
+                "y" : 10
+              },
+              {
+                "mark" : true,
+                "x" : 3,
+                "y" : 10
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 10
+              },
+              {
+                "mark" : true,
+                "x" : 6,
+                "y" : 10
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 10
+              },
+              {
+                "mark" : true,
+                "x" : 1,
+                "y" : 11
+              },
+              {
+                "mark" : true,
+                "x" : 2,
+                "y" : 11
+              },
+              {
+                "mark" : true,
+                "x" : 3,
+                "y" : 11
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 11
+              },
+              {
+                "mark" : true,
+                "x" : 6,
+                "y" : 11
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 11
+              }
+            ]
+          },
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 14,
+            "height" : 12,
+            "mouseX" : 3,
+            "mouseY" : 1,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "painted" : true,
+                "text2" : "А",
+                "number" : "6",
+                "mark" : true,
+                "x" : 3,
+                "y" : 1
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 4,
+                "y" : 1
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 5,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 8,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 9,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 11,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 12,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 13,
+                "y" : 1
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 3,
+                "y" : 2
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 4,
+                "y" : 2
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 5,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 8,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 9,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 11,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 12,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 13,
+                "y" : 2
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 3,
+                "y" : 3
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 4,
+                "y" : 3
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 5,
+                "y" : 3
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 3
+              },
+              {
+                "mark" : true,
+                "x" : 8,
+                "y" : 3
+              },
+              {
+                "mark" : true,
+                "x" : 9,
+                "y" : 3
+              },
+              {
+                "mark" : true,
+                "x" : 11,
+                "y" : 3
+              },
+              {
+                "mark" : true,
+                "x" : 12,
+                "y" : 3
+              },
+              {
+                "mark" : true,
+                "x" : 13,
+                "y" : 3
+              },
+              {
+                "mark" : true,
+                "x" : 1,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 2,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 3,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 6,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 9,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 10,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 11,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 1,
+                "y" : 6
+              },
+              {
+                "mark" : true,
+                "x" : 2,
+                "y" : 6
+              },
+              {
+                "mark" : true,
+                "x" : 3,
+                "y" : 6
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 6
+              },
+              {
+                "mark" : true,
+                "x" : 6,
+                "y" : 6
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 6
+              },
+              {
+                "mark" : true,
+                "x" : 9,
+                "y" : 6
+              },
+              {
+                "mark" : true,
+                "x" : 10,
+                "y" : 6
+              },
+              {
+                "mark" : true,
+                "x" : 11,
+                "y" : 6
+              },
+              {
+                "mark" : true,
+                "x" : 1,
+                "y" : 7
+              },
+              {
+                "mark" : true,
+                "x" : 2,
+                "y" : 7
+              },
+              {
+                "mark" : true,
+                "x" : 3,
+                "y" : 7
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 7
+              },
+              {
+                "mark" : true,
+                "x" : 6,
+                "y" : 7
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 7
+              },
+              {
+                "mark" : true,
+                "x" : 9,
+                "y" : 7
+              },
+              {
+                "mark" : true,
+                "x" : 10,
+                "y" : 7
+              },
+              {
+                "mark" : true,
+                "x" : 11,
+                "y" : 7
+              },
+              {
+                "mark" : true,
+                "x" : 1,
+                "y" : 9
+              },
+              {
+                "mark" : true,
+                "x" : 2,
+                "y" : 9
+              },
+              {
+                "mark" : true,
+                "x" : 3,
+                "y" : 9
+              },
+              {
+                "mark" : true,
+                "x" : 1,
+                "y" : 10
+              },
+              {
+                "mark" : true,
+                "x" : 2,
+                "y" : 10
+              },
+              {
+                "mark" : true,
+                "x" : 3,
+                "y" : 10
+              },
+              {
+                "mark" : true,
+                "x" : 1,
+                "y" : 11
+              },
+              {
+                "mark" : true,
+                "x" : 2,
+                "y" : 11
+              },
+              {
+                "mark" : true,
+                "x" : 3,
+                "y" : 11
+              }
+            ]
+          },
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 14,
+            "height" : 12,
+            "mouseX" : 4,
+            "mouseY" : 1,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "painted" : true,
+                "text2" : "А",
+                "number" : "6",
+                "mark" : true,
+                "x" : 4,
+                "y" : 1
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 5,
+                "y" : 1
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 6,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 8,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 9,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 10,
+                "y" : 1
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 4,
+                "y" : 2
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 5,
+                "y" : 2
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 6,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 8,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 9,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 10,
+                "y" : 2
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 4,
+                "y" : 3
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 5,
+                "y" : 3
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 6,
+                "y" : 3
+              },
+              {
+                "mark" : true,
+                "x" : 8,
+                "y" : 3
+              },
+              {
+                "mark" : true,
+                "x" : 9,
+                "y" : 3
+              },
+              {
+                "mark" : true,
+                "x" : 10,
+                "y" : 3
+              },
+              {
+                "mark" : true,
+                "x" : 1,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 2,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 3,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 6,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 9,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 10,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 11,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 1,
+                "y" : 6
+              },
+              {
+                "mark" : true,
+                "x" : 2,
+                "y" : 6
+              },
+              {
+                "mark" : true,
+                "x" : 3,
+                "y" : 6
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 6
+              },
+              {
+                "mark" : true,
+                "x" : 6,
+                "y" : 6
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 6
+              },
+              {
+                "mark" : true,
+                "x" : 9,
+                "y" : 6
+              },
+              {
+                "mark" : true,
+                "x" : 10,
+                "y" : 6
+              },
+              {
+                "mark" : true,
+                "x" : 11,
+                "y" : 6
+              },
+              {
+                "mark" : true,
+                "x" : 1,
+                "y" : 7
+              },
+              {
+                "mark" : true,
+                "x" : 2,
+                "y" : 7
+              },
+              {
+                "mark" : true,
+                "x" : 3,
+                "y" : 7
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 7
+              },
+              {
+                "mark" : true,
+                "x" : 6,
+                "y" : 7
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 7
+              },
+              {
+                "mark" : true,
+                "x" : 9,
+                "y" : 7
+              },
+              {
+                "mark" : true,
+                "x" : 10,
+                "y" : 7
+              },
+              {
+                "mark" : true,
+                "x" : 11,
+                "y" : 7
+              },
+              {
+                "mark" : true,
+                "x" : 1,
+                "y" : 9
+              },
+              {
+                "mark" : true,
+                "x" : 2,
+                "y" : 9
+              },
+              {
+                "mark" : true,
+                "x" : 3,
+                "y" : 9
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 9
+              },
+              {
+                "mark" : true,
+                "x" : 6,
+                "y" : 9
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 9
+              },
+              {
+                "mark" : true,
+                "x" : 1,
+                "y" : 10
+              },
+              {
+                "mark" : true,
+                "x" : 2,
+                "y" : 10
+              },
+              {
+                "mark" : true,
+                "x" : 3,
+                "y" : 10
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 10
+              },
+              {
+                "mark" : true,
+                "x" : 6,
+                "y" : 10
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 10
+              },
+              {
+                "mark" : true,
+                "x" : 1,
+                "y" : 11
+              },
+              {
+                "mark" : true,
+                "x" : 2,
+                "y" : 11
+              },
+              {
+                "mark" : true,
+                "x" : 3,
+                "y" : 11
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 11
+              },
+              {
+                "mark" : true,
+                "x" : 6,
+                "y" : 11
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 11
+              }
+            ]
+          },
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 16,
+            "height" : 6,
+            "mouseX" : 1,
+            "mouseY" : 1,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "painted" : true,
+                "text2" : "А",
+                "number" : "15",
+                "mark" : true,
+                "x" : 1,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 3,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 9,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 11,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 13,
+                "y" : 1
+              },
+              {
+                "mark" : true,
+                "x" : 15,
+                "y" : 1
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 1,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 3,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 9,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 11,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 13,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 15,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 1,
+                "y" : 4
+              },
+              {
+                "mark" : true,
+                "x" : 3,
+                "y" : 4
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 4
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 4
+              },
+              {
+                "mark" : true,
+                "x" : 9,
+                "y" : 4
+              },
+              {
+                "mark" : true,
+                "x" : 11,
+                "y" : 4
+              },
+              {
+                "mark" : true,
+                "x" : 13,
+                "y" : 4
+              },
+              {
+                "mark" : true,
+                "x" : 15,
+                "y" : 4
+              },
+              {
+                "mark" : true,
+                "x" : 1,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 3,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 9,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 11,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 13,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 15,
+                "y" : 5
+              }
+            ]
+          },
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 9,
+            "height" : 15,
+            "mouseX" : 6,
+            "mouseY" : 1,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "painted" : true,
+                "text2" : "А",
+                "number" : "4",
+                "mark" : true,
+                "x" : 6,
+                "y" : 1
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 7,
+                "y" : 1
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 8,
+                "y" : 1
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 6,
+                "y" : 2
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 7,
+                "y" : 2
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 8,
+                "y" : 2
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 6,
+                "y" : 3
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 7,
+                "y" : 3
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 8,
+                "y" : 3
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 6,
+                "y" : 4
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 7,
+                "y" : 4
+              },
+              {
+                "painted" : true,
+                "mark" : true,
+                "x" : 8,
+                "y" : 4
+              },
+              {
+                "mark" : true,
+                "x" : 1,
+                "y" : 6
+              },
+              {
+                "mark" : true,
+                "x" : 2,
+                "y" : 6
+              },
+              {
+                "mark" : true,
+                "x" : 3,
+                "y" : 6
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 6
+              },
+              {
+                "mark" : true,
+                "x" : 6,
+                "y" : 6
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 6
+              },
+              {
+                "mark" : true,
+                "x" : 1,
+                "y" : 7
+              },
+              {
+                "mark" : true,
+                "x" : 2,
+                "y" : 7
+              },
+              {
+                "mark" : true,
+                "x" : 3,
+                "y" : 7
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 7
+              },
+              {
+                "mark" : true,
+                "x" : 6,
+                "y" : 7
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 7
+              },
+              {
+                "mark" : true,
+                "x" : 1,
+                "y" : 8
+              },
+              {
+                "mark" : true,
+                "x" : 2,
+                "y" : 8
+              },
+              {
+                "mark" : true,
+                "x" : 3,
+                "y" : 8
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 8
+              },
+              {
+                "mark" : true,
+                "x" : 6,
+                "y" : 8
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 8
+              },
+              {
+                "mark" : true,
+                "x" : 1,
+                "y" : 9
+              },
+              {
+                "mark" : true,
+                "x" : 2,
+                "y" : 9
+              },
+              {
+                "mark" : true,
+                "x" : 3,
+                "y" : 9
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 9
+              },
+              {
+                "mark" : true,
+                "x" : 6,
+                "y" : 9
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 9
+              },
+              {
+                "mark" : true,
+                "x" : 1,
+                "y" : 11
+              },
+              {
+                "mark" : true,
+                "x" : 2,
+                "y" : 11
+              },
+              {
+                "mark" : true,
+                "x" : 3,
+                "y" : 11
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 11
+              },
+              {
+                "mark" : true,
+                "x" : 6,
+                "y" : 11
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 11
+              },
+              {
+                "mark" : true,
+                "x" : 1,
+                "y" : 12
+              },
+              {
+                "mark" : true,
+                "x" : 2,
+                "y" : 12
+              },
+              {
+                "mark" : true,
+                "x" : 3,
+                "y" : 12
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 12
+              },
+              {
+                "mark" : true,
+                "x" : 6,
+                "y" : 12
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 12
+              },
+              {
+                "mark" : true,
+                "x" : 1,
+                "y" : 13
+              },
+              {
+                "mark" : true,
+                "x" : 2,
+                "y" : 13
+              },
+              {
+                "mark" : true,
+                "x" : 3,
+                "y" : 13
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 13
+              },
+              {
+                "mark" : true,
+                "x" : 6,
+                "y" : 13
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 13
+              },
+              {
+                "mark" : true,
+                "x" : 1,
+                "y" : 14
+              },
+              {
+                "mark" : true,
+                "x" : 2,
+                "y" : 14
+              },
+              {
+                "mark" : true,
+                "x" : 3,
+                "y" : 14
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 14
+              },
+              {
+                "mark" : true,
+                "x" : 6,
+                "y" : 14
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 14
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
       "name" : "t1a",
       "title" : "Задача 1.A",
       "category" : "Задание 01: Линейные алгоритмы",
