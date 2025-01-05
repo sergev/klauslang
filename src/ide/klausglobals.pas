@@ -128,6 +128,9 @@ type
 
   function getInstallDir(trailingSlash: boolean = false): string;
 
+  procedure globalLock;
+  procedure globalUnlock;
+
 implementation
 
 uses
@@ -136,6 +139,21 @@ uses
 resourcestring
   klausConsoleOptionsIniSection = 'KlausConsoleOptions';
   klausPracticumOptionsIniSection = 'KlausPracticumOptions';
+
+var
+  globalLatch: tRTLCriticalSection;
+
+{ Globals }
+
+procedure globalLock;
+begin
+  enterCriticalSection(globalLatch);
+end;
+
+procedure globalUnlock;
+begin
+  leaveCriticalSection(globalLatch);
+end;
 
 function getInstallDir(trailingSlash: boolean = false): string;
 var
@@ -445,5 +463,9 @@ begin
   if s <> 'default' then workingDir := s;
 end;
 
+initialization
+  initCriticalSection(globalLatch);
+finalization
+  doneCriticalSection(globalLatch);
 end.
 

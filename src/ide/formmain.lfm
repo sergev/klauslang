@@ -1174,7 +1174,7 @@ object MainForm: TMainForm
     object actRunImmediate: TAction
       Category = 'Запуск'
       Caption = 'Только результат'
-      Hint = 'Только результат|Выполнить программу полностью и показать в окне конечное состояние исполнителя -- максимально быстро'
+      Hint = 'Только результат|Выполнить программу максимально быстро и показать только конечное состояние исполнителя'
       OnExecute = actRunImmediateExecute
       ShortCut = 41014
     end

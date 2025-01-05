@@ -49,9 +49,6 @@ type
 type
   tKlausDoerSpeed = (kdsSlowest, kdsSlow, kdsMedium, kdsFast, kdsFastest, kdsImmediate);
 
-var
-  klausDoerSpeed: tKlausDoerSpeed = kdsSlow;
-
 resourcestring
   strKlausDoerSettingFileExt = '.klaus-setting';
 
@@ -168,15 +165,20 @@ type
 function  klausFindDoer(const name: string): tKlausDoerClass;
 procedure klausEnumDoers(sl: tStrings);
 
+function  klausDoerSpeed: tKlausDoerSpeed;
+procedure klausDoerSpeed(kds: tKlausDoerSpeed);
+
 implementation
 
 uses
-  KlausPract, KlausUnitSystem;
+  KlausGlobals, KlausPract, KlausUnitSystem;
 
 { Globals }
 
 var
   theDoer: tKlausDoer = nil;
+  doerSpeed: tKlausDoerSpeed = kdsSlow;
+
 
 function klausFindDoer(const name: string): tKlausDoerClass;
 var
@@ -190,6 +192,20 @@ end;
 procedure klausEnumDoers(sl: tStrings);
 begin
   klausEnumStdUnits(sl, tKlausDoer);
+end;
+
+function klausDoerSpeed: tKlausDoerSpeed;
+begin
+  globalLock;
+  try result := doerSpeed;
+  finally globalUnlock; end;
+end;
+
+procedure klausDoerSpeed(kds: tKlausDoerSpeed);
+begin
+  globalLock;
+  try doerSpeed := kds;
+  finally globalUnlock; end;
 end;
 
 { tKlausDoerSetting }

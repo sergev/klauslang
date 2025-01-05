@@ -30,9 +30,6 @@ type
   tDoerSettingFrameClass = class of tDoerSettingFrame;
 
 type
-
-  { tDoerFrame }
-
   tDoerFrame = class(tFrame)
     actFieldSize: TAction;
     actArrowLeft: TAction;
@@ -247,6 +244,7 @@ begin
     actSettingSave.enabled := ds.count > 0;
     with lbSetting do if itemIndex >= 0 then sel := items.objects[itemIndex];
     actSettingRename.enabled := sel <> nil;
+    actSettingCopy.enabled := sel <> nil;
     actSettingDelete.enabled := sel <> nil;
     actSettingMoveDown.enabled := sel <> nil;
     actSettingMoveUp.enabled := sel <> nil;

@@ -266,7 +266,6 @@ type
       fKeyPressed: tNumKeyPressed;
       fInputText: string;
       fMode: tKlausMouseViewMode;
-      fLastSpeed: tKlausDoerSpeed;
 
       function  getSetting: tKlausMouseSetting;
       procedure setColors(val: tKlausMouseViewColors);
@@ -287,6 +286,8 @@ type
       procedure mouseDown(button: tMouseButton; shift: tShiftState; x, y: integer); override;
       procedure keyDown(var key: word; shift: tShiftState); override;
       procedure UTF8KeyPress(var key: tUTF8Char); override;
+      procedure change; override;
+      function  redrawDisabled: boolean; virtual;
     public
       property focusX: integer read fFocusX write setFocusX;
       property focusY: integer read fFocusY write setFocusY;
@@ -300,7 +301,7 @@ type
       procedure invalidate; override;
       function  cellRect(x, y: integer): tRect;
       function  cellFromPoint(x, y: integer): tPoint;
-      function  nextStep: boolean;
+      function  nextStep(immediate: boolean): boolean;
     published
       property color;
       property colors: tKlausMouseViewColors read fColors write setColors;
@@ -1212,15 +1213,20 @@ begin
   md := setting.turn(dir);
   if setting.here.wall[md] then
     raise eKlausError.createFmt(ercDoerFailure, at, [errMoveThroughWall]);
-  fIntParam[0] := integer(md);
-  repeat
-    frame.owner.synchronize(@syncNextStep);
-    b := boolean(fIntParam[1]);
-    ds := tKlausDoerSpeed(fIntParam[2]);
-    sleep(mouseMovementDelay[ds]);
-    if klausDebugThread <> nil then
-      klausDebugThread.checkTerminated;
-  until not b;
+  if view.redrawDisabled then begin
+    setting.mouseDir := md;
+    view.nextStep(true);
+  end else begin
+    fIntParam[0] := integer(md);
+    repeat
+      frame.owner.synchronize(@syncNextStep);
+      b := boolean(fIntParam[1]);
+      ds := tKlausDoerSpeed(fIntParam[2]);
+      sleep(mouseMovementDelay[ds]);
+      if klausDebugThread <> nil then
+        klausDebugThread.checkTerminated;
+    until not b;
+  end;
 end;
 
 procedure tKlausDoerMouse.syncNextStep;
@@ -1230,7 +1236,7 @@ begin
   md := tKlausMouseDirection(fIntParam[0]);
   with setting do begin
     mouseDir := md;
-    fIntParam[1] := integer(view.nextStep);
+    fIntParam[1] := integer(view.nextStep(false));
   end;
   fIntParam[2] := integer(klausDoerSpeed);
 end;
@@ -1238,7 +1244,8 @@ end;
 procedure tKlausDoerMouse.runTurn(frame: tKlausStackFrame; dir: tKlausInteger; at: tSrcPoint);
 begin
   fIntParam[0] := integer(setting.turn(dir));
-  frame.owner.synchronize(@syncTurn);
+  if view.redrawDisabled then syncTurn
+  else frame.owner.synchronize(@syncTurn);
 end;
 
 procedure tKlausDoerMouse.syncTurn;
@@ -1249,13 +1256,15 @@ end;
 procedure tKlausDoerMouse.runPaint(frame: tKlausStackFrame; at: tSrcPoint);
 begin
   fIntParam[0] := integer(true);
-  frame.owner.synchronize(@syncPaint);
+  if view.redrawDisabled then syncPaint
+  else frame.owner.synchronize(@syncPaint);
 end;
 
 procedure tKlausDoerMouse.runClear(frame: tKlausStackFrame; at: tSrcPoint);
 begin
   fIntParam[0] := integer(false);
-  frame.owner.synchronize(@syncPaint);
+  if view.redrawDisabled then syncPaint
+  else frame.owner.synchronize(@syncPaint);
 end;
 
 procedure tKlausDoerMouse.syncPaint;
@@ -1646,12 +1655,7 @@ end;
 
 procedure tKlausMouseView.invalidate;
 begin
-  if not running
-  or (klausDoerSpeed <> kdsImmediate)
-  or (fLastSpeed <> klausDoerSpeed) then begin
-    fLastSpeed := klausDoerSpeed;
-    inherited;
-  end;
+  if not redrawDisabled then inherited;
 end;
 
 function tKlausMouseView.cellRect(x, y: integer): tRect;
@@ -1668,7 +1672,7 @@ begin
   result.y := (y-fOrigin.y) div fCellSize;
 end;
 
-function tKlausMouseView.nextStep: boolean;
+function tKlausMouseView.nextStep(immediate: boolean): boolean;
 const
   dx: array[tKlausMouseDirection] of integer = (0, -1, 0, 1, 0);
   dy: array[tKlausMouseDirection] of integer = (0, 0, -1, 0, 1);
@@ -1679,11 +1683,8 @@ begin
   shx := dx[setting.mouseDir] * (fCellSize div mouseImageInfo.count);
   shy := dy[setting.mouseDir] * (fCellSize div mouseImageInfo.count);
   inc(fPhase);
-  if fPhase < mouseImageInfo.count then begin
-    fShiftX += shx;
-    fShiftY += shy;
-    result := true;
-  end else begin
+  result := not immediate and (fPhase < mouseImageInfo.count);
+  if not result then begin
     fPhase := 0;
     fShiftX := 0;
     fShiftY := 0;
@@ -1691,7 +1692,9 @@ begin
       mouseX := mouseX + dx[mouseDir];
       mouseY := mouseY + dy[mouseDir];
     end;
-    result := false;
+  end else begin
+    fShiftX += shx;
+    fShiftY += shy;
   end;
   invalidate;
 end;
@@ -2159,6 +2162,16 @@ begin
       end;
     end;
   end;
+end;
+
+procedure tKlausMouseView.change;
+begin
+  if not redrawDisabled then inherited;
+end;
+
+function tKlausMouseView.redrawDisabled: boolean;
+begin
+  result := running and (klausDoerSpeed = kdsImmediate);
 end;
 
 class function tKlausMouseView.doerClass: tKlausDoerClass;

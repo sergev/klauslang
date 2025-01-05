@@ -1,7 +1,7 @@
 object SceneForm: TSceneForm
   Left = 480
   Height = 642
-  Top = 219
+  Top = 218
   Width = 1010
   HorzScrollBar.Tracking = True
   VertScrollBar.Tracking = True

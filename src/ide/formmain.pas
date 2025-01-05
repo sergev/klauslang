@@ -1062,19 +1062,19 @@ end;
 
 procedure tMainForm.actRunFastestExecute(Sender: TObject);
 begin
-  klausDoerSpeed := kdsFastest;
+  klausDoerSpeed(kdsFastest);
   invalidateControlState;
 end;
 
 procedure tMainForm.actRunFastExecute(Sender: TObject);
 begin
-  klausDoerSpeed := kdsFast;
+  klausDoerSpeed(kdsFast);
   invalidateControlState;
 end;
 
 procedure tMainForm.actRunImmediateExecute(Sender: TObject);
 begin
-  klausDoerSpeed := kdsImmediate;
+  klausDoerSpeed(kdsImmediate);
   invalidateControlState;
 end;
 
@@ -1085,7 +1085,7 @@ end;
 
 procedure tMainForm.actRunMediumExecute(Sender: TObject);
 begin
-  klausDoerSpeed := kdsMedium;
+  klausDoerSpeed(kdsMedium);
   invalidateControlState;
 end;
 
@@ -1106,13 +1106,13 @@ end;
 
 procedure tMainForm.actRunSlowestExecute(Sender: TObject);
 begin
-  klausDoerSpeed := kdsSlowest;
+  klausDoerSpeed(kdsSlowest);
   invalidateControlState;
 end;
 
 procedure tMainForm.actRunSlowExecute(Sender: TObject);
 begin
-  klausDoerSpeed := kdsSlow;
+  klausDoerSpeed(kdsSlow);
   invalidateControlState;
 end;
 
@@ -1604,7 +1604,7 @@ end;
 
 procedure tMainForm.setDoerSpeed(val: tKlausDoerSpeed);
 begin
-  klausDoerSpeed := val;
+  klausDoerSpeed(val);
 end;
 
 function tMainForm.getFormStoredWidth: integer;
