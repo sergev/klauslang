@@ -141,6 +141,7 @@ type
       destructor  destroy; override;
       function  toJson: tJsonData; override;
       procedure fromJson(data: tJsonData); override;
+      procedure clear;
       function  turn(dir: integer): tKlausMouseDirection;
       procedure move(dir: tKlausMouseDirection);
   end;
@@ -958,6 +959,20 @@ begin
           end;
         end;
     end
+  finally
+    updated;
+  end;
+end;
+
+procedure tKlausMouseSetting.clear;
+var
+  i, j: integer;
+begin
+  updating;
+  try
+    for i := 0 to width-1 do
+      for j := 0 to height-1 do
+        cells[i, j].clear;
   finally
     updated;
   end;

@@ -383,30 +383,10 @@ begin
 end;
 
 procedure tDoerSettingFrame_Mouse.actSettingClearExecute(sender: tObject);
-var
-  i, j: integer;
 begin
   if setting = nil then exit;
   if messageDlg(strConfirmSettingClear, mtConfirmation, [mbYes, mbCancel], 0) <> mrYes then exit;
-  with setting do begin
-    updating;
-    try
-      for i := 0 to width-1 do
-        for j := 0 to height-1 do
-          with cells[i, j] do begin
-            walls := [];
-            text1 := '';
-            text2 := '';
-            mark := false;
-            hasNumber := false;
-            temperature := 0;
-            radiation := 0;
-            arrow := kmdNone;
-          end;
-    finally
-      updated;
-    end;
-  end;
+  setting.clear;
 end;
 
 procedure tDoerSettingFrame_Mouse.actWallDownExecute(sender: tObject);

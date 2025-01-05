@@ -95,7 +95,7 @@ type
     procedure bvListSizerMouseMove(sender: tObject; shift: tShiftState; x, y: integer);
     procedure bvListSizerMouseUp(sender: tObject; button: tMouseButton; shift: tShiftState; x, y: integer);
     procedure cbDoerChange(sender: tObject);
-    procedure lbSettingDblClick(sender: TObject);
+    procedure lbSettingDblClick(sender: tObject);
     procedure lbSettingSelectionChange(sender: tObject; user: boolean);
   private
     fListSizing: boolean;
@@ -133,7 +133,7 @@ resourcestring
   strIdxCap = '%d - %s';
   strAddSetting = 'Добавить обстановку';
   strRenameSetting = 'Переименовать обстановку';
-  strDeleteSetting = 'Удалить обстановку "%s"?';
+  strDeleteSetting = 'Удалить выделенную обстановку?';
   strCaption = 'Название: ';
   strConfirmChangeDoer = 'При смене исполнителя все существующие обстановки будут удалены. Продолжить?';
   strImportError = #13#10'  %s: %s';
@@ -333,7 +333,6 @@ end;
 
 procedure tDoerFrame.actSettingDeleteExecute(sender: tObject);
 var
-  s: string;
   idx: integer;
   ds: tKlausDoerSetting;
 begin
@@ -342,8 +341,7 @@ begin
   idx := lbSetting.itemIndex;
   if idx < 0 then exit;
   with lbSetting do ds := items.objects[idx] as tKlausDoerSetting;
-  s := format(strDeleteSetting, [ds.caption]);
-  if messageDlg(s, mtConfirmation, [mbYes, mbCancel], 0) = mrYes then try
+  if messageDlg(strDeleteSetting, mtConfirmation, [mbYes, mbCancel], 0) = mrYes then try
     if fSettingFrame <> nil then fSettingFrame.setting := nil;
     task.doerSettings.remove(ds);
     refreshSettingList;
