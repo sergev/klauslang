@@ -1639,7 +1639,7 @@ var
   f: tKlausFloat;
 begin
   f := getSimpleFloat(frame, fNum, at);
-  if isNaN(n) or IsInfinite(n) then returnSimple(frame, klausSimpleF(f))
+  if isNaN(f) or IsInfinite(f) then returnSimple(frame, klausSimpleF(f))
   else returnSimple(frame, klausSimpleF(int(f)));
 end;
 
@@ -1658,8 +1658,8 @@ var
   f: tKlausFloat;
 begin
   f := getSimpleFloat(frame, fNum, at);
-  if isNaN(f) or IsInfinite(f) then raise eKlausError.create(ercArgumentIsNotFinite, at);
-  returnSimple(frame, klausSimpleF(frac(f)));
+  if isNaN(f) or IsInfinite(f) then returnSimple(frame, klausSimpleF(NaN))
+  else returnSimple(frame, klausSimpleF(frac(f)));
 end;
 
 { tKlausSysProc_Sin }
@@ -1677,8 +1677,8 @@ var
   f: tKlausFloat;
 begin
   f := getSimpleFloat(frame, fNum, at);
-  if isNaN(f) or IsInfinite(f) then raise eKlausError.create(ercArgumentIsNotFinite, at);
-  returnSimple(frame, klausSimpleF(sin(f)));
+  if isNaN(f) or IsInfinite(f) then returnSimple(frame, klausSimpleF(NaN))
+  else returnSimple(frame, klausSimpleF(sin(f)));
 end;
 
 { tKlausSysProc_Cos }
@@ -1696,8 +1696,8 @@ var
   f: tKlausFloat;
 begin
   f := getSimpleFloat(frame, fNum, at);
-  if isNaN(f) or IsInfinite(f) then raise eKlausError.create(ercArgumentIsNotFinite, at);
-  returnSimple(frame, klausSimpleF(cos(f)));
+  if isNaN(f) or IsInfinite(f) then returnSimple(frame, klausSimpleF(NaN))
+  else returnSimple(frame, klausSimpleF(cos(f)));
 end;
 
 { tKlausSysProc_Tan }
@@ -1715,8 +1715,8 @@ var
   f: tKlausFloat;
 begin
   f := getSimpleFloat(frame, fNum, at);
-  if isNaN(f) or IsInfinite(f) then raise eKlausError.create(ercArgumentIsNotFinite, at);
-  returnSimple(frame, klausSimpleF(tan(f)));
+  if isNaN(f) or IsInfinite(f) then returnSimple(frame, klausSimpleF(NaN))
+  else returnSimple(frame, klausSimpleF(tan(f)));
 end;
 
 { tKlausSysProc_ArcSin }
@@ -1734,8 +1734,8 @@ var
   f: tKlausFloat;
 begin
   f := getSimpleFloat(frame, fNum, at);
-  if isNaN(f) or IsInfinite(f) then raise eKlausError.create(ercArgumentIsNotFinite, at);
-  returnSimple(frame, klausSimpleF(arcsin(f)));
+  if isNaN(f) or IsInfinite(f) then returnSimple(frame, klausSimpleF(NaN))
+  else returnSimple(frame, klausSimpleF(arcsin(f)));
 end;
 
 { tKlausSysProc_ArcCos }
@@ -1753,8 +1753,8 @@ var
   f: tKlausFloat;
 begin
   f := getSimpleFloat(frame, fNum, at);
-  if isNaN(f) or IsInfinite(f) then raise eKlausError.create(ercArgumentIsNotFinite, at);
-  returnSimple(frame, klausSimpleF(arccos(f)));
+  if isNaN(f) or IsInfinite(f) then returnSimple(frame, klausSimpleF(NaN))
+  else returnSimple(frame, klausSimpleF(arccos(f)));
 end;
 
 { tKlausSysProc_ArcTan }
@@ -1772,7 +1772,6 @@ var
   f: tKlausFloat;
 begin
   f := getSimpleFloat(frame, fNum, at);
-  if isNaN(f) or IsInfinite(f) then raise eKlausError.create(ercArgumentIsNotFinite, at);
   returnSimple(frame, klausSimpleF(arctan(f)));
 end;
 
@@ -1791,7 +1790,6 @@ var
   f: tKlausFloat;
 begin
   f := getSimpleFloat(frame, fNum, at);
-  if isNaN(f) or IsInfinite(f) then raise eKlausError.create(ercArgumentIsNotFinite, at);
   returnSimple(frame, klausSimpleF(ln(f)));
 end;
 
@@ -1810,7 +1808,6 @@ var
   f: tKlausFloat;
 begin
   f := getSimpleFloat(frame, fNum, at);
-  if isNaN(f) or IsInfinite(f) then raise eKlausError.create(ercArgumentIsNotFinite, at);
   returnSimple(frame, klausSimpleF(exp(f)));
 end;
 

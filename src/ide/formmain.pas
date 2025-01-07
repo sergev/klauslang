@@ -931,6 +931,7 @@ var
   msg: string;
   cn, tn: string;
 begin
+  if scene <> nil then raise eKlausError.create(ercLoadPracticumRunning, zeroSrcPt);
   if courseFrame.visible then begin
     cn := courseFrame.activeCourse;
     tn := courseFrame.activeTask;

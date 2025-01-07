@@ -151,6 +151,7 @@ const
   ercInvalidSettingFileType = 101;
   ercInvalidSettingFileFmt  = 102;
   ercWrongDoerSettingClass  = 103;
+  ercLoadPracticumRunning   = 104;
 
 const
   // Классификация кодов eKlausError для трансляции в исключения языка
@@ -198,7 +199,8 @@ const
     [ercStackTooBig, ercInaccurateCleanup, ercInvalidKlausHandle, ercTooManyHandles,
     ercUnexpectedObjectClass, ercCallsNotAllowed, ercCanvasUnavailable, ercGraphicOperationNA,
     ercEventQueueEmpty, ercInvalidCourseName, ercDuplicateCourseName, ercInvalidTaskName,
-    ercDuplicateTaskName, ercDuplicateDoer, ercDoerWindowNotAvailable, ercDoerFailure],
+    ercDuplicateTaskName, ercDuplicateDoer, ercDoerWindowNotAvailable, ercDoerFailure,
+    ercLoadPracticumRunning],
 
     //ksxBadNumber
     [ercArgumentIsNaN, ercArgumentIsNotFinite],
@@ -341,6 +343,7 @@ resourcestring
   errInvalidSettingFileType = 'Неизвестный тип файла: "%s"';
   errInvalidSettingFileFmt = 'Неверный формат файла.';
   errWrongDoerSettingClass = 'Неверный класс исполнителя. Обстановка предназначена для исполнителя "%s".';
+  errLoadPracticumRunning = 'Невозможно обновить данные. Сначала закройте окно выполнения программы.';
 
 { Globals }
 
@@ -481,6 +484,7 @@ begin
     ercInvalidSettingFileType: result := errInvalidSettingFileType;
     ercInvalidSettingFileFmt: result := errInvalidSettingFileFmt;
     ercWrongDoerSettingClass: result := errWrongDoerSettingClass;
+    ercLoadPracticumRunning: result := errLoadPracticumRunning;
   end;
 end;
 
