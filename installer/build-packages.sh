@@ -51,7 +51,7 @@ mkdir -p ./opt/klauslang/doc
 cp -r ../../doc/* ./opt/klauslang/doc/
 
 mkdir -p ./opt/klauslang/practicum
-cp -r ../../practicum/* ./opt/klauslang/practicum/
+cp -r ../../practicum/*.klaus-course ./opt/klauslang/practicum/
 
 mkdir ./usr
 rsync -r ../../src/assets/klauslang/usr/ ./usr/
@@ -95,6 +95,9 @@ rsync -r ../../src/assets/klauslang-teacher/usr/ ./usr/
 
 mkdir -p ./usr/bin
 ln -s /opt/klauslang/amd64/klaus-course-edit ./usr/bin/klaus-course-edit
+
+mkdir -p ./opt/klauslang/practicum
+cp -r ../../practicum/*.zip ./opt/klauslang/practicum/
 
 SIZE=$(du -s ../$BD2 | grep -Eo "^[0-9]+")
 

@@ -27,6 +27,9 @@ mkdir %buildroot
 mkdir -p %buildroot/opt/klauslang/amd64
 cp %_pwd/../compiled/klaus-course-edit %buildroot/opt/klauslang/amd64/
 
+mkdir -p %buildroot/opt/klauslang/practicum
+cp -r %_pwd/../practicum/*.zip %buildroot/opt/klauslang/practicum/
+
 mkdir %buildroot/usr
 rsync -r %_pwd/../src/assets/klauslang-teacher/usr/ %buildroot/usr/
 

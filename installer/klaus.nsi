@@ -70,7 +70,7 @@ Section "Практикум" SEC_Practicum
   SetShellVarContext all
 
   SetOutPath "$INSTDIR\practicum"
-  File /r "..\practicum\*"
+  File /r "..\practicum\*.klaus-course"
 SectionEnd
 
 Section /o "Редактор практикума" SEC_CourseEdit
@@ -78,6 +78,9 @@ Section /o "Редактор практикума" SEC_CourseEdit
 
   SetOutPath "$INSTDIR\x64"
   File "..\compiled\klaus-course-edit.exe"
+
+  SetOutPath "$INSTDIR\practicum"
+  File /r "..\practicum\*.zip"
 
   CreateShortCut "$SMPROGRAMS\Клаус\Редактор курсов Клаус.lnk" "$INSTDIR\x64\klaus-course-edit.exe"
   !insertmacro APP_ASSOCIATE "klaus-course" "klauslang.TrainingCourse" "Учебный курс Клаус" \
@@ -109,7 +112,7 @@ SectionEnd
   !insertmacro MUI_DESCRIPTION_TEXT ${SEC_Main} "Основные компоненты Клаус"
   !insertmacro MUI_DESCRIPTION_TEXT ${SEC_Samples} "Примеры исходного кода и тестовые примеры"
   !insertmacro MUI_DESCRIPTION_TEXT ${SEC_Practicum} "Сборники задач по программированию на Клаусе"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SEC_CourseEdit} "Редактор учебных курсов Клаус (для учителей и методистов)"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SEC_CourseEdit} "Редактор учебных курсов Клаус и решения задач (для учителей и методистов)"
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 Function un.onUninstSuccess

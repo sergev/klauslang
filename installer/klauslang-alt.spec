@@ -40,7 +40,7 @@ mkdir -p %buildroot/opt/klauslang/doc
 cp -r %_pwd/../doc/* %buildroot/opt/klauslang/doc/
 
 mkdir -p %buildroot/opt/klauslang/practicum
-cp -r %_pwd/../practicum/* %buildroot/opt/klauslang/practicum/
+cp -r %_pwd/../practicum/*.klaus-course %buildroot/opt/klauslang/practicum/
 
 mkdir %buildroot/usr
 rsync -r %_pwd/../src/assets/klauslang/usr/ %buildroot/usr/

@@ -17,10 +17,10 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="2"/>
       <MinorVersionNr Value="5"/>
-      <RevisionNr Value="6"/>
+      <RevisionNr Value="7"/>
       <BuildNr Value="1"/>
       <Language Value="0419"/>
-      <StringTable Comments="С благодарностью Дмитрию Тарасевичу и Анне Михеевой" CompanyName="Константин Захаров" FileDescription="Редактор практикума Клаус" InternalName="klauscourseedit" LegalCopyright="Программа распространяется бесплатно по Стандартной общественной лицензии GNU GPLv3 или более поздней версии: https://www.gnu.org/licenses/gpl-3.0.html" LegalTrademarks="Репозиторий проекта: https://gitflic.ru/project/czaerlag/klauslang" OriginalFilename="klaus-course-edit" ProductName="Клаус" ProductVersion="2.5.6"/>
+      <StringTable Comments="С благодарностью Дмитрию Тарасевичу и Анне Михеевой" CompanyName="Константин Захаров" FileDescription="Редактор практикума Клаус" InternalName="klauscourseedit" LegalCopyright="Программа распространяется бесплатно по Стандартной общественной лицензии GNU GPLv3 или более поздней версии: https://www.gnu.org/licenses/gpl-3.0.html" LegalTrademarks="Репозиторий проекта: https://gitflic.ru/project/czaerlag/klauslang" OriginalFilename="klaus-course-edit" ProductName="Клаус" ProductVersion="2.5.7"/>
     </VersionInfo>
     <BuildModes>
       <Item Name="Default" Default="True"/>
