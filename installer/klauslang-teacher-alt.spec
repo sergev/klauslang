@@ -38,6 +38,7 @@ touch %buildroot/usr/bin/klaus-course-edit
 
 %files
 /opt/klauslang/amd64/*
+/opt/klauslang/practicum/*.zip
 /usr/*
 %ghost /usr/bin/klaus-course-edit
 

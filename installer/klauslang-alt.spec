@@ -56,7 +56,7 @@ cp %_pwd/../installer/what-s-new.txt %buildroot/opt/klauslang/
 /opt/klauslang/samples/*
 /opt/klauslang/test/*
 /opt/klauslang/doc/*
-/opt/klauslang/practicum/*
+/opt/klauslang/practicum/*.klaus-course
 /usr/*
 /opt/klauslang/what-s-new.txt
 %ghost /usr/bin/klaus
