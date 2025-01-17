@@ -32,6 +32,8 @@ uses
   KlausUnitSystem, KlausUnitSystem_Proc, KlausUnitTerminal, KlausUnitTerminal_Proc,
   KlausUnitFiles, KlausUnitFiles_Proc;
 
+{$R *.ver.res}
+
 type
   tKlausApplication = class(tCustomApplication)
     private

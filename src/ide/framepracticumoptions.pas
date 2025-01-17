@@ -6,35 +6,32 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, ExtCtrls, StdCtrls, EditBtn, Grids,
-  KlausGlobals;
+  KlausGlobals, KlausErr;
 
 type
-
-  { tPracticumOptionsFrame }
-
-  tPracticumOptionsFrame = class(TFrame)
-    Bevel4: TBevel;
-    Bevel5: TBevel;
-    edSearchPath: TEditButton;
-    edWorkingDir: TEdit;
-    Label1: TLabel;
-    Label10: TLabel;
-    Label11: TLabel;
-    lblCourseFileName: TLabel;
-    Label3: TLabel;
-    Label4: TLabel;
-    Panel14: TPanel;
-    Panel15: TPanel;
-    Panel3: TPanel;
-    Panel4: TPanel;
-    pnDirectories: TPanel;
-    sgCourses: TStringGrid;
-    procedure edSearchPathButtonClick(Sender: TObject);
-    procedure edSearchPathChange(Sender: TObject);
-    procedure edSearchPathKeyDown(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
-    procedure edWorkingDirChange(Sender: TObject);
-    procedure sgCoursesAfterSelection(Sender: TObject; aCol, aRow: Integer);
+  tPracticumOptionsFrame = class(tFrame)
+    Bevel4: tBevel;
+    Bevel5: tBevel;
+    edSearchPath: tEditButton;
+    edWorkingDir: tEdit;
+    Label1: tLabel;
+    Label10: tLabel;
+    Label11: tLabel;
+    lblCourseFileName: tLabel;
+    Label3: tLabel;
+    Label4: tLabel;
+    Panel14: tPanel;
+    Panel15: tPanel;
+    Panel3: tPanel;
+    Panel4: tPanel;
+    pnDirectories: tPanel;
+    sgCourses: tStringGrid;
+    procedure edSearchPathButtonClick(sender: tObject);
+    procedure edSearchPathChange(sender: tObject);
+    procedure edSearchPathKeyDown(sender: tObject; var key: word; shift: tShiftState);
+    procedure edWorkingDirChange(sender: tObject);
+    procedure sgCoursesAfterSelection(sender: tObject; aCol, aRow: integer);
+    procedure sgCoursesButtonClick(sender: tObject; aCol, aRow: integer);
   private
     fRefreshCount: integer;
     fPracticumOptions: tKlausPracticumOptions;
@@ -57,13 +54,17 @@ type
 
 implementation
 
-uses LCLType, KlausPract, FormMain;
+uses LCLType, KlausPract, FormMain, Zipper, Dialogs;
 
 {$R *.lfm}
 
 resourcestring
   strCourseFileName = 'Файл курса: %s';
   strNone = '(нет)';
+  strSolutionsSetup = 'распаковать...';
+  strPromptCreateDir = 'Каталог "%s" не существует. Создать его?';
+  strPromptExistingDir = 'Файлы решений задач будут распакованы в "%s". Существующие файлы в этом каталоге могут быть перезаписаны. Продолжить?';
+  strSolutionsInstalled = 'Решения задач были успешно распакованы в "%s".';
 
 { tPracticumOptionsFrame }
 
@@ -79,34 +80,67 @@ begin
   inherited;
 end;
 
-procedure tPracticumOptionsFrame.edSearchPathChange(Sender: TObject);
+procedure tPracticumOptionsFrame.edSearchPathChange(sender: tObject);
 begin
   if refreshing then exit;
   fPracticumOptions.searchPath := edsearchPath.text;
 end;
 
-procedure tPracticumOptionsFrame.edSearchPathKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+procedure tPracticumOptionsFrame.edSearchPathKeyDown(sender: tObject; var key: word; shift: tShiftState);
 begin
   shift := shift * [ssShift, ssCtrl, ssAlt];
   if (key = VK_F5) and (shift = []) then edSearchPath.button.click;
 end;
 
-procedure tPracticumOptionsFrame.edSearchPathButtonClick(Sender: TObject);
+procedure tPracticumOptionsFrame.edSearchPathButtonClick(sender: tObject);
 begin
   mainForm.practicumOptions.searchPath := practicumOptions.searchPath;
   mainForm.loadPracticum;
   refreshCourseInfo;
 end;
 
-procedure tPracticumOptionsFrame.edWorkingDirChange(Sender: TObject);
+procedure tPracticumOptionsFrame.edWorkingDirChange(sender: tObject);
 begin
   if refreshing then exit;
   fPracticumOptions.workingDir := edWorkingDir.text;
 end;
 
-procedure tPracticumOptionsFrame.sgCoursesAfterSelection(Sender: TObject; aCol, aRow: Integer);
+procedure tPracticumOptionsFrame.sgCoursesAfterSelection(sender: tObject; aCol, aRow: integer);
 begin
   refreshCourseFileName;
+end;
+
+procedure tPracticumOptionsFrame.sgCoursesButtonClick(sender: tObject; aCol, aRow: integer);
+var
+  s, dir, msg: string;
+  zip: tUnzipper;
+begin
+  if aCol = 4 then
+    with klausPracticum do begin
+      s := courses[aRow-1].solutions;
+      if s <> '' then begin
+        zip := tUnzipper.create;
+        try
+          with practicumOptions do dir := expandFileName(expandPath(workingDir));
+          dir := includeTrailingPathDelimiter(dir) + courses[aRow-1].name;
+          if not directoryExists(dir) then begin
+            msg := format(strPromptCreateDir, [dir]);
+            if messageDlg(msg, mtConfirmation, [mbYes, mbCancel], 0) <> mrYes then exit;
+            if not forceDirectories(dir) then
+              raise eKlausError.createFmt(ercCannotCreateDirectory, zeroSrcPt, [dir]);
+          end else begin
+            msg := format(strPromptExistingDir, [dir]);
+            if messageDlg(msg, mtConfirmation, [mbYes, mbCancel], 0) <> mrYes then exit;
+          end;
+          zip.fileName := s;
+          zip.outputPath := dir;
+          zip.unzipAllFiles;
+          messageDlg(format(strSolutionsInstalled, [dir]), mtInformation, [mbOK], 0);
+        finally
+          freeAndNil(zip);
+        end;
+      end;
+    end;
 end;
 
 function tPracticumOptionsFrame.getRefreshing: boolean;
@@ -147,6 +181,7 @@ end;
 procedure tPracticumOptionsFrame.refreshCourseInfo;
 var
   i: integer;
+  sol: boolean = false;
 begin
   with klausPracticum do begin
     sgCourses.rowCount := count+1;
@@ -155,9 +190,16 @@ begin
       sgCourses.cells[1, i+1] := courses[i].author;
       sgCourses.cells[2, i+1] := intToStr(courses[i].taskCount);
       sgCourses.cells[3, i+1] := courses[i].caption;
-      sgCourses.cells[4, i+1] := courses[i].fileName;
+      if courses[i].solutions = '' then
+        sgCourses.cells[4, i+1] := strNone
+      else begin
+        sgCourses.cells[4, i+1] := strSolutionsSetup;
+        sol := true;
+      end;
+      sgCourses.cells[5, i+1] := courses[i].fileName;
     end;
   end;
+  sgCourses.columns[4].visible := sol;
   refreshCourseFileName;
 end;
 
@@ -165,7 +207,7 @@ procedure tPracticumOptionsFrame.refreshCourseFileName;
 var
   fn: string;
 begin
-  with sgCourses do if row < 1 then fn := strNone else fn := cells[4, row];
+  with sgCourses do if row < 1 then fn := strNone else fn := cells[5, row];
   lblCourseFileName.caption := format(strCourseFileName, [fn]);
 end;
 

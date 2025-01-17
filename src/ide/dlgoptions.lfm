@@ -2,18 +2,18 @@ object OptionsDlg: TOptionsDlg
   Left = 520
   Height = 710
   Top = 186
-  Width = 824
+  Width = 1000
   BorderStyle = bsDialog
   Caption = 'Настройки'
   ClientHeight = 710
-  ClientWidth = 824
+  ClientWidth = 1000
   Position = poScreenCenter
-  LCLVersion = '3.2.0.0'
+  LCLVersion = '3.4.0.0'
   object pageControl: TPageControl
     Left = 0
     Height = 660
     Top = 0
-    Width = 824
+    Width = 1000
     ActivePage = tsEditor
     Align = alClient
     TabIndex = 0
@@ -32,14 +32,14 @@ object OptionsDlg: TOptionsDlg
     Left = 0
     Height = 50
     Top = 660
-    Width = 824
+    Width = 1000
     Align = alBottom
     BevelOuter = bvNone
     ClientHeight = 50
-    ClientWidth = 824
+    ClientWidth = 1000
     TabOrder = 1
     object pbCancel: TButton
-      Left = 596
+      Left = 772
       Height = 32
       Top = 8
       Width = 104
@@ -50,7 +50,7 @@ object OptionsDlg: TOptionsDlg
       TabOrder = 0
     end
     object pbSave: TButton
-      Left = 708
+      Left = 884
       Height = 32
       Top = 8
       Width = 104

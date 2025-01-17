@@ -6,11 +6,11 @@ object PracticumOptionsFrame: TPracticumOptionsFrame
   ClientHeight = 422
   ClientWidth = 749
   TabOrder = 0
-  DesignLeft = 574
-  DesignTop = 218
+  DesignLeft = 650
+  DesignTop = 250
   object Panel14: TPanel
     Left = 10
-    Height = 22
+    Height = 21
     Top = 10
     Width = 729
     Align = alTop
@@ -18,12 +18,12 @@ object PracticumOptionsFrame: TPracticumOptionsFrame
     BorderSpacing.Around = 10
     BevelOuter = bvNone
     ChildSizing.Layout = cclTopToBottomThenLeftToRight
-    ClientHeight = 22
+    ClientHeight = 21
     ClientWidth = 729
     TabOrder = 0
     object Label10: TLabel
       Left = 0
-      Height = 18
+      Height = 17
       Top = 0
       Width = 724
       Align = alClient
@@ -36,7 +36,7 @@ object PracticumOptionsFrame: TPracticumOptionsFrame
     object Bevel4: TBevel
       Left = 0
       Height = 4
-      Top = 18
+      Top = 17
       Width = 729
       Align = alBottom
       Constraints.MaxHeight = 4
@@ -45,18 +45,18 @@ object PracticumOptionsFrame: TPracticumOptionsFrame
   end
   object pnDirectories: TPanel
     Left = 0
-    Height = 168
-    Top = 42
+    Height = 161
+    Top = 41
     Width = 749
     Align = alTop
     AutoSize = True
     BevelOuter = bvNone
-    ClientHeight = 168
+    ClientHeight = 161
     ClientWidth = 749
     TabOrder = 1
     object Panel3: TPanel
       Left = 20
-      Height = 35
+      Height = 34
       Top = 0
       Width = 719
       Align = alTop
@@ -65,12 +65,12 @@ object PracticumOptionsFrame: TPracticumOptionsFrame
       BorderSpacing.Right = 10
       BorderSpacing.Bottom = 2
       BevelOuter = bvNone
-      ClientHeight = 35
+      ClientHeight = 34
       ClientWidth = 719
       TabOrder = 0
       object Label3: TLabel
         Left = 0
-        Height = 35
+        Height = 34
         Top = 0
         Width = 220
         Align = alLeft
@@ -82,7 +82,7 @@ object PracticumOptionsFrame: TPracticumOptionsFrame
       end
       object edSearchPath: TEditButton
         Left = 228
-        Height = 35
+        Height = 34
         Top = 0
         Width = 491
         Align = alClient
@@ -118,8 +118,8 @@ object PracticumOptionsFrame: TPracticumOptionsFrame
     end
     object Panel4: TPanel
       Left = 20
-      Height = 35
-      Top = 37
+      Height = 34
+      Top = 36
       Width = 719
       Align = alTop
       AutoSize = True
@@ -127,12 +127,12 @@ object PracticumOptionsFrame: TPracticumOptionsFrame
       BorderSpacing.Right = 10
       BorderSpacing.Bottom = 2
       BevelOuter = bvNone
-      ClientHeight = 35
+      ClientHeight = 34
       ClientWidth = 719
       TabOrder = 1
       object Label4: TLabel
         Left = 0
-        Height = 35
+        Height = 34
         Top = 0
         Width = 220
         Align = alLeft
@@ -144,7 +144,7 @@ object PracticumOptionsFrame: TPracticumOptionsFrame
       end
       object edWorkingDir: TEdit
         Left = 228
-        Height = 35
+        Height = 34
         Top = 0
         Width = 491
         Align = alClient
@@ -154,8 +154,8 @@ object PracticumOptionsFrame: TPracticumOptionsFrame
     end
     object Label1: TLabel
       Left = 20
-      Height = 90
-      Top = 76
+      Height = 85
+      Top = 74
       Width = 719
       Align = alTop
       BorderSpacing.Left = 20
@@ -170,20 +170,20 @@ object PracticumOptionsFrame: TPracticumOptionsFrame
   end
   object Panel15: TPanel
     Left = 10
-    Height = 22
-    Top = 220
+    Height = 21
+    Top = 212
     Width = 729
     Align = alTop
     AutoSize = True
     BorderSpacing.Around = 10
     BevelOuter = bvNone
     ChildSizing.Layout = cclTopToBottomThenLeftToRight
-    ClientHeight = 22
+    ClientHeight = 21
     ClientWidth = 729
     TabOrder = 2
     object Label11: TLabel
       Left = 0
-      Height = 18
+      Height = 17
       Top = 0
       Width = 724
       Align = alClient
@@ -196,7 +196,7 @@ object PracticumOptionsFrame: TPracticumOptionsFrame
     object Bevel5: TBevel
       Left = 0
       Height = 4
-      Top = 18
+      Top = 17
       Width = 729
       Align = alBottom
       Constraints.MaxHeight = 4
@@ -205,8 +205,8 @@ object PracticumOptionsFrame: TPracticumOptionsFrame
   end
   object sgCourses: TStringGrid
     Left = 20
-    Height = 142
-    Top = 252
+    Height = 152
+    Top = 243
     Width = 719
     Align = alClient
     AutoEdit = False
@@ -214,30 +214,38 @@ object PracticumOptionsFrame: TPracticumOptionsFrame
     BorderSpacing.Left = 20
     BorderSpacing.Right = 10
     BorderSpacing.Bottom = 4
+    ColCount = 6
     Columns = <    
       item
         SizePriority = 0
         Title.Alignment = taCenter
         Title.Caption = 'Имя курса'
-        Width = 150
+        Width = 170
       end    
       item
         SizePriority = 0
         Title.Alignment = taCenter
         Title.Caption = 'Автор'
-        Width = 200
+        Width = 150
       end    
       item
         Alignment = taRightJustify
         SizePriority = 0
         Title.Alignment = taCenter
         Title.Caption = 'Задач'
-        Width = 70
+        Width = 55
       end    
       item
         Title.Alignment = taCenter
         Title.Caption = 'Название курса'
-        Width = 297
+        Width = 222
+      end    
+      item
+        ButtonStyle = cbsButtonColumn
+        SizePriority = 0
+        Title.Alignment = taCenter
+        Title.Caption = 'Решения'
+        Width = 120
       end    
       item
         SizePriority = 0
@@ -252,18 +260,20 @@ object PracticumOptionsFrame: TPracticumOptionsFrame
     ScrollBars = ssAutoVertical
     TabOrder = 3
     OnAfterSelection = sgCoursesAfterSelection
+    OnButtonClick = sgCoursesButtonClick
     ColWidths = (
+      170
       150
-      200
-      70
-      297
+      55
+      222
+      120
       0
     )
   end
   object lblCourseFileName: TLabel
     Left = 20
-    Height = 18
-    Top = 398
+    Height = 17
+    Top = 399
     Width = 719
     Align = alBottom
     BorderSpacing.Left = 20

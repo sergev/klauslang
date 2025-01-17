@@ -14,6 +14,7 @@ uses
   FrameDoer, KlausDoer_Mouse, FrameDoerSetting_Mouse, DlgDoerMouseCellProps;
 
 {$R *.res}
+{$R *.ver.res}
 
 function getAppName: string;
 begin

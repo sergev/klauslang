@@ -51,6 +51,7 @@ type
       fLicense: string;
       fURL: string;
       fDescription: string;
+      fSolutions: string;
       fCategories: tStringList;
       fTasks: tStringList;
 
@@ -59,6 +60,7 @@ type
       function  getTask(tn: string): tKlausTask;
       function  getTaskCount: integer;
       function  getTasks(idx: integer): tKlausTask;
+      procedure detectSolutions(aFileName: string);
     protected
       procedure addTask(item: tKlausTask);
       procedure removeTask(item: tKlausTask);
@@ -77,6 +79,7 @@ type
       property license: string read fLicense write fLicense;
       property url: string read fURL write fURL;
       property description: string read fDescription write fDescription;
+      property solutions: string read fSolutions;
       property catCount: integer read getCatCount;
       property categories[idx: integer]: string read getCategories;
       property taskCount: integer read getTaskCount;
@@ -154,6 +157,7 @@ resourcestring
   strNewTaskName = 'НоваяЗадача_';
   strNewTaskCaption = 'Новая задача';
   strTaskFileName = '%s.klaus';
+  strSolutionsFileName = '%s-решения.zip';
   strDefaultSolutionTepmlate = 'задача %s практикум %s;'#10'начало'#10#10'окончание.';
   strDoerSolutionTepmlate = 'задача %s практикум %s;'#10#10'используется %s;'#10#10'начало'#10#10'окончание.';
 
@@ -401,6 +405,14 @@ begin
   result := fTasks.objects[idx] as tKlausTask;
 end;
 
+procedure tKlausCourse.detectSolutions(aFileName: string);
+var
+  s: string;
+begin
+  s := extractFilePath(aFileName) + format(strSolutionsFileName, [name]);
+  if fileExists(s) then fSolutions := s else fSolutions := '';
+end;
+
 procedure tKlausCourse.addTask(item: tKlausTask);
 begin
   if not tKlausLexParser.isValidIdent(item.name) then raise eKlausError.createFmt(ercInvalidTaskName, zeroSrcPt, [item.name]);
@@ -453,6 +465,7 @@ begin
     finally
       fLoading := false;
       updateCategories;
+      detectSolutions(fileName);
     end;
   except
     on e: exception do raise eKlausError.createFmt(ercFileReadError, zeroSrcPt, [fileName, e.message]);
