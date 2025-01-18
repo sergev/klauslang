@@ -2,11 +2,10 @@
 #
 # Requires: ALT Linux (>= 10.4)
 #
-# This will compile klauscon.lpi, klauside.lpi and klauscourseedit.lpi for ALT Linux,
-# and build binary RPM packages.
+# This will create a source tarball and build RPM packages for ALT Linux.
+# rpm --eval %{_topdir} must return a sane RPM top directory.
 #
-# Make sure you have checked out the correct branch
-# (e.g. git checkout v2.5.8)
+# Make sure you have checked out the correct branch (e.g. git checkout v2.5.8)
 #
 
 set -e

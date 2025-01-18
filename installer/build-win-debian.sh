@@ -58,32 +58,11 @@ fi
 # DEBIAN package klauslang
 ###################################
 
-mkdir "$BD1" && cd "$BD1"
+mkdir "$BD1"
+cd ../installer
+./install.sh "../build/$BD1"
 
-mkdir -p ./opt/klauslang/amd64
-cp ../../compiled/klaus ./opt/klauslang/amd64/
-cp ../../compiled/klaus-ide ./opt/klauslang/amd64/
-
-mkdir -p ./opt/klauslang/samples
-cp -r ../../samples/* ./opt/klauslang/samples/
-
-mkdir -p ./opt/klauslang/test
-cp -r ../../test/* ./opt/klauslang/test/
-
-mkdir -p ./opt/klauslang/doc
-cp -r ../../doc/* ./opt/klauslang/doc/
-
-mkdir -p ./opt/klauslang/practicum
-cp -r ../../practicum/*.klaus-course ./opt/klauslang/practicum/
-
-mkdir ./usr
-rsync -r ../../src/assets/klauslang/usr/ ./usr/
-
-mkdir -p ./usr/bin
-ln -s /opt/klauslang/amd64/klaus ./usr/bin/klaus
-ln -s /opt/klauslang/amd64/klaus-ide ./usr/bin/klaus-ide
-
-cp ../../installer/what-s-new.txt ./opt/klauslang/
+cd ../build/$BD1
 
 SIZE=$(du -s ../$BD1 | grep -Eo "^[0-9]+")
 
