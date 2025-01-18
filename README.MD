@@ -1,7 +1,7 @@
 Последнюю версию можно скачать здесь:
-- Ubuntu:   [https://czaerlag.ru/klauslang/klauslang_2.5.7_amd64-debian.zip](https://czaerlag.ru/klauslang/klauslang_2.5.7_amd64-debian.zip).<br>
-- ALT Linux: [https://czaerlag.ru/klauslang/klauslang-2.5.7-1.x86_64-alt.zip](https://czaerlag.ru/klauslang/klauslang-2.5.7-1.x86_64-alt.zip).<br>
-- Windows: [https://czaerlag.ru/klauslang/klauslang_2.5.7_x64-windows.zip](https://czaerlag.ru/klauslang/klauslang_2.5.7_x64-windows.zip).<br>
+- Ubuntu:   [https://czaerlag.ru/klauslang/klauslang_2.5.8_amd64-debian.zip](https://czaerlag.ru/klauslang/klauslang_2.5.8_amd64-debian.zip).<br>
+- ALT Linux: [https://czaerlag.ru/klauslang/klauslang-2.5.8-1.x86_64-alt.zip](https://czaerlag.ru/klauslang/klauslang-2.5.8-1.x86_64-alt.zip).<br>
+- Windows: [https://czaerlag.ru/klauslang/klauslang_2.5.8_x64-windows.zip](https://czaerlag.ru/klauslang/klauslang_2.5.8_x64-windows.zip).<br>
 
 (или в разделе "Релизы", но это требует регистрации).
 
