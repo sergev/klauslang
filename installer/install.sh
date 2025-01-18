@@ -43,8 +43,8 @@ case $1 in
     rsync -r ../src/assets/klauslang/usr/ $INST/usr/
 
     mkdir -p $INST/usr/bin
-    ln -s $INST/opt/klauslang/amd64/klaus $INST/usr/bin/klaus
-    ln -s $INST/opt/klauslang/amd64/klaus-ide $INST/usr/bin/klaus-ide
+    ln -s /opt/klauslang/amd64/klaus $INST/usr/bin/klaus
+    ln -s /opt/klauslang/amd64/klaus-ide $INST/usr/bin/klaus-ide
 
     cp ../installer/what-s-new.txt $INST/opt/klauslang/
   ;;
@@ -56,7 +56,7 @@ case $1 in
     rsync -r ../src/assets/klauslang-teacher/usr/ $INST/usr/
 
     mkdir -p $INST/usr/bin
-    ln -s $INST/opt/klauslang/amd64/klaus-course-edit $INST/usr/bin/klaus-course-edit
+    ln -s /opt/klauslang/amd64/klaus-course-edit $INST/usr/bin/klaus-course-edit
 
     mkdir -p $INST/opt/klauslang/practicum
     cp -r ../practicum/*.zip $INST/opt/klauslang/practicum/
