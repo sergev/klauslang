@@ -1,12 +1,20 @@
 #!/bin/bash
 
-# Version number must be passed in $1
-# Compiled binaries must exist in ../compiled
-
 set -e
 set -u
 
-VER="$1"
+VER=$(cat ../src/ver)
+TOP=$(rpmbuild --eval %{_topdir})
+TOP=${TOP/'%homedir'/"$HOME"}
 
-rpmbuild -bb --define "_ver $VER" --define "_pwd $(pwd)" klauslang-alt.spec
-rpmbuild -bb --define "_ver $VER" --define "_pwd $(pwd)" klauslang-teacher-alt.spec
+echo $TOP
+
+cd ..
+
+mkdir -p $TOP/SOURCES
+rm -f $TOP/SOURCES/klauslang-$VER.tar.bz2
+tar --exclude='.git*' --exclude='./compiled' --exclude='./build' -cjvf $TOP/SOURCES/klauslang.tar.bz2 .
+
+cd ./installer
+
+rpmbuild -bb --define "_ver $VER" klauslang-alt.spec

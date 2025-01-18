@@ -2,10 +2,10 @@
 #
 # Requires: Ubuntu (>= 22.04)
 #
-# This will build klauscon.lpi, klauside.lpi and klauscourseedit.lpi for Ubuntu and Win10,
+# This will compile klauscon.lpi, klauside.lpi and klauscourseedit.lpi for Ubuntu and Win10,
 # build DEB packages, make Windows installer and ZIP them all.
 #
-# Version number MAY be passed in $1 -- the new version will be set for all the projects.
+# Version number MAY be passed in $1 -- if so, the new version will be set for all the projects.
 #
 # Directory ../build/v$1 must NOT exist
 # Directories ../build/v$1-klauslang-build and ../build/v$1-teacher-build must NOT exist
@@ -27,7 +27,6 @@ fi
 
 set -u
 
-mkdir -p ../compiled
 mkdir -p ../build && cd ../build
 
 if [ -d "v$VER" ]; then
@@ -35,25 +34,6 @@ if [ -d "v$VER" ]; then
   exit 1
 fi
 mkdir v$VER
-
-###################################
-# Build Lazarus projects
-###################################
-
-mkdir -p ../compiled/klauscon/x86_64-linux
-mkdir -p ../compiled/klauscon/x86_64-win64
-lazbuild --build-all --build-mode=Release ../src/klaus/klauscon.lpi
-lazbuild --build-all --build-mode=Win64 ../src/klaus/klauscon.lpi
-
-mkdir -p ../compiled/klauside/x86_64-linux
-mkdir -p ../compiled/klauside/x86_64-win64
-lazbuild --build-all --build-mode=Release ../src/ide/klauside.lpi
-lazbuild --build-all --build-mode=Win64 ../src/ide/klauside.lpi
-
-mkdir -p ../compiled/klauscourseedit/x86_64-linux
-mkdir -p ../compiled/klauscourseedit/x86_64-win64
-lazbuild --build-all --build-mode=Release ../src/course-edit/klauscourseedit.lpi
-lazbuild --build-all --build-mode=Win64 ../src/course-edit/klauscourseedit.lpi
 
 BD1="v$VER-klauslang-build"
 if [ -d "$BD1" ]; then
@@ -66,6 +46,13 @@ if [ -d "$BD2" ]; then
   echo "Directory already exists: $BD2"
   exit 1
 fi
+
+###################################
+# Build Lazarus projects
+###################################
+
+../installer/compile.sh Linux
+../installer/compile.sh Windows
 
 ###################################
 # DEBIAN package klauslang
