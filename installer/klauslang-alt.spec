@@ -1,6 +1,5 @@
-Name: klauslang
-Version: %_ver
 Release: 1
+Name: klauslang
 Packager: Konstantin Zakharoff <mail@czaerlag.ru>
 Vendor: Konstantin Zakharoff
 Summary: Klaus programming language and environment
@@ -40,7 +39,7 @@ cd ..
 
 %install
 cd ./installer
-./install.sh %buildroot
+./install.sh klauslang %buildroot
 rm -f %buildroot/usr/bin/klaus
 rm -f %buildroot/usr/bin/klaus-ide
 touch %buildroot/usr/bin/klaus

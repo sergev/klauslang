@@ -60,7 +60,7 @@ fi
 
 mkdir "$BD1"
 cd ../installer
-./install.sh "../build/$BD1"
+./install.sh klauslang "../build/$BD1"
 
 cd ../build/$BD1
 
@@ -89,19 +89,11 @@ rm -r $BD1
 # DEBIAN package klauslang-teacher
 ###################################
 
-mkdir "$BD2" && cd "$BD2"
+mkdir "$BD2"
+cd ../installer
+./install.sh klauslang-teacher "../build/$BD2"
 
-mkdir -p ./opt/klauslang/amd64
-cp ../../compiled/klaus-course-edit ./opt/klauslang/amd64/
-
-mkdir ./usr
-rsync -r ../../src/assets/klauslang-teacher/usr/ ./usr/
-
-mkdir -p ./usr/bin
-ln -s /opt/klauslang/amd64/klaus-course-edit ./usr/bin/klaus-course-edit
-
-mkdir -p ./opt/klauslang/practicum
-cp -r ../../practicum/*.zip ./opt/klauslang/practicum/
+cd ../build/$BD2
 
 SIZE=$(du -s ../$BD2 | grep -Eo "^[0-9]+")
 

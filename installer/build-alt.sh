@@ -14,6 +14,11 @@ set -u
 VER=$(cat ../src/ver)
 TOP=$(rpm --eval %{_topdir})
 
+mkdir -p $TOP/SPECS
+cat <(echo 'Version: ' | tr -d '\n') ../src/ver klauslang-alt.spec > $TOP/SPECS/klauslang-$VER.spec
+
+exit
+
 cd ..
 
 mkdir -p $TOP/SOURCES
@@ -22,4 +27,4 @@ tar --exclude='.git*' --exclude='./compiled' --exclude='./build' -cjvf $TOP/SOUR
 
 cd ./installer
 
-rpmbuild -ba --define "_ver $VER" klauslang-alt.spec
+rpmbuild -ba --define "_ver $VER" $TOP/SPECS/klauslang-$VER.spec
