@@ -36,3 +36,28 @@ for schoolchildren and students.
 %build
 cd ./installer
 ./compile.sh Linux
+cd ..
+
+%install
+cd ./installer
+./install.sh %buildroot
+rm -f %buildroot/usr/bin/klaus
+rm -f %buildroot/usr/bin/klaus-ide
+touch %buildroot/usr/bin/klaus
+touch %buildroot/usr/bin/klaus-ide
+cd ..
+
+%files
+/opt/klauslang/amd64/*
+/opt/klauslang/samples/*
+/opt/klauslang/test/*
+/opt/klauslang/doc/*
+/opt/klauslang/practicum/*.klaus-course
+/usr/share/*
+/opt/klauslang/what-s-new.txt
+%ghost /usr/bin/klaus
+%ghost /usr/bin/klaus-ide
+
+%post
+ln -sf /opt/klauslang/amd64/klaus /usr/bin/klaus
+ln -sf /opt/klauslang/amd64/klaus-ide /usr/bin/klaus-ide
