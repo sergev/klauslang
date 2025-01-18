@@ -17,8 +17,6 @@ TOP=$(rpm --eval %{_topdir})
 mkdir -p $TOP/SPECS
 cat <(echo 'Version: ' | tr -d '\n') ../src/ver klauslang-alt.spec > $TOP/SPECS/klauslang-$VER.spec
 
-exit
-
 cd ..
 
 mkdir -p $TOP/SOURCES

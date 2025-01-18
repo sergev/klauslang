@@ -29,6 +29,18 @@ for schoolchildren and students.
 Клаус - язык программирования по-русски, среда разработки
 и набор учебных курсов для школьников и студентов.
 
+%package -n %name-teacher
+Summary: Klaus training course editor
+Summary(ru_RU.UTF-8): Клаус - редактор учебных курсов
+Group: Education
+Requires: klauslang = %version
+
+%description -n %name-teacher
+Klaus training course editor - for teachers and methodologists.
+
+%description -n %name-teacher -l ru_RU.UTF-8
+Редактор учебных курсов Клаус - для учителей и методологов.
+
 %prep
 %setup -c
 
@@ -40,23 +52,39 @@ cd ..
 %install
 cd ./installer
 ./install.sh klauslang %buildroot
+./install.sh klauslang-teacher %buildroot
 rm -f %buildroot/usr/bin/klaus
 rm -f %buildroot/usr/bin/klaus-ide
+rm -f %buildroot/usr/bin/klaus-course-edit
 touch %buildroot/usr/bin/klaus
 touch %buildroot/usr/bin/klaus-ide
+touch %buildroot/usr/bin/klaus-course-edit
 cd ..
 
-%files
-/opt/klauslang/amd64/*
+%files -n %name
+/opt/klauslang/amd64/klaus
+/opt/klauslang/amd64/klaus-ide
 /opt/klauslang/samples/*
 /opt/klauslang/test/*
 /opt/klauslang/doc/*
 /opt/klauslang/practicum/*.klaus-course
-/usr/share/*
+/usr/share/applications/klaus-ide.desktop
+/usr/share/mime/packages/klauslang-mime.xml
+/usr/share/icons/*
 /opt/klauslang/what-s-new.txt
 %ghost /usr/bin/klaus
 %ghost /usr/bin/klaus-ide
 
+%files -n %name-teacher
+/opt/klauslang/amd64/klaus-course-edit
+/opt/klauslang/practicum/*.zip
+/usr/share/applications/klaus-course-edit.desktop
+/usr/share/mime/packages/klauslang-teacher-mime.xml
+%ghost /usr/bin/klaus-course-edit
+
 %post
 ln -sf /opt/klauslang/amd64/klaus /usr/bin/klaus
 ln -sf /opt/klauslang/amd64/klaus-ide /usr/bin/klaus-ide
+
+%post -n %name-teacher
+ln -sf /opt/klauslang/amd64/klaus-course-edit /usr/bin/klaus-course-edit

@@ -39,7 +39,7 @@ case $1 in
     mkdir -p $INST/opt/klauslang/practicum
     cp -r ../practicum/*.klaus-course $INST/opt/klauslang/practicum/
 
-    mkdir $INST/usr
+    mkdir -p $INST/usr
     rsync -r ../src/assets/klauslang/usr/ $INST/usr/
 
     mkdir -p $INST/usr/bin
@@ -52,7 +52,7 @@ case $1 in
     mkdir -p $INST/opt/klauslang/amd64
     cp ../compiled/klaus-course-edit $INST/opt/klauslang/amd64/
 
-    mkdir $INST/usr
+    mkdir -p $INST/usr
     rsync -r ../src/assets/klauslang-teacher/usr/ $INST/usr/
 
     mkdir -p $INST/usr/bin
