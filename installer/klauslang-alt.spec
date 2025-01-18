@@ -16,10 +16,10 @@ BuildArch: x86_64
 # https://gitflic.ru/project/czaerlag/klauslang/file/downloadAll?format=tar.bz2&branch=v%version
 Source: %name.tar.bz2
 
-#BuildRequires: fpc >= 3.2.2
-#BuildRequires: fpc-src
-#BuildRequires: libgtk+2-devel
-#BuildRequires: lazarus >= 3.4
+BuildRequires: fpc >= 3.2.2
+BuildRequires: fpc-src
+BuildRequires: libgtk+2-devel
+BuildRequires: lazarus >= 3.4
 
 %description
 Klaus is a Russian-based educational programming language,
