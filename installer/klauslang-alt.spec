@@ -37,9 +37,11 @@ Requires: klauslang = %version
 
 %description -n %name-teacher
 Klaus training course editor - for teachers and methodologists.
+Practicum task soultions source code.
 
 %description -n %name-teacher -l ru_RU.UTF-8
-Редактор учебных курсов Клаус - для учителей и методологов.
+Редактор учебных курсов Клаус - для учителей и методистов.
+Исходный код решений задач Практикума.
 
 %prep
 %setup -c
@@ -82,7 +84,7 @@ cd ..
 /usr/share/mime/packages/klauslang-teacher-mime.xml
 %ghost /usr/bin/klaus-course-edit
 
-%post
+%post -n %name
 ln -sf /opt/klauslang/amd64/klaus /usr/bin/klaus
 ln -sf /opt/klauslang/amd64/klaus-ide /usr/bin/klaus-ide
 
