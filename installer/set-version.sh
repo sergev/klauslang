@@ -107,4 +107,4 @@ echo "1 VERSIONINFO
 
 windres ../src/course-edit/klauscourseedit.ver.rc ../src/course-edit/klauscourseedit.ver.res
 
-echo "${vi[0]}.${vi[1]}.${vi[2]}" > ../src/ver
+echo "${vi[0]}.${vi[1]}.${vi[2]}" | tr -d '\n' > ../src/ver
