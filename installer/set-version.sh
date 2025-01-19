@@ -4,7 +4,7 @@
 # The *.ver.rc files will be written and compiled into *.res
 # within every ../src/<project-name> directory.
 #
-# The new version number (Mj.Mn.R) must be passed in $1
+# The new version number (e.g. 1.2.3) must be passed in $1
 #
 # windres must exist on the path.
 

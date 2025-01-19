@@ -6,7 +6,7 @@
 # Package name (either klauslang or klauslang-teacher) MUST be passed in $1.
 #
 # The root directory MAY be passed in $2.
-# If not specified, defaults to the filesystem root.
+# If not specified, defaults to the file system root.
 #
 
 set -e
