@@ -28,4 +28,4 @@ tar --exclude='.git*' --exclude='./compiled' --exclude='./build' -cjvf $TOP/SOUR
 
 cd ./installer
 
-rpmbuild -ba --define "_ver $VER" $TOP/SPECS/klauslang-$VER.spec
+rpmbuild -ba $TOP/SPECS/klauslang-$VER.spec
