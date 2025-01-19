@@ -504,6 +504,9 @@
       <Item>
         <Name Value="RunError(3)"/>
       </Item>
+      <Item>
+        <Name Value="EStringListError"/>
+      </Item>
     </Exceptions>
   </Debugging>
 </CONFIG>

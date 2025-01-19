@@ -1964,6 +1964,12 @@ uses
   Math, KlausUnitSystem
   {$ifdef enableLogging}, KlausLog{$endif};
 
+type
+  tNameList = array of record
+    n: tStringArray;
+    p: tSrcPoint;
+  end;
+
 const
   // Имя скрытой переменной -- выходного параметра функции, в который
   // инструкция "вернуть" помещает возвращаемое значение.
@@ -2086,6 +2092,26 @@ begin
   else begin
     acquireExceptionObject;
     raise obj at get_caller_addr(get_frame);
+  end;
+end;
+
+procedure checkUniqueNames(names: tNameList);
+var
+  i, j: integer;
+  sl: tStringList;
+begin
+  if length(names) < 1 then exit;
+  if (length(names) = 1) and (length(names[0].n) <= 1) then exit;
+  sl := tStringList.create;
+  sl.sorted := true;
+  sl.duplicates := dupError;
+  try
+    for i := 0 to length(names)-1 do
+      for j := 0 to length(names[i].n)-1 do
+        try sl.add(u8Lower(names[i].n[j]));
+        except raise eKlausError.createFmt(ercDuplicateName, names[i].p, [names[i].n[j]]); end;
+  finally
+    freeAndNil(sl);
   end;
 end;
 
@@ -4835,10 +4861,7 @@ var
   i, idx: integer;
   dt: tKlausTypeDef;
   mode: tKlausProcParamMode;
-  nms: array of record
-    n: tStringArray;
-    p: tSrcPoint;
-  end = nil;
+  nms: tNameList = nil;
 begin
   create(aOwner, aName, srcPoint(b.lex));
   b.next;
@@ -4865,6 +4888,7 @@ begin
         createIDs(b, nms[idx].n, nms[idx].p);
         b.next;
       end;
+      checkUniqueNames(nms);
       b.check(klsColon);
       b.next;
       b.check('type_id');
@@ -6690,10 +6714,7 @@ procedure tKlausRoutine.createVarDeclarations(b: tKlausSyntaxBrowser);
 var
   i: integer;
   idx: integer;
-  nms: array of record
-    n: tStringArray;
-    p: tSrcPoint;
-  end = nil;
+  nms: tNameList = nil;
   dt: tKlausTypeDef;
   v: tKlausVarValue;
   sv: tKlausSimpleValue;
@@ -6715,6 +6736,7 @@ begin
       createIDs(b, nms[idx].n, nms[idx].p);
       b.next;
     end;
+    checkUniqueNames(nms);
     b.check(klsColon);
     dt := createDataType(b);
     b.next;
