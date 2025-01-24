@@ -437,7 +437,10 @@ type
   tKlausSysProc_MouseNumber = class(tKlausSysProcDecl)
     public
       constructor create(aOwner: tKlausRoutine; aPoint: tSrcPoint);
-      procedure run(frame: tKlausStackFrame; const at: tSrcPoint); override;
+      function  isCustomParamHandler: boolean; override;
+      procedure checkCallParamTypes(expr: array of tKlausExpression; at: tSrcPoint); override;
+      procedure getCustomParamModes(types: array of tKlausTypeDef; out modes: tKlausProcParamModes; const at: tSrcPoint); override;
+      procedure customRun(frame: tKlausStackFrame; values: array of tKlausVarValueAt; const at: tSrcPoint); override;
   end;
 
 type
@@ -2406,9 +2409,54 @@ begin
   declareRetValue(kdtInteger);
 end;
 
-procedure tKlausSysProc_MouseNumber.run(frame: tKlausStackFrame; const at: tSrcPoint);
+function tKlausSysProc_MouseNumber.isCustomParamHandler: boolean;
 begin
+  result := true;
+end;
+
+procedure tKlausSysProc_MouseNumber.checkCallParamTypes(expr: array of tKlausExpression; at: tSrcPoint);
+var
+  cnt: integer;
+begin
+  cnt := length(expr);
+  if (cnt <> 0) and (cnt <> 1) then
+    raise eKlausError.createFmt(ercWrongNumberOfParams, at, [cnt, format(strNumOrNum, [0, 1])]);
+  if cnt > 0 then begin
+    if not (source.simpleTypes[kdtInteger].canAssign(expr[0].resultTypeDef)
+    or source.simpleTypes[kdtBoolean].canAssign(expr[0].resultTypeDef)) then
+      raise eKlausError.create(ercTypeMismatch, expr[0].point);
+  end;
+end;
+
+procedure tKlausSysProc_MouseNumber.getCustomParamModes(types: array of tKlausTypeDef; out modes: tKlausProcParamModes; const at: tSrcPoint);
+var
+  i: integer;
+begin
+  modes := nil;
+  setLength(modes, length(types));
+  for i := 0 to length(modes)-1 do modes[i] := kpmInput;
+end;
+
+procedure tKlausSysProc_MouseNumber.customRun(frame: tKlausStackFrame; values: array of tKlausVarValueAt; const at: tSrcPoint);
+var
+  cnt: integer;
+  n: tKlausInteger;
+  b: tKlausBoolean;
+begin
+  cnt := length(values);
+  if (cnt <> 0) and (cnt <> 1) then
+    raise eKlausError.createFmt(ercWrongNumberOfParams, at, [cnt, format(strNumOrNum, [0, 1])]);
   returnSimple(frame, klausSimpleI((owner as tKlausDoerMouse).setting.here.number));
+  if cnt > 0 then begin
+    if source.simpleTypes[kdtInteger].canAssign(values[0].v.dataType) then begin
+      n := getSimpleInt(values[0]);
+      (owner as tKlausDoerMouse).setting.here.number := n;
+    end else if source.simpleTypes[kdtBoolean].canAssign(values[0].v.dataType) then begin
+      b := getSimpleBool(values[0]);
+      (owner as tKlausDoerMouse).setting.here.hasNumber := b;
+    end else
+      raise eKlausError.create(ercTypeMismatch, values[0].at);
+  end;
 end;
 
 { tKlausSysProc_MouseTemperature }

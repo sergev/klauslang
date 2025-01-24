@@ -36234,95 +36234,111 @@
               {
                 "text2" : "А",
                 "number" : "1",
+                "mark" : true,
                 "temperature" : 1.2000000000000000E+001,
                 "x" : 0,
                 "y" : 0
               },
               {
                 "number" : "2",
+                "mark" : true,
                 "temperature" : 2.9999999999999999E-001,
                 "x" : 1,
                 "y" : 0
               },
               {
                 "number" : "3",
+                "mark" : true,
                 "temperature" : 5.0000000000000000E+000,
                 "x" : 2,
                 "y" : 0
               },
               {
                 "number" : "4",
+                "mark" : true,
                 "temperature" : 7.5400000000000000E+000,
                 "x" : 3,
                 "y" : 0
               },
               {
                 "number" : "5",
+                "mark" : true,
                 "temperature" : 1.2400000000000000E+001,
                 "x" : 4,
                 "y" : 0
               },
               {
                 "number" : "6",
+                "mark" : true,
                 "temperature" : 2.2000000000000000E+001,
                 "x" : 5,
                 "y" : 0
               },
               {
                 "number" : "7",
+                "mark" : true,
                 "temperature" : 1.1500000000000000E+001,
                 "x" : 6,
                 "y" : 0
               },
               {
                 "number" : "8",
+                "mark" : true,
                 "temperature" : -2.6000000000000001E+000,
                 "x" : 7,
                 "y" : 0
               },
               {
                 "number" : "9",
+                "mark" : true,
                 "x" : 8,
                 "y" : 0
               },
               {
                 "number" : "10",
+                "mark" : true,
                 "temperature" : 3.2999999999999998E+000,
                 "x" : 9,
                 "y" : 0
               },
               {
                 "number" : "11",
+                "mark" : true,
                 "temperature" : 1.2000000000000000E+001,
                 "x" : 10,
                 "y" : 0
               },
               {
                 "number" : "12",
+                "mark" : true,
                 "temperature" : 1.5199999999999999E+001,
                 "x" : 11,
                 "y" : 0
               },
               {
                 "number" : "13",
+                "mark" : true,
                 "temperature" : -4.0000000000000000E+000,
                 "x" : 12,
                 "y" : 0
               },
               {
                 "number" : "14",
+                "mark" : true,
                 "temperature" : 2.1000000000000000E+001,
                 "x" : 13,
                 "y" : 0
               },
               {
                 "number" : "15",
+                "mark" : true,
                 "temperature" : -3.5000000000000000E+000,
                 "x" : 14,
                 "y" : 0
               },
               {
                 "number" : "16",
+                "mark" : true,
                 "temperature" : -2.0000000000000000E+000,
                 "x" : 15,
                 "y" : 0
@@ -36341,95 +36357,111 @@
               {
                 "text2" : "А",
                 "number" : "1",
+                "mark" : true,
                 "temperature" : 2.0000000000000000E+000,
                 "x" : 0,
                 "y" : 0
               },
               {
                 "number" : "2",
+                "mark" : true,
                 "x" : 1,
                 "y" : 0
               },
               {
                 "number" : "3",
+                "mark" : true,
                 "temperature" : 5.4000000000000004E+000,
                 "x" : 2,
                 "y" : 0
               },
               {
                 "number" : "4",
+                "mark" : true,
                 "temperature" : 7.2000000000000002E+000,
                 "x" : 3,
                 "y" : 0
               },
               {
                 "number" : "5",
+                "mark" : true,
                 "temperature" : -4.0000000000000000E+000,
                 "x" : 4,
                 "y" : 0
               },
               {
                 "number" : "6",
+                "mark" : true,
                 "temperature" : 2.2000000000000000E+001,
                 "x" : 5,
                 "y" : 0
               },
               {
                 "number" : "7",
+                "mark" : true,
                 "temperature" : 1.1199999999999999E+001,
                 "x" : 6,
                 "y" : 0
               },
               {
                 "number" : "8",
+                "mark" : true,
                 "temperature" : -2.0000000000000000E+000,
                 "x" : 7,
                 "y" : 0
               },
               {
                 "number" : "9",
+                "mark" : true,
                 "temperature" : 4.0000000000000002E-001,
                 "x" : 8,
                 "y" : 0
               },
               {
                 "number" : "10",
+                "mark" : true,
                 "temperature" : 3.0000000000000000E+000,
                 "x" : 9,
                 "y" : 0
               },
               {
                 "number" : "11",
+                "mark" : true,
                 "temperature" : 1.2539999999999999E+001,
                 "x" : 10,
                 "y" : 0
               },
               {
                 "number" : "12",
+                "mark" : true,
                 "temperature" : 1.5000000000000000E+001,
                 "x" : 11,
                 "y" : 0
               },
               {
                 "number" : "13",
+                "mark" : true,
                 "temperature" : -4.8499999999999996E+000,
                 "x" : 12,
                 "y" : 0
               },
               {
                 "number" : "14",
+                "mark" : true,
                 "temperature" : 2.1000000000000000E+001,
                 "x" : 13,
                 "y" : 0
               },
               {
                 "number" : "15",
+                "mark" : true,
                 "temperature" : 2.4300000000000002E+000,
                 "x" : 14,
                 "y" : 0
               },
               {
                 "number" : "16",
+                "mark" : true,
                 "temperature" : 1.5000000000000000E+001,
                 "x" : 15,
                 "y" : 0
@@ -36448,96 +36480,112 @@
               {
                 "text2" : "А",
                 "number" : "1",
+                "mark" : true,
                 "temperature" : 7.0000000000000000E+000,
                 "x" : 0,
                 "y" : 0
               },
               {
                 "number" : "2",
+                "mark" : true,
                 "temperature" : 8.8000000000000007E+000,
                 "x" : 1,
                 "y" : 0
               },
               {
                 "number" : "3",
+                "mark" : true,
                 "temperature" : 9.0000000000000000E+000,
                 "x" : 2,
                 "y" : 0
               },
               {
                 "number" : "4",
+                "mark" : true,
                 "temperature" : 1.0100000000000000E+001,
                 "x" : 3,
                 "y" : 0
               },
               {
                 "number" : "5",
+                "mark" : true,
                 "temperature" : 1.1000000000000000E+001,
                 "x" : 4,
                 "y" : 0
               },
               {
                 "number" : "6",
+                "mark" : true,
                 "temperature" : 1.2320000000000000E+001,
                 "x" : 5,
                 "y" : 0
               },
               {
                 "number" : "7",
+                "mark" : true,
                 "temperature" : 1.3000000000000000E+001,
                 "x" : 6,
                 "y" : 0
               },
               {
                 "number" : "8",
+                "mark" : true,
                 "temperature" : 1.4400000000000000E+001,
                 "x" : 7,
                 "y" : 0
               },
               {
                 "number" : "9",
+                "mark" : true,
                 "temperature" : 1.3600000000000000E+001,
                 "x" : 8,
                 "y" : 0
               },
               {
                 "number" : "10",
+                "mark" : true,
                 "temperature" : 1.2000000000000000E+001,
                 "x" : 9,
                 "y" : 0
               },
               {
                 "number" : "11",
+                "mark" : true,
                 "temperature" : 1.1699999999999999E+001,
                 "x" : 10,
                 "y" : 0
               },
               {
                 "number" : "12",
+                "mark" : true,
                 "temperature" : 1.0000000000000000E+001,
                 "x" : 11,
                 "y" : 0
               },
               {
                 "number" : "13",
+                "mark" : true,
                 "temperature" : 9.8000000000000007E+000,
                 "x" : 12,
                 "y" : 0
               },
               {
                 "number" : "14",
+                "mark" : true,
                 "temperature" : 8.0000000000000000E+000,
                 "x" : 13,
                 "y" : 0
               },
               {
                 "number" : "15",
+                "mark" : true,
                 "temperature" : 7.4299999999999997E+000,
                 "x" : 14,
                 "y" : 0
               },
               {
                 "number" : "16",
+                "mark" : true,
                 "temperature" : 6.0000000000000000E+000,
                 "x" : 15,
                 "y" : 0
@@ -36556,97 +36604,304 @@
               {
                 "text2" : "А",
                 "number" : "1",
+                "mark" : true,
                 "temperature" : -1.4000000000000000E+001,
                 "x" : 0,
                 "y" : 0
               },
               {
                 "number" : "2",
+                "mark" : true,
                 "temperature" : -1.2300000000000001E+001,
                 "x" : 1,
                 "y" : 0
               },
               {
                 "number" : "3",
+                "mark" : true,
                 "temperature" : -1.0000000000000000E+001,
                 "x" : 2,
                 "y" : 0
               },
               {
                 "number" : "4",
+                "mark" : true,
                 "temperature" : -6.9000000000000004E+000,
                 "x" : 3,
                 "y" : 0
               },
               {
                 "number" : "5",
+                "mark" : true,
                 "temperature" : -4.0000000000000000E+000,
                 "x" : 4,
                 "y" : 0
               },
               {
                 "number" : "6",
+                "mark" : true,
                 "x" : 5,
                 "y" : 0
               },
               {
                 "number" : "7",
+                "mark" : true,
                 "temperature" : 3.2999999999999998E+000,
                 "x" : 6,
                 "y" : 0
               },
               {
                 "number" : "8",
+                "mark" : true,
                 "temperature" : 2.0000000000000000E+000,
                 "x" : 7,
                 "y" : 0
               },
               {
                 "number" : "9",
+                "mark" : true,
                 "temperature" : 1.2500000000000000E+000,
                 "x" : 8,
                 "y" : 0
               },
               {
                 "number" : "10",
+                "mark" : true,
                 "temperature" : 2.0000000000000000E+000,
                 "x" : 9,
                 "y" : 0
               },
               {
                 "number" : "11",
+                "mark" : true,
                 "temperature" : 7.6000000000000001E-001,
                 "x" : 10,
                 "y" : 0
               },
               {
                 "number" : "12",
+                "mark" : true,
                 "temperature" : -1.0000000000000000E+000,
                 "x" : 11,
                 "y" : 0
               },
               {
                 "number" : "13",
+                "mark" : true,
                 "temperature" : -3.4500000000000002E+000,
                 "x" : 12,
                 "y" : 0
               },
               {
                 "number" : "14",
+                "mark" : true,
                 "temperature" : -5.0000000000000000E+000,
                 "x" : 13,
                 "y" : 0
               },
               {
                 "number" : "15",
+                "mark" : true,
                 "temperature" : -2.2000000000000002E+000,
                 "x" : 14,
                 "y" : 0
               },
               {
                 "number" : "16",
+                "mark" : true,
                 "temperature" : 1.0000000000000000E+000,
                 "x" : 15,
+                "y" : 0
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name" : "t15h",
+      "title" : "Задача 15.H",
+      "category" : "Задание 15: Максимумы и сортировка",
+      "description" : "Мышка находится в западном конце горизонтального коридора высотой в 2 клетки. В каждой клетке северного ряда указано число. Мышка должна расставить эти числа в клетки южного ряда в порядке убывания.\r\n\r\n_Совет: для решения этой задачи закрашивайте клетки._",
+      "doer" : {
+        "name" : "Мышка",
+        "settings" : [
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 16,
+            "height" : 2,
+            "mouseX" : 0,
+            "mouseY" : 0,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "text2" : "А",
+                "number" : "12",
+                "mark" : true,
+                "x" : 0,
+                "y" : 0
+              },
+              {
+                "number" : "-3",
+                "mark" : true,
+                "x" : 1,
+                "y" : 0
+              },
+              {
+                "number" : "7",
+                "mark" : true,
+                "x" : 2,
+                "y" : 0
+              },
+              {
+                "number" : "4",
+                "mark" : true,
+                "x" : 3,
+                "y" : 0
+              },
+              {
+                "number" : "21",
+                "mark" : true,
+                "x" : 4,
+                "y" : 0
+              },
+              {
+                "number" : "42",
+                "mark" : true,
+                "x" : 5,
+                "y" : 0
+              },
+              {
+                "number" : "11",
+                "mark" : true,
+                "x" : 6,
+                "y" : 0
+              },
+              {
+                "number" : "5",
+                "mark" : true,
+                "x" : 7,
+                "y" : 0
+              },
+              {
+                "number" : "7",
+                "mark" : true,
+                "x" : 8,
+                "y" : 0
+              },
+              {
+                "number" : "-3",
+                "mark" : true,
+                "x" : 9,
+                "y" : 0
+              },
+              {
+                "number" : "-11",
+                "mark" : true,
+                "x" : 10,
+                "y" : 0
+              },
+              {
+                "number" : "4",
+                "mark" : true,
+                "x" : 11,
+                "y" : 0
+              },
+              {
+                "number" : "-13",
+                "mark" : true,
+                "x" : 12,
+                "y" : 0
+              },
+              {
+                "number" : "28",
+                "mark" : true,
+                "x" : 13,
+                "y" : 0
+              },
+              {
+                "number" : "-12",
+                "mark" : true,
+                "x" : 14,
+                "y" : 0
+              },
+              {
+                "number" : "0",
+                "mark" : true,
+                "x" : 15,
+                "y" : 0
+              }
+            ]
+          },
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 10,
+            "height" : 2,
+            "mouseX" : 0,
+            "mouseY" : 0,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "text2" : "А",
+                "number" : "5",
+                "mark" : true,
+                "x" : 0,
+                "y" : 0
+              },
+              {
+                "number" : "12",
+                "mark" : true,
+                "x" : 1,
+                "y" : 0
+              },
+              {
+                "number" : "7",
+                "mark" : true,
+                "x" : 2,
+                "y" : 0
+              },
+              {
+                "number" : "-3",
+                "mark" : true,
+                "x" : 3,
+                "y" : 0
+              },
+              {
+                "number" : "0",
+                "mark" : true,
+                "x" : 4,
+                "y" : 0
+              },
+              {
+                "number" : "11",
+                "mark" : true,
+                "x" : 5,
+                "y" : 0
+              },
+              {
+                "number" : "0",
+                "mark" : true,
+                "x" : 6,
+                "y" : 0
+              },
+              {
+                "number" : "14",
+                "mark" : true,
+                "x" : 7,
+                "y" : 0
+              },
+              {
+                "number" : "5",
+                "mark" : true,
+                "x" : 8,
+                "y" : 0
+              },
+              {
+                "number" : "-10",
+                "mark" : true,
+                "x" : 9,
                 "y" : 0
               }
             ]
