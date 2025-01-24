@@ -3,7 +3,7 @@
   "author" : "К.Ю.Поляков",
   "license" : "Creative Commons BY-NC-SA",
   "url" : "https://kpolyakov.spb.ru/",
-  "description" : "Вводный курс по программированию с использованием исполнителя Мышка.\r\n\r\nКурс был создан К.Ю.Поляковым для исполнителя \"Робот\" в обучающей среде КуМир и перенесён в Клаус с минимальными изменениями.\r\n\r\n[Сайт К.Ю.Полякова](https://kpolyakov.spb.ru/)\r\n\r\n[Репозиторий Клаус](https://gitflic.ru/project/czaerlag/klauslang)",
+  "description" : "Вводный курс по программированию с использованием исполнителя Мышка.\r\n\r\nКурс был создан К.Ю.Поляковым для исполнителя \"Робот\" в обучающей среде КуМир и перенесён в Клаус с некоторыми дополнениями.\r\n\r\n[Сайт К.Ю.Полякова](https://kpolyakov.spb.ru/)\r\n\r\n[Репозиторий Клаус](https://gitflic.ru/project/czaerlag/klauslang)",
   "tasks" : [
     {
       "name" : "задача10а",
@@ -6103,17 +6103,12 @@
             "ver" : 2,
             "width" : 10,
             "height" : 10,
-            "mouseX" : 0,
+            "mouseX" : 1,
             "mouseY" : 0,
             "mouseDir" : 3,
             "cells" : [
               {
                 "text2" : "А",
-                "x" : 0,
-                "y" : 0
-              },
-              {
-                "walls" : 10,
                 "x" : 1,
                 "y" : 0
               },
@@ -6124,232 +6119,237 @@
               },
               {
                 "walls" : 10,
+                "x" : 3,
+                "y" : 0
+              },
+              {
+                "walls" : 10,
                 "mark" : true,
-                "x" : 1,
+                "x" : 2,
                 "y" : 1
               },
               {
                 "walls" : 6,
                 "mark" : true,
-                "x" : 2,
+                "x" : 3,
                 "y" : 1
               },
               {
                 "walls" : 1,
                 "mark" : true,
-                "x" : 3,
-                "y" : 1
-              },
-              {
-                "mark" : true,
                 "x" : 4,
                 "y" : 1
               },
               {
-                "walls" : 5,
+                "mark" : true,
+                "x" : 5,
+                "y" : 1
+              },
+              {
+                "walls" : 4,
                 "text1" : "Б",
-                "x" : 0,
+                "x" : 1,
                 "y" : 2
               },
               {
                 "walls" : 11,
                 "mark" : true,
-                "x" : 1,
+                "x" : 2,
                 "y" : 2
               },
               {
                 "walls" : 12,
                 "mark" : true,
-                "x" : 2,
+                "x" : 3,
                 "y" : 2
               },
               {
                 "walls" : 9,
                 "mark" : true,
-                "x" : 3,
-                "y" : 2
-              },
-              {
-                "mark" : true,
                 "x" : 4,
                 "y" : 2
               },
               {
+                "mark" : true,
+                "x" : 5,
+                "y" : 2
+              },
+              {
                 "walls" : 2,
-                "x" : 1,
+                "x" : 2,
                 "y" : 3
               },
               {
                 "walls" : 10,
                 "mark" : true,
-                "x" : 2,
+                "x" : 3,
                 "y" : 3
               },
               {
                 "walls" : 6,
                 "mark" : true,
-                "x" : 3,
+                "x" : 4,
                 "y" : 3
               },
               {
                 "walls" : 1,
                 "mark" : true,
-                "x" : 4,
+                "x" : 5,
                 "y" : 3
               },
               {
                 "mark" : true,
-                "x" : 5,
+                "x" : 6,
                 "y" : 3
               },
               {
                 "walls" : 4,
-                "x" : 1,
+                "x" : 2,
                 "y" : 4
               },
               {
                 "walls" : 11,
                 "mark" : true,
-                "x" : 2,
+                "x" : 3,
                 "y" : 4
               },
               {
                 "walls" : 12,
                 "mark" : true,
-                "x" : 3,
+                "x" : 4,
                 "y" : 4
               },
               {
                 "walls" : 9,
                 "mark" : true,
-                "x" : 4,
-                "y" : 4
-              },
-              {
-                "mark" : true,
                 "x" : 5,
                 "y" : 4
               },
               {
+                "mark" : true,
+                "x" : 6,
+                "y" : 4
+              },
+              {
                 "walls" : 2,
-                "x" : 2,
+                "x" : 3,
                 "y" : 5
               },
               {
                 "walls" : 10,
                 "mark" : true,
-                "x" : 3,
+                "x" : 4,
                 "y" : 5
               },
               {
                 "walls" : 6,
                 "mark" : true,
-                "x" : 4,
+                "x" : 5,
                 "y" : 5
               },
               {
                 "walls" : 1,
                 "mark" : true,
-                "x" : 5,
+                "x" : 6,
                 "y" : 5
               },
               {
                 "mark" : true,
-                "x" : 6,
+                "x" : 7,
                 "y" : 5
               },
               {
                 "walls" : 4,
-                "x" : 2,
+                "x" : 3,
                 "y" : 6
               },
               {
                 "walls" : 11,
                 "mark" : true,
-                "x" : 3,
+                "x" : 4,
                 "y" : 6
               },
               {
                 "walls" : 12,
                 "mark" : true,
-                "x" : 4,
+                "x" : 5,
                 "y" : 6
               },
               {
                 "walls" : 9,
                 "mark" : true,
-                "x" : 5,
-                "y" : 6
-              },
-              {
-                "mark" : true,
                 "x" : 6,
                 "y" : 6
               },
               {
+                "mark" : true,
+                "x" : 7,
+                "y" : 6
+              },
+              {
                 "walls" : 2,
-                "x" : 3,
+                "x" : 4,
                 "y" : 7
               },
               {
                 "walls" : 10,
                 "mark" : true,
-                "x" : 4,
+                "x" : 5,
                 "y" : 7
               },
               {
                 "walls" : 6,
                 "mark" : true,
-                "x" : 5,
-                "y" : 7
-              },
-              {
-                "walls" : 1,
-                "mark" : true,
                 "x" : 6,
                 "y" : 7
               },
               {
+                "walls" : 1,
                 "mark" : true,
                 "x" : 7,
                 "y" : 7
               },
               {
+                "mark" : true,
+                "x" : 8,
+                "y" : 7
+              },
+              {
                 "walls" : 4,
-                "x" : 3,
+                "x" : 4,
                 "y" : 8
               },
               {
                 "walls" : 11,
                 "mark" : true,
-                "x" : 4,
+                "x" : 5,
                 "y" : 8
               },
               {
                 "walls" : 12,
                 "mark" : true,
-                "x" : 5,
+                "x" : 6,
                 "y" : 8
               },
               {
                 "walls" : 1,
                 "mark" : true,
-                "x" : 6,
-                "y" : 8
-              },
-              {
-                "mark" : true,
                 "x" : 7,
                 "y" : 8
               },
               {
+                "mark" : true,
+                "x" : 8,
+                "y" : 8
+              },
+              {
                 "walls" : 10,
-                "x" : 4,
+                "x" : 5,
                 "y" : 9
               },
               {
                 "walls" : 10,
-                "x" : 5,
+                "x" : 6,
                 "y" : 9
               }
             ]
