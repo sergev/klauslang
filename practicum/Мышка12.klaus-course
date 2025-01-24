@@ -22338,6 +22338,682 @@
           }
         ]
       }
+    },
+    {
+      "name" : "задача9г",
+      "title" : "Задача 9Г",
+      "category" : "Урок 09: Переменные",
+      "description" : "Прямоугольное поле разделено на две части горизонтальной стеной. Где-то в стене есть проход. Мышка стоит в произвольной клетке в северной части поля. Она должна закрасить клетки в углах обеих частей поля и вернуться в начальную точку.\r\nИспользуйте переменные.\r\n\r\nПрограмма должна правильно работать во всех обстановках.",
+      "doer" : {
+        "name" : "Мышка",
+        "settings" : [
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 10,
+            "height" : 10,
+            "mouseX" : 3,
+            "mouseY" : 3,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "mark" : true,
+                "x" : 0,
+                "y" : 0
+              },
+              {
+                "mark" : true,
+                "x" : 9,
+                "y" : 0
+              },
+              {
+                "text1" : "Б",
+                "text2" : "А",
+                "x" : 3,
+                "y" : 3
+              },
+              {
+                "walls" : 9,
+                "mark" : true,
+                "x" : 0,
+                "y" : 4
+              },
+              {
+                "walls" : 8,
+                "x" : 1,
+                "y" : 4
+              },
+              {
+                "walls" : 8,
+                "x" : 2,
+                "y" : 4
+              },
+              {
+                "walls" : 8,
+                "x" : 3,
+                "y" : 4
+              },
+              {
+                "walls" : 8,
+                "x" : 5,
+                "y" : 4
+              },
+              {
+                "walls" : 8,
+                "x" : 6,
+                "y" : 4
+              },
+              {
+                "walls" : 8,
+                "x" : 7,
+                "y" : 4
+              },
+              {
+                "walls" : 8,
+                "x" : 8,
+                "y" : 4
+              },
+              {
+                "walls" : 12,
+                "mark" : true,
+                "x" : 9,
+                "y" : 4
+              },
+              {
+                "walls" : 3,
+                "mark" : true,
+                "x" : 0,
+                "y" : 5
+              },
+              {
+                "walls" : 2,
+                "x" : 1,
+                "y" : 5
+              },
+              {
+                "walls" : 2,
+                "x" : 2,
+                "y" : 5
+              },
+              {
+                "walls" : 2,
+                "x" : 3,
+                "y" : 5
+              },
+              {
+                "walls" : 2,
+                "x" : 5,
+                "y" : 5
+              },
+              {
+                "walls" : 2,
+                "x" : 6,
+                "y" : 5
+              },
+              {
+                "walls" : 2,
+                "x" : 7,
+                "y" : 5
+              },
+              {
+                "walls" : 2,
+                "x" : 8,
+                "y" : 5
+              },
+              {
+                "walls" : 6,
+                "mark" : true,
+                "x" : 9,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 0,
+                "y" : 9
+              },
+              {
+                "mark" : true,
+                "x" : 9,
+                "y" : 9
+              }
+            ]
+          },
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 8,
+            "height" : 9,
+            "mouseX" : 3,
+            "mouseY" : 3,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "mark" : true,
+                "x" : 0,
+                "y" : 0
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 0
+              },
+              {
+                "text1" : "Б",
+                "text2" : "А",
+                "x" : 3,
+                "y" : 3
+              },
+              {
+                "walls" : 9,
+                "mark" : true,
+                "x" : 0,
+                "y" : 6
+              },
+              {
+                "walls" : 8,
+                "x" : 2,
+                "y" : 6
+              },
+              {
+                "walls" : 8,
+                "x" : 3,
+                "y" : 6
+              },
+              {
+                "walls" : 8,
+                "x" : 4,
+                "y" : 6
+              },
+              {
+                "walls" : 8,
+                "x" : 5,
+                "y" : 6
+              },
+              {
+                "walls" : 8,
+                "x" : 6,
+                "y" : 6
+              },
+              {
+                "walls" : 12,
+                "mark" : true,
+                "x" : 7,
+                "y" : 6
+              },
+              {
+                "walls" : 3,
+                "mark" : true,
+                "x" : 0,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 2,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 3,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 4,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 5,
+                "y" : 7
+              },
+              {
+                "walls" : 2,
+                "x" : 6,
+                "y" : 7
+              },
+              {
+                "walls" : 6,
+                "mark" : true,
+                "x" : 7,
+                "y" : 7
+              },
+              {
+                "mark" : true,
+                "x" : 0,
+                "y" : 8
+              },
+              {
+                "mark" : true,
+                "x" : 7,
+                "y" : 8
+              }
+            ]
+          },
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 6,
+            "height" : 7,
+            "mouseX" : 0,
+            "mouseY" : 1,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "mark" : true,
+                "x" : 0,
+                "y" : 0
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 0
+              },
+              {
+                "walls" : 9,
+                "text1" : "Б",
+                "text2" : "А",
+                "mark" : true,
+                "x" : 0,
+                "y" : 1
+              },
+              {
+                "walls" : 8,
+                "x" : 1,
+                "y" : 1
+              },
+              {
+                "walls" : 8,
+                "x" : 2,
+                "y" : 1
+              },
+              {
+                "walls" : 8,
+                "x" : 3,
+                "y" : 1
+              },
+              {
+                "walls" : 12,
+                "mark" : true,
+                "x" : 5,
+                "y" : 1
+              },
+              {
+                "walls" : 3,
+                "mark" : true,
+                "x" : 0,
+                "y" : 2
+              },
+              {
+                "walls" : 2,
+                "x" : 1,
+                "y" : 2
+              },
+              {
+                "walls" : 2,
+                "x" : 2,
+                "y" : 2
+              },
+              {
+                "walls" : 2,
+                "x" : 3,
+                "y" : 2
+              },
+              {
+                "walls" : 6,
+                "mark" : true,
+                "x" : 5,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 0,
+                "y" : 6
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 6
+              }
+            ]
+          },
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 6,
+            "height" : 6,
+            "mouseX" : 3,
+            "mouseY" : 0,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "mark" : true,
+                "x" : 0,
+                "y" : 0
+              },
+              {
+                "text1" : "Б",
+                "text2" : "А",
+                "x" : 3,
+                "y" : 0
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 0
+              },
+              {
+                "walls" : 9,
+                "mark" : true,
+                "x" : 0,
+                "y" : 2
+              },
+              {
+                "walls" : 8,
+                "x" : 1,
+                "y" : 2
+              },
+              {
+                "walls" : 8,
+                "x" : 2,
+                "y" : 2
+              },
+              {
+                "walls" : 8,
+                "x" : 4,
+                "y" : 2
+              },
+              {
+                "walls" : 12,
+                "mark" : true,
+                "x" : 5,
+                "y" : 2
+              },
+              {
+                "walls" : 3,
+                "mark" : true,
+                "x" : 0,
+                "y" : 3
+              },
+              {
+                "walls" : 2,
+                "x" : 1,
+                "y" : 3
+              },
+              {
+                "walls" : 2,
+                "x" : 2,
+                "y" : 3
+              },
+              {
+                "walls" : 2,
+                "x" : 4,
+                "y" : 3
+              },
+              {
+                "walls" : 6,
+                "mark" : true,
+                "x" : 5,
+                "y" : 3
+              },
+              {
+                "mark" : true,
+                "x" : 0,
+                "y" : 5
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 5
+              }
+            ]
+          },
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 6,
+            "height" : 5,
+            "mouseX" : 5,
+            "mouseY" : 2,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "mark" : true,
+                "x" : 0,
+                "y" : 0
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 0
+              },
+              {
+                "walls" : 9,
+                "mark" : true,
+                "x" : 0,
+                "y" : 2
+              },
+              {
+                "walls" : 8,
+                "x" : 1,
+                "y" : 2
+              },
+              {
+                "walls" : 8,
+                "x" : 3,
+                "y" : 2
+              },
+              {
+                "walls" : 8,
+                "x" : 4,
+                "y" : 2
+              },
+              {
+                "walls" : 12,
+                "text1" : "Б",
+                "text2" : "А",
+                "mark" : true,
+                "x" : 5,
+                "y" : 2
+              },
+              {
+                "walls" : 3,
+                "mark" : true,
+                "x" : 0,
+                "y" : 3
+              },
+              {
+                "walls" : 2,
+                "x" : 1,
+                "y" : 3
+              },
+              {
+                "walls" : 2,
+                "x" : 3,
+                "y" : 3
+              },
+              {
+                "walls" : 2,
+                "x" : 4,
+                "y" : 3
+              },
+              {
+                "walls" : 6,
+                "mark" : true,
+                "x" : 5,
+                "y" : 3
+              },
+              {
+                "mark" : true,
+                "x" : 0,
+                "y" : 4
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 4
+              }
+            ]
+          },
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 6,
+            "height" : 4,
+            "mouseX" : 4,
+            "mouseY" : 1,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "mark" : true,
+                "x" : 0,
+                "y" : 0
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 0
+              },
+              {
+                "walls" : 9,
+                "mark" : true,
+                "x" : 0,
+                "y" : 1
+              },
+              {
+                "walls" : 8,
+                "x" : 1,
+                "y" : 1
+              },
+              {
+                "walls" : 8,
+                "x" : 2,
+                "y" : 1
+              },
+              {
+                "walls" : 8,
+                "x" : 3,
+                "y" : 1
+              },
+              {
+                "text1" : "Б",
+                "text2" : "А",
+                "x" : 4,
+                "y" : 1
+              },
+              {
+                "walls" : 12,
+                "mark" : true,
+                "x" : 5,
+                "y" : 1
+              },
+              {
+                "walls" : 3,
+                "mark" : true,
+                "x" : 0,
+                "y" : 2
+              },
+              {
+                "walls" : 2,
+                "x" : 1,
+                "y" : 2
+              },
+              {
+                "walls" : 2,
+                "x" : 2,
+                "y" : 2
+              },
+              {
+                "walls" : 2,
+                "x" : 3,
+                "y" : 2
+              },
+              {
+                "walls" : 6,
+                "mark" : true,
+                "x" : 5,
+                "y" : 2
+              },
+              {
+                "mark" : true,
+                "x" : 0,
+                "y" : 3
+              },
+              {
+                "mark" : true,
+                "x" : 5,
+                "y" : 3
+              }
+            ]
+          },
+          {
+            "caption" : "",
+            "ver" : 2,
+            "width" : 6,
+            "height" : 2,
+            "mouseX" : 3,
+            "mouseY" : 0,
+            "mouseDir" : 3,
+            "cells" : [
+              {
+                "walls" : 11,
+                "mark" : true,
+                "x" : 0,
+                "y" : 0
+              },
+              {
+                "walls" : 10,
+                "x" : 1,
+                "y" : 0
+              },
+              {
+                "walls" : 10,
+                "text1" : "Б",
+                "text2" : "А",
+                "x" : 3,
+                "y" : 0
+              },
+              {
+                "walls" : 10,
+                "x" : 4,
+                "y" : 0
+              },
+              {
+                "walls" : 14,
+                "mark" : true,
+                "x" : 5,
+                "y" : 0
+              },
+              {
+                "walls" : 11,
+                "mark" : true,
+                "x" : 0,
+                "y" : 1
+              },
+              {
+                "walls" : 10,
+                "x" : 1,
+                "y" : 1
+              },
+              {
+                "walls" : 10,
+                "x" : 3,
+                "y" : 1
+              },
+              {
+                "walls" : 10,
+                "x" : 4,
+                "y" : 1
+              },
+              {
+                "walls" : 14,
+                "mark" : true,
+                "x" : 5,
+                "y" : 1
+              }
+            ]
+          }
+        ]
+      }
     }
   ]
 }
