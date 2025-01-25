@@ -790,8 +790,8 @@ type
       constructor create(aStmt: tKlausStatement; aUop: tKlausUnaryOperation; aPoint: tSrcPoint);
       function resultType: tKlausDataType;
       function resultTypeDef: tKlausTypeDef; virtual;
-      function evaluate: tKlausSimpleValue;
-      function evaluate(frame: tKlausStackFrame; allowCalls: boolean): tKlausSimpleValue;
+      function evaluate: tKlausSimpleValue; virtual;
+      function evaluate(frame: tKlausStackFrame; allowCalls: boolean): tKlausSimpleValue; virtual;
       function acquireVarValue: tKlausVarValue; virtual;
       function acquireVarValue(frame: tKlausStackFrame; allowCalls: boolean): tKlausVarValue; virtual;
   end;
@@ -808,18 +808,21 @@ type
       fRight: tKlausOperand;
       fOp: tKlausBinaryOperation;
       fOpPoint: tSrcPoint;
+      fAbs: boolean;
 
       procedure setLeft(aLeft: tKlausOperand);
       procedure setRight(aRight: tKlausOperand);
+      procedure doAbs(var v: tKlausSimpleValue);
     protected
-      function doEvaluate: tKlausSimpleValue; override;
-      function doEvaluate(frame: tKlausStackFrame; allowCalls: boolean): tKlausSimpleValue; override;
-      function getResultType: tKlausDataType; override;
+      function  doEvaluate: tKlausSimpleValue; override;
+      function  doEvaluate(frame: tKlausStackFrame; allowCalls: boolean): tKlausSimpleValue; override;
+      function  getResultType: tKlausDataType; override;
     public
       property left: tKlausOperand read fLeft write setLeft;
       property right: tKlausOperand read fRight write setRight;
       property op: tKlausBinaryOperation read fOp write fOp;
       property opPoint: tSrcPoint read fOpPoint write fOpPoint;
+      property abs: boolean read fAbs write fAbs;
 
       constructor create(aStmt: tKlausStatement; aUop: tKlausUnaryOperation; aPoint: tSrcPoint);
       destructor  destroy; override;
@@ -2577,8 +2580,7 @@ end;
 function tKlausOperand.resultType: tKlausDataType;
 begin
   result := getResultType;
-  if (uop <> kuoInvalid) then
-    result := klausUnOp[uop].resultType(result, point);
+  if (uop <> kuoInvalid) then result := klausUnOp[uop].resultType(result, point);
 end;
 
 function tKlausOperand.resultTypeDef: tKlausTypeDef;
@@ -3231,6 +3233,7 @@ begin
     vr := right.evaluate;
     result := klausBinOp[op].evaluate(result, vr, opPoint);
   end;
+  doAbs(result);
 end;
 
 function tKlausExpression.doEvaluate(frame: tKlausStackFrame; allowCalls: boolean): tKlausSimpleValue;
@@ -3243,11 +3246,23 @@ begin
     vr := right.evaluate(frame, allowCalls);
     result := klausBinOp[op].evaluate(result, vr, opPoint);
   end;
+  doAbs(result);
+end;
+
+procedure tKlausExpression.doAbs(var v: tKlausSimpleValue);
+begin
+  if abs then begin
+    if not (v.dataType in [kdtInteger, kdtFloat]) then raise eKlausError.create(ercTypeMismatch, left.point);
+    case v.dataType of
+      kdtInteger: v.iValue := system.abs(v.iValue);
+      kdtFloat: v.fValue := system.abs(v.fValue);
+    end;
+  end;
 end;
 
 function tKlausExpression.isVarPath: boolean;
 begin
-  result := (left is tKlausOpndVarPath) and (left.uop = kuoInvalid) and (right = nil);
+  result := not abs and (left is tKlausOpndVarPath) and (left.uop = kuoInvalid) and (right = nil);
 end;
 
 function tKlausExpression.isReadOnly: boolean;
@@ -3258,12 +3273,12 @@ end;
 
 function  tKlausExpression.isCall: boolean;
 begin
-  result := (left is tKlausOpndCall) and (left.uop = kuoInvalid) and (right = nil);
+  result := not abs and (left is tKlausOpndCall) and (left.uop = kuoInvalid) and (right = nil);
 end;
 
 function tKlausExpression.isCompound: boolean;
 begin
-  result := (left is tKlausOpndCompound) and (left.uop = kuoInvalid) and (right = nil);
+  result := not abs and (left is tKlausOpndCompound) and (left.uop = kuoInvalid) and (right = nil);
 end;
 
 function tKlausExpression.acquireVarValue: tKlausVarValue;
@@ -3294,6 +3309,7 @@ begin
     dtr := right.resultType;
     result := klausBinOp[op].resultType(result, dtr, opPoint);
   end;
+  if abs and not (result in [kdtInteger, kdtFloat]) then raise eKlausError.create(ercTypeMismatch, point);
 end;
 
 { tKlausStmtHalt }
@@ -6539,12 +6555,19 @@ function tKlausRoutine.createExpression(aStmt: tKlausStatement; b: tKlausSyntaxB
     else if b.check('var_path', false) then result := tKlausOpndVarPath.create(aStmt, uop, p, b)
     else if b.check('exists', false) then result := tKlausOpndExists.create(aStmt, uop, p, b)
     else if b.check('call', false) then result := tKlausOpndCall.create(aStmt, uop, p, b)
-    else if b.check(klsParOpen) then begin
+    else if b.check(klsParOpen, false) then begin
       b.next;
       b.check('expression');
       result := doCreateExpression(uop, p);
       b.next;
       b.check(klsParClose);
+    end else if b.check(klsAbs) then begin
+      b.next;
+      b.check('expression');
+      result := doCreateExpression(uop, p);
+      (result as tKlausExpression).abs := true;
+      b.next;
+      b.check(klsAbs);
     end;
   end;
 
@@ -6631,7 +6654,7 @@ function tKlausRoutine.createExpression(aStmt: tKlausStatement; b: tKlausSyntaxB
 
   const
     bopSym = [low(tKlausBinOpSymbols)..high(tKlausBinOpSymbols)];
-    bopKwd = [kkwdAnd, kkwdOr, kkwdXor];
+    bopKwd = [low(tKlausBinOpKeywords)..high(tKlausBinOpKeywords)];
   var
     r: integer;
     kwd: tKlausKeyword;

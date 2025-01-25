@@ -221,11 +221,11 @@ const
 
     (name: 'binary_operation';
     def:   '("+" | "++" | "-" | "*" | "/" | "\" | "%" | "^" | "=" | "<>" | ">" | "<" |'+
-           '">=" | "<=" | "&&" | "||" | "~~" | "&" | "|" | "~" | `и` | `или` | `либо`)'),
+           '">=" | "<=" | "&&" | "||" | "~~" | `и` | `или` | `либо`)'),
 
     (name: 'operand';
     def:   '[<unary_operation>] (<literal> | <typecast> | <call> | <var_path> | <exists> | '+
-           '"(" <expression> ")")'),
+           '"(" <expression> ")" | "|" <expression> "|")'),
 
     (name: 'literal';
     def:   '(#char | #string | #integer | #float | #moment | `да` | `нет` | `пусто`)'),

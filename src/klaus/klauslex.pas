@@ -195,14 +195,11 @@ type
     klsGT,        // больше
     klsLE,        // меньше или равно
     klsGE,        // больше или равно
-    klsAnd,       // логическое "и"
-    klsOr,        // логическое "или"
-    klsXor,       // логическое "исключающее или"
     klsBitAnd,    // побитовое "и"
     klsBitOr,     // побитовое "или"
     klsBitXor,    // побитовое "исключающее или"
     klsMinus,     // унарный минус, вычитание
-    klsNot,       // логическое отрицание
+    klsNot,       // побитовое отрицание
     klsAsgn,      // присвоить
     klsAddAsgn,   // прибавить и присвоить
     klsSubAsgn,   // вычесть и присвоить
@@ -223,7 +220,8 @@ type
     klsBktOpen,   // обращение к элементу массива или словаря, литерал массива
     klsBktClose,  // обращение к элементу массива или словаря, литерал массива
     klsBrcOpen,   // литерал словаря, структуры
-    klsBrcClose   // литерал словаря, структуры
+    klsBrcClose,  // литерал словаря, структуры
+    klsAbs        // знак модуля
   );
 
 type
@@ -487,12 +485,10 @@ const
     (s: '>='; k: klsGE),
     (s: '-';  k: klsMinus),
     (s: '!'; k: klsNot),
-    (s: '&&'; k: klsAnd),
-    (s: '||'; k: klsOr),
-    (s: '~~'; k: klsXor),
-    (s: '&'; k: klsBitAnd),
-    (s: '|'; k: klsBitOr),
-    (s: '~'; k: klsBitXor),
+    (s: '&&'; k: klsBitAnd),
+    (s: '||'; k: klsBitOr),
+    (s: '~~'; k: klsBitXor),
+    (s: '|'; k: klsAbs),
     (s: ':='; k: klsAsgn),
     (s: '+='; k: klsAddAsgn),
     (s: '-='; k: klsSubAsgn),

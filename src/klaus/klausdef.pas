@@ -99,7 +99,7 @@ type
 
 type
   // Унарная операция
-  tKlausUnaryOperation = (kuoInvalid, kuoMinus, kuoNot);
+  tKlausUnaryOperation = (kuoInvalid, kuoMinus, kuoNot, kuoBitNot);
   tKlausValidUnaryOperation = succ(kuoInvalid)..high(tKlausUnaryOperation);
   tKlausUnOpSymbols = klsMinus..klsNot;
   tKlausUnOpKeywords = kkwdNot..kkwdNot;
@@ -108,14 +108,15 @@ const
   // Ключевые слова унарных операций
   klausKwdToUnOp: array[tKlausUnOpKeywords] of tKlausValidUnaryOperation = (kuoNot);
   // Символы унарных операций
-  klausSymToUnOp: array[tKlausUnOpSymbols] of tKlausValidUnaryOperation = (kuoMinus, kuoNot);
+  klausSymToUnOp: array[tKlausUnOpSymbols] of tKlausValidUnaryOperation = (kuoMinus, kuoBitNot);
 
 const
   // Наименования унарных операций
   klausUnaryOperationName: array[tKlausUnaryOperation] of string = (
     'не определено', //kuoInvalid
     'минус',         //kuoMinus
-    'отрицание'      //kuoNot
+    'отрицание',     //kuoNot
+    'побитовое НЕ'   //kuoNot
   );
 
 type
@@ -139,7 +140,7 @@ const
   // Символы бинарных операций
   klausSymToBinOp: array[tKlausBinOpSymbols] of tKlausValidBinaryOperation = (
     kboPlus, kboConcat, kboMulti, kboFDiv, kboIDiv, kboMod, kboPwr, kboEq, kboNEq,
-    kboLT, kboGT, kboLE, kboGE, kboAnd, kboOr, kboXor, kboBitAnd, kboBitOr, kboBitXor, kboMinus);
+    kboLT, kboGT, kboLE, kboGE, kboBitAnd, kboBitOr, kboBitXor, kboMinus);
 
 const
   // Приоритет бинарных операций
@@ -233,6 +234,17 @@ type
 type
   // Унарная операция "логическое НЕ"
   tKlausUnOpNot = class(tKlausUnaryOperator)
+    protected
+      function getOp: tKlausUnaryOperation; override;
+    public
+      function defined(dt: tKlausDataType): boolean; override;
+      function resultType(dt: tKlausDataType; const at: tSrcPoint): tKlausDataType; override;
+      function evaluate(const v: tKlausSimpleValue; const at: tSrcPoint): tKlausSimpleValue; override;
+  end;
+
+type
+  // Унарная операция "побитовое НЕ"
+  tKlausUnOpBitNot = class(tKlausUnaryOperator)
     protected
       function getOp: tKlausUnaryOperation; override;
     public
@@ -871,7 +883,7 @@ end;
 
 function tKlausUnOpNot.defined(dt: tKlausDataType): boolean;
 begin
-  result := dt in [kdtInteger, kdtBoolean];
+  result := dt = kdtBoolean;
 end;
 
 function tKlausUnOpNot.resultType(dt: tKlausDataType; const at: tSrcPoint): tKlausDataType;
@@ -883,10 +895,31 @@ end;
 function tKlausUnOpNot.evaluate(const v: tKlausSimpleValue; const at: tSrcPoint): tKlausSimpleValue;
 begin
   result.dataType := resultType(v.dataType, at);
-  case result.dataType of
-    kdtInteger: result.iValue := not v.iValue;
-    kdtBoolean: result.bValue := not v.bValue;
-  end;
+  result.bValue := not v.bValue;
+end;
+
+{ tKlausUnOpBitNot }
+
+function tKlausUnOpBitNot.getOp: tKlausUnaryOperation;
+begin
+  result := kuoBitNot;
+end;
+
+function tKlausUnOpBitNot.defined(dt: tKlausDataType): boolean;
+begin
+  result := dt = kdtInteger;
+end;
+
+function tKlausUnOpBitNot.resultType(dt: tKlausDataType; const at: tSrcPoint): tKlausDataType;
+begin
+  checkDefined(dt, at);
+  result := dt;
+end;
+
+function tKlausUnOpBitNot.evaluate(const v: tKlausSimpleValue; const at: tSrcPoint): tKlausSimpleValue;
+begin
+  result.dataType := resultType(v.dataType, at);
+  result.iValue := not v.iValue;
 end;
 
 { tKlausUnaryOperator }
@@ -1392,6 +1425,7 @@ initialization
   // Унарные операторы
   klausUnOp[kuoMinus] := tKlausUnOpMinus.create;
   klausUnOp[kuoNot] := tKlausUnOpNot.create;
+  klausUnOp[kuoBitNot] := tKlausUnOpBitNot.create;
   // Бинарные операторы
   klausBinOp[kboPlus] := tKlausBinOpPlus.create;
   klausBinOp[kboConcat] := tKlausBinOpConcat.create;
