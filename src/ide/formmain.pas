@@ -66,303 +66,300 @@ type
   end;
 
 type
-
-  { tMainForm }
-
   tMainForm = class(tForm)
-    actFileNew: TAction;
-    actFileOpen: TAction;
-    actFileSave: TAction;
-    actFileSaveAs: TAction;
-    actFileSaveAll: TAction;
-    actFileClose: TAction;
-    actFileExit: TAction;
-    actEditReplace: TAction;
-    actEditSearchNext: TAction;
-    actEditSearch: TAction;
-    actEditUndo: TAction;
-    actEditCut: TAction;
-    actEditCopy: TAction;
-    actEditPaste: TAction;
-    actEditSelectAll: TAction;
-    actEditDeleteLine: TAction;
-    actEditIndentBlock: TAction;
-    actEditUnindentBlock: TAction;
-    actHelpAbout: TAction;
-    actFileOptions: TAction;
-    actDebugWatches: TAction;
-    actDebugEvaluateWatch: TAction;
-    actHelpReferenceGuide: TAction;
-    actRunImmediate: TAction;
-    actRunAllSettings: TAction;
-    actRunFast: TAction;
-    actRunFastest: TAction;
-    actRunMedium: TAction;
-    actRunSlow: TAction;
-    actRunSlowest: TAction;
-    actRunInterceptKeyboard: TAction;
-    actDebugRunToCursor: TAction;
-    actDebugToggleBreakpoint: TAction;
-    actRunShowScene: TAction;
-    actRunStartArgs: TAction;
-    actDebugShowExecPoint: TAction;
-    actDebugStepInto: TAction;
-    actDebugStepOver: TAction;
-    actRunStop: TAction;
-    actRunPause: TAction;
-    actRunStart: TAction;
-    actRunCheckSyntax: TAction;
-    actToggleBookmark0: TAction;
-    actToggleBookmark1: TAction;
-    actToggleBookmark2: TAction;
-    actToggleBookmark3: TAction;
-    actToggleBookmark4: TAction;
-    actToggleBookmark5: TAction;
-    actToggleBookmark6: TAction;
-    actToggleBookmark7: TAction;
-    actToggleBookmark8: TAction;
-    actToggleBookmark9: TAction;
-    actGotoBookmark0: TAction;
-    actGotoBookmark1: TAction;
-    actGotoBookmark2: TAction;
-    actGotoBookmark3: TAction;
-    actGotoBookmark4: TAction;
-    actGotoBookmark5: TAction;
-    actGotoBookmark6: TAction;
-    actGotoBookmark7: TAction;
-    actGotoBookmark8: TAction;
-    actGotoBookmark9: TAction;
-    actDebugBreakpoints: TAction;
-    actDebugCallStack: TAction;
-    actDebugLocalVariables: TAction;
-    actWindowMoveTabRight: TAction;
-    actWindowMoveTabLeft: TAction;
-    actWindowPrevTab: TAction;
-    actWindowNextTab: TAction;
-    actionList: TActionList;
-    actionImages: TImageList;
-    applicationProperties: TApplicationProperties;
-    bvDebugSizer: TBevel;
-    bvCourseSizer: TBevel;
-    editLineImages: TImageList;
-    MenuItem1: TMenuItem;
-    MenuItem2: TMenuItem;
-    MenuItem3: TMenuItem;
-    miRunImmediate: TMenuItem;
-    miRunAllSettings: TMenuItem;
-    miRunFastest: TMenuItem;
-    miRunFast: TMenuItem;
-    miRunMedium: TMenuItem;
-    miRunSlow: TMenuItem;
-    miRunSlowest: TMenuItem;
-    miRunDoerSpeed: TMenuItem;
-    miPracticum: TMenuItem;
-    miDebug: TMenuItem;
-    miDebugBreakpoints: TMenuItem;
-    miDebugCallStack: TMenuItem;
-    miDebugLocalVariables: TMenuItem;
-    miDebugRunToCursor: TMenuItem;
-    miDebugShowExecPoint: TMenuItem;
-    miDebugStepInto: TMenuItem;
-    miDebugStepOver: TMenuItem;
-    miDebugToggleBreakpoint: TMenuItem;
-    miDebugWatches: TMenuItem;
-    miFileOptions: TMenuItem;
-    miRunInterceptKeyboard: TMenuItem;
-    miHelpAbout: TMenuItem;
-    miHelp: TMenuItem;
-    miEditIndentBlock: TMenuItem;
-    miEditUnindentBlock: TMenuItem;
-    miRunToCursor: TMenuItem;
-    miToggleBreakpoint: TMenuItem;
-    miToggleBookmark9: TMenuItem;
-    miToggleBookmark8: TMenuItem;
-    miToggleBookmark7: TMenuItem;
-    miToggleBookmark6: TMenuItem;
-    miToggleBookmark5: TMenuItem;
-    miToggleBookmark4: TMenuItem;
-    miToggleBookmark3: TMenuItem;
-    miToggleBookmark2: TMenuItem;
-    miToggleBookmark1: TMenuItem;
-    miToggleBookmark0: TMenuItem;
-    miToggleBookmark: TMenuItem;
-    miGotoBookmark9: TMenuItem;
-    migotoBookmark8: TMenuItem;
-    miGotoBookmark7: TMenuItem;
-    miGotoBookmark6: TMenuItem;
-    miGotoBookmark5: TMenuItem;
-    miGotoBookmark4: TMenuItem;
-    miGotoBookmark3: TMenuItem;
-    miGotoBookmark2: TMenuItem;
-    miGotoBookmark1: TMenuItem;
-    miGotoBookmark0: TMenuItem;
-    miGotoBookmark: TMenuItem;
-    miRunShowScene: TMenuItem;
-    miRunCheckSyntax: TMenuItem;
-    miRunStart: TMenuItem;
-    miRunStartArgs: TMenuItem;
-    miRunPause: TMenuItem;
-    miRunStop: TMenuItem;
-    miSunStepInto: TMenuItem;
-    miRunStepOver: TMenuItem;
-    miRunShowExecPoint: TMenuItem;
-    miRun: TMenuItem;
-    miEditCut: TMenuItem;
-    miEditCopy: TMenuItem;
-    miEditPaste: TMenuItem;
-    miEditSelectAll: TMenuItem;
-    miWindowPrevTab: TMenuItem;
-    miWindowNextTab: TMenuItem;
-    miWindowMoveTabLeft: TMenuItem;
-    miWindowMoveTabRight: TMenuItem;
-    miWindowLocalVariables: TMenuItem;
-    miWindowCallStack: TMenuItem;
-    miWindowBreakpoints: TMenuItem;
-    miWindow: TMenuItem;
-    sbDebug: TScrollBox;
-    pnDebugContent: TFlowPanel;
-    saveDialog: TSaveDialog;
-    sbCourse: TScrollBox;
-    Separator1: TMenuItem;
-    mainMenu: TMainMenu;
-    miEditReplace: TMenuItem;
-    miEditSearchNext: TMenuItem;
-    miEditSearch: TMenuItem;
-    miEditUndo: TMenuItem;
-    miFileOpen: TMenuItem;
-    miFileSave: TMenuItem;
-    miFileSaveAs: TMenuItem;
-    miFileSaveAll: TMenuItem;
-    miFileExit: TMenuItem;
-    miFileClose: TMenuItem;
-    openDialog: TOpenDialog;
-    pageControl: TPageControl;
-    miSepRecent: TMenuItem;
-    miEdit: TMenuItem;
-    miFile: TMenuItem;
-    miFileNew: TMenuItem;
-    Separator10: TMenuItem;
-    Separator11: TMenuItem;
-    Separator12: TMenuItem;
-    Separator13: TMenuItem;
-    Separator14: TMenuItem;
-    Separator2: TMenuItem;
-    Separator3: TMenuItem;
-    Separator4: TMenuItem;
-    Separator5: TMenuItem;
-    Separator6: TMenuItem;
-    Separator7: TMenuItem;
-    Separator8: TMenuItem;
-    Separator9: TMenuItem;
-    statusBar: TStatusBar;
-    tbWindowWatches: TToolButton;
-    toolBar: TToolBar;
-    tbFileNew: TToolButton;
-    tbEditReplace: TToolButton;
-    tbFileOpen: TToolButton;
-    tbFileSave: TToolButton;
-    tbFileClose: TToolButton;
-    ToolButton1: TToolButton;
-    tbWindowLocalVariables: TToolButton;
-    tbWindowCallStack: TToolButton;
-    tbEditCut: TToolButton;
-    tbEditCopy: TToolButton;
-    tbEditPaste: TToolButton;
-    ToolButton10: TToolButton;
-    tbRunStepInto: TToolButton;
-    tbRunStepOver: TToolButton;
-    tbRunShowExecPoint: TToolButton;
-    tbFileOptions: TToolButton;
-    ToolButton11: TToolButton;
-    ToolButton12: TToolButton;
-    ToolButton13: TToolButton;
-    ToolButton14: TToolButton;
-    ToolButton15: TToolButton;
-    ToolButton16: TToolButton;
-    ToolButton17: TToolButton;
-    ToolButton2: TToolButton;
-    tbRunCheckSyntax: TToolButton;
-    tbRunStart: TToolButton;
-    ToolButton3: TToolButton;
-    tbRunShowScene: TToolButton;
-    ToolButton4: TToolButton;
-    ToolButton5: TToolButton;
-    tbEditUndo: TToolButton;
-    tbWindowBreakpoints: TToolButton;
-    tbRunStartArgs: TToolButton;
-    ToolButton6: TToolButton;
-    ToolButton7: TToolButton;
-    tbEditSearch: TToolButton;
-    tbEditSearchNext: TToolButton;
-    tbRunPause: TToolButton;
-    tbRunStop: TToolButton;
-    ToolButton8: TToolButton;
-    ToolButton9: TToolButton;
-    procedure actDebugEvaluateWatchExecute(Sender: TObject);
-    procedure actEditCopyExecute(Sender: TObject);
-    procedure actEditCutExecute(Sender: TObject);
-    procedure actEditDeleteLineExecute(Sender: TObject);
-    procedure actEditIndentBlockExecute(Sender: TObject);
-    procedure actEditPasteExecute(Sender: TObject);
-    procedure actEditSearchNextExecute(Sender: TObject);
-    procedure actEditSearchReplaceExecute(Sender: TObject);
-    procedure actEditSelectAllExecute(Sender: TObject);
-    procedure actEditUndoExecute(Sender: TObject);
-    procedure actEditUnindentBlockExecute(Sender: TObject);
-    procedure actFileCloseExecute(sender: TObject);
-    procedure actFileExitExecute(sender: TObject);
-    procedure actFileNewExecute(sender: TObject);
-    procedure actFileOpenExecute(sender: TObject);
-    procedure actFileOptionsExecute(Sender: TObject);
-    procedure actFileSaveAllExecute(Sender: TObject);
-    procedure actFileSaveAsExecute(sender: TObject);
-    procedure actFileSaveExecute(sender: TObject);
-    procedure actHelpAboutExecute(Sender: TObject);
-    procedure actHelpReferenceGuideExecute(Sender: TObject);
-    procedure actRunAllSettingsExecute(Sender: TObject);
-    procedure actRunCheckSyntaxExecute(Sender: TObject);
-    procedure actRunFastestExecute(Sender: TObject);
-    procedure actRunFastExecute(Sender: TObject);
-    procedure actRunImmediateExecute(Sender: TObject);
-    procedure actRunInterceptKeyboardExecute(Sender: TObject);
-    procedure actRunMediumExecute(Sender: TObject);
-    procedure actRunPauseExecute(Sender: TObject);
-    procedure actDebugShowExecPointExecute(Sender: TObject);
-    procedure actRunShowSceneExecute(Sender: TObject);
-    procedure actRunSlowestExecute(Sender: TObject);
-    procedure actRunSlowExecute(Sender: TObject);
-    procedure actRunStartArgsExecute(Sender: TObject);
-    procedure actRunStartExecute(Sender: TObject);
-    procedure actDebugStepIntoExecute(Sender: TObject);
-    procedure actDebugStepOverExecute(Sender: TObject);
-    procedure actRunStopExecute(Sender: TObject);
-    procedure actDebugRunToCursorExecute(Sender: TObject);
-    procedure actDebugToggleBreakpointExecute(Sender: TObject);
-    procedure actToggleBookmarkExecute(Sender: TObject);
-    procedure actGotoBookmarkExecute(Sender: TObject);
-    procedure actDebugBreakpointsExecute(Sender: TObject);
-    procedure actDebugCallStackExecute(Sender: TObject);
-    procedure actDebugLocalVariablesExecute(Sender: TObject);
-    procedure actWindowMoveTabLeftExecute(Sender: TObject);
-    procedure actWindowMoveTabRightExecute(Sender: TObject);
-    procedure actWindowNextTabExecute(Sender: TObject);
-    procedure actWindowPrevTabExecute(Sender: TObject);
-    procedure actDebugWatchesExecute(Sender: TObject);
+    actFileNew: tAction;
+    actFileOpen: tAction;
+    actFileSave: tAction;
+    actFileSaveAs: tAction;
+    actFileSaveAll: tAction;
+    actFileClose: tAction;
+    actFileExit: tAction;
+    actEditReplace: tAction;
+    actEditSearchNext: tAction;
+    actEditSearch: tAction;
+    actEditUndo: tAction;
+    actEditCut: tAction;
+    actEditCopy: tAction;
+    actEditPaste: tAction;
+    actEditSelectAll: tAction;
+    actEditDeleteLine: tAction;
+    actEditIndentBlock: tAction;
+    actEditUnindentBlock: tAction;
+    actHelpAbout: tAction;
+    actFileOptions: tAction;
+    actDebugWatches: tAction;
+    actDebugEvaluateWatch: tAction;
+    actHelpReferenceGuide: tAction;
+    actRunImmediate: tAction;
+    actRunAllSettings: tAction;
+    actRunFast: tAction;
+    actRunFastest: tAction;
+    actRunMedium: tAction;
+    actRunSlow: tAction;
+    actRunSlowest: tAction;
+    actRunInterceptKeyboard: tAction;
+    actDebugRunToCursor: tAction;
+    actDebugToggleBreakpoint: tAction;
+    actRunShowScene: tAction;
+    actRunStartArgs: tAction;
+    actDebugShowExecPoint: tAction;
+    actDebugStepInto: tAction;
+    actDebugStepOver: tAction;
+    actRunStop: tAction;
+    actRunPause: tAction;
+    actRunStart: tAction;
+    actRunCheckSyntax: tAction;
+    actToggleBookmark0: tAction;
+    actToggleBookmark1: tAction;
+    actToggleBookmark2: tAction;
+    actToggleBookmark3: tAction;
+    actToggleBookmark4: tAction;
+    actToggleBookmark5: tAction;
+    actToggleBookmark6: tAction;
+    actToggleBookmark7: tAction;
+    actToggleBookmark8: tAction;
+    actToggleBookmark9: tAction;
+    actGotoBookmark0: tAction;
+    actGotoBookmark1: tAction;
+    actGotoBookmark2: tAction;
+    actGotoBookmark3: tAction;
+    actGotoBookmark4: tAction;
+    actGotoBookmark5: tAction;
+    actGotoBookmark6: tAction;
+    actGotoBookmark7: tAction;
+    actGotoBookmark8: tAction;
+    actGotoBookmark9: tAction;
+    actDebugBreakpoints: tAction;
+    actDebugCallStack: tAction;
+    actDebugLocalVariables: tAction;
+    actWindowMoveTabRight: tAction;
+    actWindowMoveTabLeft: tAction;
+    actWindowPrevTab: tAction;
+    actWindowNextTab: tAction;
+    actionList: tActionList;
+    actionImages: tImageList;
+    applicationProperties: tApplicationProperties;
+    bvDebugSizer: tBevel;
+    bvCourseSizer: tBevel;
+    editLineImages: tImageList;
+    MenuItem1: tMenuItem;
+    MenuItem2: tMenuItem;
+    MenuItem3: tMenuItem;
+    miRunImmediate: tMenuItem;
+    miRunAllSettings: tMenuItem;
+    miRunFastest: tMenuItem;
+    miRunFast: tMenuItem;
+    miRunMedium: tMenuItem;
+    miRunSlow: tMenuItem;
+    miRunSlowest: tMenuItem;
+    miRunDoerSpeed: tMenuItem;
+    miPracticum: tMenuItem;
+    miDebug: tMenuItem;
+    miDebugBreakpoints: tMenuItem;
+    miDebugCallStack: tMenuItem;
+    miDebugLocalVariables: tMenuItem;
+    miDebugRunToCursor: tMenuItem;
+    miDebugShowExecPoint: tMenuItem;
+    miDebugStepInto: tMenuItem;
+    miDebugStepOver: tMenuItem;
+    miDebugToggleBreakpoint: tMenuItem;
+    miDebugWatches: tMenuItem;
+    miFileOptions: tMenuItem;
+    miRunInterceptKeyboard: tMenuItem;
+    miHelpAbout: tMenuItem;
+    miHelp: tMenuItem;
+    miEditIndentBlock: tMenuItem;
+    miEditUnindentBlock: tMenuItem;
+    miRunToCursor: tMenuItem;
+    miToggleBreakpoint: tMenuItem;
+    miToggleBookmark9: tMenuItem;
+    miToggleBookmark8: tMenuItem;
+    miToggleBookmark7: tMenuItem;
+    miToggleBookmark6: tMenuItem;
+    miToggleBookmark5: tMenuItem;
+    miToggleBookmark4: tMenuItem;
+    miToggleBookmark3: tMenuItem;
+    miToggleBookmark2: tMenuItem;
+    miToggleBookmark1: tMenuItem;
+    miToggleBookmark0: tMenuItem;
+    miToggleBookmark: tMenuItem;
+    miGotoBookmark9: tMenuItem;
+    migotoBookmark8: tMenuItem;
+    miGotoBookmark7: tMenuItem;
+    miGotoBookmark6: tMenuItem;
+    miGotoBookmark5: tMenuItem;
+    miGotoBookmark4: tMenuItem;
+    miGotoBookmark3: tMenuItem;
+    miGotoBookmark2: tMenuItem;
+    miGotoBookmark1: tMenuItem;
+    miGotoBookmark0: tMenuItem;
+    miGotoBookmark: tMenuItem;
+    miRunShowScene: tMenuItem;
+    miRunCheckSyntax: tMenuItem;
+    miRunStart: tMenuItem;
+    miRunStartArgs: tMenuItem;
+    miRunPause: tMenuItem;
+    miRunStop: tMenuItem;
+    miSunStepInto: tMenuItem;
+    miRunStepOver: tMenuItem;
+    miRunShowExecPoint: tMenuItem;
+    miRun: tMenuItem;
+    miEditCut: tMenuItem;
+    miEditCopy: tMenuItem;
+    miEditPaste: tMenuItem;
+    miEditSelectAll: tMenuItem;
+    miWindowPrevTab: tMenuItem;
+    miWindowNextTab: tMenuItem;
+    miWindowMoveTabLeft: tMenuItem;
+    miWindowMoveTabRight: tMenuItem;
+    miWindowLocalVariables: tMenuItem;
+    miWindowCallStack: tMenuItem;
+    miWindowBreakpoints: tMenuItem;
+    miWindow: tMenuItem;
+    sbDebug: tScrollBox;
+    pnDebugContent: tFlowPanel;
+    saveDialog: tSaveDialog;
+    sbCourse: tScrollBox;
+    Separator1: tMenuItem;
+    mainMenu: tMainMenu;
+    miEditReplace: tMenuItem;
+    miEditSearchNext: tMenuItem;
+    miEditSearch: tMenuItem;
+    miEditUndo: tMenuItem;
+    miFileOpen: tMenuItem;
+    miFileSave: tMenuItem;
+    miFileSaveAs: tMenuItem;
+    miFileSaveAll: tMenuItem;
+    miFileExit: tMenuItem;
+    miFileClose: tMenuItem;
+    openDialog: tOpenDialog;
+    pageControl: tPageControl;
+    miSepRecent: tMenuItem;
+    miEdit: tMenuItem;
+    miFile: tMenuItem;
+    miFileNew: tMenuItem;
+    Separator10: tMenuItem;
+    Separator11: tMenuItem;
+    Separator12: tMenuItem;
+    Separator13: tMenuItem;
+    Separator14: tMenuItem;
+    Separator2: tMenuItem;
+    Separator3: tMenuItem;
+    Separator4: tMenuItem;
+    Separator5: tMenuItem;
+    Separator6: tMenuItem;
+    Separator7: tMenuItem;
+    Separator8: tMenuItem;
+    Separator9: tMenuItem;
+    statusBar: tStatusBar;
+    tbWindowWatches: tToolButton;
+    toolBar: tToolBar;
+    tbFileNew: tToolButton;
+    tbEditReplace: tToolButton;
+    tbFileOpen: tToolButton;
+    tbFileSave: tToolButton;
+    tbFileClose: tToolButton;
+    ToolButton1: tToolButton;
+    tbWindowLocalVariables: tToolButton;
+    tbWindowCallStack: tToolButton;
+    tbEditCut: tToolButton;
+    tbEditCopy: tToolButton;
+    tbEditPaste: tToolButton;
+    ToolButton10: tToolButton;
+    tbRunStepInto: tToolButton;
+    tbRunStepOver: tToolButton;
+    tbRunShowExecPoint: tToolButton;
+    tbFileOptions: tToolButton;
+    ToolButton11: tToolButton;
+    ToolButton12: tToolButton;
+    ToolButton13: tToolButton;
+    ToolButton14: tToolButton;
+    ToolButton15: tToolButton;
+    ToolButton16: tToolButton;
+    ToolButton17: tToolButton;
+    ToolButton2: tToolButton;
+    tbRunCheckSyntax: tToolButton;
+    tbRunStart: tToolButton;
+    ToolButton3: tToolButton;
+    tbRunShowScene: tToolButton;
+    ToolButton4: tToolButton;
+    ToolButton5: tToolButton;
+    tbEditUndo: tToolButton;
+    tbWindowBreakpoints: tToolButton;
+    tbRunStartArgs: tToolButton;
+    ToolButton6: tToolButton;
+    ToolButton7: tToolButton;
+    tbEditSearch: tToolButton;
+    tbEditSearchNext: tToolButton;
+    tbRunPause: tToolButton;
+    tbRunStop: tToolButton;
+    ToolButton8: tToolButton;
+    ToolButton9: tToolButton;
+    procedure actDebugEvaluateWatchExecute(sender: tObject);
+    procedure actEditCopyExecute(sender: tObject);
+    procedure actEditCutExecute(sender: tObject);
+    procedure actEditDeleteLineExecute(sender: tObject);
+    procedure actEditIndentBlockExecute(sender: tObject);
+    procedure actEditPasteExecute(sender: tObject);
+    procedure actEditSearchNextExecute(sender: tObject);
+    procedure actEditSearchReplaceExecute(sender: tObject);
+    procedure actEditSelectAllExecute(sender: tObject);
+    procedure actEditUndoExecute(sender: tObject);
+    procedure actEditUnindentBlockExecute(sender: tObject);
+    procedure actFileCloseExecute(sender: tObject);
+    procedure actFileExitExecute(sender: tObject);
+    procedure actFileNewExecute(sender: tObject);
+    procedure actFileOpenExecute(sender: tObject);
+    procedure actFileOptionsExecute(sender: tObject);
+    procedure actFileSaveAllExecute(sender: tObject);
+    procedure actFileSaveAsExecute(sender: tObject);
+    procedure actFileSaveExecute(sender: tObject);
+    procedure actHelpAboutExecute(sender: tObject);
+    procedure actHelpReferenceGuideExecute(sender: tObject);
+    procedure actRunAllSettingsExecute(sender: tObject);
+    procedure actRunCheckSyntaxExecute(sender: tObject);
+    procedure actRunFastestExecute(sender: tObject);
+    procedure actRunFastExecute(sender: tObject);
+    procedure actRunImmediateExecute(sender: tObject);
+    procedure actRunInterceptKeyboardExecute(sender: tObject);
+    procedure actRunMediumExecute(sender: tObject);
+    procedure actRunPauseExecute(sender: tObject);
+    procedure actDebugShowExecPointExecute(sender: tObject);
+    procedure actRunShowSceneExecute(sender: tObject);
+    procedure actRunSlowestExecute(sender: tObject);
+    procedure actRunSlowExecute(sender: tObject);
+    procedure actRunStartArgsExecute(sender: tObject);
+    procedure actRunStartExecute(sender: tObject);
+    procedure actDebugStepIntoExecute(sender: tObject);
+    procedure actDebugStepOverExecute(sender: tObject);
+    procedure actRunStopExecute(sender: tObject);
+    procedure actDebugRunToCursorExecute(sender: tObject);
+    procedure actDebugToggleBreakpointExecute(sender: tObject);
+    procedure actToggleBookmarkExecute(sender: tObject);
+    procedure actGotoBookmarkExecute(sender: tObject);
+    procedure actDebugBreakpointsExecute(sender: tObject);
+    procedure actDebugCallStackExecute(sender: tObject);
+    procedure actDebugLocalVariablesExecute(sender: tObject);
+    procedure actWindowMoveTabLeftExecute(sender: tObject);
+    procedure actWindowMoveTabRightExecute(sender: tObject);
+    procedure actWindowNextTabExecute(sender: tObject);
+    procedure actWindowPrevTabExecute(sender: tObject);
+    procedure actDebugWatchesExecute(sender: tObject);
     procedure applicationHint(sender: tObject);
     procedure formCloseQuery(sender: tObject; var canClose: boolean);
     procedure formShortCut(var msg: tLMKey; var handled: boolean);
     procedure formShow(sender: tObject);
-    procedure pageControlChange(sender: TObject);
-    procedure propStorageRestoreProperties(Sender: TObject);
+    procedure pageControlChange(sender: tObject);
+    procedure propStorageRestoreProperties(sender: tObject);
     procedure bvDebugSizerMouseDown(sender: tObject; button: tMouseButton; shift: tShiftState; x, y: integer);
-    procedure bvDebugSizerMouseMove(sender: TObject; shift: TShiftState; x, y: integer);
+    procedure bvDebugSizerMouseMove(sender: tObject; shift: tShiftState; x, y: integer);
     procedure bvDebugSizerMouseUp(sender: tObject; button: tMouseButton; shift: tShiftState; x, y: integer);
     procedure bvCourseSizerMouseDown(sender: tObject; button: tMouseButton; shift: tShiftState; x, y: integer);
-    procedure bvCourseSizerMouseMove(sender: TObject; shift: TShiftState; x, y: integer);
+    procedure bvCourseSizerMouseMove(sender: tObject; shift: tShiftState; x, y: integer);
     procedure bvCourseSizerMouseUp(sender: tObject; button: tMouseButton; shift: tShiftState; x, y: integer);
-    procedure pnDebugContentResize(Sender: TObject);
-    procedure propStorageRestoringProperties(Sender: TObject);
-    procedure propStorageSavingProperties(Sender: TObject);
+    procedure pnDebugContentResize(sender: tObject);
+    procedure propStorageRestoringProperties(sender: tObject);
+    procedure propStorageSavingProperties(sender: tObject);
     procedure miPracticumCourseClick(sender: tObject);
   private
     fCtlStateClients: tList;
@@ -803,7 +800,7 @@ begin
     messageDlg(msg, mtError, [mbOK], 0);
 end;
 
-procedure tMainForm.actFileNewExecute(sender: TObject);
+procedure tMainForm.actFileNewExecute(sender: tObject);
 begin
   openEditFrame;
 end;
@@ -997,18 +994,21 @@ begin
   fCourseFrame.htmlInfo.fixedTypeface := editStyles.font.name;
 end;
 
-procedure tMainForm.actFileOpenExecute(sender: TObject);
+procedure tMainForm.actFileOpenExecute(sender: tObject);
+var
+  i: integer;
 begin
   if openDialog.execute then
-    openEditFrame(openDialog.fileName);
+    for i := 0 to openDialog.files.count-1 do
+      openEditFrame(openDialog.files[i]);
 end;
 
-procedure tMainForm.actFileOptionsExecute(Sender: TObject);
+procedure tMainForm.actFileOptionsExecute(sender: tObject);
 begin
   showOptionsDlg;
 end;
 
-procedure tMainForm.actFileSaveAllExecute(Sender: TObject);
+procedure tMainForm.actFileSaveAllExecute(sender: tObject);
 var
   i: integer;
 begin
@@ -1016,17 +1016,17 @@ begin
     if not saveEditFrame(frames[i]) then break;
 end;
 
-procedure tMainForm.actFileSaveAsExecute(sender: TObject);
+procedure tMainForm.actFileSaveAsExecute(sender: tObject);
 begin
   saveEditFrame(activeFrame, true);
 end;
 
-procedure tMainForm.actFileSaveExecute(sender: TObject);
+procedure tMainForm.actFileSaveExecute(sender: tObject);
 begin
   saveEditFrame(activeFrame);
 end;
 
-procedure tMainForm.actHelpAboutExecute(Sender: TObject);
+procedure tMainForm.actHelpAboutExecute(sender: tObject);
 begin
   with tSplashForm.create(application) do begin
     closeOnTimer := false;
@@ -1034,7 +1034,7 @@ begin
   end;
 end;
 
-procedure tMainForm.actHelpReferenceGuideExecute(Sender: TObject);
+procedure tMainForm.actHelpReferenceGuideExecute(sender: tObject);
 var
   fn: string;
 begin
@@ -1042,12 +1042,12 @@ begin
   openDocument(fn);
 end;
 
-procedure tMainForm.actRunAllSettingsExecute(Sender: TObject);
+procedure tMainForm.actRunAllSettingsExecute(sender: tObject);
 begin
   run(rmNonStop, true);
 end;
 
-procedure tMainForm.actRunCheckSyntaxExecute(Sender: TObject);
+procedure tMainForm.actRunCheckSyntaxExecute(sender: tObject);
 var
   fr: tEditFrame;
   src: tKlausSource;
@@ -1061,63 +1061,63 @@ begin
   end;
 end;
 
-procedure tMainForm.actRunFastestExecute(Sender: TObject);
+procedure tMainForm.actRunFastestExecute(sender: tObject);
 begin
   klausDoerSpeed(kdsFastest);
   invalidateControlState;
 end;
 
-procedure tMainForm.actRunFastExecute(Sender: TObject);
+procedure tMainForm.actRunFastExecute(sender: tObject);
 begin
   klausDoerSpeed(kdsFast);
   invalidateControlState;
 end;
 
-procedure tMainForm.actRunImmediateExecute(Sender: TObject);
+procedure tMainForm.actRunImmediateExecute(sender: tObject);
 begin
   klausDoerSpeed(kdsImmediate);
   invalidateControlState;
 end;
 
-procedure tMainForm.actRunInterceptKeyboardExecute(Sender: TObject);
+procedure tMainForm.actRunInterceptKeyboardExecute(sender: tObject);
 begin
   if scene <> nil then scene.previewShortCuts := actRunInterceptKeyboard.checked;
 end;
 
-procedure tMainForm.actRunMediumExecute(Sender: TObject);
+procedure tMainForm.actRunMediumExecute(sender: tObject);
 begin
   klausDoerSpeed(kdsMedium);
   invalidateControlState;
 end;
 
-procedure tMainForm.actRunPauseExecute(Sender: TObject);
+procedure tMainForm.actRunPauseExecute(sender: tObject);
 begin
   if isRunning then scene.pause;
 end;
 
-procedure tMainForm.actDebugShowExecPointExecute(Sender: TObject);
+procedure tMainForm.actDebugShowExecPointExecute(sender: tObject);
 begin
   showExecPoint;
 end;
 
-procedure tMainForm.actRunShowSceneExecute(Sender: TObject);
+procedure tMainForm.actRunShowSceneExecute(sender: tObject);
 begin
   if scene <> nil then scene.setFocus;
 end;
 
-procedure tMainForm.actRunSlowestExecute(Sender: TObject);
+procedure tMainForm.actRunSlowestExecute(sender: tObject);
 begin
   klausDoerSpeed(kdsSlowest);
   invalidateControlState;
 end;
 
-procedure tMainForm.actRunSlowExecute(Sender: TObject);
+procedure tMainForm.actRunSlowExecute(sender: tObject);
 begin
   klausDoerSpeed(kdsSlow);
   invalidateControlState;
 end;
 
-procedure tMainForm.actRunStartArgsExecute(Sender: TObject);
+procedure tMainForm.actRunStartArgsExecute(sender: tObject);
 var
   fr: tEditFrame;
   dlg: tCmdLineArgsDlg;
@@ -1321,64 +1321,64 @@ begin
   end;
 end;
 
-procedure tMainForm.actRunStartExecute(Sender: TObject);
+procedure tMainForm.actRunStartExecute(sender: tObject);
 begin
   run(rmNonStop, false);
 end;
 
-procedure tMainForm.actDebugRunToCursorExecute(Sender: TObject);
+procedure tMainForm.actDebugRunToCursorExecute(sender: tObject);
 begin
   run(rmToCursor, false);
 end;
 
-procedure tMainForm.actDebugStepIntoExecute(Sender: TObject);
+procedure tMainForm.actDebugStepIntoExecute(sender: tObject);
 begin
   run(rmStepInto, false);
 end;
 
-procedure tMainForm.actDebugStepOverExecute(Sender: TObject);
+procedure tMainForm.actDebugStepOverExecute(sender: tObject);
 begin
   run(rmStepOver, false);
 end;
 
-procedure tMainForm.actDebugToggleBreakpointExecute(Sender: TObject);
+procedure tMainForm.actDebugToggleBreakpointExecute(sender: tObject);
 begin
   if activeFrame <> nil then activeFrame.toggleBreakpoint;
 end;
 
-procedure tMainForm.actRunStopExecute(Sender: TObject);
+procedure tMainForm.actRunStopExecute(sender: tObject);
 begin
   if scene <> nil then scene.close;
 end;
 
-procedure tMainForm.actToggleBookmarkExecute(Sender: TObject);
+procedure tMainForm.actToggleBookmarkExecute(sender: tObject);
 begin
   if activeFrame <> nil then;
     activeFrame.toggleBookmark((sender as tComponent).tag);
 end;
 
-procedure tMainForm.actGotoBookmarkExecute(Sender: TObject);
+procedure tMainForm.actGotoBookmarkExecute(sender: tObject);
 begin
   if activeFrame <> nil then;
     activeFrame.gotoBookmark((sender as tComponent).tag);
 end;
 
-procedure tMainForm.actDebugBreakpointsExecute(Sender: TObject);
+procedure tMainForm.actDebugBreakpointsExecute(sender: tObject);
 begin
   debugView[dvtBreakpoints].visible := true;
 end;
 
-procedure tMainForm.actDebugCallStackExecute(Sender: TObject);
+procedure tMainForm.actDebugCallStackExecute(sender: tObject);
 begin
   debugView[dvtCallStack].visible := true;
 end;
 
-procedure tMainForm.actDebugLocalVariablesExecute(Sender: TObject);
+procedure tMainForm.actDebugLocalVariablesExecute(sender: tObject);
 begin
   debugView[dvtVariables].visible := true;
 end;
 
-procedure tMainForm.actWindowMoveTabLeftExecute(Sender: TObject);
+procedure tMainForm.actWindowMoveTabLeftExecute(sender: tObject);
 var
   ts: tTabSheet;
 begin
@@ -1387,7 +1387,7 @@ begin
   if ts.pageIndex > 0 then ts.pageIndex := ts.pageIndex-1;
 end;
 
-procedure tMainForm.actWindowMoveTabRightExecute(Sender: TObject);
+procedure tMainForm.actWindowMoveTabRightExecute(sender: tObject);
 var
   ts: tTabSheet;
 begin
@@ -1396,33 +1396,33 @@ begin
   if ts.pageIndex < pageControl.PageCount-1 then ts.pageIndex := ts.pageIndex+1;
 end;
 
-procedure tMainForm.actWindowNextTabExecute(Sender: TObject);
+procedure tMainForm.actWindowNextTabExecute(sender: tObject);
 begin
   pageControl.selectNextPage(true);
 end;
 
-procedure tMainForm.actWindowPrevTabExecute(Sender: TObject);
+procedure tMainForm.actWindowPrevTabExecute(sender: tObject);
 begin
   pageControl.selectNextPage(false);
 end;
 
-procedure tMainForm.actDebugWatchesExecute(Sender: TObject);
+procedure tMainForm.actDebugWatchesExecute(sender: tObject);
 begin
   debugView[dvtWatches].visible := true;
 end;
 
-procedure tMainForm.actFileExitExecute(sender: TObject);
+procedure tMainForm.actFileExitExecute(sender: tObject);
 begin
   close;
 end;
 
-procedure tMainForm.actFileCloseExecute(sender: TObject);
+procedure tMainForm.actFileCloseExecute(sender: tObject);
 begin
   if not promptToSaveEditFrame(activeFrame) then exit;
   destroyEditFrame(activeFrame);
 end;
 
-procedure tMainForm.actEditUndoExecute(Sender: TObject);
+procedure tMainForm.actEditUndoExecute(sender: tObject);
 var
   fr: tEditFrame;
 begin
@@ -1431,7 +1431,7 @@ begin
   fr.edit.undo;
 end;
 
-procedure tMainForm.actEditUnindentBlockExecute(Sender: TObject);
+procedure tMainForm.actEditUnindentBlockExecute(sender: tObject);
 var
   fr: tEditFrame;
 begin
@@ -1441,7 +1441,7 @@ begin
   fr.unindentBlock;
 end;
 
-procedure tMainForm.actEditCutExecute(Sender: TObject);
+procedure tMainForm.actEditCutExecute(sender: tObject);
 var
   fr: tEditFrame;
 begin
@@ -1450,7 +1450,7 @@ begin
   fr.edit.cutToClipboard;
 end;
 
-procedure tMainForm.actEditDeleteLineExecute(Sender: TObject);
+procedure tMainForm.actEditDeleteLineExecute(sender: tObject);
 var
   fr: tEditFrame;
 begin
@@ -1460,7 +1460,7 @@ begin
   fr.deleteLine;
 end;
 
-procedure tMainForm.actEditIndentBlockExecute(Sender: TObject);
+procedure tMainForm.actEditIndentBlockExecute(sender: tObject);
 var
   fr: tEditFrame;
 begin
@@ -1470,7 +1470,7 @@ begin
   fr.indentBlock;
 end;
 
-procedure tMainForm.actEditPasteExecute(Sender: TObject);
+procedure tMainForm.actEditPasteExecute(sender: tObject);
 var
   fr: tEditFrame;
 begin
@@ -1479,7 +1479,7 @@ begin
   fr.edit.pasteFromClipboard;
 end;
 
-procedure tMainForm.actEditSearchNextExecute(Sender: TObject);
+procedure tMainForm.actEditSearchNextExecute(sender: tObject);
 var
   fr: tEditFrame;
 begin
@@ -1489,7 +1489,7 @@ begin
   else actEditSearch.execute;
 end;
 
-procedure tMainForm.actEditSearchReplaceExecute(Sender: TObject);
+procedure tMainForm.actEditSearchReplaceExecute(sender: tObject);
 var
   fr: tEditFrame;
   dlg: tSearchReplaceDlg;
@@ -1510,7 +1510,7 @@ begin
   end;
 end;
 
-procedure tMainForm.actEditSelectAllExecute(Sender: TObject);
+procedure tMainForm.actEditSelectAllExecute(sender: tObject);
 var
   fr: tEditFrame;
 begin
@@ -1519,7 +1519,7 @@ begin
   fr.edit.selectAll;
 end;
 
-procedure tMainForm.actEditCopyExecute(Sender: TObject);
+procedure tMainForm.actEditCopyExecute(sender: tObject);
 var
   fr: tEditFrame;
 begin
@@ -1528,7 +1528,7 @@ begin
   fr.edit.copyToClipboard;
 end;
 
-procedure tMainForm.actDebugEvaluateWatchExecute(Sender: TObject);
+procedure tMainForm.actDebugEvaluateWatchExecute(sender: tObject);
 begin
   with tEvaluateDlg.create(application) do try
     if showModal = mrOK then
@@ -1890,7 +1890,7 @@ begin
   end;
 end;
 
-procedure tMainForm.pageControlChange(sender: TObject);
+procedure tMainForm.pageControlChange(sender: tObject);
 begin
   invalidateCourseInfo;
   invalidateControlState;
@@ -1904,7 +1904,7 @@ begin
   end;
 end;
 
-procedure tMainForm.bvDebugSizerMouseMove(sender: TObject; shift: TShiftState; x, y: integer);
+procedure tMainForm.bvDebugSizerMouseMove(sender: tObject; shift: tShiftState; x, y: integer);
 var
   p: tPoint;
   dw: integer;
@@ -1931,7 +1931,7 @@ begin
   end;
 end;
 
-procedure tMainForm.bvCourseSizerMouseMove(sender: TObject; shift: TShiftState; x, y: integer);
+procedure tMainForm.bvCourseSizerMouseMove(sender: tObject; shift: tShiftState; x, y: integer);
 var
   p: tPoint;
   dw: integer;
@@ -1950,7 +1950,7 @@ begin
   if (button = mbLeft) then fCoursePanelSizing := false;
 end;
 
-procedure tMainForm.pnDebugContentResize(Sender: TObject);
+procedure tMainForm.pnDebugContentResize(sender: tObject);
 var
   i: integer;
 begin
@@ -1979,7 +1979,7 @@ begin
   if fControlStateInvalid then postMessage(handle, APPM_UpdateControlState, 0, 0);
 end;
 
-procedure tMainForm.propStorageRestoringProperties(Sender: TObject);
+procedure tMainForm.propStorageRestoringProperties(sender: tObject);
 begin
   fEditStyles.loadFromIni(propStorage);
   fConsoleOptions.loadFromIni(propStorage);
@@ -1987,7 +1987,7 @@ begin
   sessionProperties := getSessionProperties;
 end;
 
-procedure tMainForm.propStorageSavingProperties(Sender: TObject);
+procedure tMainForm.propStorageSavingProperties(sender: tObject);
 begin
   sessionProperties := getSessionProperties;
   fEditStyles.saveToIni(propStorage);
@@ -2003,7 +2003,7 @@ begin
   if course = nil then showCourseinfo('', '') else showCourseInfo(course.name, '', true);
 end;
 
-procedure tMainForm.propStorageRestoreProperties(Sender: TObject);
+procedure tMainForm.propStorageRestoreProperties(sender: tObject);
 begin
   updateRecentMenuItems;
 end;

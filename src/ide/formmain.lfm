@@ -1288,7 +1288,7 @@ object MainForm: TMainForm
     Title = 'Открыть файл'
     DefaultExt = '.klaus'
     Filter = 'Файлы Клаус|*.klaus;*.клаус|Все файлы|*'
-    Options = [ofPathMustExist, ofFileMustExist, ofEnableSizing, ofViewDetail]
+    Options = [ofAllowMultiSelect, ofPathMustExist, ofFileMustExist, ofEnableSizing, ofViewDetail]
     Left = 136
     Top = 260
   end
